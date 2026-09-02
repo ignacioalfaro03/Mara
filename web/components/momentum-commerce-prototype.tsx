@@ -9,9 +9,11 @@ export function MomentumCommercePrototype({ experienceId }: { experienceId: stri
   const [intentCaptured, setIntentCaptured] = useState(false);
   const [mockPurchased, setMockPurchased] = useState(false);
   const isDevelopment = process.env.NODE_ENV === "development";
-  const belongsToCollection = offer.collectionId === nightSeries.id;
+  const belongsToCollection = offer?.collectionId === nightSeries.id;
 
   useEffect(() => {
+    if (!offer) return;
+
     track("commercial_moment_shown", {
       offer_id: offer.id,
       moment: offer.moment,
@@ -25,6 +27,8 @@ export function MomentumCommercePrototype({ experienceId }: { experienceId: stri
       });
     }
   }, [offer]);
+
+  if (!offer) return null;
 
   function captureIntent() {
     setIntentCaptured(true);
