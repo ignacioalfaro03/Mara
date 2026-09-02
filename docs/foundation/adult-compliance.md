@@ -24,6 +24,8 @@ Read together with the [Desire Operating System Integration Contract](../archite
 10. Provider/platform/payment policy must be checked before activation, not after.
 11. Consent to one adult category never implies consent to another.
 12. Eligibility filtering happens before adult candidate ranking/generation.
+13. Financial-power fantasy never authorizes real financial exploitation.
+14. Post-spend vulnerability is not a commercial targeting opportunity.
 
 ## Age and adult eligibility
 
@@ -53,7 +55,8 @@ Potential scopes:
 - `adult_mode`;
 - content intensity band;
 - roleplay category;
-- financial-domination fantasy;
+- `financial_domination_fantasy`;
+- financial humiliation / role-language scope where applicable;
 - object/niche fetish;
 - body-focused play;
 - anticipation/orgasm-control fantasy;
@@ -65,6 +68,8 @@ Rules:
 
 - consent to adult mode does not authorize every category;
 - consent to one fetish/object/body focus does not authorize another;
+- consent to financial-power fantasy does not authorize financial humiliation language automatically;
+- consent to D02 does not authorize `paypig`, `wallet`, `ATM`, `slave` or similar labels automatically;
 - consent to voice V2 does not imply V3;
 - contribution to a World Asset does not imply fantasy consent involving that asset;
 - a prior session does not silently authorize a later context forever;
@@ -77,7 +82,8 @@ Conceptual state:
 consent_state:
   adult_mode: active
   scopes:
-    authority_roleplay: active
+    financial_domination_fantasy: active
+    financial_humiliation_language: inactive
     voice_v2: active
     voice_v3: inactive
     persistent_adult_memory: inactive
@@ -215,9 +221,114 @@ Never:
 - punish payment refusal;
 - make affection proportional to spend;
 - infer debt tolerance or higher hidden WTP;
-- use financial distress as targeting data.
+- use financial distress as targeting data;
+- use salary or bank balance to decide commercial pressure;
+- treat one payment as permission for future payment asks;
+- treat D02 participation as consent to humiliation language.
 
 > **THE FANTASY MAY BE FINDOM. THE PAYMENT SYSTEM MAY NOT BECOME FINANCIAL EXPLOITATION.**
+
+## D02 user safety controls
+
+Community research justifies stronger operational boundaries for any future real-payment D02 implementation.
+
+### Cold-set limits
+
+A user may eventually set a hard session/period cap outside high-intensity play.
+
+The product does not need to know:
+
+- salary;
+- bank balance;
+- credit limit;
+- debt capacity;
+- household expenses;
+- why the user selected the cap.
+
+> **NO SALARY NEEDED. NO BANK BALANCE NEEDED.**
+
+### No hot renegotiation
+
+Permanent rule:
+
+> **SET LIMITS COLD. PLAY INSIDE THEM HOT. NEVER RENEGOTIATE THEM HOT.**
+
+If a hard cap is reached during a high-intensity D02 window:
+
+- the financial action becomes ineligible;
+- Mara may refuse;
+- Mara may redirect to a nonfinancial action;
+- the product does not ask `raise your limit?`;
+- the limit is not silently expanded;
+- relationship warmth does not change.
+
+Changing a cap, where supported in the future, happens in a neutral settings/context state and does not retroactively reopen the same intense commercial moment.
+
+### `No money today`
+
+Future user controls should support an immediate session-level state such as:
+
+`no_money_today = true`
+
+When active:
+
+- D02 can continue through eligible nonfinancial components;
+- financial asks/Treats/paid D02 actions lose eligibility;
+- Mara does not punish, guilt or cool baseline affection;
+- the state is not interpreted as financial distress unless the user explicitly says so.
+
+### Post-spend commercial blackout
+
+Permanent rule:
+
+> **POST-SPEND VULNERABILITY IS A COMMERCIAL DEAD ZONE.**
+
+After a real or simulated paid financial-power beat:
+
+- fulfill promised value;
+- acknowledge;
+- normalize according to user preference;
+- allow ordinary conversation/space/open loop;
+- do not surface another immediate financial ask.
+
+Never:
+
+- upsell directly from a high-intensity paid peak;
+- ask for another send because the first succeeded;
+- raise the equivalent-SKU price;
+- ask to increase the cap;
+- use shame/regret as evidence of desire;
+- use aftercare as a sales funnel.
+
+### Explicit regret/distress exit
+
+If the user explicitly reports financial regret, distress, loss of control or a desire to stop:
+
+- pause D02 commercial actions;
+- no commercial next action;
+- respect category pause/reset;
+- do not eroticize the regret;
+- do not reassure them into another purchase;
+- provide a discreet support/controls path where productized later.
+
+Re-entry should require deliberate user action outside the distressed/intense moment.
+
+### Refusal is allowed
+
+Mara may reject a financial action because:
+
+- a cap is reached;
+- timing is wrong;
+- commercial attention is saturated;
+- the product action is not meaningful;
+- Mara does not want the proposed thing;
+- a nonfinancial action is better.
+
+This is not a system failure.
+
+> **SOMETIMES THE MOST DOMINANT ACTION IS TO REFUSE THE MONEY.**
+
+Do not manufacture refusal as fake scarcity intended to trigger larger later spend.
 
 ## Session State vs commercial targeting
 
@@ -227,7 +338,9 @@ Temporary session state can improve interaction quality:
 - current mode;
 - current route;
 - current open loop;
-- current consent scope.
+- current consent scope;
+- `no_money_today` where explicitly selected;
+- recovery state.
 
 That state must not automatically become commercial targeting data.
 
@@ -237,7 +350,11 @@ Especially do not derive:
 
 or:
 
-`user currently lonely → increase offer frequency`.
+`user currently lonely → increase offer frequency`
+
+or:
+
+`user just paid → immediately ask for more`.
 
 ## Privacy and memory
 
@@ -255,13 +372,22 @@ Default posture:
 
 Persistent adult preference memory requires explicit product/privacy review before activation.
 
+D02-specific privacy rules:
+
+- no public `paypig` status;
+- no public lifetime spend;
+- no public D02 badge by default;
+- no D02 label in push/email/browser title/public URL;
+- no salary/bank-balance collection for personalization;
+- no spend rank as relationship status.
+
 ## Sensitive analytics
 
 Generic analytics should prefer opaque identifiers:
 
 ```text
-route_id = D03
-candidate_id = E07
+route_id = D02
+candidate_id = A07
 reaction = worked
 ```
 
@@ -272,6 +398,8 @@ Do not send raw:
 - explicit body/object preferences;
 - trans-content interest as a user identity label;
 - roleplay details;
+- D02 role language;
+- private financial limits;
 - vulnerability state.
 
 ## Trans-inclusive handling
@@ -315,6 +443,8 @@ For each active public channel maintain:
 Public acquisition should be platform-safe.
 Deep adult personalization belongs first-party behind the proper gate.
 
+Do not use external ad-tech sexual/fetish targeting to build first-party D02 profiles.
+
 ## Payments
 
 Before real payments:
@@ -322,13 +452,13 @@ Before real payments:
 1. freeze exact product catalog/SKUs;
 2. identify countries/jurisdictions served;
 3. review current processor acceptable-use/restricted-business rules;
-4. verify explicit support for AI adult content, interactive adult experiences, custom content, voice, PPV, subscription and Caprichos as applicable;
+4. verify explicit support for AI adult content, interactive adult experiences, custom content, voice, PPV, subscription, D02 framing and Caprichos as applicable;
 5. confirm refund/chargeback obligations;
 6. confirm descriptor/recurring billing disclosure;
 7. document fallback if provider rejects scope;
 8. obtain separate founder authorization.
 
-Approval for one Mara SKU/provider scope does not imply approval for every other SKU or Caprichos/community-goal model.
+Approval for one Mara SKU/provider scope does not imply approval for every other SKU, D02 financial-power framing or Caprichos/community-goal model.
 
 ## Caprichos compliance boundary
 
@@ -347,6 +477,8 @@ Real Caprichos require separate review covering:
 Community participation remains:
 
 > **PUBLIC AGGREGATE. PRIVATE INDIVIDUAL.**
+
+A private D02 meaning may change how an eligible user experiences participation. It may not change public Goal terms, affection, target or contributor status.
 
 ## Playable rituals
 
@@ -373,6 +505,7 @@ Need future handling for:
 - doxxing;
 - non-consensual real-person content;
 - illegal requests;
+- financial-regret/D02 pause requests;
 - reporting/takedown/contact.
 
 Support should be discreet, clear and nonjudgmental.
@@ -388,7 +521,11 @@ Adult monetization experiments must track not only conversion/revenue but also:
 - consent drop-off;
 - support burden;
 - provider/policy incidents;
-- continuation/return after commercial moment.
+- continuation/return after commercial moment;
+- post-spend pressure;
+- role-language cringe;
+- trust after refusal/no-offer;
+- regret/distress signals.
 
 A test that increases conversion while materially damaging trust, safety or dispute economics is not a winner.
 
@@ -409,7 +546,10 @@ Before real adult commercial launch, require a written review covering:
 - abuse/reporting;
 - deletion/contact path;
 - rights/licensing for image/video/voice;
-- external-media sources if applicable.
+- external-media sources if applicable;
+- D02 cold-set cap behavior if activated;
+- post-spend commercial blackout behavior;
+- discreet D02 notification/privacy behavior.
 
 Founder authorization for payments, providers, deployment and production activation remain separate approvals.
 
@@ -422,5 +562,15 @@ Founder authorization for payments, providers, deployment and production activat
 > **SERVE THE MOMENT; NEVER EXPLOIT THE STATE.**
 
 > **MONEY CAN BUY ENTITLEMENT/SCOPE. IT CANNOT BUY MARA'S BASELINE AFFECTION OR CONSENT.**
+
+> **THE FANTASY MAY BE FINANCIAL DOMINATION. REAL FINANCE REMAINS ORDINARY.**
+
+> **SET LIMITS COLD. PLAY INSIDE THEM HOT. NEVER RENEGOTIATE THEM HOT.**
+
+> **POST-SPEND VULNERABILITY IS A COMMERCIAL DEAD ZONE.**
+
+> **NO SALARY NEEDED. NO BANK BALANCE NEEDED.**
+
+> **SOMETIMES THE MOST DOMINANT ACTION IS TO REFUSE THE MONEY.**
 
 > **PRIVATE BY DEFAULT.**
