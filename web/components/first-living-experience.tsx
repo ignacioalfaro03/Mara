@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { experiences } from "@/data/experiences";
 import { track } from "@/lib/analytics";
 import { recommendExperience } from "@/lib/p0/matcher";
+import { MomentumCommercePrototype } from "@/components/momentum-commerce-prototype";
 import type {
   ExperienceDefinition,
   LifeState,
@@ -158,7 +159,6 @@ export function FirstLivingExperience() {
   const [recommendation, setRecommendation] = useState<Recommendation | null>(null);
   const [activeExperience, setActiveExperience] = useState<ExperienceDefinition | null>(null);
   const [plansToTrain, setPlansToTrain] = useState<boolean | undefined>();
-  const [premiumIntentCaptured, setPremiumIntentCaptured] = useState(false);
   const [returnState, setReturnState] = useState<P0PersistedState | null>(null);
 
   useEffect(() => {
@@ -303,11 +303,6 @@ export function FirstLivingExperience() {
     setStep("life_callback");
   }
 
-  function capturePremiumIntent() {
-    setPremiumIntentCaptured(true);
-    track("premium_intent", { experience_id: activeExperience?.id ?? "unknown", offer: "continuation" });
-  }
-
   function createOpenLoop() {
     const state: P0PersistedState = {
       completed: true,
@@ -341,7 +336,6 @@ export function FirstLivingExperience() {
     setRecommendation(null);
     setActiveExperience(null);
     setPlansToTrain(undefined);
-    setPremiumIntentCaptured(false);
     setReturnState(null);
     setLifeState(initialLifeState);
     setStep("intro");
@@ -525,16 +519,7 @@ export function FirstLivingExperience() {
             <span>AHORA</span>
             <p>Al final sí voy a ir al gym. Me dio lata reconocerlo después de haber dicho que probablemente no iba.</p>
           </div>
-          {activeExperience.premiumLabel ? (
-            <div className="premiumIntentCard">
-              <span>P0 · PREMIUM INTENT</span>
-              <strong>{activeExperience.premiumLabel}</strong>
-              <p>Este test mide deseo de continuar. No hay cobro ni checkout activo.</p>
-              <button type="button" onClick={capturePremiumIntent} disabled={premiumIntentCaptured}>
-                {premiumIntentCaptured ? "Interés guardado" : "Yo seguiría"}
-              </button>
-            </div>
-          ) : null}
+          {activeExperience.premiumLabel ? <MomentumCommercePrototype experienceId={activeExperience.id} /> : null}
           <div className="userContextPrompt">
             <p>
               {plansToTrain
