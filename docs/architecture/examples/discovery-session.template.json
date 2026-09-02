@@ -1,0 +1,52 @@
+{
+  "schema_version": "0.1",
+  "discovery_session_id": "discovery_example",
+  "user_id": null,
+  "format": "fast_five",
+  "adult_mode": false,
+  "consent_scope": "personalization",
+  "questions": [
+    {
+      "question_id": "q1",
+      "prompt": "¿Voz o visual?",
+      "options": ["voice", "visual"],
+      "selected": null,
+      "mara_prediction": null,
+      "prediction_confidence": null,
+      "prediction_result": null,
+      "reaction": null,
+      "preference_candidate": {
+        "category": "format_affinity",
+        "value": null,
+        "context": {
+          "surface": "private",
+          "modality": null,
+          "scenario": null
+        },
+        "source_type": "discovery_choice",
+        "explicit": false,
+        "confidence": "low",
+        "sensitivity": "normal"
+      }
+    }
+  ],
+  "reveal": {
+    "summary_lines": [],
+    "user_feedback": null,
+    "corrections": []
+  },
+  "next_experience": {
+    "recommendation_mode": "known_fit",
+    "experience_ref": null,
+    "reason_code": null
+  },
+  "analytics_safe": {
+    "game_started": false,
+    "game_completed": false,
+    "prediction_hits": 0,
+    "prediction_misses": 0,
+    "correction_count": 0
+  },
+  "created_at": null,
+  "completed_at": null
+}
