@@ -3,70 +3,125 @@
 import { useEffect, useMemo, useState } from "react";
 import { getOfferForExperience, nightSeries } from "@/data/commercial";
 import { track } from "@/lib/analytics";
+import {
+  assignCommercialExperimentVariant,
+  getCommercialExperimentConfig,
+  type CommercialExperimentVariant,
+} from "@/lib/p0/commercial-experiment";
 
 export function MomentumCommercePrototype({ experienceId }: { experienceId: string }) {
   const offer = useMemo(() => getOfferForExperience(experienceId), [experienceId]);
+  const [variant, setVariant] = useState<CommercialExperimentVariant>("A_offer_only");
+  const [variantReady, setVariantReady] = useState(false);
   const [intentCaptured, setIntentCaptured] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
   const [mockPurchased, setMockPurchased] = useState(false);
   const isDevelopment = process.env.NODE_ENV === "development";
+  const config = useMemo(() => getCommercialExperimentConfig(variant), [variant]);
   const belongsToCollection = offer?.collectionId === nightSeries.id;
 
   useEffect(() => {
-    if (!offer) return;
+    const assigned = assignCommercialExperimentVariant();
+    setVariant(assigned);
+    setVariantReady(true);
+    track("commercial_experiment_assigned", { experiment: "momentum_commerce_p0", variant: assigned });
+  }, []);
+
+  useEffect(() => {
+    if (!offer || !variantReady) return;
 
     track("commercial_moment_shown", {
       offer_id: offer.id,
       moment: offer.moment,
       availability_type: offer.availability.type,
+      variant,
     });
 
     if (offer.availability.type !== "always_available") {
       track("scarcity_offer_viewed", {
         offer_id: offer.id,
         prototype_only: Boolean(offer.availability.prototypeOnly),
+        variant,
       });
     }
-  }, [offer]);
+  }, [offer, variant, variantReady]);
 
   if (!offer) return null;
 
   function captureIntent() {
     setIntentCaptured(true);
-    track("offer_opened", { offer_id: offer.id, offer_type: offer.type });
-    track("premium_intent", { offer_id: offer.id, offer_type: offer.type });
+    track("offer_opened", { offer_id: offer.id, offer_type: offer.type, variant });
+    track("premium_intent", { offer_id: offer.id, offer_type: offer.type, variant });
 
     if (offer.type === "voice_upgrade") {
-      track("voice_upgrade_interest", { offer_id: offer.id });
+      track("voice_upgrade_interest", { offer_id: offer.id, variant });
     }
 
     if (offer.type === "custom") {
-      track("custom_slot_interest", { offer_id: offer.id, prototype_only: true });
+      track("custom_slot_interest", { offer_id: offer.id, prototype_only: true, variant });
     }
+  }
+
+  function dismissOffer() {
+    setDismissed(true);
+    track("commercial_offer_dismissed", {
+      offer_id: offer.id,
+      offer_type: offer.type,
+      variant,
+      consequence: "none",
+    });
   }
 
   function simulatePurchase() {
     if (!isDevelopment) return;
 
     setMockPurchased(true);
-    track("mock_purchase_completed", { offer_id: offer.id, development_only: true });
-    track("purchase_resume", { offer_id: offer.id, resume_state: offer.resumeState });
-    track("reward_delivered", { offer_id: offer.id, reward_style: offer.rewardStyle });
+    track("mock_purchase_completed", { offer_id: offer.id, development_only: true, variant });
+    track("purchase_resume", { offer_id: offer.id, resume_state: offer.resumeState, variant });
 
-    if (belongsToCollection) {
-      track("collection_item_acquired", { collection_id: nightSeries.id, development_only: true });
+    if (config.showRewardContract) {
+      track("reward_delivered", { offer_id: offer.id, reward_style: offer.rewardStyle, variant });
+    }
+
+    if (config.showOwnership && belongsToCollection) {
+      track("collection_item_acquired", { collection_id: nightSeries.id, development_only: true, variant });
     }
   }
 
+  if (dismissed) {
+    return (
+      <div className="commerceDismissed" aria-live="polite">
+        <span>MARA</span>
+        <p>Ya. Seguimos.</p>
+      </div>
+    );
+  }
+
   const isPrototypeScarcity = Boolean(offer.availability.prototypeOnly);
-  const collectionOwned = belongsToCollection && mockPurchased
+  const collectionOwned = config.showOwnership && belongsToCollection && mockPurchased
     ? Array.from(new Set([...nightSeries.prototypeOwnedItemIds, "gym"]))
     : nightSeries.prototypeOwnedItemIds;
 
   return (
     <div className="premiumIntentCard">
       <span>P0 · MOMENTUM COMMERCE</span>
+      {isDevelopment ? <small className="livingMemory">Experiment: {variant}</small> : null}
       <strong>{offer.maraLine}</strong>
       <p>{offer.scope}</p>
+
+      {config.showRewardContract ? (
+        <div className="commerceValueContract">
+          <span>PAYOFF</span>
+          <p>Si esto se desbloqueara, Mara reaccionaría en contexto y la experiencia seguiría desde este mismo punto.</p>
+        </div>
+      ) : null}
+
+      {config.showOwnership && belongsToCollection ? (
+        <div className="commerceValueContract">
+          <span>MY HISTORY WITH MARA</span>
+          <p>Esta experiencia también quedaría dentro de tu colección/historia adquirida.</p>
+        </div>
+      ) : null}
 
       {isPrototypeScarcity ? (
         <div className="livingMemory">
@@ -78,7 +133,10 @@ export function MomentumCommercePrototype({ experienceId }: { experienceId: stri
       ) : null}
 
       {!intentCaptured ? (
-        <button type="button" onClick={captureIntent}>{offer.ctaLabel}</button>
+        <div className="commerceActions">
+          <button type="button" onClick={captureIntent}>{offer.ctaLabel}</button>
+          <button type="button" className="commerceSkip" onClick={dismissOffer}>Ahora no</button>
+        </div>
       ) : (
         <p className="livingMemory">Interés guardado. No hubo cobro ni checkout.</p>
       )}
@@ -90,25 +148,25 @@ export function MomentumCommercePrototype({ experienceId }: { experienceId: stri
       {mockPurchased ? (
         <div className="lifeMoment">
           <span>DEV MOCK · EXACT-STATE RESUME</span>
-          <p>{offer.rewardLine ?? "Ya. Ahora sí."}</p>
+          <p>{config.showRewardContract ? (offer.rewardLine ?? "Ya. Ahora sí.") : "Ya. Ahora sí."}</p>
           <p>
             Resume state: <code>{offer.resumeState}</code>. No transaction occurred; this only validates the post-purchase UX contract.
           </p>
           <button
             type="button"
-            onClick={() => track("continuation_opened", { offer_id: offer.id, development_only: true })}
+            onClick={() => track("continuation_opened", { offer_id: offer.id, development_only: true, variant })}
           >
             Continuar desde aquí
           </button>
         </div>
       ) : null}
 
-      {belongsToCollection ? (
+      {config.showOwnership && belongsToCollection ? (
         <div className="livingMemory">
           <button
             type="button"
             className="livingReset"
-            onClick={() => track("collection_viewed", { collection_id: nightSeries.id })}
+            onClick={() => track("collection_viewed", { collection_id: nightSeries.id, variant })}
           >
             {nightSeries.title}: {collectionOwned.length}/{nightSeries.itemIds.length}
           </button>
