@@ -82,6 +82,25 @@ The assignment is deliberately lightweight and stored locally. It is suitable fo
 
 In development, the P0 Commerce Lab panel can force A/B/C. Forcing a variant clears the previous P0 living state and safe session log, then reloads so one tester/session starts cleanly in the requested variant.
 
+### Canonical A/B/C fixture
+
+Use the DEV-only route:
+
+`/experience/commerce-lab`
+
+for controlled A/B/C comparisons.
+
+It fixes the same underlying commercial context for every tester:
+
+`gym_late_voice_01 → gym_continue_01`
+
+This prevents the normal Fantasy matcher from accidentally changing the underlying experience between A/B/C. The offer is `always_available` and collection-linked, so the controlled difference is:
+- A = offer only;
+- B = same offer + payoff/reward contract;
+- C = same offer + payoff/reward contract + ownership/history.
+
+Use normal `/experience` separately to test ecological fit: whether commerce still feels natural when Mara/personalization chooses the actual experience.
+
 A fourth concept — **real scarcity** — is intentionally excluded from normal A/B/C assignment until there is an actual enforceable capacity/time/edition constraint. The existing scarcity UI is only a developer-visible prototype example.
 
 Users can choose `Ahora no`. Declining an offer:
@@ -169,6 +188,7 @@ Do not populate this variable with a real provider until founder authorization a
 
 - `/` — conversion-first Home with `Enter Mara` as the primary action
 - `/experience` — Mara P0 First Living Experience + Momentum Commerce prototype
+- `/experience/commerce-lab` — DEV-only canonical A/B/C commerce fixture
 - `/meet-mara` — character/brand introduction
 - `/premium` — premium value and configurable handoff
 - `/legal` — AI disclosure, adult-only, consent, privacy and reporting requirements
