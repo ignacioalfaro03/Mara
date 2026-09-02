@@ -2,15 +2,14 @@
 
 import Link from "next/link";
 import { track } from "@/lib/analytics";
+import { MaraHeroVisual } from "@/components/mara-presence";
 
 export default function HomePage() {
   return (
     <main>
       <section className="hero">
         <div className="heroMedia" aria-label="Mara Vera">
-          <div className="mediaFrame">
-            <span>MARA VERA</span>
-          </div>
+          <MaraHeroVisual />
         </div>
         <div className="heroCopy">
           <p className="eyebrow">MEET MARA VERA</p>
