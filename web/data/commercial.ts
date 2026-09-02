@@ -104,6 +104,12 @@ export const nightSeries: CollectionDefinition = {
   completionReward: "Epilogue voice · prototype concept",
 };
 
-export function getOfferForExperience(experienceId: string) {
-  return offers.find((offer) => offer.sourceExperienceId === experienceId) ?? null;
+export function getOfferForExperience(experienceId: string): OfferDefinition {
+  const offer = offers.find((candidate) => candidate.sourceExperienceId === experienceId);
+
+  if (!offer) {
+    throw new Error(`Missing P0 commercial offer for premium experience: ${experienceId}`);
+  }
+
+  return offer;
 }
