@@ -219,6 +219,7 @@ export const experiences: ExperienceDefinition[] = [
     title: "No te voy a dar la fácil",
     maraIntro: "Creo que contigo sirve más un poco de resistencia que decirte que sí a todo.",
     body: "Mara mantiene criterio propio y ofrece una elección limitada en vez de complacencia automática.",
+    premiumLabel: "Me interesaría una versión custom",
     vector: {
       energy: "selective",
       interaction: "teasing",
