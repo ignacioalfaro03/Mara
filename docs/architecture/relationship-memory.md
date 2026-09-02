@@ -4,6 +4,8 @@
 
 Authoritative product layer built on top of the existing Dual Memory System and Relationship Engine. This document clarifies how memory creates continuity and commercial defensibility without turning spending into emotional closeness.
 
+The [Preference Graph](preference-graph.md) is a structured view inside **User Relationship Memory**. It is not a second memory system.
+
 ## Purpose
 
 Memory exists to create **relationship continuity**, not to maximize data collection.
@@ -25,10 +27,11 @@ Keep these concepts separate:
 
 1. **Mara Self Memory** — Mara's persistent fictional life, opinions, plans, recurring people and prior events.
 2. **User Relationship Memory** — filtered, consented context useful for future interaction.
-3. **Relationship State** — stage of interaction continuity.
-4. **Commercial State** — purchases, entitlements and monetization analytics.
-5. **Raw transcripts** — separate and not retained by default simply to power memory.
-6. **Identity / payment / consent records** — separate stores and controls.
+3. **Preference Graph** — structured preference signals within User Relationship Memory, including confidence/context/recency/correction.
+4. **Relationship State** — stage of interaction continuity.
+5. **Commercial State** — purchases, entitlements and monetization analytics.
+6. **Raw transcripts** — separate and not retained by default simply to power memory.
+7. **Identity / payment / consent records** — separate stores and controls.
 
 Do not create a second memory stack parallel to `memory-system.md`.
 
@@ -45,15 +48,33 @@ Potentially useful, consent-compatible records:
 - explicit dislikes;
 - user-stated boundaries;
 - consented intensity preferences;
-- story choices;
+- story/discovery choices;
 - ritual/challenge affinity;
 - open loops;
 - shared jokes;
 - previous purchased experience references;
 - whether a continuation is available;
-- memory corrections.
+- memory/preference corrections.
 
 Do not store information just because it appears in conversation.
+
+## Preference Graph handoff
+
+The Desire Discovery Engine, story branches, conversation and user corrections can emit structured preference candidates.
+
+Candidate flow:
+
+**choice/statement → preference candidate → sensitivity/consent filter → confidence/context update → Preference Graph → selective Context Builder retrieval**.
+
+The graph should distinguish:
+- explicit vs inferred;
+- stable vs experimental;
+- global vs contextual;
+- recent vs stale;
+- normal vs adult-sensitive;
+- active vs rejected/expired.
+
+A single choice is normally weak evidence. Explicit correction overrides weak inference.
 
 ## Prohibited personalization infrastructure
 
@@ -66,11 +87,12 @@ Never build or infer persistent targeting fields for:
 - compulsive-spending propensity;
 - emotional dependency;
 - desperation;
+- sexual compulsion;
 - other vulnerability scores designed to increase monetization.
 
 ## Memory write test
 
-Before writing a durable user memory, ask:
+Before writing a durable user memory or preference, ask:
 
 1. Is this useful for a future experience?
 2. Is it appropriate to retain?
@@ -78,6 +100,7 @@ Before writing a durable user memory, ask:
 4. Would forgetting it materially reduce continuity?
 5. Is there a lower-sensitivity representation?
 6. Does it have an expiry/decay path?
+7. Is this explicit, inferred or merely a one-off choice?
 
 If not, do not persist it.
 
@@ -126,6 +149,7 @@ Open loops may originate from:
 - a chosen branch;
 - a future event;
 - an opted-in ritual/challenge;
+- a discovery-session promise/reveal;
 - a premium continuation.
 
 Each loop should have:
@@ -165,19 +189,20 @@ Working model:
 
 **Relational Capital = Shared History + Useful Memory + Resolved Loops + Ritual History + Interaction Fit + Mara World Familiarity**
 
-Spend is intentionally excluded.
+Preference learning can improve `Interaction Fit`, but spend is intentionally excluded.
 
 The product moat is healthy accumulated history, not manufactured dependency.
 
 ## Personalized Home / Next Best Experience
 
-A future first-party Home may use consented, non-sensitive context to prioritize:
+A future first-party Home may use consented, non-sensitive context and Preference Graph signals to prioritize:
 - a continuation;
 - a story callback;
 - a relevant voice moment;
 - a free interaction;
 - a purchased entitlement;
-- a new product aligned with explicit preferences;
+- a new product aligned with explicit/high-confidence preferences;
+- an exploration/serendipity option;
 - no proactive offer at all.
 
 Example:
@@ -197,7 +222,7 @@ not immediate revenue alone.
 When persistent first-party memory exists, provide appropriate paths to:
 - inspect selected preferences where practical;
 - correct preferences;
-- remove individual memories where practical;
+- remove individual memories/preferences where practical;
 - reset personalization;
 - request deletion;
 - control adult-mode/intensity preferences;
@@ -205,12 +230,15 @@ When persistent first-party memory exists, provide appropriate paths to:
 
 ## Analytics separation
 
-Track memory product quality without sending raw intimate content into general analytics.
+Track memory/preference product quality without sending raw intimate content into general analytics.
 
 Candidate metrics:
 - successful callback rate;
 - open-loop resolution rate;
 - memory correction rate;
+- Preference Graph correction rate;
+- Mara Guess Accuracy;
+- Personalization Lift;
 - memory usefulness feedback;
 - creepiness/negative-reaction rate;
 - continuity error rate;
@@ -224,17 +252,18 @@ Commercial correlations may be analyzed at aggregate/cohort level, but memory sh
 
 Before persistent infrastructure:
 - use small manual test user records;
-- write explicit consented preferences only;
-- use Markdown/JSON/spreadsheets;
+- maintain a lightweight Preference Graph in JSON/spreadsheet form;
+- write explicit consented preferences and conservative inferred signals only;
+- use confidence/context/recency fields;
 - construct Context Packs manually;
-- test a small number of open loops and callbacks;
-- measure whether continuity actually improves return and willingness to pay.
+- test a small number of open loops, predictions and callbacks;
+- measure whether continuity/personalization actually improves return and willingness to pay.
 
 ## Build trigger
 
 Invest in persistent Relationship Memory only after:
 1. meaningful returning-user volume;
-2. evidence that continuity improves experience/return or monetization;
-3. manual memory becomes an operational bottleneck;
+2. evidence that continuity/personalization improves experience/return or monetization;
+3. manual memory/preferences become an operational bottleneck;
 4. privacy/provider architecture is defined;
 5. the Traction → Investment Gate is approved.
