@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { caprichos, getCapricho } from "@/data/caprichos";
+import { caprichos } from "@/data/caprichos";
 import { desireRoutes } from "@/data/desire-routes";
 import { track } from "@/lib/analytics";
 import { formatUsdCents } from "@/lib/p0/caprichos";
