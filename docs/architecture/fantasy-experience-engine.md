@@ -4,13 +4,15 @@
 
 Future-facing product architecture with a manual-first launch path. This document defines narrative and interactive commerce patterns. It does not authorize production activation, real payments or expensive realtime infrastructure.
 
+The engine consumes filtered [Preference Graph](preference-graph.md) signals and [Desire Discovery](desire-discovery-engine.md) outputs through the existing Relationship Memory / Context Builder architecture. It does not own a separate user profile.
+
 ## Purpose
 
-Transform adult content from a flat catalog into a coherent system of **situations, choices, continuations, voice moments and remembered callbacks**.
+Transform adult content from a flat catalog into a coherent system of **situations, choices, continuations, voice moments, adaptive branches and remembered callbacks**.
 
 The differentiated value is:
 
-**direction + anticipation + participation + personality + continuity**.
+**direction + anticipation + participation + personality + personalization + continuity**.
 
 ## Core experience model
 
@@ -20,11 +22,47 @@ A Fantasy Experience may contain:
 2. **Hook** — a question, tension or unresolved moment.
 3. **Choice** — the user selects among bounded options.
 4. **Reaction** — Mara responds in character.
-5. **Payoff** — free or paid content/interaction is delivered.
-6. **Continuation** — a future branch, sequel or callback remains possible.
-7. **Memory write** — only the minimum useful, consented state is retained where enabled.
+5. **Preference signal** — the choice may create a low-confidence structured signal where appropriate.
+6. **Payoff** — free or paid content/interaction is delivered.
+7. **Continuation** — a future branch, sequel or callback remains possible.
+8. **Memory write** — only the minimum useful, consented state is retained where enabled.
 
 This can work in text, voice, image, video or combinations.
+
+## Preference-aware experience selection
+
+The Preference Graph may influence:
+- experience ranking;
+- voice vs visual emphasis;
+- story family;
+- branch ordering;
+- Mara tone within consented intensity;
+- context/style;
+- personalization depth;
+- which continuation is surfaced;
+- whether to show a known-fit option or a bounded exploration option.
+
+Rules:
+- explicit consent/boundaries override preference fit;
+- adult mode eligibility overrides all inferred interest;
+- one weak inferred signal must not lock the user into a category;
+- explicit correction/rejection must propagate immediately;
+- sensitive preferences should use conservative retention/retrieval.
+
+## Explore, exploit and Surprise Me
+
+The experience selector should balance:
+
+### Known fit
+Use reliable preferences to improve relevance.
+
+### Exploration
+Offer reasonable adjacent alternatives to avoid a filter bubble and learn changing tastes.
+
+### Surprise Me
+A user-controlled exploration mode that increases novelty while respecting boundaries.
+
+This is recommendation-system logic only; it is never a license to exploit users economically.
 
 ## Fantasy Marketplace
 
@@ -36,6 +74,8 @@ A marketplace item can define:
 - adult intensity band;
 - included formats;
 - personalization options;
+- relevant preference tags;
+- exploration eligibility;
 - duration/length;
 - whether choices are included;
 - whether continuation is available;
@@ -57,6 +97,28 @@ Non-explicit examples:
 
 The situation is a product wrapper. The exact content remains governed by adult compliance and user boundaries.
 
+## Co-created experiences
+
+`Build It` can turn discovery into product creation.
+
+Example bounded sequence:
+1. mood;
+2. setting;
+3. look;
+4. interaction tone;
+5. preferred modality;
+6. continuation type.
+
+The resulting experience should visibly use the selected variables.
+
+This creates a stronger sense of personalization than choosing a finished catalog item, while keeping generation constrained and operable.
+
+Co-creation can be:
+- free discovery;
+- a preview;
+- a paid custom experience;
+- part of a transparent bundle.
+
 ## Branching experiences
 
 A simple branch should not require a game engine.
@@ -67,9 +129,11 @@ Launch representation can be Markdown/JSON:
 experience_id
 premise
 intensity_band
+preference_tags[]
 entry_variant
 choice_1[]
 reaction_1[]
+preference_signal_policy
 paid_gate_optional
 choice_2[]
 payoff_ref
@@ -79,7 +143,7 @@ memory_write_policy
 
 Example interaction shape:
 
-**Start → Choice → Mara reaction → Optional paid unlock → Second choice → Payoff → Future continuation**
+**Start → Choice → Mara reaction → Preference update candidate → Optional paid unlock → Second choice → Payoff → Future continuation**
 
 Branching should create agency, not payment confusion.
 
@@ -94,6 +158,8 @@ A paid gate may appear only when:
 
 Do not surprise-charge or interrupt a highly aroused adult moment with opaque pricing.
 
+Preference signals may improve **which offer is shown**, not produce vulnerability-based pricing.
+
 ## Narrative retention
 
 The engine should create reasons to return beyond asset novelty.
@@ -104,6 +170,7 @@ Potential structures:
 - recurring scenarios;
 - unresolved loops;
 - user-chosen consequences;
+- discovery callbacks;
 - callbacks;
 - anniversary/seasonal moments;
 - sequels;
@@ -130,6 +197,8 @@ Candidate products:
 - roleplay voice experiences where permitted;
 - audio-first bundles.
 
+Preference Graph signals can prioritize voice when the user has explicitly or reliably demonstrated voice affinity.
+
 Quality bar follows `docs/character/voice-bible.md`:
 - natural cadence;
 - Mara-specific delivery;
@@ -152,10 +221,10 @@ Same core experience for all users.
 Preferred name and one explicit context variable.
 
 ### P2 — Preference-aware
-Tone, format or theme based on explicit preferences.
+Tone, format or theme based on explicit/high-confidence preference signals.
 
 ### P3 — Continuity-aware
-Uses a prior story choice or safe callback.
+Uses a prior story/discovery choice or safe callback.
 
 ### P4 — Relationship-aware
 Uses durable relationship context, only after consent-based persistent memory is justified.
@@ -168,6 +237,8 @@ To scale without feeling templated, separate:
 - canonical premise;
 - Mara voice/personality layer;
 - allowed variables;
+- preference tags;
+- exploration tags;
 - content blocks;
 - branch rules;
 - callback slots;
@@ -188,6 +259,7 @@ Safe variation may affect:
 - callback timing;
 - reward type;
 - narrative reveal;
+- nearby preference exploration;
 - tone inside the approved range.
 
 Surprise must never alter:
@@ -205,6 +277,7 @@ A future account may show a private "My history with Mara" view containing only 
 - saved/owned media entitlements;
 - milestones;
 - opted-in memorable moments;
+- selected discovery results where appropriate;
 - available continuations.
 
 This should create useful continuity, not emotional pressure.
@@ -217,6 +290,7 @@ For each experience, track:
 - conversion from preview;
 - completion rate;
 - continuation rate;
+- preference-relevant vs generic performance;
 - first → second purchase linkage;
 - repeat rate;
 - refund/dispute;
@@ -235,6 +309,10 @@ Manual-first priority tests:
 4. No continuation vs explicit sequel/continuation.
 5. Generic vs P1 personalized short audio/message.
 6. No callback vs relevant callback from the prior episode.
+7. Generic experience recommendation vs Preference Graph-informed recommendation.
+8. Known-fit recommendation vs `Surprise Me` exploration.
+9. Finished catalog choice vs `Build It` co-created experience.
+10. Discovery result only vs discovery result + immediately adapted fantasy experience.
 
 Use spreadsheets/Markdown/JSON to operate tests before building workflow engines.
 
@@ -242,8 +320,9 @@ Use spreadsheets/Markdown/JSON to operate tests before building workflow engines
 
 Automate only when:
 1. users repeatedly complete or purchase narrative experiences;
-2. continuation behavior predicts return or spend;
-3. manual fulfillment becomes a measured bottleneck;
-4. contribution margin can support the infrastructure;
-5. provider/payment/legal constraints are resolved;
-6. the Traction → Investment Gate is satisfied or the founder explicitly authorizes a bounded test.
+2. preference-aware selection shows measurable lift;
+3. continuation behavior predicts return or spend;
+4. manual fulfillment becomes a measured bottleneck;
+5. contribution margin can support the infrastructure;
+6. provider/payment/legal constraints are resolved;
+7. the Traction → Investment Gate is satisfied or the founder explicitly authorizes a bounded test.
