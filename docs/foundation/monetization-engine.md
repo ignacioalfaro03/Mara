@@ -12,6 +12,8 @@ The commercial priority is not maximum extraction from one session. It is:
 
 **first purchase → value confirmation → second purchase → repeat spend → retained relationship**.
 
+The [Desire Discovery Engine](../architecture/desire-discovery-engine.md) and [Preference Graph](../architecture/preference-graph.md) may improve **offer relevance**. They must never become vulnerability scoring or opaque individualized pricing infrastructure.
+
 ## Monetization ladder
 
 ### Layer 0 — Free attention
@@ -25,23 +27,28 @@ Surfaces:
 - humor and opinions;
 - mini stories;
 - open narrative loops;
-- public personality.
+- public personality;
+- platform-safe polls / A-B choices.
 
 The free layer should create curiosity about Mara, not reveal the entire premium value.
 
-### Layer 1 — Free relationship
-Purpose: move from follower to identified/returning user.
+### Layer 1 — Free relationship + playable discovery
+Purpose: move from follower to identified/returning user while making personalization enjoyable.
 
 Candidate experiences:
 - limited conversation;
-- preference onboarding;
+- 3-choice playable onboarding;
+- Fast Five / Mara Test;
+- lightweight preference discovery;
+- Mara predictions;
+- correction/reveal loops;
 - lightweight/manual callbacks;
 - previews;
 - small story choices;
 - first voice exposure;
 - explicit adult-mode discovery without automatic escalation.
 
-At launch this can be partially manual. Persistent infrastructure is not required.
+At launch this can be partially manual and rule-based. Persistent infrastructure is not required.
 
 ### Layer 2 — Low-ticket first purchase
 Purpose: create the lowest-friction proof of willingness to pay.
@@ -54,7 +61,8 @@ Candidate products:
 - personalized short message;
 - visual pack;
 - bounded mini experience;
-- simple interactive branch.
+- simple interactive branch;
+- discovery-informed experience recommendation.
 
 Primary metrics:
 - visitor → registration;
@@ -62,6 +70,7 @@ Primary metrics:
 - time to first purchase;
 - average first ticket;
 - first-product conversion;
+- preference-relevant vs generic conversion;
 - refund/dispute rate.
 
 ### Layer 3 — Repeat purchases
@@ -74,7 +83,8 @@ Candidate repeatable surfaces:
 - themed drops;
 - follow-up personalization;
 - branching continuations;
-- bundles.
+- bundles;
+- co-created `Build It` experiences.
 
 The commercial proof point is **first payer → second payer**.
 
@@ -107,6 +117,49 @@ Higher-value experiences may include:
 
 High ticket must come from scope, personalization and perceived value—not financial pressure.
 
+## Discovery-informed offer relevance
+
+Preference signals can improve **product-market fit per user**.
+
+Examples:
+- high explicit/reliable voice affinity → feature a voice experience;
+- strong narrative affinity → feature a story continuation;
+- personalization affinity → feature a custom experience;
+- exploration preference → feature `Surprise Me` / novel experience;
+- repeated co-creation engagement → feature `Build It`.
+
+The system may change:
+- recommendation order;
+- highlighted experience;
+- content modality;
+- story family;
+- continuation priority.
+
+The system must not use Preference Graph data to:
+- estimate the maximum price an individual will tolerate;
+- target debt/financial distress;
+- exploit loneliness/dependency;
+- suppress cheaper equivalent options based on vulnerability;
+- alter emotional treatment based on expected spend.
+
+Pricing remains transparent and SKU/cohort-based.
+
+## Personalized storefront
+
+A future storefront can rank products differently for different users using:
+- explicit preferences;
+- high-confidence inferred preferences;
+- prior purchased entitlements;
+- story history;
+- format affinity;
+- current context;
+- relationship continuity;
+- exploration mode.
+
+Two users may see different **ordering/highlighting** while the same SKU retains the same applicable price and terms under the current pricing rule.
+
+Preference relevance should be auditable enough to explain product logic internally without storing raw intimate answers in commerce systems.
+
 ## Experience Configurator
 
 Do not treat custom requests as an unstructured inbox forever.
@@ -123,6 +176,8 @@ A future configurator may expose safe, bounded variables such as:
 - narrative style;
 - ending/continuation type;
 - personalization depth.
+
+The `Build It` playable format can become the front-end UX for this configurator.
 
 Pricing may eventually depend on:
 - generation/review cost;
@@ -153,7 +208,7 @@ Examples of non-explicit commercial framing:
 
 A product may have:
 - preview;
-- choice;
+- discovery choice;
 - unlock;
 - continuation;
 - callback;
@@ -193,7 +248,8 @@ Permitted:
 - themed series;
 - episodic collections;
 - seasonal moments;
-- user-visible history of acquired episodes/experiences.
+- user-visible history of acquired episodes/experiences;
+- safe discovery badges/results where useful.
 
 Prohibited:
 - fake countdowns;
@@ -201,7 +257,7 @@ Prohibited:
 - fake scarcity;
 - fabricated urgency.
 
-Collectibility can support "My history with Mara" through purchased episodes, milestones and remembered story arcs. It must not create artificial emotional debt.
+Collectibility can support "My history with Mara" through purchased episodes, milestones, discovery history and remembered story arcs. It must not create artificial emotional debt.
 
 ## High-value users
 
@@ -242,6 +298,8 @@ Each paid action must make clear:
 
 Do not insert surprise monetization inside an adult/aroused moment.
 
+A discovery game may lead to a relevant product, but the transition from play to commerce must be obvious.
+
 ## Pricing architecture
 
 All numeric pricing is experimental until real purchase data exists.
@@ -281,13 +339,14 @@ Track at minimum:
 - contribution margin %;
 - fulfillment time;
 - approval/rework rate;
-- repeat-purchase linkage.
+- repeat-purchase linkage;
+- personalization/discovery operational cost where relevant.
 
 Prefer products with:
 
 **high perceived value / low marginal cost / high repeatability / low policy risk**.
 
-Voice and text personalization are hypotheses to validate, not assumed winners.
+Voice, text personalization and discovery-informed recommendations are hypotheses to validate, not assumed winners.
 
 ## Commercial segmentation
 
@@ -301,7 +360,7 @@ Use commercial segments for offers and analytics only:
 - `high_value` — high recurring revenue;
 - `lapsed_payer` — previously paid, no recent purchase.
 
-Relationship state remains separate.
+Relationship state and Preference Graph remain separate from commercial segmentation.
 
 ## MVP monetization experiments
 
@@ -313,8 +372,11 @@ Prioritize evidence over infrastructure.
 4. One-off purchase vs clearly scoped bundle.
 5. No callback vs relevant callback after a paid experience.
 6. Standard continuation vs branching continuation.
-7. Free-depth timing: early offer vs value-before-offer.
-8. Membership intent only after repeat use evidence.
+7. Generic recommendation vs Preference Graph-informed recommendation.
+8. Finished product vs `Build It` co-created offer.
+9. Discovery result only vs discovery result + immediately relevant offer.
+10. Free-depth timing: early offer vs value-before-offer.
+11. Membership intent only after repeat use evidence.
 
 Do not declare winners from tiny samples. Use qualitative signal until volume supports stronger inference.
 
@@ -322,18 +384,29 @@ Do not declare winners from tiny samples. Use qualitative signal until volume su
 
 Acquisition:
 - social → web CTR;
+- social quiz → web CTR;
 - visitor → signup/identified user.
 
 Activation:
 - conversation start;
 - first meaningful interaction;
+- playable onboarding completion;
 - first voice play;
 - adult-mode eligible/opt-in where relevant.
+
+Discovery quality:
+- quiz start/completion;
+- choices per session;
+- repeat discovery rate;
+- Mara Guess Accuracy;
+- correction/confirmation rate;
+- Personalization Lift.
 
 Monetization:
 - premium intent;
 - first payer;
 - first → second payer;
+- personalized vs generic offer conversion;
 - AOV;
 - ARPU;
 - ARPPU;
@@ -353,7 +426,8 @@ Quality/safety:
 - refund/dispute;
 - voluntary stop/skip;
 - negative-reaction rate;
-- memory correction/creepiness rate when personalization is involved.
+- preference correction rate;
+- memory/personalization creepiness rate.
 
 ## Commercial decision rule
 
