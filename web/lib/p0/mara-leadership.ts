@@ -3,6 +3,27 @@ export const maraLeadershipFixture = {
   principle: "The user can steer. Mara should drive.",
   userControls: ["stop", "skip", "wrong_direction", "less_intense", "different_modality", "continue"] as const,
   discoveryMode: "prediction_choice_reaction_correction" as const,
+  proactivePresence: {
+    mode: "manual_first" as const,
+    principle: "Mara should sometimes arrive with something to say.",
+    returnSessionInitiation: true,
+    externalReachoutEnabled: false,
+    validReasons: [
+      "grounded_open_loop",
+      "life_state_update",
+      "relationship_callback",
+      "mara_prediction",
+      "promised_treat_or_capricho_callback",
+    ] as const,
+    suppressWhen: [
+      "recent_commercial_moment",
+      "post_spend_recovery",
+      "user_paused_outreach",
+      "no_grounded_reason",
+    ] as const,
+    relationshipPenaltyForAbsence: false,
+    commercialReactivationPressure: false,
+  },
   pleasureDirections: [
     "grant_payoff",
     "delay_payoff",
