@@ -5,9 +5,8 @@ import { useState } from "react";
 const MARA_IMAGE_URL = process.env.NEXT_PUBLIC_MARA_HERO_IMAGE?.trim();
 const MARA_VOICE_URL = process.env.NEXT_PUBLIC_MARA_VOICE_URL?.trim();
 
-export function MaraPortrait({ compact = false, label = "Mara Vera" }: { compact?: boolean; label?: string }) {
+function MaraImage({ className, compact = false, label }: { className: string; compact?: boolean; label: string }) {
   const [failed, setFailed] = useState(false);
-  const className = compact ? "livingPortrait livingPortraitCompact" : "livingPortrait";
 
   if (MARA_IMAGE_URL && !failed) {
     return (
@@ -28,6 +27,15 @@ export function MaraPortrait({ compact = false, label = "Mara Vera" }: { compact
       <span>M</span>
     </div>
   );
+}
+
+export function MaraHeroVisual() {
+  return <MaraImage className="mediaFrame" label="Mara Vera" />;
+}
+
+export function MaraPortrait({ compact = false, label = "Mara Vera" }: { compact?: boolean; label?: string }) {
+  const className = compact ? "livingPortrait livingPortraitCompact" : "livingPortrait";
+  return <MaraImage className={className} compact={compact} label={label} />;
 }
 
 export function MaraVoiceMoment({ transcript }: { transcript: string }) {
