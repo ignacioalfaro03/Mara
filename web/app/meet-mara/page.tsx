@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function MeetMaraPage() {
   return (
     <main className="pageShell">
@@ -7,6 +9,10 @@ export default function MeetMaraPage() {
         <p className="lede">
           Mara Vera is a fully synthetic adult character. She has her own aesthetic, opinions, routines and boundaries — and she is not designed to behave like an assistant.
         </p>
+        <div className="ctaRow">
+          <Link href="/experience" className="primaryCta">Enter Mara</Link>
+          <Link href="/legal" className="textCta">How this works</Link>
+        </div>
       </section>
 
       <section className="profileGrid">
@@ -18,6 +24,12 @@ export default function MeetMaraPage() {
 
       <section className="quotePanel">
         <p>“You’re allowed to be curious. I’m not promising I’ll make it easy.”</p>
+      </section>
+
+      <section className="closingPanel">
+        <p className="eyebrow">EARLY ACCESS</p>
+        <h2>The interesting part starts when Mara has something to remember.</h2>
+        <Link href="/experience" className="primaryCta">Start</Link>
       </section>
     </main>
   );
