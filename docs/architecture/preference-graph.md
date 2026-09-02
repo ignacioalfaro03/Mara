@@ -4,7 +4,7 @@
 
 Authoritative structured-preference model inside **User Relationship Memory**.
 
-This is not a second memory database. It is a normalized view of selected user preference signals that can be consumed by the Context Builder, Desire Discovery Engine, [Fantasy Compiler](fantasy-compiler.md), Fantasy Experience Engine and future Next Best Experience logic.
+This is not a second memory database. It is a normalized view of selected user preference signals that can be consumed by the Context Builder, Desire Discovery Engine, [Fantasy Compiler](fantasy-compiler.md), [Momentum Commerce](momentum-commerce.md), Fantasy Experience Engine and future Next Best Experience logic.
 
 ## Purpose
 
@@ -251,6 +251,40 @@ It should come from harmless interaction behavior and remain confidence/context-
 
 Do not label it as impulsivity, personality type or psychological need.
 
+Use it only to choose between known-fit, adjacent and `Surprise Me` candidates.
+
+## Reward / agency interaction preferences
+
+Only after repeated, consent-compatible evidence, the graph may represent contextual preferences such as:
+- `praise_affinity`;
+- `teasing_reward_affinity`;
+- `challenge_affinity`;
+- `control_affinity`;
+- `surprise_affinity`;
+- `collector_affinity`.
+
+These describe **how an experience works best**, not who the user “is”.
+
+Example:
+
+```yaml
+category: reward_style
+value: praise
+context:
+  surface: private_experience
+  dynamic: mara_leads
+confidence: medium
+stability: contextual
+sensitivity: personal
+```
+
+Rules:
+- one “Good boy” reaction or one purchase does not justify a durable node;
+- reward affinity must be correctable and decayable;
+- stronger adult-coded praise/dominance remains subject to adult-mode/consent rules;
+- reward preference does not authorize payment-conditioned affection;
+- collector affinity may rank collections/owned-history surfaces but not create fake scarcity or pressure.
+
 ## Saturation feedback
 
 The graph may receive structured update candidates when repeated experiences stop performing, such as:
@@ -266,14 +300,17 @@ Preference Graph may influence relevance:
 - which SKU/experience is highlighted;
 - modality shown first;
 - story continuation priority;
-- known-fit vs explore recommendation.
+- known-fit vs explore recommendation;
+- eligible reward presentation/cadence;
+- collection or agency surface ordering.
 
 It must not be used to:
 - set vulnerability-based personalized prices;
 - infer financial/emotional weakness;
 - increase emotional pressure;
 - alter baseline respect/affection;
-- hide cheaper equivalent products from vulnerable users.
+- hide cheaper equivalent products from vulnerable users;
+- change relational tone because a purchase was declined.
 
 Pricing remains governed by transparent SKU/cohort rules.
 
@@ -287,6 +324,7 @@ Example:
 RELEVANT PREFERENCES
 - voice: high confidence, explicitly confirmed
 - teasing: medium confidence, private text only
+- praise: medium confidence, Mara-led experiences only
 - surprise: emerging
 - do not use: X (explicit rejection)
 ```
@@ -301,7 +339,8 @@ The Fantasy Experience Engine can consume the selected/compiled configuration to
 - voice vs visual emphasis;
 - intensity defaults within consent;
 - personalization level;
-- explore/serendipity candidate.
+- explore/serendipity candidate;
+- reward-style eligibility where the experience includes one.
 
 Adult eligibility/consent always overrides preference relevance.
 
@@ -349,6 +388,7 @@ This is sufficient to test whether structured preference memory materially impro
 - Correction Acceptance
 - Preference decay/expiry rate
 - Personalization Lift
+- reward-style acceptance/correction where tested
 - negative/creepy reaction rate
 
 These are product-quality measures, not psychological scores.
