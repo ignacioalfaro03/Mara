@@ -60,19 +60,45 @@ Do not include real scarcity in comparison until one of these exists:
 
 The current `12/12` capacity example is developer prototype data and must remain labeled `NOT REAL INVENTORY`.
 
+## Canonical A/B/C fixture
+
+Do **not** compare A/B/C only through the normal Fantasy matcher. Different testers can otherwise receive different underlying experiences, and variant C only exposes ownership when the selected offer belongs to a collection.
+
+Use the DEV-only route:
+
+`/experience/commerce-lab`
+
+It fixes the underlying commercial context to:
+
+`gym_late_voice_01 → gym_continue_01`
+
+This offer is:
+- the same for A/B/C;
+- `always_available`;
+- linked to `night_series_p0`;
+- free from real/prototype scarcity in the actual A/B/C comparison.
+
+Therefore the controlled difference is:
+- A = offer only;
+- B = same offer + payoff/reward contract;
+- C = same offer + payoff/reward contract + ownership/history.
+
+Use the normal `/experience` route separately to test **ecological fit**: whether Momentum Commerce still feels natural when Fantasy Compiler/personalization determines the experience.
+
 ## Running the P0 commerce lab
 
 The development-only `P0 COMMERCE LAB` panel makes qualitative sessions repeatable without external analytics.
 
 For each tester:
-1. choose the intended variant (`A_offer_only`, `B_reward` or `C_ownership`) in the DEV panel;
-2. forcing a variant clears the previous P0 living state and safe session event log, stores the selected variant and reloads;
-3. let the tester use Mara without coaching the commercial decision;
-4. if an offer appears, allow either premium intent or `Ahora no` naturally;
-5. after either path, `Seguir con Mara` / `Seguimos` records whether the person explicitly continues after commerce;
-6. at the end, update and copy the DEV scorecard;
-7. copy the raw P0 event log only when deeper debugging is useful;
-8. capture the qualitative interview separately without putting intimate answers into generic analytics.
+1. open `/experience/commerce-lab`;
+2. choose the intended variant (`A_offer_only`, `B_reward` or `C_ownership`) in the DEV panel;
+3. forcing a variant clears the previous P0 living state and safe session event log, stores the selected variant and reloads;
+4. let the tester evaluate the fixture without coaching the commercial decision;
+5. allow either premium intent or `Ahora no` naturally;
+6. after either path, `Seguir con Mara` / `Seguimos` records whether the person explicitly continues after commerce;
+7. at the end, update and copy the DEV scorecard;
+8. copy the raw P0 event log only when deeper debugging is useful;
+9. capture the qualitative interview separately without putting intimate answers into generic analytics.
 
 The scorecard is directional only. It summarizes safe counts such as:
 - commercial moments;
@@ -131,7 +157,7 @@ Development mode keeps a capped **safe P0 event log** in `sessionStorage` under:
 
 `mara_p0_event_log`
 
-The `/experience` route exposes a DEV-only panel with:
+The DEV panel exposes:
 - forced A/B/C variant controls;
 - an on-device scorecard;
 - `Copiar scorecard`;
