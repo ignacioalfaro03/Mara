@@ -10,13 +10,13 @@ function MaraImage({ className, compact = false, label }: { className: string; c
 
   if (MARA_IMAGE_URL && !failed) {
     return (
-      <div className={className} aria-label={label}>
+      <div className={className} aria-label={label} style={{ padding: 0, overflow: "hidden" }}>
         <img
           src={MARA_IMAGE_URL}
           alt={label}
           loading={compact ? "lazy" : "eager"}
           onError={() => setFailed(true)}
-          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          style={{ width: "100%", height: "100%", minHeight: "inherit", objectFit: "cover", display: "block" }}
         />
       </div>
     );
