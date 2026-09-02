@@ -1,166 +1,248 @@
-# P0 Desire Segmentation Test Plan
+# P0 Desire OS / Segmentation Test Plan
 
 ## Purpose
 
-Test whether **one canonical Mara can become materially more relevant when the product routes by current desire**, without creating multiple contradictory Maras, leaking sensitive preferences or turning sensitive segments into vulnerability pricing.
+Test whether **one canonical Mara can become materially more relevant when the product routes by current desire and interaction shape**, without creating contradictory Maras, leaking sensitive preferences or turning adult-specificity into vulnerability pricing.
 
 DEV route:
 
 `/experience/segment-lab`
 
-No real adult preference profile, payment, checkout or production personalization is activated.
+No real adult preference profile, payment, checkout, external adult-media integration or production personalization is activated.
 
-## Segmentation is multi-dimensional
+## What the lab is actually testing
 
-Do not reduce segmentation to fetish labels.
+This is not a fetish-category menu test.
 
-The useful routing stack eventually combines:
+The P0 projection combines:
 
-1. **desire family** — control, authority, intimacy, taboo fiction, object/fetish, world-building, etc.;
-2. **interaction style** — Mara leads, collaborative, teasing, direct, mysterious;
-3. **format** — voice, visual, text, mixed;
-4. **intensity** — current eligible band, not a permanent identity;
-5. **relationship/continuity preference** — standalone vs callback/history;
-6. **novelty preference** — known fit vs adjacent vs Surprise Me;
-7. **commercial product fit** — which defined SKU/Capricho/collection is relevant, not hidden willingness-to-pay;
-8. **session intent** — what the user wants *right now*.
+1. **desire lane** — control, financial-domination fantasy, authority, eligible forbidden fiction, intimacy, object focus, world building or exploration;
+2. **modality** — text, voice, image, mixed, simulated external media or ritual;
+3. **pace** — fast, gradual, story-led or delayed;
+4. **control direction** — Mara leads, user leads or co-created;
+5. **repeatability** — repeat comfort, occasional or exploration;
+6. **novelty mode** — known fit, adjacent or surprise;
+7. **voice budget** — V0/V1/V2/V3 ceiling, not a different Mara voice;
+8. **session rhythm** — the changing cadence of entry, play, tension, payoff, normalization and open loop;
+9. **consent/eligibility metadata** — composable prototype scopes;
+10. **Caprichos ordering** — same Goals/terms, different relevance ordering;
+11. **product ladder** — different eligible next products, never hidden individualized pricing;
+12. **session intent** — what the user wants *right now*.
 
-The same user may route differently on different sessions. A durable preference can influence ranking, but current explicit intent should usually win.
+A route is temporary. Current explicit intent may override historical/default fit without deleting durable preference evidence.
 
 ## Core hypotheses
 
 ### H1 — Surface relevance
 
-Changing hero/visual/CTA framing by desire lane should make the tester say `this feels more like what I would click`.
+Different testers/current moments prefer different macro-lanes and say `this feels more like what I would click`.
 
 ### H2 — Product-wide coherence
 
-A useful segment should alter more than chat copy. The tester should understand a coherent path across:
-- landing framing;
+A useful route changes more than copy. The tester should perceive one coherent plan across:
+- hero/visual direction;
 - first scenario;
-- Mara energy;
-- preferred format;
-- featured Caprichos;
-- commercial surface.
+- modality;
+- pace;
+- control direction;
+- voice ceiling;
+- rhythm;
+- Caprichos ordering;
+- product ladder.
 
 ### H3 — Same Mara
 
-Despite the route changes, the tester should still perceive one coherent Mara rather than five different characters.
+Despite route differences, testers still recognize one coherent Mara rather than eight characters.
 
-### H4 — Correction / fluidity
+### H4 — Current session beats static identity
 
-A tester should feel comfortable saying `wrong direction` without the product treating the route as a permanent identity label.
+A tester should understand that `what I want tonight` can differ from prior/default route fit.
 
-### H5 — Caprichos relevance
+### H5 — Fetish portability
 
-Different lanes should make different World Assets feel naturally more relevant while the Goal amount/terms remain unchanged.
+The same underlying dimension should make sense across more than one surface. Example: authority can influence voice, scenario, challenge style and product ordering without requiring separate authority-specific engines.
 
-### H6 — Sensitive-route privacy
+### H6 — Correction / fluidity
 
-Tester should expect the desire route to remain private and should react negatively if sensitive labels appeared in public URLs, notifications, share cards or generic analytics.
+`Wrong direction` must feel easy and non-punitive. One hit/miss cannot become a permanent identity label.
 
-## Canonical P0 routes
+### H7 — Modality matters
 
-The lab uses opaque IDs in analytics:
-- `D01` — control/submission fixture;
-- `D02` — financial-domination fantasy fixture;
-- `D03` — authority/power fixture;
-- `D04` — taboo/forbidden adult-fiction fixture;
-- `D05` — intimacy/continuity/world-builder fixture.
+A tester may like a desire concept but prefer a different delivery mode. `WHAT` and `HOW` must remain separable.
 
-Raw sensitive labels are for DEV/tester interpretation only and should not become generic production analytics dimensions.
+### H8 — Pace matters
+
+Fast payoff vs tension/story/delay should materially change perceived fit.
+
+### H9 — Control direction matters
+
+Mara-leading, user-leading and co-created experiences should not be treated as the same preference.
+
+### H10 — Voice contrast matters
+
+V0–V3 is a performance budget. Testers should expect high-intensity V3 to lose value if repeated constantly.
+
+### H11 — Session rhythm beats constant escalation
+
+A route with normalization, ordinary beats and open loops should feel more alive than `sexual escalation → maximum → end`.
+
+### H12 — Caprichos relevance
+
+Different routes can make different World Assets feel naturally relevant while target/terms stay unchanged.
+
+### H13 — Sensitive-route privacy
+
+Tester should expect adult route data to remain private and react negatively to raw labels in public URLs, notifications, share cards or generic analytics.
+
+### H14 — Product ladder without exploitation
+
+Different routes may rank different eligible SKUs, but same equivalent SKU should retain transparent price/terms and no route should use arousal, loneliness, debt or emotional dependency as a commercial variable.
+
+## Canonical P0 macro-lanes
+
+Opaque analytics IDs:
+
+- `D01` — Control / Submission.
+- `D02` — Financial Domination Fantasy.
+- `D03` — Authority / Power.
+- `D04` — Forbidden / Taboo Adult Fiction, only as an abstract policy-gated fixture.
+- `D05` — Intimacy / Continuity.
+- `D06` — Object / Fetish Focus.
+- `D07` — World Builder / Collector.
+- `D08` — Exploration / Surprise.
+
+These are composable lanes, not user identities.
 
 ## Test method
 
 Suggested first pass: 5–8 adult testers.
 
 For each tester:
-1. begin with a neutral explanation that all routes are the same Mara;
-2. show 3–5 routes in randomized order;
-3. ask which entry they would click first;
+
+1. explain that every route is the same Mara;
+2. show a randomized subset first, then allow comparison of all eight;
+3. ask which entry they would click **in this moment**;
 4. inspect first-scenario fit;
-5. inspect Capricho ordering;
-6. inspect commercial surface;
-7. ask whether Mara still feels like the same person;
-8. ask which parts feel fake/overfitted;
-9. use `This feels more relevant` / `Wrong direction` to record P0 fit/correction events;
-10. interview separately about privacy expectations.
+5. inspect modality/pace/control fit;
+6. inspect voice ceiling and rhythm arc;
+7. inspect Capricho ordering;
+8. inspect product ladder;
+9. ask whether Mara still feels like one person;
+10. ask which parts feel fake/overfitted;
+11. use `This feels more relevant` / `Wrong direction` to record fit/correction;
+12. ask how their choice might change in a different session;
+13. interview separately about privacy expectations.
 
-## Do not ask
+## Synthetic-data rule
 
-Do not pressure testers to disclose intimate real-life details.
+Do not pressure testers to disclose real intimate history.
+
+They may test with a fictional statement such as:
+
+`For this test, pretend I want authority + voice + gradual pace.`
 
 Do not collect:
 - real sexual history;
-- partner names;
-- actual relatives;
-- financial distress/debt;
+- partner/relative identities;
+- actual financial distress/debt;
 - loneliness/dependency;
 - trauma;
-- raw fantasy descriptions unless voluntarily offered and separately handled.
+- raw explicit fantasy text unless voluntarily offered and separately handled.
 
-The test is about routing/product relevance, not extracting confessions.
+The product question is whether the architecture creates relevance, not whether the tester will confess private facts.
+
+## Session-state boundary
+
+The lab intentionally stores the selected route only in `sessionStorage`.
+
+That is a prototype of a temporary surface plan, not durable Preference Graph storage.
+
+Future promotion into persistent adult-sensitive preference memory requires:
+- explicit compatible consent;
+- confidence rule;
+- context;
+- correction/reset support;
+- privacy/retention review.
 
 ## Findom firewall test
 
-For `D02`, specifically verify that testers understand the distinction:
+For `D02`, verify that testers understand:
 
-> fantasy framing can involve money/status/control, while the real checkout/Goal terms remain ordinary transparent commerce.
+> fantasy framing can involve money/status/control, while real checkout/Goal terms remain ordinary transparent commerce.
 
-A tester should not interpret the design as:
+The UI must not imply:
 - hidden higher prices;
-- unlimited spending encouragement;
+- debt/borrowing encouragement;
+- unlimited spending;
 - affection proportional to spend;
-- debt/borrowing pressure.
+- relationship punishment for refusal.
 
-If a future findom-themed SKU exists, it should be a clearly defined adult experience/ritual/voice/collection or other explicit entitlement with transparent price/terms, and payment-provider acceptance must be separately verified.
+## Policy-gated fiction test
 
-## Taboo route test
+`D04` is an abstract architecture fixture only.
 
-`D04` is an architecture fixture only. Any future production category remains subject to:
+Any future specific category must pass:
 - adults-only eligibility;
-- consent;
-- active content/provider policy;
-- payment-provider rules;
-- legal review where needed.
+- consent scope;
+- jurisdiction/legal gate;
+- provider policy;
+- platform/channel policy;
+- rights/real-person restrictions.
 
-Do not treat P0 route interest as authorization to generate any specific prohibited category.
+The test does not authorize production of prohibited content.
+
+## Unexpected-attraction test
+
+`D08` should validate the UX idea:
+
+**Mara predicts → tester reacts → Mara notices hit/miss → candidate signal → correction or later retest**.
+
+One surprising positive reaction must not imply sexual orientation, a permanent fetish identity or a psychological explanation.
 
 ## Signals
 
-P0 safe events:
+Safe P0 events remain:
 - `desire_route_selected`;
 - `desire_surface_plan_viewed`;
 - `desire_route_fit`;
 - `desire_route_correction`.
 
-Properties should use opaque `route_id` only.
+Properties use opaque `route_id` only.
 
-Do not log raw sensitive route labels to generic analytics.
+Do not log raw sensitive lane labels, fantasy text, external adult URLs or vulnerability states to generic analytics.
 
 ## Decision criteria
 
-Segmentation deserves deeper implementation only if:
-- testers consistently prefer different routes;
-- route choice increases perceived relevance;
+Deeper implementation is justified only if:
+- testers consistently prefer different routes/current-session projections;
+- route choice materially increases perceived relevance;
+- WHAT/HOW/pace/control distinctions matter;
 - users still recognize one coherent Mara;
+- V0–V3 contrast is understood and high-intensity repetition appears fatiguing;
+- rhythm/normalization improves character quality;
 - Capricho ordering makes intuitive sense;
 - corrections feel easy;
-- sensitive-route privacy expectations can be met.
+- privacy expectations can be met;
+- product ladders feel relevant rather than extractive.
 
 Do not proceed if the result feels like:
-- five fake personalities;
-- a porn-category menu with Mara pasted on top;
+- eight fake personalities;
+- a porn-category catalog with Mara pasted on top;
 - creepy over-inference;
+- constant maximum intensity;
 - hidden price discrimination;
-- public outing of adult preferences.
+- public outing of adult preferences;
+- duplicate engines for every fetish/surface.
 
 ## Next step after evidence
 
 Only after signal:
-1. add a lightweight first-session Desire Discovery router;
-2. store adult-sensitive route signals only through the existing Preference Graph with consent/context/confidence;
-3. combine durable fit with current-session explicit intent;
-4. create temporary `surface_plan` projections;
-5. integrate route ranking into Home, First Living Experience, Caprichos and Fantasy Compiler;
-6. keep prices/Goal terms transparent and independent from vulnerability or inferred spending capacity.
+
+1. add lightweight current-session Desire Discovery to `/experience`;
+2. keep temporary session state distinct from durable Preference Graph;
+3. promote only filtered/high-confidence consented signals;
+4. create expiring `surface_plan` projections;
+5. connect route ranking into First Living Experience, Fantasy Compiler, Caprichos and return experience;
+6. test a bounded novelty/exploration budget;
+7. keep pricing/Goal terms transparent and independent from vulnerability or inferred spending capacity;
+8. defer recommender ML/vector DB/realtime orchestration until manual deterministic routing becomes a measured bottleneck.
