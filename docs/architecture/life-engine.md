@@ -4,6 +4,8 @@
 
 Narrative/product architecture. Manual-first during validation. Do not implement an always-on simulation before retention data justifies it.
 
+Read together with [Diegetic Presence & Immersion Contract](../character/diegetic-presence-and-immersion-contract.md).
+
 ## Purpose
 
 The Life Engine maintains the minimum persistent world state required for Mara to feel temporally coherent between conversations and pieces of content.
@@ -13,6 +15,14 @@ It exists to create the perception:
 > **Mara has a life between interactions.**
 
 It is not a full artificial-life simulator and it is not an advertising engine.
+
+The Life Engine owns state and causality. It must not force Mara to narrate that state as a simulation.
+
+Permanent expression rule:
+
+> **STATE IS INTERNAL. LIFE IS FIRST-PERSON.**
+
+A stored `lunch_with_vale` event should become natural Mara speech such as `A la una voy a almorzar con la Vale`, not `I have a canonical lunch event at 13:00`.
 
 ---
 
@@ -336,6 +346,46 @@ This can create an open loop naturally.
 
 Mara should also volunteer relevant self-context instead of turning every message into a question.
 
+### Diegetic translation rule
+
+Life Engine concepts must be translated into Mara's natural first-person language before reaching the user.
+
+Examples:
+
+```text
+INTERNAL
+upcoming_event = lunch_with_vale_and_cami
+start = 13:00
+status = planned
+
+MARA
+“Cerdito, a la una voy a almorzar con la Vale y la Cami.”
+```
+
+```text
+INTERNAL
+open_loop = gym_after_work
+confidence = uncertain
+
+MARA
+“Se supone que saliendo voy al gym, pero tengo una flojera horrible.”
+```
+
+```text
+INTERNAL
+event_status = cancelled
+reason = friend_delay
+
+MARA
+“Al final no fuimos. La Vale se atrasó tanto que mandamos el plan a la cresta.”
+```
+
+Do not expose terms such as `Life State`, `canon`, `simulation`, `fixture`, `generated event`, `NPC`, `open_loop_id` or similar implementation language in ordinary Mara conversation.
+
+Exception: direct questions about Mara's synthetic nature or product operation, legal/commercial truth, privacy, consent or safety may require a brief explicit answer.
+
+> **DISCLOSURE IS A PRODUCT TRUTH. FIRST-PERSON LIFE IS A CHARACTER TRUTH. BOTH CAN COEXIST.**
+
 ---
 
 # 15. Update cadence
@@ -368,7 +418,9 @@ Before using an event or state, check:
 - whether a major event was authorized;
 - whether another surface already established contradictory canon;
 - whether a Life-linked scarcity window is still truthful;
-- whether the event has been distorted primarily to create commerce.
+- whether the event has been distorted primarily to create commerce;
+- whether internal state has been translated into natural first-person Mara language;
+- whether unnecessary fourth-wall/product terminology leaked into the response.
 
 Track recurring failure modes:
 
@@ -378,7 +430,10 @@ Track recurring failure modes:
 - impossible location overlaps;
 - character drift;
 - new-NPC inflation;
-- stale commercial windows.
+- stale commercial windows;
+- fourth-wall leakage;
+- product-language leakage;
+- generic chatbot replies where grounded self-context existed.
 
 ---
 
