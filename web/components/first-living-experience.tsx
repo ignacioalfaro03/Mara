@@ -25,6 +25,7 @@ const initialLifeState: LifeState = {
 
 type Step =
   | "intro"
+  | "user_context"
   | "choice_energy"
   | "choice_interaction"
   | "choice_format"
@@ -185,20 +186,32 @@ export function FirstLivingExperience() {
       energy === "selective" ? "te gusta que tenga criterio" : "te va mejor algo más relajado",
       interaction === "teasing" ? "prefieres un poco de tensión antes que ir directo" : "no necesitas tanto misterio",
       format === "voice" ? "y el audio te llama más que puro texto" : "y por ahora te basta el texto",
-      novelty === "high" ? ". Igual me dejarías salirme un poco del libreto." : ". No necesito inventarte algo raro para mantenerte interesado.",
+      novelty === "high" ? "igual me dejarías salirme un poco del libreto" : "no necesito inventarte algo raro para mantenerte interesado",
     ];
 
-    return `Por lo que elegiste, ${fragments.join(", ")}`;
+    return `Por lo que elegiste, ${fragments.join(", ")}.`;
   }, [profile]);
 
   function start() {
-    setStep("choice_energy");
+    setStep("user_context");
     track("playable_onboarding_started");
   }
 
+  function captureInitialTraining(value: boolean) {
+    setPlansToTrain(value);
+    track("choice_made", { step: "safe_user_context" });
+    setReaction({
+      eyebrow: "MARA",
+      text: value ? "Ya. Entonces después no me vendas humo." : "Bien. Hoy no te voy a convertir en proyecto de disciplina.",
+    });
+    window.setTimeout(() => {
+      setReaction(null);
+      setStep("choice_energy");
+    }, 650);
+  }
+
   function chooseEnergy(value: "selective" | "warm") {
-    const next = { ...profile, energy: makeSignal("energy", value) };
-    setProfile(next);
+    setProfile((current) => ({ ...current, energy: makeSignal("energy", value) }));
     setReaction({
       eyebrow: "MARA",
       text: value === "selective" ? "Ya. O sea que no quieres que te diga que sí a todo." : "Ok. No todo tiene que ser una prueba.",
@@ -211,12 +224,8 @@ export function FirstLivingExperience() {
   }
 
   function chooseInteraction(value: "teasing" | "direct") {
-    const next = { ...profile, interaction: makeSignal("interaction", value) };
-    setProfile(next);
-    setReaction({
-      eyebrow: "MARA",
-      text: value === "teasing" ? "Mmm. Era la que esperaba." : "Directo entonces. Me sirve.",
-    });
+    setProfile((current) => ({ ...current, interaction: makeSignal("interaction", value) }));
+    setReaction({ eyebrow: "MARA", text: value === "teasing" ? "Mmm. Era la que esperaba." : "Directo entonces. Me sirve." });
     track("choice_made", { step: "interaction" });
     window.setTimeout(() => {
       setReaction(null);
@@ -227,12 +236,8 @@ export function FirstLivingExperience() {
   function chooseFormat(value: "voice" | "text") {
     const next = { ...profile, format: makeSignal("format", value) };
     setProfile(next);
-    const predictedNovelty = next.interaction?.value === "teasing" || next.energy?.value === "selective" ? "adjacent" : "known_fit";
-    setPrediction(predictedNovelty);
-    setReaction({
-      eyebrow: "MARA",
-      text: value === "voice" ? "Eso sí cambia bastante cómo se siente." : "Bien. Primero palabras, después vemos.",
-    });
+    setPrediction(next.interaction?.value === "teasing" || next.energy?.value === "selective" ? "adjacent" : "known_fit");
+    setReaction({ eyebrow: "MARA", text: value === "voice" ? "Eso sí cambia bastante cómo se siente." : "Bien. Primero palabras, después vemos." });
     track("choice_made", { step: "format" });
     window.setTimeout(() => {
       setReaction(null);
@@ -244,9 +249,10 @@ export function FirstLivingExperience() {
 
   function choosePrediction(value: "known_fit" | "adjacent") {
     const hit = value === prediction;
-    const noveltySignal = makeSignal("novelty", value === "adjacent" ? "high" : "low", "medium", "prediction");
-    const next = { ...profile, novelty: noveltySignal };
-    setProfile(next);
+    setProfile((current) => ({
+      ...current,
+      novelty: makeSignal("novelty", value === "adjacent" ? "high" : "low", "medium", "prediction"),
+    }));
     setPredictionHit(hit);
     track(hit ? "prediction_hit" : "prediction_miss");
     setReaction({ eyebrow: "MARA", text: hit ? "Te voy conociendo." : "Ok. Me cagaste la teoría." });
@@ -259,21 +265,17 @@ export function FirstLivingExperience() {
   function correctReveal(correction: "yes" | "partial" | "no") {
     let nextProfile = profile;
 
-    if (correction === "partial") {
+    if (correction !== "yes") {
       nextProfile = Object.fromEntries(
-        Object.entries(profile).map(([key, signal]) => [key, signal ? { ...signal, confidence: "low" as const } : signal]),
-      ) as PreferenceProfile;
-    }
-
-    if (correction === "no") {
-      nextProfile = Object.fromEntries(
-        Object.entries(profile).map(([key, signal]) => [key, signal ? { ...signal, confidence: "low" as const, source: "correction" as const } : signal]),
+        Object.entries(profile).map(([key, signal]) => [
+          key,
+          signal ? { ...signal, confidence: "low" as const, ...(correction === "no" ? { source: "correction" as const } : {}) } : signal,
+        ]),
       ) as PreferenceProfile;
     }
 
     setProfile(nextProfile);
     track(correction === "yes" ? "reveal_confirmed" : "reveal_corrected", { correction });
-
     const mode: RecommendationMode = correction === "no" ? "explore" : "known_fit";
     const nextRecommendation = recommendExperience(nextProfile, lifeState, experiences, mode);
     setRecommendation(nextRecommendation);
@@ -295,14 +297,9 @@ export function FirstLivingExperience() {
     track("experience_recommended", { mode: "surprise_me" });
   }
 
-  function captureTraining(value: boolean) {
+  function captureTrainingUpdate(value: boolean) {
     setPlansToTrain(value);
-    setLifeState({
-      mood: "playful",
-      workState: "done",
-      fitnessState: "going_to_gym",
-      openLoop: "gym_resolved",
-    });
+    setLifeState({ mood: "playful", workState: "done", fitnessState: "going_to_gym", openLoop: "gym_resolved" });
     setStep("life_callback");
   }
 
@@ -325,8 +322,16 @@ export function FirstLivingExperience() {
       lastSeenAt: new Date().toISOString(),
     };
     writePersistedState(state);
+    setReturnState(state);
     track("open_loop_created", { type: "theory_followup" });
     setStep("open_loop");
+  }
+
+  function continueReturn(mode: RecommendationMode) {
+    const nextRecommendation = recommendExperience(profile, lifeState, experiences, mode);
+    setRecommendation(nextRecommendation);
+    track("experience_recommended", { mode, source: "return_open_loop" });
+    setStep("recommendation");
   }
 
   function resetExperience() {
@@ -346,10 +351,7 @@ export function FirstLivingExperience() {
     return (
       <section className="livingStage livingReaction" aria-live="polite">
         <div className="livingPortrait" aria-hidden="true"><span>M</span></div>
-        <div>
-          <p className="eyebrow">{reaction.eyebrow}</p>
-          <h1>{reaction.text}</h1>
-        </div>
+        <div><p className="eyebrow">{reaction.eyebrow}</p><h1>{reaction.text}</h1></div>
       </section>
     );
   }
@@ -369,8 +371,9 @@ export function FirstLivingExperience() {
                 : "La última vez dejamos una teoría a medias."}
           </p>
           {returnState?.openLoop ? <p className="livingMemory">Pendiente: {returnState.openLoop.text}</p> : null}
-          <div className="livingActions">
-            <button type="button" className="primaryCta buttonReset" onClick={resetExperience}>Probar de nuevo</button>
+          <div className="livingChoices">
+            <ChoiceButton label="Elige tú" detail="Usa lo que ya aprendiste." onClick={() => continueReturn("known_fit")} />
+            <ChoiceButton label="Arriesga un poco" detail="Prueba algo cercano, no random." onClick={() => continueReturn("explore")} />
           </div>
           <button type="button" className="livingReset" onClick={resetExperience}>Borrar estado local P0</button>
         </div>
@@ -388,6 +391,22 @@ export function FirstLivingExperience() {
           <p className="livingLead">Hoy se me alargó el trabajo y todavía estoy decidiendo si ir al gym. Pero primero quiero ver algo contigo.</p>
           <button type="button" className="primaryCta buttonReset" onClick={start}>Dale</button>
           <p className="livingDisclosure">Mara es un personaje virtual generado con IA · P0 guarda solo estado local de baja sensibilidad.</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (step === "user_context") {
+    return (
+      <section className="livingStage livingQuestion">
+        <div className="livingCopy">
+          <p className="eyebrow">ANTES</p>
+          <h1>Yo sigo dudando con el gym. ¿Tú entrenas hoy?</h1>
+          <p className="livingLead">Esto no es parte de tu “perfil”. Solo quiero acordarme bien si sale después.</p>
+          <div className="livingChoices">
+            <ChoiceButton label="Sí, entreno" onClick={() => captureInitialTraining(true)} />
+            <ChoiceButton label="No hoy" onClick={() => captureInitialTraining(false)} />
+          </div>
         </div>
       </section>
     );
@@ -479,10 +498,7 @@ export function FirstLivingExperience() {
         <div className="livingCopy">
           <p className="eyebrow">MARA ELIGE</p>
           <h1>{recommendation.selected.maraIntro}</h1>
-          <ExperienceCard
-            experience={recommendation.selected}
-            onOpen={() => chooseRecommendation(recommendation.selected, recommendation.mode)}
-          />
+          <ExperienceCard experience={recommendation.selected} onOpen={() => chooseRecommendation(recommendation.selected, recommendation.mode)} />
           <div className="recommendationAlternatives">
             {recommendation.alternative ? (
               <button type="button" onClick={() => chooseRecommendation(recommendation.alternative!, "explore")}>Dame la otra</button>
@@ -509,11 +525,6 @@ export function FirstLivingExperience() {
             <span>AHORA</span>
             <p>Al final sí voy a ir al gym. Me dio lata reconocerlo después de haber dicho que probablemente no iba.</p>
           </div>
-          <div className="userContextPrompt">
-            <p>¿No que tú también entrenabas hoy, o me estoy inventando eso?</p>
-            <button type="button" onClick={() => captureTraining(true)}>Sí, entreno</button>
-            <button type="button" onClick={() => captureTraining(false)}>No hoy</button>
-          </div>
           {activeExperience.premiumLabel ? (
             <div className="premiumIntentCard">
               <span>P0 · PREMIUM INTENT</span>
@@ -524,6 +535,15 @@ export function FirstLivingExperience() {
               </button>
             </div>
           ) : null}
+          <div className="userContextPrompt">
+            <p>
+              {plansToTrain
+                ? "¿No que tú también ibas a entrenar hoy? ¿Sigues en pie?"
+                : "Tú me dijiste que hoy no entrenabas. ¿Sigue igual o cambió el plan?"}
+            </p>
+            <button type="button" onClick={() => captureTrainingUpdate(true)}>{plansToTrain ? "Sí, sigo en pie" : "Cambió el plan"}</button>
+            <button type="button" onClick={() => captureTrainingUpdate(false)}>{plansToTrain ? "Me bajé" : "Sigue igual"}</button>
+          </div>
         </div>
       </section>
     );
