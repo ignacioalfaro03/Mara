@@ -10,6 +10,23 @@ DEV route:
 
 No real adult preference profile, payment, checkout or production personalization is activated.
 
+## Segmentation is multi-dimensional
+
+Do not reduce segmentation to fetish labels.
+
+The useful routing stack eventually combines:
+
+1. **desire family** — control, authority, intimacy, taboo fiction, object/fetish, world-building, etc.;
+2. **interaction style** — Mara leads, collaborative, teasing, direct, mysterious;
+3. **format** — voice, visual, text, mixed;
+4. **intensity** — current eligible band, not a permanent identity;
+5. **relationship/continuity preference** — standalone vs callback/history;
+6. **novelty preference** — known fit vs adjacent vs Surprise Me;
+7. **commercial product fit** — which defined SKU/Capricho/collection is relevant, not hidden willingness-to-pay;
+8. **session intent** — what the user wants *right now*.
+
+The same user may route differently on different sessions. A durable preference can influence ranking, but current explicit intent should usually win.
+
 ## Core hypotheses
 
 ### H1 — Surface relevance
@@ -96,6 +113,8 @@ A tester should not interpret the design as:
 - affection proportional to spend;
 - debt/borrowing pressure.
 
+If a future findom-themed SKU exists, it should be a clearly defined adult experience/ritual/voice/collection or other explicit entitlement with transparent price/terms, and payment-provider acceptance must be separately verified.
+
 ## Taboo route test
 
 `D04` is an architecture fixture only. Any future production category remains subject to:
@@ -141,6 +160,7 @@ Do not proceed if the result feels like:
 Only after signal:
 1. add a lightweight first-session Desire Discovery router;
 2. store adult-sensitive route signals only through the existing Preference Graph with consent/context/confidence;
-3. use temporary `surface_plan` projections;
-4. integrate route ranking into Home, First Living Experience, Caprichos and Fantasy Compiler;
-5. keep prices/Goal terms transparent and independent from vulnerability or inferred spending capacity.
+3. combine durable fit with current-session explicit intent;
+4. create temporary `surface_plan` projections;
+5. integrate route ranking into Home, First Living Experience, Caprichos and Fantasy Compiler;
+6. keep prices/Goal terms transparent and independent from vulnerability or inferred spending capacity.
