@@ -92,6 +92,9 @@ The Web MVP is tracked separately from the product foundation so implementation 
 - [Adult Relationship Entertainment](docs/foundation/adult-relationship-entertainment.md)
 - [Monetization constitution](docs/foundation/monetization.md)
 - [Monetization Engine](docs/foundation/monetization-engine.md)
+- [Pricing & Willingness to Pay](docs/foundation/pricing-and-wtp.md)
+- [Payment Readiness](docs/foundation/payment-readiness.md)
+- [First Real Payment Experiment](docs/foundation/first-payment-experiment.md)
 - [Compliance by design](docs/foundation/compliance.md)
 - [Adult Compliance](docs/foundation/adult-compliance.md)
 - [30-day launch roadmap](docs/foundation/roadmap.md)
@@ -237,6 +240,23 @@ Talking-video workflow:
 **script → Mara voice → approved audio → talking video/avatar → QC**.
 
 Paid tools are unlocked only by the Traction → Investment Gate or explicit bounded founder authorization.
+
+## Payment readiness
+
+Before any real transaction:
+- freeze one SKU and its exact scope;
+- select a price candidate from WTP + economics evidence;
+- obtain explicit processor acceptance for the real entity + AI adult model + product type;
+- define launch jurisdictions and age-assurance requirements;
+- model fees, reserves, chargebacks and payout delay;
+- test entitlement, cancel/decline and exact-state resume;
+- keep provider activation, payment activation and production deployment as separate founder authorizations.
+
+Current processor posture:
+- Stripe: excluded for Mara's intended adult scope under current policy;
+- CCBill: adult-capable but published direct Visa/Mastercard merchant regions do not currently include Chile;
+- Segpay: priority due-diligence candidate, explicit Mara/entity acceptance still required;
+- Centrobill: secondary due-diligence candidate, explicit Mara/entity acceptance still required.
 
 ## Commercial proof
 
