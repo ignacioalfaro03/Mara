@@ -74,7 +74,12 @@ export type MaraEvent =
   | "external_media_watch_intent"
   | "external_media_return_simulated"
   | "external_media_reaction"
-  | "external_media_learning_shown";
+  | "external_media_learning_shown"
+  | "ritual_viewed"
+  | "ritual_play_intent"
+  | "ritual_completed_simulated"
+  | "ritual_skipped"
+  | "ritual_reward_preference";
 
 export type MaraEventRecord = {
   event: MaraEvent;
@@ -144,6 +149,11 @@ const P0_DEV_LOG_EVENTS = new Set<MaraEvent>([
   "external_media_return_simulated",
   "external_media_reaction",
   "external_media_learning_shown",
+  "ritual_viewed",
+  "ritual_play_intent",
+  "ritual_completed_simulated",
+  "ritual_skipped",
+  "ritual_reward_preference",
 ]);
 
 function appendDevelopmentEvent(record: MaraEventRecord) {
