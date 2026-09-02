@@ -61,13 +61,14 @@ The `/experience` route includes an in-context Momentum Commerce prototype rathe
 
 Domain data:
 - `lib/p0/commercial.ts` — commercial moment, reward, availability, collection and mock-state types;
-- `lib/p0/commercial-experiment.ts` — lightweight P0 A/B/C assignment;
+- `lib/p0/commercial-experiment.ts` — lightweight P0 A/B/C assignment + DEV forcing controls;
 - `data/commercial.ts` — P0 offers, continuation metadata, one collection and one clearly labeled scarcity prototype;
-- `components/momentum-commerce-prototype.tsx` — intent, decline-without-penalty, DEV-only purchase/resume simulation, reward and collection UI.
+- `components/momentum-commerce-prototype.tsx` — intent, decline-without-penalty, post-offer continuation, DEV-only purchase/resume simulation, reward and collection UI;
+- `components/p0-debug-panel.tsx` — DEV-only variant forcing, scorecard and safe log export.
 
 The P0 validates the product contract:
 
-**high-value moment → clear optional offer → premium intent or no-penalty decline → DEV-only mock entitlement → exact-state resume → Mara payoff → continuation**.
+**high-value moment → clear optional offer → premium intent or no-penalty decline → explicit continuation → DEV-only mock entitlement → exact-state resume → Mara payoff → continuation**.
 
 ### P0 commercial experiment
 
@@ -79,6 +80,8 @@ P0 assigns one sticky local variant:
 
 The assignment is deliberately lightweight and stored locally. It is suitable for qualitative/early directional testing only; it is **not** production experimentation/statistical infrastructure.
 
+In development, the P0 Commerce Lab panel can force A/B/C. Forcing a variant clears the previous P0 living state and safe session log, then reloads so one tester/session starts cleanly in the requested variant.
+
 A fourth concept — **real scarcity** — is intentionally excluded from normal A/B/C assignment until there is an actual enforceable capacity/time/edition constraint. The existing scarcity UI is only a developer-visible prototype example.
 
 Users can choose `Ahora no`. Declining an offer:
@@ -87,7 +90,22 @@ Users can choose `Ahora no`. Declining an offer:
 - causes no loss of state;
 - allows the surrounding Mara experience to continue normally.
 
-This is important for measuring whether commerce preserves momentum rather than merely maximizing CTA clicks.
+After intent or decline, an explicit continuation action records `commercial_post_offer_continued`. This is the P0 pre-payment proxy for **Commercial Inertia**: did the user actually keep going after commerce appeared?
+
+### P0 Commerce Lab / zero-vendor evidence
+
+Development mode keeps a capped safe event log in `sessionStorage` under `mara_p0_event_log`.
+
+The DEV panel can:
+- force `A_offer_only`, `B_reward` or `C_ownership`;
+- show/update a directional scorecard;
+- copy the scorecard;
+- copy the raw safe event log;
+- clear the event log.
+
+The scorecard tracks safe counts such as commercial moments, premium intents, declines, post-offer continuations, DEV mock purchases, delivered rewards and collection views.
+
+This is prototype evidence capture only. It is not an analytics warehouse and does not justify adding an analytics SaaS before traction.
 
 ### No real payment
 
@@ -133,6 +151,8 @@ Collection value is shown only in variant C and only for offers explicitly linke
 
 No persistent ownership database exists in P0.
 
+See `P0_COMMERCE_TEST_PLAN.md` for the qualitative/directional test protocol.
+
 ## Premium handoff
 
 Real payment/provider activation is intentionally disabled by default.
@@ -157,6 +177,6 @@ Do not populate this variable with a real provider until founder authorization a
 
 The MVP dispatches provider-agnostic browser events through `lib/analytics.ts`. No analytics vendor is connected in this branch.
 
-P0 analytics record only interaction/commercial metadata such as choice step, prediction hit/miss, recommendation mode, experience ID, voice interaction, return/open-loop behavior, experiment variant, premium intent, offer dismissal, offer type, availability type, DEV mock purchase/resume and reward style.
+P0 analytics record only interaction/commercial metadata such as choice step, prediction hit/miss, recommendation mode, experience ID, voice interaction, return/open-loop behavior, experiment variant, premium intent, offer dismissal, post-offer continuation, offer type, availability type, DEV mock purchase/resume and reward style.
 
 Do not attach raw intimate answers, fantasy values, raw conversation content, payment data or identity documents to the generic analytics event layer.
