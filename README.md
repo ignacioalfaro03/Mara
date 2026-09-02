@@ -10,9 +10,11 @@ Mara Vera is not just an AI influencer and not just a chatbot. The product is th
 
 The durable character system is:
 
-**identity + voice + personality + story continuity + memory + relationship**
+**identity + voice + personality + persistent life + story continuity + dual memory + relationship**
 
-The underlying image, video, voice and realtime models are replaceable providers. Mara's identity is the asset.
+Mara should not feel frozen between interactions. She has a coherent fictional life — work, routines, friends, plans, ordinary events and evolving history — while separately remembering useful, consented context from each user relationship.
+
+The underlying image, video, voice and realtime models are replaceable providers. Mara's identity and continuity are the assets.
 
 The business is designed around monetization, retention, unit economics and scalable distribution while maintaining strong legal, payment, platform, safety and privacy guardrails.
 
@@ -20,6 +22,7 @@ The business is designed around monetization, retention, unit economics and scal
 
 - Make money: features need a commercial or defensibility hypothesis.
 - Mara is always disclosed as AI.
+- Mara's life is persistent fiction, never a claim that a hidden real woman exists behind the account.
 - Adult experiences are adults-only.
 - Consent before intensity.
 - Monetize desire, not vulnerability.
@@ -28,6 +31,8 @@ The business is designed around monetization, retention, unit economics and scal
 - Keep recurring OPEX approximately $0 until traction and a measured bottleneck justify spend.
 - Mara Vera is original synthetic IP.
 - Mara's production voice must be original/licensed, not an unauthorized clone of a real person.
+- Separate Mara Self Memory from User Relationship Memory.
+- Separate relationship closeness from commercial/spending state.
 - Minimize data collection and persistent memory.
 - Avoid provider lock-in: models are replaceable; canonical identity is not.
 - GitHub is the source of truth.
@@ -52,6 +57,8 @@ The Web MVP is tracked separately from the product foundation so implementation 
 - [Tone of voice](docs/character/tone-of-voice.md)
 - [Visual Bible](docs/character/visual-bible.md)
 - [Voice Bible / Human Presence](docs/character/voice-bible.md)
+- [Life Bible](docs/character/life-bible.md)
+- [Social Graph](docs/character/social-graph.md)
 
 ### Production
 - [Content & Production Engine](docs/production/content-engine.md)
@@ -62,11 +69,26 @@ The Web MVP is tracked separately from the product foundation so implementation 
 - [Analytics events](docs/web/analytics-events.md)
 
 ### Architecture
+- [Life Engine](docs/architecture/life-engine.md)
+- [Dual Memory System](docs/architecture/memory-system.md)
+- [Context Builder](docs/architecture/context-builder.md)
 - [Relationship Engine — post-validation](docs/architecture/relationship-engine.md)
 
 ## Launch operating model
 
 The launch stack should remain manual-first and free-tier-first.
+
+### Character continuity
+
+At launch, Life/Memory can be curated with lightweight Markdown/JSON/spreadsheets rather than always-on agents.
+
+Core flow:
+
+**Life State → relevant Self/User Memory → Context Pack → text/voice/content → filtered memory/event update**
+
+The system should prove that continuity improves experience and return behavior before persistent infrastructure is purchased or automated.
+
+### Production economics
 
 Measure production with:
 
@@ -88,4 +110,4 @@ No production deploy, real payments/provider activation, paid subscription, exte
 
 ## Current objective
 
-> **Launch Mara Vera within 30 days, validate real willingness to pay and repeat engagement/spend, and keep the technology stack extremely lean until the market earns additional investment.**
+> **Launch Mara Vera within 30 days, validate real willingness to pay and repeat engagement/spend, make the character feel persistently alive, and keep the technology stack extremely lean until the market earns additional investment.**
