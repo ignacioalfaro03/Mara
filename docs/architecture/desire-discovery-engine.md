@@ -2,9 +2,9 @@
 
 ## Status
 
-Authoritative architecture for **Playable Personalization** inside the existing Foundation outcome. It does not create a parallel memory or recommendation system.
+Authoritative architecture for **Playable Personalization** inside the existing Foundation outcome. It does not create a parallel memory, recommendation or fantasy system.
 
-The Desire Discovery Engine captures preference signals through entertaining choices and hands filtered signals to the existing User Relationship Memory / Preference Graph, Context Builder and Fantasy Experience Engine.
+The Desire Discovery Engine captures preference signals through entertaining choices and hands filtered signals to User Relationship Memory / Preference Graph. The [Fantasy Compiler](fantasy-compiler.md) then uses a temporary preference projection to compose/rank eligible experiences for the Fantasy Experience Engine.
 
 ## Core thesis
 
@@ -14,31 +14,15 @@ The experience should feel like:
 
 > **Play with Mara and she'll start figuring you out.**
 
-The user:
-- chooses;
-- compares;
-- ranks;
-- reacts;
-- changes their mind;
-- corrects Mara;
-- surprises Mara;
-- discovers patterns in their own choices.
+The user chooses, compares, ranks, reacts, changes their mind, corrects Mara, surprises her and discovers patterns in their own choices.
 
-Mara:
-- makes bounded hypotheses;
-- reacts in character;
-- predicts when confidence supports it;
-- accepts correction;
-- adapts the next experience;
-- makes the learning visible without pretending to read minds.
+Mara makes bounded hypotheses, reacts in character, predicts when evidence supports it, accepts correction and visibly adapts the next experience without pretending to read minds.
 
 ## Architecture position
 
-Do not build a second user profile.
-
 Conceptual flow:
 
-**Playable interaction → Choice Signal → Preference Graph update candidate → filtered Relationship Memory → Context Builder → next interaction / Fantasy Experience / offer relevance → user reaction → updated signal**
+**Playable interaction → Choice Signal → Preference Graph update candidate → temporary User Desire Vector → Fantasy Compiler / Context Builder → next experience → user reaction → updated signal**.
 
 The Desire Discovery Engine owns:
 - game/session structure;
@@ -53,48 +37,36 @@ The Desire Discovery Engine owns:
 It does not own:
 - durable memory storage;
 - relationship stage;
-- commercial state;
-- pricing;
-- payment data;
+- commercial state/pricing;
+- Fantasy Compiler matching logic;
+- content generation;
 - clinical/psychological inference.
 
 ## Discovery formats
 
 ### A/B Choice
-Two options, one fast decision.
-
-Useful for:
-- visual style;
-- tone;
-- modality;
-- scenario direction;
-- interaction style.
+Two options, one fast decision. Useful for visual style, tone, modality, scenario direction and interaction style.
 
 ### This or That
-Fast paired decisions such as:
-- elegant / bold;
-- surprise / control;
-- voice / visual;
-- story / interaction;
-- teasing / direct.
+Fast paired choices such as elegant/bold, surprise/control, voice/visual, story/interaction, teasing/direct.
 
 ### Ranking
-Rank 3–6 options. This produces richer relative preference information than a single like.
+Rank 3–6 options. Produces richer relative preference information than a single like.
 
 ### Rapid Fire
-A sequence of quick choices. Response time may be recorded for UX analysis, but must not be treated as psychological diagnosis or hidden vulnerability evidence.
+A sequence of quick choices. Response time may be used for UX analysis but must not become psychological diagnosis or vulnerability evidence.
 
 ### Mara Test
 Mara states a playful hypothesis and tests it through several choices.
 
 ### Fast Five
-Five choices, followed by a short Mara interpretation.
+Five choices followed by a short Mara interpretation.
 
 ### Build It
-The user progressively builds a scenario through bounded variables.
+The user progressively builds a bounded experience configuration.
 
 ### Guess Me
-The user predicts Mara's own canonical preference.
+The user predicts Mara's canonical preference.
 
 ### I Bet You
 Mara predicts the user's next choice.
@@ -109,7 +81,7 @@ The user explicitly asks Mara to explore outside known preferences.
 
 Prediction is a first-class product mechanic.
 
-Example pattern:
+Pattern:
 
 > “Apuesto a que eliges la segunda.”
 
@@ -122,30 +94,23 @@ If wrong:
 > “Ok. Esa no me la esperaba.”
 
 Rules:
-- prediction confidence must come from the Preference Graph or explicit recent context;
-- do not claim certainty when evidence is weak;
-- wrong predictions are useful signals, not failures to hide;
-- prediction must remain playful, not creepy or authoritative;
-- never predict sensitive traits or vulnerabilities.
+- prediction confidence comes from Preference Graph/recent context;
+- do not claim certainty from weak evidence;
+- wrong predictions are useful signals;
+- never predict sensitive traits/vulnerabilities;
+- prediction should feel playful, not invasive.
 
 ## Correction Loop
 
 Corrections are high-value labels.
 
-User responses such as:
-- “no”;
-- “depende”;
-- “antes sí, ahora no”;
-- “solo en audio”;
-- “hoy quiero otra cosa”;
+Responses such as “no”, “depende”, “antes sí, ahora no”, “solo en audio” or “hoy quiero otra cosa” should become structured correction/update candidates.
 
-should be represented as structured correction/update candidates rather than discarded contradiction.
-
-The system should support:
+Support:
 - correction;
 - context qualification;
 - preference weakening;
-- preference replacement;
+- replacement;
 - temporary override;
 - explicit rejection.
 
@@ -157,34 +122,69 @@ Discovery is valuable only if the user sees an effect.
 
 Required loop:
 
-**choice → Mara reaction → pattern hypothesis → user confirms/corrects → next experience changes**.
+**choice → Mara reaction → pattern hypothesis → confirm/correct → compiled/adapted next experience**.
 
 Avoid:
 
 **20 questions → generic result → nothing changes**.
 
-The next visible consequence can be:
+Possible visible consequences:
 - different story recommendation;
 - different voice-led experience;
 - different tone;
-- different visual option;
-- better default ordering;
+- better option ordering;
 - different continuation;
-- a relevant offer;
-- a deliberate surprise.
+- relevant product;
+- deliberate adjacent surprise.
+
+## Discovery → Fantasy Compiler
+
+Discovery does not directly generate a final fantasy category.
+
+It produces structured signals that can be projected into dimensions such as:
+- character energy;
+- interaction style;
+- context;
+- format;
+- dynamic;
+- narrative preference;
+- personalization depth;
+- novelty preference.
+
+The Fantasy Compiler combines these dimensions rather than assigning the user one permanent label.
+
+Example:
+
+```text
+repeated choices →
+selective energy + teasing + voice + work context + continuation + medium novelty
+```
+
+This may yield a candidate experience that feels specifically composed rather than selected from a fetish menu.
+
+## Build It as composition UI
+
+`Build It` is the user-visible bridge into Fantasy Compilation.
+
+A bounded sequence may ask for:
+1. mood;
+2. Mara energy;
+3. setting;
+4. format;
+5. dynamic;
+6. ending/continuation.
+
+Mara may preselect or curate options based on current context and allow correction.
+
+The user does not need to see every internal variable.
+
+The final experience should visibly reflect the selected combination.
 
 ## Discovery vs psychology
 
-Mara may talk about:
-- patterns;
-- tendencies;
-- repeated choices;
-- preferences;
-- contradictions;
-- current mood;
-- surprise.
+Mara may talk about patterns, tendencies, repeated choices, preferences, contradictions, current mood and surprise.
 
-Mara must not claim to diagnose or reveal:
+Mara must not claim to diagnose/reveal:
 - subconscious truth;
 - trauma;
 - mental-health conditions;
@@ -204,79 +204,53 @@ Preferred language:
 
 Adult preference discovery is a gated subset.
 
-Where allowed, it may explore bounded categories such as:
-- initiative;
-- surprise;
-- control;
-- teasing;
-- narrative;
-- voice;
-- roleplay;
-- intensity;
-- duration;
-- interaction format;
-- aesthetic/context.
+Where allowed, it may explore bounded dimensions such as initiative, surprise, control, teasing, narrative, voice, roleplay, intensity, duration, interaction format and aesthetic/context.
 
 Requirements:
 - adult eligibility;
 - explicit adult-mode opt-in;
 - skip/stop;
-- user corrections;
+- correction;
 - privacy controls;
-- no permanent inference from a single choice;
+- no permanent inference from one choice;
 - no raw intimate answers in general analytics.
 
-## Explore vs exploit
+## Explore vs known fit
 
-Recommendation terminology only:
-
-### Exploit
-Use known preferences to increase relevance.
+### Known fit
+Use reliable preferences to improve relevance.
 
 ### Explore
-Test reasonable alternatives to avoid repetition and discover change.
+Test reasonable adjacent alternatives to avoid repetition and discover change.
 
-Never interpret “exploit” as exploiting the user financially or psychologically.
+### Surprise Me
+User-controlled higher novelty within boundaries.
 
-A healthy system needs both:
-- enough familiarity to feel understood;
-- enough novelty to remain interesting.
+The Fantasy Compiler owns final candidate balancing; Discovery provides the signals and explicit `Surprise Me` intent.
 
 ## Serendipity
 
-Mara should occasionally test a nearby alternative with reasonable likelihood of success.
-
-If the user likes it:
-- create/update the relevant preference signal.
-
-If not:
-- capture the correction;
-- reduce confidence;
-- do not repeatedly push the same choice.
+If an adjacent option works, create/update the relevant preference signal. If it fails, capture correction and avoid repeatedly pushing the same choice.
 
 ## Progressive discovery
 
-Do not front-load the entire profile.
+Do not front-load the whole profile.
 
 Possible rhythm:
 - onboarding: 3 lightweight choices;
-- later session: one Fast Five;
-- story: one branch choice;
-- conversation: one natural correction;
-- after experience: one lightweight feedback signal;
+- later: one Fast Five;
+- story: one branch;
+- conversation: natural correction;
+- after experience: lightweight feedback;
 - weekly: optional Mara Test or Guess Me.
 
 The Preference Graph should emerge over time.
 
 ## Reciprocal play
 
-Mara also has canonical preferences from her Character/Life system.
+Mara also has canonical preferences from Character/Life systems.
 
-Some games should reverse direction:
-- user guesses Mara;
-- compare choices;
-- show playful agreement/disagreement;
-- let Mara defend a preference.
+Reverse games can let the user guess Mara, compare choices, see playful agreement/disagreement and hear Mara defend a preference.
 
 This prevents the product from feeling like a disguised CRM.
 
@@ -288,33 +262,19 @@ Allowed as entertainment:
 
 > “Tenemos gustos peligrosamente parecidos.”
 
-Do not frame this as scientific relationship compatibility or psychological prediction.
+Do not frame as scientific relationship compatibility.
 
 ## Social/share loop
 
-Safe, non-sensitive discovery outputs can become shareable cards.
+Safe, non-sensitive outputs can become shareable cards: playful energy/archetype, agreement score, harmless style/mood result or prediction streak.
 
-Examples:
-- playful energy/archetype;
-- agreement score with Mara;
-- harmless style/mood result;
-- prediction streak.
-
-Private by default.
-
-Never auto-share:
-- adult fantasies;
-- sexual preferences;
-- intimate answers;
-- private relationship memory.
+Private by default. Never auto-share adult fantasies, sexual preferences, intimate answers or private relationship memory.
 
 ## P0 implementation
 
-Do not build ML/recommender infrastructure.
-
 P0 can use:
 - Markdown/JSON question sets;
-- simple rule-based scoring;
+- rule-based scoring;
 - manual preference records;
 - confidence buckets;
 - recency;
@@ -328,28 +288,18 @@ No embeddings/vector DB/custom recommender before evidence.
 
 1. Traditional onboarding vs 3-choice Mara Game.
 2. Neutral quiz vs Mara commentary after each answer.
-3. Result only vs result + immediate adapted experience.
+3. Result only vs result + immediately compiled/adapted experience.
 4. Mara prediction vs no prediction.
-5. Generic offer vs preference-relevant offer.
-6. Known-preference choice vs Surprise Me alternative.
+5. Generic experience vs preference-composed combination.
+6. Known-fit choice vs `Surprise Me`.
 7. Static result vs editable/correctable result.
 8. Static quiz vs branching quiz.
 9. Private result vs safe share card.
-10. No follow-up vs callback based on prior discovery session.
+10. Finished experience vs `Build It` co-creation.
 
 ## Success criteria
 
-The engine matters if it improves:
-- activation;
-- meaningful interaction;
-- session depth;
-- return rate;
-- voice/story engagement;
-- first purchase;
-- second purchase;
-- personalized conversion;
-- retention;
-- Preference Graph quality.
+The engine matters if it improves activation, meaningful interaction, session depth, return, voice/story engagement, first purchase, second purchase, personalized conversion, retention and Preference Graph quality.
 
 It does not succeed merely because users answer many questions.
 
@@ -357,8 +307,8 @@ It does not succeed merely because users answer many questions.
 
 Automate materially only when:
 1. discovery sessions are repeatedly used;
-2. personalization lift is measurable;
+2. personalization/compiled-experience lift is measurable;
 3. manual scoring/curation becomes a real bottleneck;
 4. data/privacy architecture is approved;
-5. incremental value can justify cost;
+5. incremental value justifies cost;
 6. the Traction → Investment Gate is satisfied or a bounded founder-authorized experiment exists.
