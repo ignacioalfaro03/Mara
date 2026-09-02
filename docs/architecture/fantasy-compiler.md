@@ -1,10 +1,27 @@
 # Mara Vera — Fantasy Compiler / Desire Composition Engine
 
+Last reviewed: 2026-09-02
+
 ## Status
 
-Authoritative composition and recommendation layer inside the existing Foundation outcome.
+Authoritative composition and recommendation layer inside Mara Foundation.
 
-The Fantasy Compiler does **not** create a new user profile, memory system, content engine or payment layer. It consumes filtered signals from the [Preference Graph](preference-graph.md), [Desire Discovery Engine](desire-discovery-engine.md), Context Builder, Life Engine and Relationship Memory, then composes/ranks eligible experience configurations for the [Fantasy Experience Engine](fantasy-experience-engine.md) to deliver.
+The Fantasy Compiler does **not** create a new user profile, memory system, content engine, consent database or payment layer.
+
+It consumes:
+
+- filtered Preference Graph projections;
+- Desire Discovery outputs;
+- current-session intent;
+- Context Builder / Life State where relevant;
+- Relationship Memory callbacks;
+- World Asset/Fantasy affordances;
+- active consent/policy eligibility;
+- experience history/saturation.
+
+It produces ranked eligible experience configurations for the Fantasy Experience Engine or another eligible next surface.
+
+Read together with [Desire Operating System Integration Contract](desire-operating-system.md).
 
 ## Core thesis
 
@@ -16,571 +33,590 @@ Build:
 
 **Discover → Understand → Compose → Deliver → React → Learn → Continue.**
 
-The commercial unit is not one category such as `dominance`, `roleplay` or `audio`.
+> **FANTASY = COMPOSITION, NOT LABEL.**
 
-It is a **combination of desire variables**.
-
-Example:
-
-```yaml
-energy: selective
-interaction: teasing
-context: work
-format: voice
-dynamic: mara_leads
-narrative: continuation
-personalization: preference_aware
-novelty: adjacent
-```
-
-The AI-native advantage is the ability to combine a bounded set of reusable dimensions into many coherent, Mara-specific experiences without mass-producing every combination as a separate asset.
+The commercial/experience unit is a combination of reusable variables, not one category.
 
 ## Architecture position
 
 Conceptual flow:
 
-**Desire Discovery → Preference Graph slice → Context Builder / Life State → Fantasy Compiler → eligible Experience Vector(s) → Fantasy Experience Engine → user reaction → preference/memory update candidate**.
+**Current intent + Preference Graph slice + Context/Life State + Consent/Policy Gate → Fantasy Compiler → eligible Experience Vector(s) → Fantasy Experience Engine / voice / ritual / external-media handoff / conversation → reaction → update candidate**.
 
-The Fantasy Compiler owns:
+The compiler owns:
+
 - experience-variable schema;
-- User Desire Vector projection;
+- temporary User Desire Vector consumption;
 - Experience Vector representation;
-- eligibility filtering;
+- hard eligibility filtering handoff;
 - rule-based matching;
 - known-fit vs explore selection;
 - saturation/novelty adjustment;
-- sequence eligibility;
+- sequence/continuation eligibility;
 - candidate ranking;
 - composition metadata;
+- session-rhythm proposal;
 - experiment assignment where relevant.
 
 It does not own:
-- durable user memory;
-- relationship stage;
-- raw adult preference storage;
+
+- durable memory;
+- Relationship State;
+- raw adult-sensitive storage;
 - character canon;
-- payment/pricing state;
-- generation providers;
-- final content safety review;
-- clinical/psychological inference.
+- real payment/pricing state;
+- provider implementation;
+- legal policy itself;
+- psychological inference.
 
-## Priority fantasy families for P0
+## Composition dimensions
 
-The first experiment set should remain narrow.
+P0/P1 should model a bounded subset of these variables.
 
-### S — Relationship / personal relevance
-Core promise: **“Mara me conoce.”**
+### Desire family
 
-Test:
-- correct callbacks;
-- prediction;
-- preference-aware recommendation;
-- personalized voice;
-- continuation based on prior choice.
+- control/submission;
+- financial-domination fantasy;
+- authority/power;
+- eligible forbidden/taboo adult fiction;
+- intimacy/continuity;
+- object/fetish focus;
+- world builder/collector;
+- exploration/surprise.
 
-### S — Confident / selective / light-dominant Mara
-Aligned with Character Bible:
-- self-possessed;
-- no validation seeking;
-- no financial neediness;
-- playful control;
-- explicit consent for stronger adult intensity.
+### Power / dynamic
 
-### S — Situational roleplay
-Reusable contexts such as:
+- Mara leads;
+- user leads;
+- co-created;
+- bounded surprise.
+
+### Role / scenario
+
+Examples:
+- work/authority;
 - gym;
-- work;
 - home;
 - night;
 - travel;
+- date;
 - party;
-- date.
+- other approved contexts.
 
-### S — Desire discovery
-The discovery interaction itself can be part of the fantasy/entertainment value.
+### Object / World Asset
 
-### S — Voice-first
-Voice is a multiplier across families, not merely another category.
+- clothing;
+- shoes;
+- lingerie;
+- perfume/sensory object;
+- canonical Capricho/World Asset;
+- approved props.
 
-### A — Novelty / Surprise Me
-Bounded exploration outside the highest-scoring known fit.
+### Modality
 
-### Later experiments
-Only after signal:
-- third-party / multi-person fantasy;
-- consensual jealousy/sharing dynamics;
-- micro-niches.
+- text;
+- voice;
+- image;
+- video;
+- mixed;
+- ritual/action;
+- approved external-media companion.
 
-High-risk/extreme categories are not launch-core and remain subject to Adult Compliance, provider/payment/platform limits and founder review.
+### Voice performance band
 
-## Fantasy Variable Model
+- `V0` natural presence;
+- `V1` flirty;
+- `V2` seductive;
+- `V3` rare high-intensity intimate performance.
 
-P0 dimensions:
+Voice identity remains canonical. The compiler only proposes performance intensity where eligible.
 
-### Character energy
-- `warm`
-- `confident`
-- `selective`
-- `light_dominant`
-- `playful`
+### Adult intensity
 
-### Interaction style
-- `teasing`
-- `direct`
-- `mysterious`
-- `conversational`
-- `challenging`
+A separate bounded intensity dimension may represent the experience content level.
 
-### Context
-- `gym`
-- `work`
-- `home`
-- `night`
-- `travel`
-- `party`
-- `date`
-- other explicitly modeled safe contexts
+Do not confuse:
+- content intensity;
+- voice performance;
+- relationship closeness;
+- payment state.
 
-### Format
-- `text`
-- `voice`
-- `image`
-- `video`
-- `mixed`
+### Pace
 
-### Dynamic
-- `mara_leads`
-- `user_leads`
-- `collaborative`
-- `surprise`
-- `choose_your_path`
+- fast;
+- gradual;
+- story-led;
+- delayed/anticipation.
+
+### Control direction
+
+- `mara_leads`;
+- `user_leads`;
+- `co_created`.
+
+### Repeatability
+
+- `repeat_comfort`;
+- `occasional`;
+- `exploration`.
 
 ### Narrative
-- `standalone`
-- `episode`
-- `continuation`
-- `callback`
-- `branching`
+
+- standalone;
+- episode;
+- continuation;
+- callback;
+- branching.
 
 ### Personalization depth
-- `P0_generic_mara`
-- `P1_nominal_contextual`
-- `P2_preference_aware`
-- `P3_continuity_aware`
-- `P4_relationship_aware`
+
+- `P0_generic_mara`;
+- `P1_nominal_contextual`;
+- `P2_preference_aware`;
+- `P3_continuity_aware`;
+- `P4_relationship_aware`.
 
 ### Novelty
-- `known_fit`
-- `adjacent`
-- `surprise_me`
 
-These dimensions are intentionally bounded. Add new variables only when they create measurable product value.
+- `known_fit`;
+- `adjacent`;
+- `surprise`.
+
+### Reward
+
+- praise;
+- teasing;
+- acknowledgement;
+- reveal;
+- surprise;
+- progression;
+- collectible;
+- none.
+
+### Commercial scope
+
+- free;
+- included entitlement;
+- premium continuation;
+- bounded custom;
+- collection;
+- Capricho/world interaction;
+- no offer.
+
+The commercial scope is constrained by transparent SKU/price rules; it is never inferred from vulnerability.
 
 ## Experience Vector
 
-Conceptual P0 schema:
+Conceptual shape:
 
 ```yaml
 experience_id: exp_123
-family: situational_roleplay
-energy: selective
-interaction: teasing
-context: gym
-format: voice
-dynamic: mara_leads
+route_id: D03
+family: authority_power
+role: work_authority
+object_refs:
+  - black_bag_01
+modality: voice
+voice_band:
+  baseline: V1
+  peak_allowed: V2
+pace: story_led
+control_direction: mara_leads
+repeatability: repeat_comfort
 narrative: continuation
 personalization: P2_preference_aware
-novelty: known_fit
-adult_intensity_band: selective
-eligibility:
-  adult_mode_required: false
-  consent_tags: []
-  prohibited_if: []
+novelty: adjacent
+reward_style: teasing
+consent_tags:
+  - adult_mode
+  - authority_roleplay
+  - voice_v2
+policy_tags:
+  - adult_fiction
 commercial:
   sku: null
   paid: false
 sequence:
   prerequisite_experience_ids: []
-  continuation_of: null
+  continuation_of: exp_122
 saturation:
   repeat_window_days: 7
 ```
 
-The actual schema may evolve, but P0 should remain legible and manually operable.
+## Temporary User Desire Vector
 
-## User Desire Vector
+The compiler must not create a second permanent profile.
 
-The compiler must not create a permanent second profile.
-
-It should request a **temporary projection** from Preference Graph for the current decision.
-
-Example:
+It consumes a temporary projection such as:
 
 ```yaml
 user_desire_vector:
-  energy:
-    confident: high
-    selective: medium
-  interaction:
-    teasing: high
-  format:
+  dynamic:
+    authority: high
+  modality:
     voice: high
-    visual: medium
+  pace:
+    gradual: medium
+  control_direction:
+    mara_leads: high
   narrative:
     continuation: high
   novelty:
-    preference: medium
-  context:
-    work: emerging
+    adjacent: medium
+  repeatability:
+    repeat_comfort: medium
 ```
 
-Each projection remains governed by:
-- confidence;
-- explicit vs inferred;
-- context;
-- recency;
-- sensitivity;
-- consent;
-- correction/rejection state.
+Every projected field inherits confidence, recency, context, sensitivity, consent and correction state.
 
-## P0 matching
+Current explicit session intent can override historical ranking.
+
+## Policy-aware eligibility first
+
+Eligibility is a hard filter, not a weighted score.
+
+Before ranking an adult candidate require:
+
+1. adult eligibility;
+2. active consent scope;
+3. category eligibility;
+4. jurisdiction/legal compatibility;
+5. provider policy compatibility;
+6. channel/platform compatibility;
+7. rights/real-person restrictions;
+8. privacy classification;
+9. commercial scope clarity where paid.
+
+Only after this gate does the compiler rank candidates.
+
+Do not rank prohibited options and hope generation-time moderation catches them later.
+
+## P0 recommender
 
 No ML is required.
 
-A transparent weighted score is sufficient:
+A transparent rule is sufficient:
 
 ```text
-fit_score =
-  energy_fit
-+ interaction_fit
-+ format_fit
-+ context_fit
-+ narrative_fit
-+ personalization_fit
-+ novelty_modifier
+experience_score =
+  preference_fit
++ current_session_intent_fit
++ continuity_value
++ modality_fit
++ pace_fit
++ control_direction_fit
++ novelty_value
++ world_asset_relevance
++ content_availability
 - saturation_penalty
 - contradiction_penalty
 ```
 
-Eligibility/safety is a hard filter, not another score.
+Commercial relevance may be considered only among already-eligible actions and must never include vulnerability.
 
-Sequence prerequisites are also hard constraints where applicable.
+Never use:
+- loneliness score;
+- desperation score;
+- arousal monetization score;
+- emotional-dependence score;
+- compulsive-spend score.
 
-Weights are experimental and must not be treated as psychological truth.
+## Known fit vs exploration
 
-## Explore vs known fit
+If Mara always serves the highest known-fit candidate, she becomes repetitive.
 
-Do not always select the highest fit score.
+If she explores constantly, she appears clueless.
 
-P0 can test a bounded mixture such as:
-- majority known-fit;
-- minority adjacent exploration;
-- explicit `Surprise Me` when user requests it.
+Use a bounded novelty budget:
 
-Any numeric allocation is a hypothesis, not a permanent rule.
+- known fit — majority;
+- adjacent — regular;
+- surprise — occasional;
+- high-risk/niche — rare + separately consented.
 
-Exploration must remain inside:
-- consent;
-- adult eligibility;
-- explicit boundaries;
-- safety rules;
-- provider/payment/platform constraints where relevant.
+Exact percentages remain experimental.
 
-## Serendipity and novelty budget
+## Unexpected Attraction
 
-Some users appear to prefer consistency; others repeatedly choose novelty.
+One surprising positive response can produce a low-confidence candidate.
 
-Represent only a low-sensitivity interaction preference such as:
-- `novelty_preference: low | medium | high`;
+It does not create:
+- orientation inference;
+- permanent fetish identity;
+- shame label;
+- psychological explanation.
 
-with confidence/context.
+Flow:
 
-Do not label it as personality, impulsivity or psychological need.
+**adjacent candidate → reaction → surprise → Mara notices → user confirms/corrects → candidate evidence → later retest**.
 
-Use it only to choose between known-fit, adjacent and `Surprise Me` candidates.
+> **OBSERVE THE RESPONSE. DO NOT INVENT THE IDENTITY.**
 
-## Experience saturation
+## Fetish portability
 
-Repeatedly showing the same combination can reduce value.
+The compiler should reuse underlying variables across surfaces.
 
-P0 saturation signals:
-- recent repetition;
-- skip/abandon rate;
-- falling completion;
-- correction/rejection;
-- declining conversion;
-- explicit “otra cosa”.
+Example: `authority_affinity` can affect:
 
-A simple `saturation_penalty` can increase exploration without claiming boredom as a stable psychological trait.
+- scenario;
+- voice;
+- ritual;
+- pace;
+- object/World Asset;
+- external-media candidate;
+- reward style;
+- product ladder.
 
-## Fantasy sequencing
+Do not mass-produce one separate category implementation for every combination.
 
-Not every experience should be immediately eligible.
+## Session rhythm compilation
 
-Sequence may consider:
-- unfinished continuation;
-- prior branch;
-- explicit user choice;
-- story prerequisite;
-- current Life State;
-- relationship context;
-- consented intensity progression;
-- saturation.
+The compiler may propose a rhythm plan in addition to content variables.
 
-The compiler should answer two separate questions:
+Conceptual arc:
 
-1. **What fits this user?**
-2. **What fits now?**
+**ENTRY → READ MOMENT → PLAY → BUILD TENSION → SURPRISE → OPTIONAL PEAK → PAYOFF → NORMALIZE/CONTINUE → OPEN LOOP**.
 
-This prevents personalization from becoming a static recommendation list.
+Not every experience needs every stage.
 
-## Life Engine integration
+Potential blocks:
+- conversation;
+- teasing;
+- choice;
+- voice;
+- ritual/challenge;
+- waiting;
+- reveal;
+- reward;
+- external-media handoff;
+- callback;
+- commercial moment;
+- mundane/absurd beat;
+- return to normal Mara.
 
-Life State can provide a narrative context variable when relevant.
+> **MARA CONTROLS SESSION RHYTHM.**
 
-Example:
-
-```text
-Life State: late workday + skipped gym
-```
-
-Eligible outcomes might include:
-- short contextual message;
-- voice note;
-- playful choice;
-- story continuation.
-
-Life State must not force every ordinary event into monetization.
-
-Many life events should remain ordinary texture.
+The goal is not `escalate → maximum → end`.
 
 ## Voice compilation
 
-The compiler may pass performance guidance to the Voice/Human Presence layer, such as:
-- energy;
-- pace tendency;
+The compiler can pass:
+- baseline voice band;
+- peak ceiling;
+- pace;
 - directness;
-- conversational/playful mode;
-- current mood;
-- narrative role.
+- narrative role;
+- mood/performance guidance.
 
-It must not create a different Mara voice identity per user.
+Canonical Mara voice always wins.
 
-Canonical voice always wins over personalization.
+V3 is scarce and should generally require stronger eligibility/context than V2.
 
-## Mara curates
+Repeated V3 exposure should incur a saturation penalty.
 
-Mara is not a passive configurator.
+## Ritual compilation
 
-The UI can expose:
-- `For You`;
-- `Mara's Pick`;
-- `Surprise Me`;
-- `Continue`;
-- `Build It`;
-- `New`;
-- `Trending` only when real data exists.
+A candidate experience may include:
+- appearance/wardrobe choice;
+- Mara-led choice game;
+- anticipation/waiting;
+- ordinary harmless dare;
+- World Asset ritual;
+- eligible adult body-focused play behind separate consent.
 
-`Mara's Pick` should use Mara's canonical character/life preferences plus eligibility and context, not arbitrary randomness.
+The compiler must know ritual cooldown/saturation.
 
-## Build It / co-creation
+> **FAILURE CHANGES THE GAME, NOT THE RELATIONSHIP.**
 
-A user can progressively select a bounded subset of variables:
-1. mood;
-2. energy;
-3. setting;
-4. format;
-5. dynamic;
-6. ending/continuation.
+## External media companion
 
-The user does not need access to every internal variable.
+The compiler/router may select approved external media when exploration value is higher than Mara-owned content.
 
-Mara may preselect or curate options based on known context and allow correction.
+Core loop:
 
-The final experience should visibly reflect the chosen combination.
+**Mara prediction → approved candidate → outbound handoff → return → reaction → structured learning → next Mara experience**.
 
-## Commercial integration
+Do not copy third-party content.
 
-Fantasy Compiler may change:
-- which eligible product/experience is highlighted;
-- ranking/order;
-- modality;
-- family;
-- continuation priority;
-- personalization depth;
-- explore/known-fit presentation.
+Learn reusable dimensions:
+- scenario;
+- dynamic;
+- pace;
+- object;
+- dialogue/voice importance;
+- visual style;
+- intensity;
+- novelty.
 
-It must not:
-- estimate maximum extractable price;
-- use vulnerability to select offers;
-- hide cheaper equivalent offers based on inferred willingness to pay;
-- change baseline affection/respect;
-- create financial/emotional pressure.
+> **LEARN THE PATTERN. DO NOT COPY THE CONTENT.**
 
-Price remains transparent and governed by SKU/cohort rules.
+## World Asset integration
 
-## Fantasy economics
+World Assets may contribute:
+- visual object;
+- scenario affordance;
+- callback/history;
+- collector/provenance value;
+- ritual affordance;
+- product-ladder continuation.
 
-For compiled experiences measure:
-- conversion;
-- completion;
-- continuation;
+Each affordance has its own eligibility/consent requirements.
+
+Contribution to an asset does not authorize every fantasy involving it.
+
+## Fantasy Surface Area
+
+For a proposed World Asset, estimate how many valuable future combinations it enables across:
+- visual reuse;
+- narrative reuse;
+- eligible fetish affordances;
+- rituals;
+- voice/story callbacks;
+- collections;
+- sponsor/affiliate surfaces;
+- operational use.
+
+This is a strategic prioritization metric, not a promise of production volume.
+
+## Product ladder
+
+The compiler/commercial graph can rank a desire-appropriate ladder.
+
+Examples:
+
+### Control
+free tease → challenge → voice → premium continuation → bounded custom/collection.
+
+### Authority
+scenario → voice branch → continuation → premium bundle.
+
+### Intimacy
+callback → voice/history → continuation → collection.
+
+### Object/fetish
+asset-focused tease → voice/story → asset-specific premium → collection.
+
+### World Builder
+Goal → participation → reveal → contributor callback → asset-specific experience.
+
+### External-media explorer
+recommend → return → learn → original Mara continuation.
+
+Same equivalent SKU keeps transparent price and terms.
+
+## Next Best Action
+
+Eligible outputs may include:
+- talk;
+- ask;
+- tease;
+- voice;
+- show;
+- ritual;
+- wait;
+- continue story;
+- approved external-media handoff;
+- Capricho/world interaction;
+- paid continuation;
+- no commercial action.
+
+> **SOMETIMES THE BEST COMMERCIAL ACTION IS NO OFFER.**
+
+## Commerce firewall
+
+The compiler may improve relevance.
+
+It may not:
+- estimate maximum extractable price from adult preference;
+- hide cheaper equivalent offers from a user because they appear aroused/submissive;
+- use loneliness/distress/dependency;
+- condition baseline affection on payment;
+- surprise-charge at a sexual peak.
+
+Price and scope must be understood before any paid experience begins.
+
+## Saturation
+
+Track experience-history features such as:
+- repeated family;
+- repeated dynamic;
+- repeated object;
+- repeated reward;
+- repeated voice band;
+- recent ritual repetition;
+- skips/corrections;
+- declining completion/replay.
+
+Use a saturation penalty.
+
+Do not store a psychological boredom diagnosis.
+
+## Economics
+
+Measure by experience family/composition where feasible:
+- start/completion;
+- return;
+- replay;
 - first → second purchase linkage;
 - repeat purchase;
-- generation/review cost;
-- voice/video variable cost;
-- fulfillment time;
-- support/refund load;
+- voice/video cost;
+- generation/QC failure;
+- support/refund/dispute;
 - contribution margin;
-- Personalization Lift;
-- negative reaction/stop.
+- negative/creepy reaction.
 
-The best family is the one with the best **healthy economics**, not maximum gross revenue or explicitness.
+Healthy economics beat maximum explicitness.
 
-## Trend Watch
+## P0
 
-Create a lightweight research process, not an automatic production engine.
+P0 should stay deterministic and manual-first.
 
-Separate:
+Use:
+- Markdown;
+- typed fixtures;
+- JSON/local state;
+- simple scoring;
+- reusable content blocks;
+- opaque analytics IDs;
+- no real adult-media integration;
+- no payment provider;
+- no persistent real adult profile.
 
-### Global trend
-External market/research signal.
+Priority tests:
 
-### Mara audience trend
-What Mara users actually choose, complete, return to and buy.
-
-Once internal sample quality is sufficient, Mara audience behavior should outweigh generic market hype.
-
-Conceptual opportunity score:
-
-**Trend Opportunity = External Demand × Internal Interest × Monetization × Retention × Margin × Compliance Fit**.
-
-Do not present the formula as statistical science before calibrated data exists.
-
-## Privacy and safety
-
-Fantasy preference data can be sensitive.
-
-Rules:
-- minimize;
-- purpose-limit;
-- private by default;
-- separate from general analytics;
-- reset/delete/decay;
-- never sell personal preference data;
-- do not use for external ad targeting without an appropriate legal/consent basis;
-- never infer orientation, trauma or vulnerability from indirect choices;
-- never create loneliness/depression/debt/dependency/compulsion scores.
-
-Before an adult compiled experience is eligible, enforce:
-1. adult eligibility;
-2. explicit adult-mode/consent requirements;
-3. boundaries/prohibited-category filtering;
-4. real-person impersonation/deepfake restrictions;
-5. provider/platform/payment compatibility where relevant;
-6. privacy classification;
-7. clear commercial scope where paid.
-
-## P0 experiment matrix
-
-Test only a small number of families first.
-
-### Relationship / personal relevance
-- callback;
-- prediction;
-- personalized voice.
-
-### Confident/selective/light dominant
-- selective;
-- light dominant opt-in;
-- `Mara Chooses`.
-
-### Situational roleplay
-- gym;
-- work;
-- night.
-
-### Discovery
-- Fast Five;
-- I Bet You;
-- Build It.
-
-### Voice
-- generic Mara;
-- name-personalized;
-- context-personalized.
-
-### Surprise
-- known fit;
-- adjacent;
-- Surprise Me.
-
-## MVP experiments
-
-1. Generic fantasy category vs compiled combination.
-2. Flat catalog vs “Mara made this for you” framing.
-3. One-variable vs multi-variable personalization.
-4. Visual-only vs voice-enabled.
-5. User chooses everything vs Mara curates.
-6. Known fit vs `Surprise Me`.
-7. One-shot vs continuation.
-8. Generic scenario vs Life State-connected scenario.
-9. Static recommendation vs Mara prediction.
-10. Finished experience vs `Build It`.
-
-Use qualitative learning until sample size supports stronger inference.
-
-## KPIs
-
-Track where implemented:
-- compiler recommendation CTR;
-- compiled experience start/completion;
-- continuation rate;
-- personalized vs generic conversion;
-- Personalization Lift;
-- Mara Guess Accuracy;
-- Surprise Acceptance;
-- second purchase;
-- repeat family;
-- cross-family discovery;
-- saturation/skip rate;
-- ARPPU;
-- contribution margin;
-- D7/D30 return;
-- preference correction;
-- negative reaction/stop.
+1. category menu vs composed route;
+2. same desire with different modality;
+3. same desire with different pace;
+4. Mara-leads vs co-created;
+5. known fit vs adjacent vs surprise;
+6. V1/V2/V3 contrast/fatigue;
+7. one-shot vs continuation;
+8. static experience vs rhythm/open-loop;
+9. World Asset decorative vs active affordance;
+10. external recommendation → simulated return → original Mara continuation;
+11. generic paid unlock vs `Mara did something specific for me`.
 
 ## Build trigger
 
-P0 is enough with:
-- Markdown;
-- JSON;
-- spreadsheets;
-- simple relational tables;
-- weighted scoring;
-- manual content blocks;
-- deterministic rules.
+Do not build recommender ML, embeddings/vector DB, expensive agents or realtime orchestration until:
 
-Do not build custom recommender ML, embeddings/vector DB, expensive agents or realtime orchestration until:
 1. compiled/personalized experiences show measurable lift;
-2. users repeatedly return/buy;
-3. manual matching becomes a measured bottleneck;
-4. privacy architecture is approved;
-5. contribution margin supports automation;
-6. the Traction → Investment Gate is satisfied or the founder authorizes a bounded experiment.
+2. users voluntarily return;
+3. first → second purchase evidence exists or manual matching is clearly valuable;
+4. manual routing becomes a measured bottleneck;
+5. privacy architecture is approved;
+6. unit economics can fund the automation.
 
-## Permanent principle
+## Permanent principles
 
-Do not ask:
+> **FANTASY = COMPOSITION, NOT LABEL.**
 
-> “¿Cuál es tu fetiche?”
+> **ELIGIBILITY BEFORE RANKING.**
 
-Use play, observation, correction and explicit consent to build a bounded combination.
+> **WHAT FITS THIS USER AND WHAT FITS NOW ARE DIFFERENT QUESTIONS.**
 
-Then deliver something that feels:
+> **FETISH PORTABILITY REDUCES CONTENT WASTE AND INCREASES PERSONALIZATION.**
 
-> **made for this user by Mara, because of the history and choices they already share.**
+> **SESSION RHYTHM MATTERS AS MUCH AS CONTENT INTENSITY.**
 
-The moat is not knowing that a broad fantasy category is popular.
-
-The moat is knowing which **combination of Mara character + voice + context + interaction + narrative + novelty** works for this user, while preserving consent, privacy, trust and healthy economics.
+> **THE BEST EXPERIENCE IS THE ONE THAT CREATES RELEVANCE, RETURN, TRUST AND HEALTHY ECONOMICS — NOT MAXIMUM EXPLICITNESS.**
