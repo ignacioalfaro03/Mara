@@ -60,6 +60,9 @@ The Web MVP is tracked separately from the product foundation so implementation 
 - [Life Bible](docs/character/life-bible.md)
 - [Social Graph](docs/character/social-graph.md)
 
+### Research
+- [Adult Rituals / Self-Touch Challenges](docs/research/adult-rituals.md)
+
 ### Production
 - [Content & Production Engine](docs/production/content-engine.md)
 - [Provider Registry](docs/production/provider-registry.md)
