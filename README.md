@@ -1,6 +1,6 @@
 # Mara Vera
 
-Mara Vera is an AI-native adult relationship entertainment business designed to turn attention into recurring paid digital relationships through **desire, content, interaction, voice, playable personalization, narrative and continuity**.
+Mara Vera is an AI-native adult relationship entertainment business designed to turn attention into recurring paid digital relationships through **desire, content, interaction, voice, playable personalization, fantasy composition, narrative and continuity**.
 
 ## Core thesis
 
@@ -8,58 +8,66 @@ Mara Vera is not just an AI influencer, not just a chatbot and not a porn bot. T
 
 System-level progression:
 
-**Attention → Desire → Interaction → Playable Discovery → Personalization → Continuity → Relationship → Commerce → Repeat Value**
+**Attention → Desire → Interaction → Playable Discovery → Preference Understanding → Fantasy Composition → Personalization → Continuity → Relationship → Commerce → Repeat Value**
 
 Commercial validation loop:
 
-**Social discovery → first-party web → playful interaction → premium intent → first payment → second payment → repeat spend → retained relationship**
+**Social discovery → first-party web → playful interaction → relevant experience → premium intent → first payment → second payment → repeat spend → retained relationship**
 
-The core user value is:
+Core user value:
 
 > **Mara did something for me.**
 
-A second defining product loop is:
+Defining discovery loop:
 
 > **Play with Mara and she'll start figuring you out.**
 
-The durable character system is:
+Defining composition principle:
 
-**identity + voice + personality + persistent life + story continuity + dual memory + preference graph + relationship**
+> **Do not sell fantasy categories. Compose combinations of desire.**
 
-Mara should not feel frozen between interactions. She has a coherent fictional life — work, routines, friends, plans, ordinary events and evolving history — while separately remembering useful, consented context and structured preference signals from each user relationship when that capability is enabled.
+The durable system is:
 
-The underlying image, video, voice, recommendation and realtime models are replaceable providers. Mara's identity, canonical voice, history, interaction fit and continuity are the assets.
+**identity + voice + personality + persistent life + story continuity + dual memory + preference graph + fantasy compiler + relationship**.
 
-The business is designed around monetization, retention, unit economics and scalable distribution while maintaining strong legal, payment, platform, safety and privacy guardrails.
+Mara has a coherent disclosed fictional life — work, routines, friends, plans, ordinary events and evolving history — while separately remembering useful, consented context and structured preference signals when enabled.
+
+Underlying image, video, voice, recommendation and realtime models are replaceable providers. Mara's identity, canonical voice, history, interaction fit, learned preference structure and continuity are the assets.
+
+The business prioritizes monetization, retention, unit economics and scalable distribution while maintaining strong legal, payment, platform, safety and privacy guardrails.
 
 ## Permanent operating principles
 
-- Make money: features need a commercial or defensibility hypothesis.
+- Make money: meaningful features need a commercial or defensibility hypothesis.
 - Mara is always disclosed as AI.
-- Mara's life is persistent fiction, never a claim that a hidden real woman exists behind the account.
+- Mara's life is persistent fiction, never a claim that a hidden real woman exists.
 - Mara is clearly adult; adult experiences are adults-only.
-- Sexuality is a core character/product dimension, not a superficial add-on.
+- Sexuality is a core character/product dimension.
 - Consent before intensity.
+- Mara never seeks validation or financial rescue.
+- Payment changes entitlement, never Mara's self-worth, baseline respect or emotional stability.
 - Playable personalization should feel like entertainment, not a questionnaire or psychological test.
-- Preference inference is confidence-aware, contextual and correctable.
-- No fake psychology or claims that Mara literally reads the subconscious.
-- Monetize desire and relevance, not vulnerability.
-- Relationship closeness and commercial/spending state remain separate.
-- Preference relevance can change recommendations, not vulnerability-based pricing.
+- Preference inference is confidence-aware, contextual, decaying and correctable.
+- No fake psychology or subconscious-reading claims.
+- Do not assign users one rigid fantasy label: fantasy is composition.
+- Monetize desire, relevance, access, personalization and experience — not vulnerability.
+- Relationship closeness and commercial state remain separate.
+- Preference/Fantasy Compiler relevance can change recommendations, not vulnerability-based pricing.
 - Compliance by design.
 - Do not overbuild before revenue validation.
 - Keep recurring OPEX approximately $0 until traction and a measured bottleneck justify spend.
 - Mara Vera is original synthetic IP.
-- Mara's production voice must be original/licensed, not an unauthorized clone of a real person.
+- Production voice must be original/licensed, not an unauthorized clone.
 - Separate Mara Self Memory from User Relationship Memory.
 - Preference Graph is part of User Relationship Memory, not a parallel memory stack.
-- Minimize data collection and persistent memory, especially adult-sensitive preferences.
+- Fantasy Compiler is composition/routing, not another memory/profile system.
+- Minimize persistent data, especially adult-sensitive preferences.
 - Avoid provider lock-in: models are replaceable; canonical identity is not.
 - GitHub is the source of truth.
 
 ## The web is core product
 
-The Mara Vera website is not a secondary landing page. It is the owned hub for **brand + conversion + playable discovery + analytics + compliance**, and later for account, catalog, entitlements, personalization, Relationship Memory and first-party commerce.
+The Mara Vera website is not a secondary landing page. It is the owned hub for **brand + conversion + playable discovery + fantasy routing + analytics + compliance**, and later account, catalog, entitlements, personalization, Relationship Memory and first-party commerce.
 
 The Web MVP is tracked separately from the product foundation so implementation can iterate without reopening core product decisions.
 
@@ -103,98 +111,111 @@ The Web MVP is tracked separately from the product foundation so implementation 
 - [Relationship Memory](docs/architecture/relationship-memory.md)
 - [Preference Graph](docs/architecture/preference-graph.md)
 - [Desire Discovery Engine](docs/architecture/desire-discovery-engine.md)
+- [Fantasy Compiler](docs/architecture/fantasy-compiler.md)
+- [Fantasy Experience Engine](docs/architecture/fantasy-experience-engine.md)
 - [Context Builder](docs/architecture/context-builder.md)
 - [Relationship Engine — post-validation](docs/architecture/relationship-engine.md)
-- [Fantasy Experience Engine](docs/architecture/fantasy-experience-engine.md)
 
 ## Launch operating model
 
-The launch stack should remain manual-first and free-tier-first.
+The launch stack remains manual-first and free-tier-first.
 
-### Character continuity + preference fit
+### Core intelligence flow
 
-At launch, Life/Memory/Preference Graph can be curated with lightweight Markdown/JSON/spreadsheets rather than always-on agents.
+At launch, Life/Memory/Preference Graph/Fantasy Compiler can be operated with Markdown/JSON/spreadsheets and deterministic rules.
 
 Core flow:
 
-**Life State + relevant Self/User Memory + Preference Graph slice → Context Pack → text/voice/content/game → filtered memory/preference/event update**
+**Life State + relevant Self/User Memory + Preference Graph slice → temporary User Desire Vector → Fantasy Compiler → Context Pack / Experience Vector → text/voice/content/game → filtered update candidate**.
 
-Manual/lightweight predictions, corrections, callbacks, narrative continuations and preference-aware recommendations are valid launch tests. Persistent Relationship Memory/recommender infrastructure is not required until returning-user evidence proves the need.
+This lets Mara test sophisticated-feeling personalization without expensive ML or always-on agents.
 
 ### Playable Personalization
 
-The product should learn through entertaining choices rather than static profiling.
-
-P0 formats include:
+P0 formats:
 - 3-choice onboarding;
 - Fast Five;
-- Mara predictions (`I Bet You`);
+- `I Bet You`;
 - Guess Me;
-- ranking / A-B choices;
-- correction/reveal loops;
-- `Build It` co-creation;
-- `Surprise Me` exploration.
+- ranking / A-B;
+- correction/reveal;
+- `Build It`;
+- `Surprise Me`.
 
-The visible loop is:
+Visible loop:
 
-**Mara asks/challenges → user chooses → Mara reacts → preference candidate updates → Mara predicts/adapts → user confirms or surprises her → next experience becomes more relevant**.
+**Mara asks/challenges → user chooses → Mara reacts → Preference Graph updates → Fantasy Compiler composes/ranks → user gets a more relevant experience → reaction updates future choices**.
 
-Do not claim scientific mind-reading, subconscious diagnosis or psychological profiling.
+### Fantasy Compiler
+
+The compiler combines bounded dimensions such as:
+- Mara energy;
+- interaction style;
+- context;
+- format;
+- dynamic;
+- narrative;
+- personalization depth;
+- novelty.
+
+P0 priority families:
+1. relationship / personal relevance;
+2. confident/selective/light-dominant Mara;
+3. situational roleplay;
+4. desire discovery;
+5. voice-first;
+6. novelty / Surprise Me.
+
+The core idea is **mass personalization without mass production**.
 
 ### Relationship commerce
 
-Early product tests should prioritize:
-
+Early tests prioritize:
 1. character/visual desirability;
 2. Mara voice;
-3. playable discovery / fun;
+3. playable discovery/fun;
 4. meaningful interaction;
-5. lightweight/manual preference fit and continuity;
-6. low-ticket first purchase;
-7. personalized short audio/message;
-8. first → second purchase;
-9. situation/narrative framing;
-10. preference-aware continuation/branching/co-creation;
-11. membership only when repeat usage supports it;
-12. persistent Relationship Engine / Preference Graph only after validation.
+5. simple compiled relevance;
+6. lightweight continuity;
+7. low-ticket first purchase;
+8. personalized/compiled voice or mini experience;
+9. first→second purchase;
+10. narrative continuation;
+11. `Build It` / preference-aware branching;
+12. membership only when repeat usage supports it;
+13. persistent Relationship Engine / automated recommender only after validation.
 
-The product should avoid flat-catalog commoditization. Fantasy/situation commerce, voice, playable discovery and personalized continuity are strategic hypotheses to validate.
+Avoid flat-catalog commoditization.
 
-### Production economics
+## Production economics
 
-Measure production with:
+Measure:
 - **CPAA — Cost Per Approved Asset**;
 - **TPAA — Time Per Approved Asset**;
-- **Approval Yield — approved assets / generated candidates**;
-- contribution margin per paid product/experience;
-- operational cost of personalization/discovery where relevant.
+- **Approval Yield**;
+- contribution margin per product/experience;
+- incremental personalization/compile cost;
+- reusable content-block ratio where useful.
 
-For talking-video content, preserve voice continuity through an audio-first workflow:
+Talking-video workflow:
 
 **script → Mara voice → approved audio → talking video/avatar → QC**.
 
-Paid tools are unlocked only when the [Traction → Investment Gate](docs/foundation/traction-investment-gate.md) is satisfied or the founder explicitly authorizes a bounded experiment.
+Paid tools are unlocked only by the Traction → Investment Gate or explicit bounded founder authorization.
 
 ## Commercial proof
 
-The first purchase proves willingness to pay.
+First purchase proves willingness to pay.
 
-The second purchase is stronger evidence that Mara delivered value worth repeating.
+Second purchase is stronger evidence that Mara delivered repeatable value.
 
-Playable personalization is commercially valuable only if it improves at least one of:
-- activation;
-- return;
-- personalized engagement;
-- first/second purchase;
-- retention;
-- contribution margin;
-- defensibility.
+Playable personalization/Fantasy Compiler are commercially valuable only if they improve activation, return, conversion, repeat purchase, retention, contribution margin or defensibility.
 
-Commercial health should be evaluated through:
+Commercial health:
 
 **repeat spend × retention × satisfaction × contribution margin**.
 
-Do not optimize for maximum spend inside an adult/aroused session or for emotional dependency.
+Do not optimize for maximum explicitness, maximum session spend or emotional dependency.
 
 ## Execution model
 
@@ -204,4 +225,4 @@ No production deploy, real payments/provider activation, paid subscription, exte
 
 ## Current objective
 
-> **Launch Mara Vera within 30 days, validate real willingness to pay and repeat engagement/spend, prove that Mara-specific voice + playable personalization + narrative continuity create value, and keep the technology stack extremely lean until the market earns additional investment.**
+> **Launch Mara Vera within 30 days, validate real willingness to pay and repeat engagement/spend, and prove that Mara-specific voice + playable personalization + fantasy composition + narrative continuity create value before investing in heavy infrastructure.**
