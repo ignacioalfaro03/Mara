@@ -53,7 +53,19 @@ export type MaraEvent =
   | "wtp_response_yes"
   | "wtp_response_maybe"
   | "wtp_response_no"
-  | "wtp_post_price_continued";
+  | "wtp_post_price_continued"
+  | "capricho_viewed"
+  | "contribution_intent"
+  | "contribution_amount_selected"
+  | "team_selected"
+  | "alias_visibility_selected"
+  | "amount_visibility_selected"
+  | "vote_cast"
+  | "goal_progress_viewed"
+  | "contributor_history_viewed"
+  | "world_asset_reveal_viewed"
+  | "goal_completion_simulated"
+  | "goal_share_intent";
 
 export type MaraEventRecord = {
   event: MaraEvent;
@@ -102,6 +114,18 @@ const P0_DEV_LOG_EVENTS = new Set<MaraEvent>([
   "wtp_response_maybe",
   "wtp_response_no",
   "wtp_post_price_continued",
+  "capricho_viewed",
+  "contribution_intent",
+  "contribution_amount_selected",
+  "team_selected",
+  "alias_visibility_selected",
+  "amount_visibility_selected",
+  "vote_cast",
+  "goal_progress_viewed",
+  "contributor_history_viewed",
+  "world_asset_reveal_viewed",
+  "goal_completion_simulated",
+  "goal_share_intent",
 ]);
 
 function appendDevelopmentEvent(record: MaraEventRecord) {
