@@ -9,6 +9,7 @@ export function MomentumCommercePrototype({ experienceId }: { experienceId: stri
   const [intentCaptured, setIntentCaptured] = useState(false);
   const [mockPurchased, setMockPurchased] = useState(false);
   const isDevelopment = process.env.NODE_ENV === "development";
+  const belongsToCollection = offer.collectionId === nightSeries.id;
 
   useEffect(() => {
     track("commercial_moment_shown", {
@@ -46,11 +47,14 @@ export function MomentumCommercePrototype({ experienceId }: { experienceId: stri
     track("mock_purchase_completed", { offer_id: offer.id, development_only: true });
     track("purchase_resume", { offer_id: offer.id, resume_state: offer.resumeState });
     track("reward_delivered", { offer_id: offer.id, reward_style: offer.rewardStyle });
-    track("collection_item_acquired", { collection_id: nightSeries.id, development_only: true });
+
+    if (belongsToCollection) {
+      track("collection_item_acquired", { collection_id: nightSeries.id, development_only: true });
+    }
   }
 
   const isPrototypeScarcity = Boolean(offer.availability.prototypeOnly);
-  const collectionOwned = mockPurchased
+  const collectionOwned = belongsToCollection && mockPurchased
     ? Array.from(new Set([...nightSeries.prototypeOwnedItemIds, "gym"]))
     : nightSeries.prototypeOwnedItemIds;
 
@@ -95,16 +99,18 @@ export function MomentumCommercePrototype({ experienceId }: { experienceId: stri
         </div>
       ) : null}
 
-      <div className="livingMemory">
-        <button
-          type="button"
-          className="livingReset"
-          onClick={() => track("collection_viewed", { collection_id: nightSeries.id })}
-        >
-          {nightSeries.title}: {collectionOwned.length}/{nightSeries.itemIds.length}
-        </button>
-        <br />Completion concept: {nightSeries.completionReward}.
-      </div>
+      {belongsToCollection ? (
+        <div className="livingMemory">
+          <button
+            type="button"
+            className="livingReset"
+            onClick={() => track("collection_viewed", { collection_id: nightSeries.id })}
+          >
+            {nightSeries.title}: {collectionOwned.length}/{nightSeries.itemIds.length}
+          </button>
+          <br />Completion concept: {nightSeries.completionReward}.
+        </div>
+      ) : null}
     </div>
   );
 }
