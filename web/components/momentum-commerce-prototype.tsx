@@ -18,7 +18,6 @@ export function MomentumCommercePrototype({ experienceId }: { experienceId: stri
   const [mockPurchased, setMockPurchased] = useState(false);
   const isDevelopment = process.env.NODE_ENV === "development";
   const config = useMemo(() => getCommercialExperimentConfig(variant), [variant]);
-  const belongsToCollection = offer?.collectionId === nightSeries.id;
 
   useEffect(() => {
     const assigned = assignCommercialExperimentVariant();
@@ -48,25 +47,28 @@ export function MomentumCommercePrototype({ experienceId }: { experienceId: stri
 
   if (!offer) return null;
 
+  const activeOffer = offer;
+  const belongsToCollection = activeOffer.collectionId === nightSeries.id;
+
   function captureIntent() {
     setIntentCaptured(true);
-    track("offer_opened", { offer_id: offer.id, offer_type: offer.type, variant });
-    track("premium_intent", { offer_id: offer.id, offer_type: offer.type, variant });
+    track("offer_opened", { offer_id: activeOffer.id, offer_type: activeOffer.type, variant });
+    track("premium_intent", { offer_id: activeOffer.id, offer_type: activeOffer.type, variant });
 
-    if (offer.type === "voice_upgrade") {
-      track("voice_upgrade_interest", { offer_id: offer.id, variant });
+    if (activeOffer.type === "voice_upgrade") {
+      track("voice_upgrade_interest", { offer_id: activeOffer.id, variant });
     }
 
-    if (offer.type === "custom") {
-      track("custom_slot_interest", { offer_id: offer.id, prototype_only: true, variant });
+    if (activeOffer.type === "custom") {
+      track("custom_slot_interest", { offer_id: activeOffer.id, prototype_only: true, variant });
     }
   }
 
   function dismissOffer() {
     setDismissed(true);
     track("commercial_offer_dismissed", {
-      offer_id: offer.id,
-      offer_type: offer.type,
+      offer_id: activeOffer.id,
+      offer_type: activeOffer.type,
       variant,
       consequence: "none",
     });
@@ -76,11 +78,11 @@ export function MomentumCommercePrototype({ experienceId }: { experienceId: stri
     if (!isDevelopment) return;
 
     setMockPurchased(true);
-    track("mock_purchase_completed", { offer_id: offer.id, development_only: true, variant });
-    track("purchase_resume", { offer_id: offer.id, resume_state: offer.resumeState, variant });
+    track("mock_purchase_completed", { offer_id: activeOffer.id, development_only: true, variant });
+    track("purchase_resume", { offer_id: activeOffer.id, resume_state: activeOffer.resumeState, variant });
 
     if (config.showRewardContract) {
-      track("reward_delivered", { offer_id: offer.id, reward_style: offer.rewardStyle, variant });
+      track("reward_delivered", { offer_id: activeOffer.id, reward_style: activeOffer.rewardStyle, variant });
     }
 
     if (config.showOwnership && belongsToCollection) {
@@ -97,7 +99,7 @@ export function MomentumCommercePrototype({ experienceId }: { experienceId: stri
     );
   }
 
-  const isPrototypeScarcity = Boolean(offer.availability.prototypeOnly);
+  const isPrototypeScarcity = Boolean(activeOffer.availability.prototypeOnly);
   const collectionOwned = config.showOwnership && belongsToCollection && mockPurchased
     ? Array.from(new Set([...nightSeries.prototypeOwnedItemIds, "gym"]))
     : nightSeries.prototypeOwnedItemIds;
@@ -106,8 +108,8 @@ export function MomentumCommercePrototype({ experienceId }: { experienceId: stri
     <div className="premiumIntentCard">
       <span>P0 · MOMENTUM COMMERCE</span>
       {isDevelopment ? <small className="livingMemory">Experiment: {variant}</small> : null}
-      <strong>{offer.maraLine}</strong>
-      <p>{offer.scope}</p>
+      <strong>{activeOffer.maraLine}</strong>
+      <p>{activeOffer.scope}</p>
 
       {config.showRewardContract ? (
         <div className="commerceValueContract">
@@ -127,14 +129,14 @@ export function MomentumCommercePrototype({ experienceId }: { experienceId: stri
         <div className="livingMemory">
           <strong>P0 PROTOTYPE AVAILABILITY — NOT REAL INVENTORY</strong>
           <br />
-          Demo: {offer.availability.capacityRemaining}/{offer.availability.capacityTotal} slots · reason: manual voice/QC capacity.
+          Demo: {activeOffer.availability.capacityRemaining}/{activeOffer.availability.capacityTotal} slots · reason: manual voice/QC capacity.
           This number must never be shown as real scarcity in production unless backed by enforceable inventory.
         </div>
       ) : null}
 
       {!intentCaptured ? (
         <div className="commerceActions">
-          <button type="button" onClick={captureIntent}>{offer.ctaLabel}</button>
+          <button type="button" onClick={captureIntent}>{activeOffer.ctaLabel}</button>
           <button type="button" className="commerceSkip" onClick={dismissOffer}>Ahora no</button>
         </div>
       ) : (
@@ -148,13 +150,13 @@ export function MomentumCommercePrototype({ experienceId }: { experienceId: stri
       {mockPurchased ? (
         <div className="lifeMoment">
           <span>DEV MOCK · EXACT-STATE RESUME</span>
-          <p>{config.showRewardContract ? (offer.rewardLine ?? "Ya. Ahora sí.") : "Ya. Ahora sí."}</p>
+          <p>{config.showRewardContract ? (activeOffer.rewardLine ?? "Ya. Ahora sí.") : "Ya. Ahora sí."}</p>
           <p>
-            Resume state: <code>{offer.resumeState}</code>. No transaction occurred; this only validates the post-purchase UX contract.
+            Resume state: <code>{activeOffer.resumeState}</code>. No transaction occurred; this only validates the post-purchase UX contract.
           </p>
           <button
             type="button"
-            onClick={() => track("continuation_opened", { offer_id: offer.id, development_only: true, variant })}
+            onClick={() => track("continuation_opened", { offer_id: activeOffer.id, development_only: true, variant })}
           >
             Continuar desde aquí
           </button>
