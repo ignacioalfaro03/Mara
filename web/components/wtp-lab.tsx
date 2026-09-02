@@ -1,8 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { getOfferForExperience } from "@/data/commercial";
+import { useEffect, useMemo, useState } from "react";
+import { getOfferForExperience, nightSeries } from "@/data/commercial";
 import { track } from "@/lib/analytics";
+import {
+  getCommercialExperimentConfig,
+  readCommercialExperimentVariant,
+  type CommercialExperimentVariant,
+} from "@/lib/p0/commercial-experiment";
 import {
   assignWtpPriceBucket,
   type WtpPriceConfig,
@@ -13,22 +18,29 @@ const FIXTURE_EXPERIENCE_ID = "gym_late_voice_01";
 
 export function WtpLab() {
   const [price, setPrice] = useState<WtpPriceConfig | null>(null);
+  const [treatment, setTreatment] = useState<CommercialExperimentVariant>("A_offer_only");
   const [response, setResponse] = useState<WtpResponse | null>(null);
   const [continued, setContinued] = useState(false);
   const offer = getOfferForExperience(FIXTURE_EXPERIENCE_ID);
+  const treatmentConfig = useMemo(() => getCommercialExperimentConfig(treatment), [treatment]);
+  const belongsToCollection = offer.collectionId === nightSeries.id;
 
   useEffect(() => {
+    const activeTreatment = readCommercialExperimentVariant() ?? "A_offer_only";
     const assigned = assignWtpPriceBucket();
+    setTreatment(activeTreatment);
     setPrice(assigned);
     track("wtp_price_assigned", {
       bucket: assigned.bucket,
       amount_usd_cents: assigned.amountUsdCents,
       offer_id: offer.id,
+      treatment: activeTreatment,
     });
     track("wtp_price_shown", {
       bucket: assigned.bucket,
       amount_usd_cents: assigned.amountUsdCents,
       offer_id: offer.id,
+      treatment: activeTreatment,
     });
   }, [offer.id]);
 
@@ -44,6 +56,7 @@ export function WtpLab() {
         bucket: activePrice.bucket,
         amount_usd_cents: activePrice.amountUsdCents,
         offer_id: offer.id,
+        treatment,
       },
     );
   }
@@ -56,6 +69,7 @@ export function WtpLab() {
       amount_usd_cents: activePrice.amountUsdCents,
       response,
       offer_id: offer.id,
+      treatment,
     });
   }
 
@@ -73,9 +87,22 @@ export function WtpLab() {
             Pago único hipotético por: {offer.scope.replace(" P0 intent only.", "")} No es suscripción.
             En P0 no existe checkout, cargo ni entitlement real.
           </p>
-          <p className="livingMemory">
-            Si una futura compra real fuera autorizada, el contrato sería: desbloqueo → regreso al mismo momento → payoff → continuación.
-          </p>
+
+          {treatmentConfig.showRewardContract ? (
+            <div className="commerceValueContract">
+              <span>PAYOFF</span>
+              <p>Si esto se comprara de verdad, Mara reaccionaría en contexto y la experiencia seguiría desde este mismo punto.</p>
+            </div>
+          ) : null}
+
+          {treatmentConfig.showOwnership && belongsToCollection ? (
+            <div className="commerceValueContract">
+              <span>MY HISTORY WITH MARA</span>
+              <p>Esta experiencia también quedaría dentro de tu colección/historia adquirida.</p>
+            </div>
+          ) : null}
+
+          <p className="livingMemory">Treatment congelado para este test: {treatment}.</p>
         </div>
 
         {!response ? (
@@ -112,7 +139,7 @@ export function WtpLab() {
         )}
 
         <p className="livingDisclosure">
-          Un tester ve un solo precio. No mostrar P1/P2/P3 juntos durante la comparación principal.
+          Primero fija A/B/C en el DEV panel y luego cambia solo P1/P2/P3. Un tester ve un solo precio.
         </p>
       </div>
     </section>
