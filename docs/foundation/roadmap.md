@@ -2,13 +2,13 @@
 
 ## Roadmap principle
 
-Mara should validate the **smallest commercial system capable of proving character desire, playable personalization, compiled relevance, first purchase, second purchase and return behavior**.
+Mara should validate the **smallest commercial system capable of proving character desire, playable personalization, compiled relevance, momentum-preserving commerce, first purchase, second purchase and return behavior**.
 
 Do not confuse launch readiness with feature completeness.
 
 Priority order:
 
-**character → visual identity → voice → playable discovery → lightweight Fantasy Compiler → conversation → continuity → first paid unlock → personalized/compiled experience → second purchase → narrative continuation → membership intent → persistent relationship infrastructure**.
+**character → visual identity → voice → playable discovery → lightweight Fantasy Compiler → conversation → continuity → premium intent → contextual paid moment → post-purchase payoff/resume → second purchase → narrative continuation → real scarcity/collection tests → membership intent → persistent relationship infrastructure**.
 
 The Web MVP remains a separate implementation outcome/PR.
 
@@ -20,6 +20,7 @@ Lock:
 - Desire Discovery / Playable Personalization;
 - Preference Graph boundaries;
 - Fantasy Compiler responsibility boundaries;
+- Momentum Commerce / scarcity / reward principles;
 - character/sexual identity;
 - monetization rules;
 - adult compliance;
@@ -27,7 +28,7 @@ Lock:
 - web IA;
 - experiment backlog.
 
-Exit: one source of truth defining who Mara is, how she learns, how experiences are composed, what is sold/prohibited and how success is measured.
+Exit: one source of truth defining who Mara is, how she learns, how experiences are composed, how offers appear without breaking momentum, what is sold/prohibited and how success is measured.
 
 ## Days 4–7 — Character + Voice System
 
@@ -40,7 +41,8 @@ Build/validate:
 - canonical voice;
 - Mara's own preferences for reciprocal games;
 - content directions;
-- consistency QA.
+- consistency QA;
+- reward/praise language consistent with Mara rather than generic ecommerce acknowledgment.
 
 Primary test:
 
@@ -52,6 +54,7 @@ Build/review mobile-first architecture:
 - Home;
 - Meet Mara;
 - Premium/discovery surface;
+- P0 First Living Experience;
 - legal/compliance;
 - AI disclosure;
 - age gate;
@@ -67,12 +70,15 @@ Foundation/P0 prototype should require no heavy infrastructure:
 - one reveal/correction flow;
 - lightweight Preference Graph JSON/table;
 - temporary User Desire Vector;
-- 6–12 pre-authored Experience Vectors;
+- 6–15 pre-authored Experience Vectors;
 - simple weighted matching;
 - known-fit vs adjacent/Surprise Me mode;
-- one immediate compiled next-experience rule.
-
-This does **not** authorize modifying/merging the separate Web MVP PR automatically.
+- one immediate compiled next-experience rule;
+- 3–5 structured commercial moments;
+- one explicitly labeled prototype scarcity example;
+- one collection/progress concept;
+- one development-only purchase→resume mock;
+- reward-style metadata.
 
 No real payments/providers without separate authorization.
 
@@ -104,11 +110,13 @@ Suggested initial kit:
 - 1–2 personalized audio/message workflows;
 - 1 branching/continuation experience;
 - 1 `Build It` flow;
-- 1 known-fit vs `Surprise Me` comparison.
+- 1 known-fit vs `Surprise Me` comparison;
+- 1 reward-style test plan;
+- 1 real-scarcity test design that remains inactive until the inventory/window is actually enforceable.
 
-Exit: enough inventory to compare character, discovery, compiled relevance, personalization and monetization without material spend.
+Exit: enough inventory to compare character, discovery, compiled relevance, personalization, momentum and monetization without material spend.
 
-## Days 12–18 — Monetization + Compiler Dry Run
+## Days 12–18 — Monetization + Compiler + Momentum Dry Run
 
 Before payment activation:
 - finalize offer scope/naming;
@@ -123,19 +131,27 @@ Before payment activation:
 - define User Desire Vector projection;
 - define simple matching weights;
 - define saturation/repetition rule;
-- ensure Preference Graph changes recommendation order, not price;
+- ensure Preference Graph changes recommendation/reward relevance, not price;
+- define commercial moment taxonomy;
+- define exact-state checkout resume contract;
+- design first 10 seconds after successful entitlement;
+- define reward-style eligibility/cooldown;
+- define ownership vs access;
+- define one collection and continuation graph;
+- define scarcity metadata and enforcement source of truth;
+- verify no fake scarcity or production-looking demo capacity;
 - rehearse reset/correction;
 - keep adult-sensitive data out of general analytics.
 
-Priority products:
-1. low-ticket unlock;
+Priority products/hypotheses:
+1. low-ticket continuation;
 2. personalized short voice/message;
 3. compiled mini experience;
-4. situation/narrative offer;
-5. preference-relevant recommendation;
+4. preference-relevant recommendation;
+5. Build It / pay for agency;
 6. simple bundle;
-7. continuation;
-8. `Build It`.
+7. collection/ownership;
+8. real capacity-limited custom after operational limit is known.
 
 Membership stays secondary until repeat behavior exists.
 
@@ -145,7 +161,7 @@ When separately authorized, open social + owned web + approved premium surface.
 
 Track:
 
-**attention → web → playable discovery → compiled recommendation → interaction/premium intent → first purchase → second purchase → return**.
+**attention → web → playable discovery → compiled recommendation → premium intent → contextual offer → first purchase → resume/payoff → continuation → second purchase → return**.
 
 Operate manually/rule-based:
 - preference scoring;
@@ -155,7 +171,10 @@ Operate manually/rule-based:
 - callbacks;
 - personalization;
 - discovery reveals;
-- saturation handling.
+- saturation handling;
+- offer timing;
+- reward delivery;
+- real inventory/window enforcement if scarcity is tested.
 
 Do not scale paid acquisition yet.
 
@@ -173,17 +192,24 @@ Compare combinations of:
 - known-fit vs exploration;
 - Life State connection;
 - narrative continuity;
+- in-context vs store-style commerce;
+- reward style;
+- exact-state resume;
+- collection ownership;
+- real scarcity vs evergreen where a valid constraint exists;
 - price/bundle structure.
 
 Optimize for:
 - meaningful interaction;
+- premium intent;
 - first/second purchase;
+- post-purchase continuation;
 - retained users;
 - healthy contribution margin;
 - Personalization Lift;
-- low privacy/creepiness/negative-reaction rate.
+- low privacy/creepiness/commerce-fatigue signal.
 
-Not vanity quiz completion or raw explicitness.
+Not vanity quiz completion, fake urgency or raw explicitness.
 
 ## Day-30 gate
 
@@ -195,20 +221,21 @@ Indicative evidence:
 - ~10+ repeat spenders;
 - organic conversion signal;
 - at least one positive-contribution-margin product format;
-- evidence that at least one Mara-specific lever (voice, playable personalization, compiled relevance, narrative or continuity) improves response;
-- no material privacy/creepiness signal.
+- evidence that at least one Mara-specific lever (voice, playable personalization, compiled relevance, Momentum Commerce, narrative or continuity) improves response;
+- reasonable post-purchase continuation;
+- no material privacy/creepiness/manipulation signal.
 
 ### YELLOW
 Interest exists but monetization/retention is weak.
 
-Iterate character, voice, discovery fun, compiler variables/weights, visible adaptation, offer, first-purchase product, price, personalization and continuation.
+Iterate character, voice, discovery fun, compiler variables/weights, visible adaptation, offer timing, post-purchase payoff, first-purchase product, price, personalization, continuation and commerce density.
 
-Do not answer weak signal with expensive ML.
+Do not answer weak signal with fake scarcity or expensive ML.
 
 ### RED
 No meaningful demand after valid tests.
 
-Do not build persistent agents, realtime voice, complex memory, ML recommenders, vector DBs or expensive content stacks. Reposition, pivot or stop.
+Do not build persistent agents, realtime voice, complex memory, ML recommenders, vector DBs, wallet infrastructure, scarcity services or expensive content stacks. Reposition, pivot or stop.
 
 ## Build order after GREEN
 
@@ -216,13 +243,15 @@ Do not build persistent agents, realtime voice, complex memory, ML recommenders,
 2. Improve winning content/voice workflow.
 3. Improve playable discovery.
 4. Improve simple Fantasy Compiler where lift exists.
-5. Improve first→second purchase.
-6. Expand preference-aware narrative/continuation products.
-7. Add consent-based persistent Relationship Memory / Preference Graph when justified.
-8. Automate measured matching/fulfillment bottlenecks.
-9. Test membership if repeat usage supports recurring value.
-10. Test scalable acquisition.
-11. Only later consider more characters / broader Character Commerce infrastructure.
+5. Improve in-context commercial moments and exact-state resume.
+6. Improve first→second purchase paths.
+7. Expand preference-aware narrative/continuation/agency products.
+8. Test truthful drops/collections where operationally enforceable.
+9. Add consent-based persistent Relationship Memory / Preference Graph when justified.
+10. Automate measured matching/fulfillment/inventory bottlenecks.
+11. Test membership if repeat usage supports recurring value.
+12. Test scalable acquisition.
+13. Only later consider more characters / broader Character Commerce infrastructure.
 
 ## MVP experiment backlog
 
@@ -247,11 +276,19 @@ Do not build persistent agents, realtime voice, complex memory, ML recommenders,
 19. One-off vs bundle.
 20. Warm vs Selective vs Light Dominant within consent rules.
 21. Value-before-offer timing.
-22. Membership intent after repeat behavior.
+22. Store redirect vs in-context offer.
+23. Context loss vs exact-state purchase resume.
+24. No post-purchase Mara reaction vs contextual reaction.
+25. Praise vs teasing vs neutral where preference permits.
+26. Standalone purchase vs natural continuation chain.
+27. One-off item vs collection/ownership.
+28. Evergreen vs a **real** 72h/capacity-limited test.
+29. Unlimited custom vs real weekly operational capacity.
+30. Membership intent after repeat behavior.
 
 Use qualitative learning until sample size supports stronger inference.
 
-## Discovery / Compiler success metrics
+## Discovery / Compiler / Momentum success metrics
 
 Track:
 - playable onboarding completion;
@@ -263,7 +300,17 @@ Track:
 - Surprise Acceptance;
 - saturation/skip;
 - Personalization Lift;
-- return after discovery/compiled experience;
+- commercial moment→offer open;
+- premium intent;
+- offer dismissal/session abandonment;
+- Purchase Resume Success;
+- Post-Purchase Continuation Rate;
+- Commercial Inertia;
+- Voice Attach Rate;
+- continuation attach;
+- collection attach/completion;
+- real scarcity conversion/frustration;
+- return after discovery/compiled/paid experience;
 - personalized/compiled vs generic conversion;
 - creepiness/negative reaction.
 
@@ -271,4 +318,4 @@ Track:
 
 Recurring OPEX remains approximately $0 until traction exists, a bottleneck is measured, expected impact is clear, free/manual alternatives are insufficient and the Traction → Investment Gate is approved or the founder explicitly authorizes a bounded experiment.
 
-Specifically: do not purchase/build ML recommender, embeddings/vector DB or realtime preference infrastructure merely because Fantasy Compiler exists conceptually.
+Specifically: do not purchase/build ML recommender, embeddings/vector DB, realtime preference infrastructure, wallet/credit system or automated scarcity/inventory service merely because the architecture exists conceptually.
