@@ -21,6 +21,7 @@ export function MomentumCommercePrototype({ experienceId, onIntentCaptured, onDe
   const [variantReady, setVariantReady] = useState(false);
   const [intentCaptured, setIntentCaptured] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  const [continuedAfterOffer, setContinuedAfterOffer] = useState(false);
   const [mockPurchased, setMockPurchased] = useState(false);
   const isDevelopment = process.env.NODE_ENV === "development";
   const config = useMemo(() => getCommercialExperimentConfig(variant), [variant]);
@@ -82,6 +83,15 @@ export function MomentumCommercePrototype({ experienceId, onIntentCaptured, onDe
     });
   }
 
+  function continueAfterCommerce(source: "decline" | "intent") {
+    setContinuedAfterOffer(true);
+    track("commercial_post_offer_continued", {
+      offer_id: activeOffer.id,
+      source,
+      variant,
+    });
+  }
+
   function simulatePurchase() {
     if (!isDevelopment) return;
 
@@ -98,11 +108,21 @@ export function MomentumCommercePrototype({ experienceId, onIntentCaptured, onDe
     }
   }
 
-  if (dismissed) {
+  if (continuedAfterOffer) {
     return (
       <div className="commerceDismissed" aria-live="polite">
         <span>MARA</span>
         <p>Ya. Seguimos.</p>
+      </div>
+    );
+  }
+
+  if (dismissed) {
+    return (
+      <div className="commerceDismissed" aria-live="polite">
+        <span>MARA</span>
+        <p>Ya. No pasa nada.</p>
+        <button type="button" onClick={() => continueAfterCommerce("decline")}>Seguimos</button>
       </div>
     );
   }
@@ -148,7 +168,10 @@ export function MomentumCommercePrototype({ experienceId, onIntentCaptured, onDe
           <button type="button" className="commerceSkip" onClick={dismissOffer}>Ahora no</button>
         </div>
       ) : (
-        <p className="livingMemory">Interés guardado. No hubo cobro ni checkout.</p>
+        <div className="commerceIntentCaptured">
+          <p className="livingMemory">Interés guardado. No hubo cobro ni checkout.</p>
+          <button type="button" className="commerceSkip" onClick={() => continueAfterCommerce("intent")}>Seguir con Mara</button>
+        </div>
       )}
 
       {intentCaptured && isDevelopment && !mockPurchased ? (
