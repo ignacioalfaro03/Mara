@@ -32,7 +32,19 @@ export type MaraEvent =
   | "premium_intent"
   | "open_loop_created"
   | "return_session"
-  | "negative_reaction";
+  | "negative_reaction"
+  | "commercial_moment_shown"
+  | "offer_opened"
+  | "mock_purchase_completed"
+  | "purchase_resume"
+  | "reward_delivered"
+  | "continuation_opened"
+  | "collection_viewed"
+  | "collection_item_acquired"
+  | "scarcity_offer_viewed"
+  | "scarcity_closed"
+  | "custom_slot_interest"
+  | "voice_upgrade_interest";
 
 export function track(event: MaraEvent, properties: Record<string, string | number | boolean> = {}) {
   if (typeof window === "undefined") return;
