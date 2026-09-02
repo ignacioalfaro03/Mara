@@ -1,26 +1,151 @@
 # Mara Vera — Preference Graph
 
+Last reviewed: 2026-09-02
+
 ## Status
 
 Authoritative structured-preference model inside **User Relationship Memory**.
 
-This is not a second memory database. It is a normalized view of selected user preference signals that can be consumed by the Context Builder, Desire Discovery Engine, [Fantasy Compiler](fantasy-compiler.md), [Momentum Commerce](momentum-commerce.md), Fantasy Experience Engine and future Next Best Experience logic.
+This is not a second memory database, fetish profile or psychological scoring system.
 
-## Purpose
+It is a normalized view of selected, purpose-limited evidence that can be consumed by:
 
-Represent what Mara currently has reason to believe a user prefers, with enough context to avoid treating one choice as permanent truth.
+- Context Builder;
+- Desire Discovery;
+- Desire Routing;
+- Fantasy Compiler;
+- Momentum Commerce / Commercial Graph for relevance only;
+- Fantasy Experience Engine;
+- future Next Best Action logic.
 
-The graph supports:
-- explicit and inferred preferences;
-- confidence;
-- context/modality;
-- recency;
-- contradiction;
-- stability/decay;
-- correction;
-- sensitivity;
-- consent;
-- user control.
+Read together with [Desire Operating System Integration Contract](desire-operating-system.md).
+
+## Core principle
+
+> **PREFERENCE GRAPH = COMPONENTS, NOT IDENTITY TAGS.**
+
+Represent what Mara currently has reason to believe works for this user, in which context, with what confidence and consent.
+
+Do not reduce the user to:
+
+- `findom guy`;
+- `submissive`;
+- `foot guy`;
+- `taboo guy`;
+- sexual orientation inferred from viewing;
+- a hidden personality diagnosis.
+
+## Why components matter
+
+The same underlying affinity can be portable across product surfaces.
+
+Example: an authority affinity may affect:
+
+- scenario;
+- sentence/directness style;
+- voice delivery;
+- challenge structure;
+- clothing/World Asset relevance;
+- external-media ranking;
+- reward grammar;
+- product ladder.
+
+The graph should therefore learn reusable variables rather than storing a single static fetish label.
+
+## Canonical preference dimensions
+
+Initial dimensions may include:
+
+### Desire / dynamic
+- control affinity;
+- authority affinity;
+- intimacy/continuity affinity;
+- object-focus affinity;
+- world-builder/collector affinity;
+- exploration/surprise affinity;
+- other eligible adult-specific components where separately consented.
+
+### Object
+- clothing;
+- footwear;
+- lingerie;
+- perfume/sensory object;
+- World Asset affinity;
+- other bounded approved object classes.
+
+### Role / scenario
+- work/authority;
+- travel;
+- date;
+- home;
+- night;
+- other approved contexts.
+
+### Modality
+- text;
+- voice;
+- image;
+- video;
+- mixed;
+- external-media companion;
+- ritual/action.
+
+### Voice
+- conversational affinity;
+- flirt affinity;
+- seductive voice affinity;
+- high-intensity voice affinity;
+- dialogue importance.
+
+### Intensity
+- preferred adult intensity band by context;
+- `less intense` correction;
+- high-intensity fatigue signals.
+
+### Control direction
+- Mara leads;
+- user leads;
+- co-created.
+
+### Pace
+- fast payoff;
+- gradual tension;
+- story-led;
+- delayed reveal/anticipation.
+
+### Reward style
+- praise;
+- teasing;
+- acknowledgement;
+- reveal;
+- surprise;
+- progression;
+- collectible.
+
+### Novelty
+- known-fit preference;
+- adjacent exploration affinity;
+- `Surprise Me` affinity.
+
+### Repeatability
+- repeat comfort;
+- occasional preference;
+- exploration/one-off curiosity.
+
+### Narrative / continuity
+- standalone;
+- callback;
+- episode;
+- branching;
+- continuity/history affinity.
+
+### Visual style
+- editorial direction;
+- crop/detail affinity;
+- visual pacing;
+- object prominence.
+
+Do not add dimensions merely because they are easy to log. Add them when they create measurable product value.
 
 ## Core record
 
@@ -29,89 +154,139 @@ Conceptual shape:
 ```yaml
 preference_id: pref_123
 user_id: user_123
-category: interaction_style
-value: teasing
+category: pace
+value: gradual
 context:
-  surface: private_chat
-  modality: text
-  scenario: null
+  surface: private_experience
+  desire_route: D03
+  modality: voice
 source:
-  type: repeated_choices
+  type: explicit_choice
   source_refs:
-    - discovery_session_4
-explicit: false
-confidence: medium
-stability: emerging
-sensitivity: normal
+    - session_42
+explicit: true
+confidence: high
+stability: contextual
+sensitivity: personal
 consent_scope: personalization
 created_at: 2026-09-02T00:00:00Z
 last_observed_at: 2026-09-02T00:00:00Z
-last_confirmed_at: null
+last_confirmed_at: 2026-09-02T00:00:00Z
 contradiction_count: 0
 status: active
 ```
 
-The exact storage schema remains implementation-dependent.
+The storage schema remains implementation-dependent.
+
+## Session State is not durable Preference Graph
+
+Current desire is temporal.
+
+A session may contain:
+
+```yaml
+session_state:
+  current_intent: authority
+  current_route: D03
+  current_intensity: suggestive
+  current_mode: voice_first
+  current_open_loop: waiting_for_reply
+  current_consent_scope:
+    - adult_mode
+    - authority_roleplay
+    - voice_v2
+```
+
+This is ephemeral by default.
+
+Do not automatically persist:
+- current arousal;
+- current desire route;
+- current intensity;
+- one-time novelty;
+- one surprising reaction.
+
+Only filtered candidate signals may be promoted into Preference Graph.
+
+## Candidate → durable promotion
+
+Possible promotion triggers:
+
+1. explicit user preference/confirmation;
+2. explicit correction/dislike;
+3. repeated consistent behavior across relevant contexts;
+4. replay/sequel request;
+5. repeated completion + explicit fit signal;
+6. later confirmation of a previously surprising response.
+
+Weak evidence:
+- one click;
+- one watch intent;
+- one Capricho contribution intent;
+- one accidental choice;
+- one high-intensity session.
+
+A weak signal may remain ephemeral or low-confidence rather than becoming durable memory.
+
+## Signal hierarchy
+
+Strongest signals:
+
+1. explicit correction;
+2. explicit preference;
+3. repeated recent behavior;
+4. completed experiences;
+5. replay;
+6. sequel/continuation request.
+
+Negative evidence is first-class:
+- `wrong`;
+- `not this`;
+- `not today`;
+- `too much`;
+- `too soft`;
+- `boring`;
+- repeated skip.
 
 ## Explicit vs inferred
 
 ### Explicit
-The user directly states or confirms a preference.
 
-Examples:
-- “prefiero audio”;
-- “no me gusta eso”;
-- “háblame más directo”;
-- “solo en historias”.
+The user directly states, selects or confirms a preference.
 
-Explicit records normally receive higher confidence, subject to recency and later correction.
+Explicit does not mean permanent. Context and recency still matter.
 
 ### Inferred
-Derived from repeated behavior such as:
-- A/B choices;
-- ranking;
-- story branches;
-- repeated format consumption;
-- accepted recommendations.
 
-Inferred records remain hypotheses. Mara should use confidence-aware language rather than treating them as identity facts.
+Derived from repeated consent-compatible behavior.
 
-## Context model
+Inferred records remain hypotheses.
 
-Preferences can vary by:
-- surface;
-- modality;
-- narrative vs conversation;
-- public vs private;
-- adult-mode context;
-- intensity band;
-- time/moment;
-- experience family.
+Mara should use confidence-aware behavior and allow correction rather than declaring identity facts.
 
-Example: a user may prefer teasing in text, directness in voice, elegant visual aesthetics and surprise in story branches. Do not collapse these into one global boolean.
-
-## Confidence model
+## Confidence
 
 ### Low
 - one inferred signal;
-- old/weak evidence;
-- meaningful contradiction.
+- old evidence;
+- meaningful contradiction;
+- surprising one-off response.
 
 ### Medium
 - several consistent signals;
 - repeated recent behavior;
-- one explicit but contextual statement.
+- one explicit but strongly contextual statement.
 
 ### High
 - explicit recent confirmation;
 - repeated behavior plus confirmation;
-- durable preference with no meaningful contradiction.
+- durable/context-stable pattern with little contradiction.
 
 Confidence must be reducible.
 
-## Stability and decay
+## Stability and repeatability
 
-Candidate states:
+Candidate stability states:
 - `experimental`;
 - `emerging`;
 - `stable`;
@@ -120,43 +295,96 @@ Candidate states:
 - `rejected`;
 - `expired`.
 
-Decay can depend on time since observation, confidence, explicit/inferred source, contradiction count, context stability and sensitivity.
+Separately, a preference may be:
+- `repeat_comfort`;
+- `occasional`;
+- `exploration`.
 
-P0 should use simple rules. Adult-sensitive inferred preferences receive conservative retention and re-confirmation treatment.
+Do not overlearn something the user enjoyed once as novelty.
 
-## Contradictions and corrections
+## Contradiction and correction
 
-Contradiction is expected and useful.
+Contradiction is expected.
 
-When new behavior conflicts with an existing preference:
-1. record the new signal;
-2. reduce confidence if appropriate;
-3. inspect context differences;
-4. avoid immediately deleting the older record;
-5. if repeated, mark `changing` or split by context;
-6. if explicitly corrected, update/reject the old preference.
+When new behavior conflicts:
 
-Correction types:
+1. record the candidate signal;
+2. inspect whether context changed;
+3. reduce confidence where appropriate;
+4. split by context if evidence supports it;
+5. mark `changing` after repeated contradiction;
+6. honor explicit correction immediately for future routing.
+
+Correction types may include:
 - `wrong`;
 - `contextual`;
 - `changed`;
 - `temporary_override`;
+- `not_today`;
 - `reject`;
 - `reset`.
 
-Mara may surface contradiction playfully — “Eso sí que no te lo tenía” — but should not pressure the user to explain.
+Mara may notice contradiction playfully but should not psychoanalyze why it exists.
+
+## Unexpected Attraction
+
+A surprising response can become a candidate dimension.
+
+Conceptual signal:
+
+```yaml
+category: object_focus
+value: candidate_X
+source:
+  type: explicit_surprise_reaction
+explicit: true
+confidence: low
+stability: experimental
+sensitivity: adult_sensitive
+```
+
+One hit does not justify:
+- orientation inference;
+- permanent fetish identity;
+- shame/closeted labels;
+- psychological explanation.
+
+> **OBSERVE THE RESPONSE. DO NOT INVENT THE IDENTITY.**
+
+Adult content involving trans adults can be an eligible adult content dimension. Never infer orientation from one reaction and never frame trans identity itself as shameful/taboo.
 
 ## Sensitivity classes
 
 Suggested classes:
-- `normal` — style, format, humor, pacing;
+- `normal` — format, humor, generic pacing/style;
 - `personal` — relationship/interaction preferences;
-- `adult_sensitive` — adult fantasy/intensity preferences;
+- `adult_sensitive` — adult fantasy/intensity/object/roleplay preference;
 - `prohibited_inference` — never create.
 
-`adult_sensitive` records require stricter consent, visibility, retention and analytics separation.
+Adult-sensitive records require stricter:
+- consent;
+- visibility;
+- retention;
+- deletion/reset;
+- analytics separation;
+- access control/security design.
 
-## Prohibited preference nodes
+## Persistent adult-memory gate
+
+Persistent adult preference memory requires:
+
+- explicit compatible consent;
+- purpose definition;
+- privacy review;
+- deletion/reset path;
+- correction path;
+- retention/decay policy;
+- security/encryption design;
+- analytics boundary.
+
+Do not default to raw transcript storage when structured lower-sensitivity evidence is sufficient.
+
+## Prohibited nodes
 
 Never create nodes for:
 - loneliness;
@@ -168,48 +396,52 @@ Never create nodes for:
 - emotional dependency;
 - compulsive spending;
 - sexual compulsion;
-- inferred orientation from indirect choices;
+- inferred sexual orientation from indirect choices;
+- hidden `maximum extractable willingness to pay`;
 - other vulnerability scores intended for monetization.
 
 ## Source provenance
 
-Every inferred preference should be explainable internally through source references such as:
+Every inferred record should retain enough provenance to explain why it exists:
+- explicit statement/choice;
 - discovery session;
-- story branch;
-- explicit statement;
-- correction;
+- Fantasy branch;
+- ritual result;
+- external-media reaction;
 - repeated modality choice;
-- experience completion/purchase where appropriate.
+- correction;
+- replay/continuation;
+- World Asset interaction.
 
-Do not store raw intimate content if a structured lower-sensitivity signal is sufficient.
+Prefer opaque/source IDs to raw intimate content.
 
-## User Desire Vector projection
+## Temporary User Desire Vector
 
-The Preference Graph does not permanently store a second `user_desire_profile` object.
+The Preference Graph does not store a second permanent `user_desire_profile`.
 
-When the Fantasy Compiler needs recommendations, create a **temporary decision projection** containing only relevant dimensions.
+For a routing/compiler decision, expose only the smallest relevant projection.
 
 Example:
 
 ```yaml
 user_desire_vector:
-  energy:
-    confident: high
-    selective: medium
-  interaction:
-    teasing: high
-  format:
+  dynamic:
+    authority: high
+  modality:
     voice: high
-    visual: medium
+  pace:
+    gradual: medium
+  control_direction:
+    mara_leads: high
   narrative:
     continuation: high
   novelty:
-    preference: medium
-  context:
-    work: emerging
+    adjacent: medium
+  repeatability:
+    repeat_comfort: medium
 ```
 
-Every projected value inherits:
+Every value inherits:
 - confidence;
 - recency;
 - context;
@@ -218,177 +450,171 @@ Every projected value inherits:
 - consent;
 - correction/rejection state.
 
-The compiler must not treat projection fields as permanent identity labels.
+## Desire Routing handoff
+
+Routing uses the graph as one input, not the only input.
+
+Explicit current-session intent can override historical ranking.
+
+The graph may inform:
+- lane relevance;
+- modality;
+- pace;
+- control direction;
+- voice ceiling;
+- novelty;
+- Capricho ordering;
+- ritual/reward fit;
+- continuation.
+
+The router returns a temporary `surface_plan`; it does not mutate the whole graph.
 
 ## Fantasy Compiler handoff
 
-The Fantasy Compiler may use the graph to compare a temporary User Desire Vector with eligible Experience Vectors.
+The compiler can consume the temporary desire vector and compare it with eligible Experience Vectors.
 
-The graph can inform:
-- character energy fit;
-- interaction-style fit;
-- format affinity;
-- context affinity;
-- narrative preference;
-- personalization depth;
+Use the graph for:
+- preference fit;
+- explicit dislikes/boundaries;
+- continuity fit;
+- modality fit;
+- pace/control fit;
 - novelty/exploration preference;
-- explicit dislikes/boundaries.
+- World Asset/object fit;
+- reward/ritual fit.
 
-The graph does **not** provide:
-- vulnerability scores;
-- maximum willingness-to-pay estimates;
-- relationship closeness derived from spend;
-- permission to bypass adult-mode or safety requirements.
+The graph cannot bypass eligibility or consent.
 
-## Novelty preference
+## External Media handoff
 
-A low-sensitivity interaction preference may represent how much novelty the user appears to enjoy:
-- `low`;
-- `medium`;
-- `high`.
+External-media reactions may produce candidates such as:
+- dynamic fit;
+- pace;
+- dialogue/voice importance;
+- visual/object emphasis;
+- intensity correction;
+- `surprised_me`.
 
-It should come from harmless interaction behavior and remain confidence/context-aware.
+Do not persist raw title/URL when an opaque media candidate ID plus structured reaction is sufficient.
 
-Do not label it as impulsivity, personality type or psychological need.
+## Ritual handoff
 
-Use it only to choose between known-fit, adjacent and `Surprise Me` candidates.
+Possible contextual dimensions:
+- challenge affinity;
+- anticipation affinity;
+- Mara-leads affinity;
+- ordinary-dare tolerance;
+- reward preference;
+- ritual frequency preference.
 
-## Reward / agency interaction preferences
-
-Only after repeated, consent-compatible evidence, the graph may represent contextual preferences such as:
-- `praise_affinity`;
-- `teasing_reward_affinity`;
-- `challenge_affinity`;
-- `control_affinity`;
-- `surprise_affinity`;
-- `collector_affinity`.
-
-These describe **how an experience works best**, not who the user “is”.
-
-Example:
-
-```yaml
-category: reward_style
-value: praise
-context:
-  surface: private_experience
-  dynamic: mara_leads
-confidence: medium
-stability: contextual
-sensitivity: personal
-```
-
-Rules:
-- one “Good boy” reaction or one purchase does not justify a durable node;
-- reward affinity must be correctable and decayable;
-- stronger adult-coded praise/dominance remains subject to adult-mode/consent rules;
-- reward preference does not authorize payment-conditioned affection;
-- collector affinity may rank collections/owned-history surfaces but not create fake scarcity or pressure.
+Do not create `obedience score` or `self-control score`.
 
 ## Saturation feedback
 
-The graph may receive structured update candidates when repeated experiences stop performing, such as:
-- explicit “otra cosa”;
-- repeated skips;
-- repeated correction/rejection.
+Saturation belongs primarily to experience history/compiler ranking.
 
-Do not persist a psychological `boredom_score`. Saturation belongs primarily to the Fantasy Compiler/experience-history layer; only durable preference changes should flow back into the graph.
+Signals may include:
+- repeated family;
+- repeated dynamic;
+- repeated voice band;
+- repeated object;
+- repeated reward;
+- skips/corrections.
+
+Do not persist a psychological boredom diagnosis.
+
+Only durable preference changes should flow back into Preference Graph.
 
 ## Commercial separation
 
 Preference Graph may influence relevance:
-- which SKU/experience is highlighted;
-- modality shown first;
-- story continuation priority;
-- known-fit vs explore recommendation;
-- eligible reward presentation/cadence;
-- collection or agency surface ordering.
+- eligible SKU ordering;
+- modality;
+- continuation;
+- product ladder;
+- Capricho ranking;
+- collection/World Asset emphasis.
 
 It must not be used to:
-- set vulnerability-based personalized prices;
+- raise equivalent-SKU price because of adult preference;
 - infer financial/emotional weakness;
-- increase emotional pressure;
-- alter baseline respect/affection;
-- hide cheaper equivalent products from vulnerable users;
-- change relational tone because a purchase was declined.
+- increase pressure from arousal/loneliness;
+- alter baseline warmth because payment was declined;
+- hide cheaper equivalent products from a vulnerable user.
 
-Pricing remains governed by transparent SKU/cohort rules.
+> **SERVE THE MOMENT; NEVER EXPLOIT THE STATE.**
 
 ## Context Builder handoff
 
-Retrieve only the smallest useful preference subset.
+Retrieve only the smallest useful slice.
 
 Example:
 
 ```text
 RELEVANT PREFERENCES
-- voice: high confidence, explicitly confirmed
-- teasing: medium confidence, private text only
-- praise: medium confidence, Mara-led experiences only
+- authority dynamic: high confidence, adult private context
+- voice: high confidence
+- gradual pace: medium confidence
+- Mara leads: medium confidence
 - surprise: emerging
-- do not use: X (explicit rejection)
+- explicit rejection: candidate X
 ```
 
-Do not dump the whole graph into every prompt.
+Do not dump the entire adult graph into every prompt.
 
-## Fantasy Experience handoff
+## User control
 
-The Fantasy Experience Engine can consume the selected/compiled configuration to determine:
-- eligible story family;
-- branch ordering;
-- voice vs visual emphasis;
-- intensity defaults within consent;
-- personalization level;
-- explore/serendipity candidate;
-- reward-style eligibility where the experience includes one.
-
-Adult eligibility/consent always overrides preference relevance.
-
-## User-visible Desire Profile
-
-A future user-facing summary may translate graph data into playful, editable language.
-
-Example:
-
-**Por lo que has ido eligiendo**
-- Voz: alta afinidad
-- Storytelling: alta
-- Sorpresa: media
-- Tensión: alta
-
-Rules:
-- no diagnosis;
-- no hidden sensitive inference;
-- allow correction/reset;
-- private by default.
+Future user-facing controls should allow:
+- view/edit appropriate preference summaries;
+- `wrong`;
+- `not today`;
+- reset category;
+- reduce intensity;
+- disable persistent adult memory;
+- delete/reset adult-sensitive history where applicable.
 
 ## P0 representation
 
-Before persistent infrastructure, use a lightweight table/JSON object with:
+Before persistent infrastructure, use session/local fixtures with:
 - category;
 - value;
 - context;
 - explicit/inferred;
 - confidence;
-- last_seen;
-- status;
-- correction notes;
+- last seen;
+- stability/repeatability;
+- correction;
 - sensitivity;
 - consent scope.
 
-This is sufficient to test whether structured preference memory materially improves product experience and compiled recommendations.
+Synthetic data is enough to test product value.
 
 ## Quality metrics
 
-- Preference Confidence distribution
-- Preference Stability
-- Surprise Rate
-- Mara Guess Accuracy
-- Correction Rate
-- Correction Acceptance
-- Preference decay/expiry rate
-- Personalization Lift
-- reward-style acceptance/correction where tested
-- negative/creepy reaction rate
+Track where implemented:
+- prediction hit;
+- correction rate;
+- correction acceptance;
+- preference stability/decay;
+- modality fit;
+- pace fit;
+- surprise acceptance;
+- replay/continuation;
+- Personalization Lift;
+- negative/creepy reaction.
 
 These are product-quality measures, not psychological scores.
+
+## Permanent principles
+
+> **PREFERENCE GRAPH = COMPONENTS, NOT IDENTITY TAGS.**
+
+> **CURRENT SESSION STATE IS EPHEMERAL BY DEFAULT.**
+
+> **ONE HIT IS A CANDIDATE, NOT A DURABLE TRUTH.**
+
+> **NEGATIVE SIGNALS ARE FIRST-CLASS PRODUCT DATA.**
+
+> **PERSISTENT ADULT MEMORY REQUIRES CONSENT + PRIVACY + CORRECTION + DELETION.**
+
+> **PREFERENCE RELEVANCE MAY ROUTE PRODUCTS; IT MAY NOT ROUTE EXPLOITATION.**
