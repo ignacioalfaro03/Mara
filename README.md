@@ -1,6 +1,6 @@
 # Mara Vera
 
-Mara Vera is an AI-native adult relationship entertainment business designed to turn attention into recurring paid digital relationships through **desire, content, interaction, voice, personalization, narrative and continuity**.
+Mara Vera is an AI-native adult relationship entertainment business designed to turn attention into recurring paid digital relationships through **desire, content, interaction, voice, playable personalization, narrative and continuity**.
 
 ## Core thesis
 
@@ -8,23 +8,27 @@ Mara Vera is not just an AI influencer, not just a chatbot and not a porn bot. T
 
 System-level progression:
 
-**Attention → Desire → Interaction → Personalization → Continuity → Relationship → Commerce → Repeat Value**
+**Attention → Desire → Interaction → Playable Discovery → Personalization → Continuity → Relationship → Commerce → Repeat Value**
 
 Commercial validation loop:
 
-**Social discovery → first-party web → premium intent → first payment → second payment → repeat spend → retained relationship**
+**Social discovery → first-party web → playful interaction → premium intent → first payment → second payment → repeat spend → retained relationship**
 
 The core user value is:
 
 > **Mara did something for me.**
 
+A second defining product loop is:
+
+> **Play with Mara and she'll start figuring you out.**
+
 The durable character system is:
 
-**identity + voice + personality + persistent life + story continuity + dual memory + relationship**
+**identity + voice + personality + persistent life + story continuity + dual memory + preference graph + relationship**
 
-Mara should not feel frozen between interactions. She has a coherent fictional life — work, routines, friends, plans, ordinary events and evolving history — while separately remembering useful, consented context from each user relationship when that capability is enabled.
+Mara should not feel frozen between interactions. She has a coherent fictional life — work, routines, friends, plans, ordinary events and evolving history — while separately remembering useful, consented context and structured preference signals from each user relationship when that capability is enabled.
 
-The underlying image, video, voice and realtime models are replaceable providers. Mara's identity, canonical voice, history and continuity are the assets.
+The underlying image, video, voice, recommendation and realtime models are replaceable providers. Mara's identity, canonical voice, history, interaction fit and continuity are the assets.
 
 The business is designed around monetization, retention, unit economics and scalable distribution while maintaining strong legal, payment, platform, safety and privacy guardrails.
 
@@ -36,21 +40,26 @@ The business is designed around monetization, retention, unit economics and scal
 - Mara is clearly adult; adult experiences are adults-only.
 - Sexuality is a core character/product dimension, not a superficial add-on.
 - Consent before intensity.
-- Monetize desire, not vulnerability.
+- Playable personalization should feel like entertainment, not a questionnaire or psychological test.
+- Preference inference is confidence-aware, contextual and correctable.
+- No fake psychology or claims that Mara literally reads the subconscious.
+- Monetize desire and relevance, not vulnerability.
 - Relationship closeness and commercial/spending state remain separate.
+- Preference relevance can change recommendations, not vulnerability-based pricing.
 - Compliance by design.
 - Do not overbuild before revenue validation.
 - Keep recurring OPEX approximately $0 until traction and a measured bottleneck justify spend.
 - Mara Vera is original synthetic IP.
 - Mara's production voice must be original/licensed, not an unauthorized clone of a real person.
 - Separate Mara Self Memory from User Relationship Memory.
-- Minimize data collection and persistent memory.
+- Preference Graph is part of User Relationship Memory, not a parallel memory stack.
+- Minimize data collection and persistent memory, especially adult-sensitive preferences.
 - Avoid provider lock-in: models are replaceable; canonical identity is not.
 - GitHub is the source of truth.
 
 ## The web is core product
 
-The Mara Vera website is not a secondary landing page. It is the owned hub for **brand + conversion + analytics + compliance**, and later for account, catalog, entitlements, personalization, Relationship Memory and first-party commerce.
+The Mara Vera website is not a secondary landing page. It is the owned hub for **brand + conversion + playable discovery + analytics + compliance**, and later for account, catalog, entitlements, personalization, Relationship Memory and first-party commerce.
 
 The Web MVP is tracked separately from the product foundation so implementation can iterate without reopening core product decisions.
 
@@ -65,6 +74,9 @@ The Web MVP is tracked separately from the product foundation so implementation 
 - [Adult Compliance](docs/foundation/adult-compliance.md)
 - [30-day launch roadmap](docs/foundation/roadmap.md)
 - [Traction → Investment Gate](docs/foundation/traction-investment-gate.md)
+
+### Product / UX
+- [Playable Personalization](docs/product/playable-personalization.md)
 
 ### Character
 - [Character Bible](docs/character/character-bible.md)
@@ -88,8 +100,10 @@ The Web MVP is tracked separately from the product foundation so implementation 
 ### Architecture
 - [Life Engine](docs/architecture/life-engine.md)
 - [Dual Memory System](docs/architecture/memory-system.md)
-- [Context Builder](docs/architecture/context-builder.md)
 - [Relationship Memory](docs/architecture/relationship-memory.md)
+- [Preference Graph](docs/architecture/preference-graph.md)
+- [Desire Discovery Engine](docs/architecture/desire-discovery-engine.md)
+- [Context Builder](docs/architecture/context-builder.md)
 - [Relationship Engine — post-validation](docs/architecture/relationship-engine.md)
 - [Fantasy Experience Engine](docs/architecture/fantasy-experience-engine.md)
 
@@ -97,15 +111,35 @@ The Web MVP is tracked separately from the product foundation so implementation 
 
 The launch stack should remain manual-first and free-tier-first.
 
-### Character continuity
+### Character continuity + preference fit
 
-At launch, Life/Memory can be curated with lightweight Markdown/JSON/spreadsheets rather than always-on agents.
+At launch, Life/Memory/Preference Graph can be curated with lightweight Markdown/JSON/spreadsheets rather than always-on agents.
 
 Core flow:
 
-**Life State → relevant Self/User Memory → Context Pack → text/voice/content → filtered memory/event update**
+**Life State + relevant Self/User Memory + Preference Graph slice → Context Pack → text/voice/content/game → filtered memory/preference/event update**
 
-Manual/lightweight callbacks and narrative continuations are valid launch tests. Persistent Relationship Memory infrastructure is not required until returning-user evidence proves the need.
+Manual/lightweight predictions, corrections, callbacks, narrative continuations and preference-aware recommendations are valid launch tests. Persistent Relationship Memory/recommender infrastructure is not required until returning-user evidence proves the need.
+
+### Playable Personalization
+
+The product should learn through entertaining choices rather than static profiling.
+
+P0 formats include:
+- 3-choice onboarding;
+- Fast Five;
+- Mara predictions (`I Bet You`);
+- Guess Me;
+- ranking / A-B choices;
+- correction/reveal loops;
+- `Build It` co-creation;
+- `Surprise Me` exploration.
+
+The visible loop is:
+
+**Mara asks/challenges → user chooses → Mara reacts → preference candidate updates → Mara predicts/adapts → user confirms or surprises her → next experience becomes more relevant**.
+
+Do not claim scientific mind-reading, subconscious diagnosis or psychological profiling.
 
 ### Relationship commerce
 
@@ -113,17 +147,18 @@ Early product tests should prioritize:
 
 1. character/visual desirability;
 2. Mara voice;
-3. meaningful interaction;
-4. lightweight/manual continuity;
-5. low-ticket first purchase;
-6. personalized short audio/message;
-7. first → second purchase;
-8. situation/narrative framing;
-9. continuation/branching;
-10. membership only when repeat usage supports it;
-11. persistent Relationship Engine only after validation.
+3. playable discovery / fun;
+4. meaningful interaction;
+5. lightweight/manual preference fit and continuity;
+6. low-ticket first purchase;
+7. personalized short audio/message;
+8. first → second purchase;
+9. situation/narrative framing;
+10. preference-aware continuation/branching/co-creation;
+11. membership only when repeat usage supports it;
+12. persistent Relationship Engine / Preference Graph only after validation.
 
-The product should avoid flat-catalog commoditization. Fantasy/situation commerce, voice and personalized continuity are strategic hypotheses to validate.
+The product should avoid flat-catalog commoditization. Fantasy/situation commerce, voice, playable discovery and personalized continuity are strategic hypotheses to validate.
 
 ### Production economics
 
@@ -131,7 +166,8 @@ Measure production with:
 - **CPAA — Cost Per Approved Asset**;
 - **TPAA — Time Per Approved Asset**;
 - **Approval Yield — approved assets / generated candidates**;
-- contribution margin per paid product/experience.
+- contribution margin per paid product/experience;
+- operational cost of personalization/discovery where relevant.
 
 For talking-video content, preserve voice continuity through an audio-first workflow:
 
@@ -144,6 +180,15 @@ Paid tools are unlocked only when the [Traction → Investment Gate](docs/founda
 The first purchase proves willingness to pay.
 
 The second purchase is stronger evidence that Mara delivered value worth repeating.
+
+Playable personalization is commercially valuable only if it improves at least one of:
+- activation;
+- return;
+- personalized engagement;
+- first/second purchase;
+- retention;
+- contribution margin;
+- defensibility.
 
 Commercial health should be evaluated through:
 
@@ -159,4 +204,4 @@ No production deploy, real payments/provider activation, paid subscription, exte
 
 ## Current objective
 
-> **Launch Mara Vera within 30 days, validate real willingness to pay and repeat engagement/spend, prove that Mara-specific voice/personalization/continuity creates value, and keep the technology stack extremely lean until the market earns additional investment.**
+> **Launch Mara Vera within 30 days, validate real willingness to pay and repeat engagement/spend, prove that Mara-specific voice + playable personalization + narrative continuity create value, and keep the technology stack extremely lean until the market earns additional investment.**
