@@ -69,7 +69,12 @@ export type MaraEvent =
   | "desire_route_selected"
   | "desire_surface_plan_viewed"
   | "desire_route_fit"
-  | "desire_route_correction";
+  | "desire_route_correction"
+  | "external_media_recommended"
+  | "external_media_watch_intent"
+  | "external_media_return_simulated"
+  | "external_media_reaction"
+  | "external_media_learning_shown";
 
 export type MaraEventRecord = {
   event: MaraEvent;
@@ -134,6 +139,11 @@ const P0_DEV_LOG_EVENTS = new Set<MaraEvent>([
   "desire_surface_plan_viewed",
   "desire_route_fit",
   "desire_route_correction",
+  "external_media_recommended",
+  "external_media_watch_intent",
+  "external_media_return_simulated",
+  "external_media_reaction",
+  "external_media_learning_shown",
 ]);
 
 function appendDevelopmentEvent(record: MaraEventRecord) {
