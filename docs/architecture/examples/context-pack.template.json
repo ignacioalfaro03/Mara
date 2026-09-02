@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "mode": "private_conversation",
+  "mara_identity": {
+    "character_summary_ref": "docs/character/character-bible.md",
+    "voice_summary_ref": "docs/character/voice-bible.md"
+  },
+  "mara_current_state": {
+    "mood": null,
+    "current_context": null,
+    "relevant_open_loops": []
+  },
+  "relevant_mara_memories": [],
+  "user": {
+    "user_id": null,
+    "preferred_name": null,
+    "relationship_stage": "new",
+    "relevant_memories": [],
+    "open_loops": [],
+    "preferred_tone": null,
+    "explicit_boundaries": []
+  },
+  "current_conversation": {
+    "recent_turns": []
+  },
+  "retrieval_metadata": {
+    "memories_considered": 0,
+    "memories_included": 0,
+    "sensitive_candidates_excluded": 0,
+    "low_confidence_candidates_excluded": 0
+  },
+  "post_turn_candidates": {
+    "memory_writes": [],
+    "memory_updates": [],
+    "open_loops_created": [],
+    "open_loops_resolved": [],
+    "mara_life_events_created": []
+  }
+}
