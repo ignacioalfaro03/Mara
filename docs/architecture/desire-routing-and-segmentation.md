@@ -4,471 +4,526 @@ Last reviewed: 2026-09-02
 
 ## Status
 
-Authoritative routing layer for adapting Mara's acquisition, presentation, Caprichos, Fantasy entry and interaction to different user desires **without creating multiple incompatible Maras or a second preference profile**.
+Authoritative routing layer for adapting Mara's acquisition, presentation, Fantasy entry, interaction, Caprichos ordering and commercial next action **without creating multiple Maras or a second preference profile**.
 
-This layer consumes filtered, consent-compatible signals from the existing Preference Graph, Desire Discovery, Context Builder and current-session choices. It then produces a temporary `surface_plan` for the current context.
+Read together with [Desire Operating System Integration Contract](desire-operating-system.md).
 
-It does not own durable memory, pricing, Relationship State or raw adult-sensitive data.
+This layer consumes filtered, consent-compatible signals from:
+
+- Desire Discovery;
+- Preference Graph;
+- current-session explicit intent;
+- correction history;
+- Context Builder / Life State where relevant;
+- novelty/saturation history;
+- active consent and policy eligibility.
+
+It outputs a temporary `surface_plan`.
+
+It does **not** own durable memory, Relationship State, pricing, raw adult-sensitive data, payment state, provider policy or character canon.
 
 ## Core thesis
 
 > **ONE MARA. MANY DESIRE ROUTES.**
 
-Mara's identity, taste, voice, life canon, boundaries and baseline personality remain coherent.
+> **FETISH-LED ACQUISITION. MARA-LED RETENTION.**
 
-What adapts is how that same Mara is framed and which part of her world becomes most relevant first.
+Mara's identity, body, voice identity, life canon, taste, boundaries, values, humor and baseline respect remain coherent.
 
-A user who strongly prefers consensual domination should not receive the same first page, Capricho ordering, fantasy entry or interaction cadence as a user who prefers authority roleplay, romance, taboo fiction, object-focused fetishes or world-building/collector participation.
+The product adapts which side of the same Mara is most relevant **for this moment**.
 
-The product should feel personally relevant before it feels like a catalog.
+The routing question is not:
 
-## Important distinction
+> `What fetish identity is this person?`
 
-Segmentation is not:
+It is:
 
-- `this person IS a findom user`;
-- `this person IS submissive`;
-- `this person IS lonely`;
-- a psychological diagnosis;
-- a vulnerability score;
-- a reason to change equivalent-SKU pricing.
+> **Which eligible combination of desire + modality + pace + control direction + continuity + novelty best fits this session?**
 
-Segmentation is:
+## Route is not identity
 
-> **For this surface and moment, which eligible desire lane is most likely to make Mara feel relevant?**
+Never model:
 
-A user can have several lanes with different confidence and context.
+- `USER = FINDOM GUY`;
+- `USER = SUBMISSIVE`;
+- `USER = FOOT GUY`;
+- `USER = TABOO GUY`;
+- `USER = TRANS PORN GUY`;
+- `USER = LONELY`.
+
+Model reusable dimensions with confidence/context instead.
+
+A single user may have several affinities and a different explicit current-session intent.
+
+Current explicit intent can temporarily outrank durable history without deleting it.
 
 ## Invariant Mara layer
 
 Never segment away:
 
-- Mara's canonical identity;
-- adult age;
-- core physical identity;
-- voice identity;
+- canonical Mara identity;
+- unambiguously adult age;
+- canonical visual/body identity;
+- core voice identity;
 - self-possession;
 - taste;
 - life canon;
 - baseline respect;
-- boundaries/consent;
+- consent/boundaries;
 - AI disclosure;
-- legal/commercial truthfulness.
-
-Mara does not become a different fictional person for each segment.
+- legal/commercial truthfulness;
+- equivalent-SKU pricing rules.
 
 ## Adaptive layer
 
-The routing layer may adapt:
+A `surface_plan` may adapt:
 
 - acquisition creative;
-- landing-page hero framing;
-- visual crop / editorial direction;
-- copy tone;
-- CTA wording;
-- first playable question;
-- Fantasy family ranking;
-- format ranking (voice/image/story/etc.);
-- Mara interaction energy within canonical range;
-- reward style where eligible;
+- landing hero framing;
+- imagery/crop/editorial direction;
+- CTA;
+- first question;
+- first experience;
+- Mara interaction energy within canon;
+- preferred modality;
+- voice intensity ceiling;
+- pace;
+- control direction;
+- novelty mode;
+- Fantasy candidate ranking;
+- ritual/challenge eligibility;
+- reward style;
 - Capricho ordering;
 - World Asset relevance;
-- collection ordering;
-- next-best experience;
-- optional public-safe campaign destination.
+- external-media recommendation eligibility;
+- product ladder ordering;
+- next-best action.
 
-Pricing remains governed by transparent SKU/cohort rules, not hidden individual vulnerability pricing.
+It cannot change:
 
-## Desire lanes
+- core Mara identity;
+- consent rules;
+- policy eligibility;
+- same-SKU price because of inferred sexual/emotional state;
+- true Goal terms/target;
+- baseline affection/respect.
 
-The initial architecture should use a small set of reusable lanes rather than hundreds of fetish labels.
+## Canonical macro-lanes
 
-### 1. Control / Submission
+Keep the initial taxonomy small and composable.
 
-Potential signals:
+### D01 — Control / Submission
+
+Signals may include:
 - Mara leads;
+- structured choice;
 - commands/challenges;
-- praise;
-- selective/light-dominant energy;
-- structured agency surrender where explicitly chosen.
-
-Surface direction:
-- stronger Mara POV;
-- fewer explanatory words;
-- decisive CTAs;
-- voice-first opportunities;
-- challenge/reward cadence.
-
-### 2. Financial Domination Fantasy
-
-This is a **consensual adult fantasy lane**, not permission to exploit real financial vulnerability.
-
-Potential fantasy/product signals:
-- luxury/status symbolism;
-- controlled tribute-themed roleplay;
-- selective, expensive-taste Mara framing;
-- ritual, obedience and status themes;
-- Caprichos with high symbolic relevance.
-
-Commercial boundary:
-
-> **THE FANTASY MAY BE FINDOM. THE PAYMENT SYSTEM MAY NOT BECOME FINANCIAL EXPLOITATION.**
-
-Therefore:
-- equivalent SKUs keep transparent cohort pricing;
-- do not raise prices because a user appears submissive/aroused;
-- do not infer debt tolerance;
-- do not encourage borrowing;
-- do not use actual payment refusal to withdraw affection;
-- do not make relationship warmth proportional to spend;
-- high-value contributions retain explicit confirmation/friction;
-- real Caprichos still follow goal contracts and truthful fulfillment.
-
-Mara can sell a defined findom-themed experience, voice, ritual, collection or fantasy when eligible. That is different from manipulating the user's real finances.
-
-### 3. Authority / Power Roleplay
-
-Examples:
-- boss/employee;
-- trainer/athlete;
-- teacher-like authority only where all characters are clearly adults and provider rules permit;
-- other adult professional/power contexts.
-
-Surface direction:
-- office/editorial visual cues;
-- structured tasks;
-- voice notes;
-- performance/challenge language;
-- authority-driven Fantasy entries.
-
-### 4. Taboo / Forbidden Fiction
-
-Adult fictional taboo themes may exist only when all depicted/roleplayed participants are unambiguously adults, consent rules are satisfied and the actual provider/payment/content policy permits the specific category.
-
-This may include fictional forbidden-relationship framing or adult family-roleplay themes where lawful/provider-permitted.
-
-Do not use minors, age ambiguity, real relatives, non-consensual real-person scenarios or provider-prohibited categories.
-
-Surface direction should remain discreet; sensitive labels should not leak into URLs, notifications, analytics or public profile surfaces.
-
-### 5. Romance / Intimacy / Continuity
-
-Potential signals:
-- voice;
-- callbacks;
-- slow build;
-- affection;
-- daily-life continuity;
-- emotional/narrative relevance.
-
-This lane should monetize richer experiences/continuity without dependency pressure.
-
-### 6. Tease / Voyeur / Visual Tension
-
-Potential signals:
-- visual reveal pacing;
 - anticipation;
-- outfit/lifestyle moments;
-- partial reveal;
-- story/photo sequence.
+- earned reward/praise/teasing.
 
-### 7. Object / Fetish Focus
+Portable expressions:
+- voice;
+- ritual;
+- scenario;
+- reward style;
+- pacing;
+- Capricho framing.
 
-Examples may include:
-- feet;
-- footwear;
-- perfume/sensory focus;
-- lingerie/object focus;
-- consensual pee-play or other eligible niche adult interests.
+### D02 — Financial Domination Fantasy
 
-These are opt-in adult-sensitive preferences and should be routed conservatively.
+Signals may include:
+- luxury;
+- status;
+- money/control symbolism;
+- tribute-themed consensual roleplay;
+- expensive-taste Mara framing.
 
-World Asset Fantasy Affordances are particularly important here: an object can become an active part of an eligible fantasy rather than mere decoration.
+Permanent firewall:
 
-### 8. World Builder / Collector
+> **FINDOM FANTASY DOES NOT AUTHORIZE REAL FINANCIAL EXPLOITATION.**
 
-Potential signals:
+Never derive higher hidden prices, debt pressure, unlimited spend pressure, payment-conditioned affection or financial distress targeting from this lane.
+
+### D03 — Authority / Power
+
+Adult fictional contexts may include:
+- boss/professional authority;
+- instructor/coach-like adult power framing;
+- other controlled adult hierarchies where eligible.
+
+Portable expressions:
+- structured voice;
+- scenario;
+- challenge;
+- clothing/World Asset relevance;
+- reward grammar.
+
+### D04 — Forbidden / Taboo Adult Fiction
+
+Only fictional adult tension that passes:
+- age eligibility;
+- consent;
+- jurisdiction/legal rules;
+- provider policy;
+- platform/channel policy;
+- rights/real-person restrictions.
+
+Do not infer that fictional interest equals desire for illegal real-world behavior.
+
+Sensitive labels stay discreet and opaque in analytics/public metadata.
+
+### D05 — Intimacy / Continuity
+
+Signals may include:
+- remembered moments;
+- callbacks;
+- voice;
+- private history;
+- episode/continuation preference;
+- ordinary-life texture.
+
+Do not convert continuity preference into loneliness/dependency scoring.
+
+### D06 — Object / Fetish Focus
+
+Signals may include eligible interest in:
+- clothing;
+- shoes;
+- lingerie;
+- perfume/sensory objects;
+- other World Assets/body-focus variables where separately consented.
+
+The routing system should learn the underlying reusable object/dynamic variable rather than create a permanent identity tag.
+
+### D07 — World Builder / Collector
+
+Signals may include:
 - Caprichos;
-- completion;
-- badges;
+- Goals;
 - provenance;
+- archive;
+- team/vote participation;
 - collections;
-- voting;
-- helping shape Mara's world.
+- `you helped make this happen` history.
 
-Surface direction:
-- goals/progress/history;
-- World Asset reveals;
-- contributor callbacks;
-- Archive/provenance.
+Public aggregate remains separate from private individual participation.
 
-## Multi-lane model
+### D08 — Exploration / Surprise
 
-Never force a user into one permanent segment.
+Signals may include:
+- explicit `Surprise Me`;
+- high novelty preference;
+- adjacent exploration;
+- unexpected-attraction moments;
+- curiosity about a Mara prediction.
 
-A temporary routing projection can be:
+One surprising hit is a candidate signal, not identity.
 
-```yaml
-desire_route:
-  primary: authority_power
-  secondary:
-    - voice
-    - world_builder
-  explore:
-    - control_submission
-  confidence: medium
-  context: private_evening
-```
+## Fetish portability
 
-Another moment may produce a different route.
+The system should route by reusable underlying variables.
+
+Example: `authority_affinity` can influence:
+
+- scenario ranking;
+- voice style;
+- ritual type;
+- pace;
+- clothing/World Asset relevance;
+- external-media candidate ranking;
+- reward style;
+- product ladder.
+
+Do not implement one isolated authority system per surface.
+
+> **FETISH PORTABILITY = ONE UNDERLYING VARIABLE, MANY ELIGIBLE PRODUCT EXPRESSIONS.**
+
+## What + How + Pace + Control + Repeatability
+
+A route needs more than a desire family.
+
+Model at least:
+
+- `what` — dynamic/scenario/object;
+- `how` — text/voice/image/video/mixed/external-media/ritual;
+- `pace` — fast/gradual/story-led/delayed;
+- `control_direction` — Mara leads/user leads/co-created;
+- `repeatability` — repeat comfort/occasional/exploration;
+- `continuity` — standalone/callback/episode;
+- `novelty` — known-fit/adjacent/surprise;
+- eligible voice intensity ceiling.
+
+This prevents shallow category personalization.
 
 ## Signal hierarchy
 
-Use, in order:
+Use in order:
 
 1. explicit current-session choice;
-2. explicit Preference Graph confirmation;
+2. explicit recent Preference Graph confirmation;
 3. repeated recent behavior;
-4. contextual inferred fit;
+4. grounded contextual fit;
 5. bounded exploration.
 
-Never let one click permanently define a segment.
+Negative signals matter:
+- `wrong`;
+- `not this`;
+- `not today`;
+- `too much`;
+- `boring`;
+- repeated skip.
 
-## First-session discovery
-
-Do not begin with a clinical fetish questionnaire.
-
-Use playful, low-friction choices that reveal intent indirectly but transparently enough for correction.
-
-Example structure:
-
-> What sounds more like your kind of trouble tonight?
-
-- `I want Mara to take control.`
-- `Give me a situation that feels forbidden.`
-- `I want something that feels personal.`
-
-Then progressively refine.
-
-Users can always choose `Surprise me` or correct Mara.
+One click or one contribution is weak evidence.
 
 ## Surface Plan
-
-The router should output a temporary plan rather than mutate the whole product.
 
 Conceptual shape:
 
 ```yaml
 surface_plan:
-  lane: authority_power
+  route_id: D03
+  current_session_intent: authority
   hero_tone: controlled
   visual_direction: office_editorial
-  primary_cta: enter_scenario
   first_experience_family: authority_roleplay
-  preferred_format: voice
+  preferred_modality: voice
+  pace: story_led
+  control_direction: mara_leads
+  repeatability: repeat_comfort
+  novelty_mode: adjacent
+  voice_plan:
+    baseline: V1
+    peak_allowed: V2
+    V3_eligible: false
+  consent_tags:
+    - adult_mode
+    - authority_roleplay
+    - voice_v2
   capricho_order:
     - black_bag_01
-    - car_01
-  reward_style: challenge
+    - camera_01
+  next_best_action: voice_branch
+  expires: end_of_session_or_new_explicit_intent
 ```
 
-This object is ephemeral and derived.
+The object is derived and ephemeral.
 
-## Landing-page personalization
+## Surface Plan expiration
 
-### Anonymous / unknown visitor
+Recompute on:
 
-Use broad Mara brand positioning.
+- new explicit intent;
+- correction;
+- category opt-out;
+- meaningful context shift;
+- session restart;
+- time expiry;
+- saturation change.
 
-Do not guess sensitive sexual interests from external ad-tech data.
-
-### Known consented user
-
-After Mara has enough first-party evidence, the returning experience may reorder:
-- hero module;
-- featured experience;
-- Capricho;
-- voice/story emphasis;
-- collections.
-
-Do not put sensitive lane names in:
-- browser title;
-- push notification;
-- email subject;
-- share-card metadata;
-- public URL slug;
-- generic analytics event names.
-
-Use opaque internal route IDs where needed.
+Do not let yesterday's adult session silently become today's identity.
 
 ## Acquisition routing
 
-Different acquisition creatives may legitimately emphasize different Mara strengths, but all must resolve back to the same canonical Mara.
+Public acquisition can demonstrate specificity while remaining channel-safe.
 
 Examples:
-- control-focused creative → control-oriented first experience;
-- luxury/status creative → eligible financial-domination fantasy entry;
-- office creative → authority roleplay entry;
-- intimacy/voice creative → continuity/voice entry;
-- Caprichos creative → World Builder entry.
+- control creative → D01 entry;
+- luxury/status creative → D02 entry;
+- authority creative → D03 entry;
+- voice/intimacy creative → D05 entry;
+- object/lifestyle creative → D06 entry;
+- Caprichos/world creative → D07 entry;
+- unexpected-attraction/surprise creative → D08 entry.
 
-Do not create fake identities or contradictory backstories for each campaign.
+All paths resolve into the same canonical Mara.
 
-## Caprichos segmentation
+Do not use external ad-tech sexual inference as the basis for first-party adult profiling.
 
-Caprichos should be ranked by desire relevance, not shown identically to everyone.
+## Public safe / private deep
+
+Public surfaces can signal:
+- confidence;
+- dominance;
+- mystery;
+- luxury;
+- authority;
+- voice;
+- teasing;
+- exclusivity;
+- personality.
+
+Deep adult personalization belongs first-party after age/consent eligibility.
+
+## Caprichos routing
+
+Same Goals. Different ordering.
 
 Examples:
-
-- luxury/status / findom-fantasy affinity → fashion, jewelry, car or premium World Assets may rank higher;
-- object/fetish affinity → eligible fashion/accessory World Assets with relevant Fantasy Affordances may rank higher;
-- World Builder affinity → provenance, completion and community consequence rank higher;
-- authority lane → assets usable in office/power scenarios may rank higher;
-- intimacy lane → assets with stronger shared-history/callback value may rank higher.
+- D02 → car/jewelry/bag may rank higher;
+- D06 → shoes/outfit/bag/accessories may rank higher;
+- D07 → camera/set/vehicle/provenance may rank higher;
+- D05 → assets with strong callbacks/history may rank higher;
+- D03 → assets with scenario utility may rank higher.
 
 Rules:
-- the underlying Goal target and terms do not change by user lane;
-- no fake scarcity per segment;
-- no hidden higher target because a segment spends more;
-- ranking may personalize; truth may not.
+- no hidden target changes;
+- no fake scarcity;
+- no segment-specific fulfillment promise;
+- no spend-weighted affection;
+- contribution does not imply consent to every fantasy affordance.
 
-## Interaction segmentation
+## External media routing
 
-Same Mara, different eligible expression.
+The router may choose among:
 
-Control-preferring user:
-- Mara leads more often;
-- fewer permissionless over-explanations;
-- more challenges/rewards within consent.
+```text
+conversation
+voice
+mara_owned_experience
+ritual
+approved_external_media
+capricho_world_interaction
+paid_continuation
+nothing_commercial
+```
 
-Authority-roleplay user:
-- scenario framing and structured tasks rank higher.
+External adult media is not mandatory for adult sessions.
 
-Intimacy user:
-- callbacks, voice and continuity rank higher.
+Use it when discovery value is high and the return loop is strong.
 
-Object/fetish user:
-- eligible World Assets become active Fantasy objects more often.
+Do not send the user away when Mara-specific relationship/continuity value is clearly higher.
 
-World Builder user:
-- Mara references goals, provenance and `you helped make this happen` moments more often.
+## Unexpected attraction
+
+If the user explicitly reports a surprising response:
+
+**candidate → reaction → surprise → Mara notices → correction/confirmation → Preference Graph candidate → later retest**.
+
+Never infer orientation or a permanent sexual identity from one behavior.
+
+Adult content involving trans adults is a normal eligible content dimension where lawful/consensual/provider-compatible; trans identity itself must not be framed as shameful/taboo.
+
+## Session rhythm handoff
+
+The route can propose a rhythm plan:
+
+**ENTRY → READ MOMENT → PLAY → BUILD TENSION → SURPRISE → OPTIONAL PEAK → PAYOFF → NORMALIZE/CONTINUE → OPEN LOOP**.
+
+Not every session uses every step.
+
+High-intensity and commercial moments both consume attention budget.
+
+## Voice handoff
+
+Routing may define a temporary performance range:
+
+- V0 natural presence;
+- V1 flirty;
+- V2 seductive;
+- V3 rare high-intensity intimate performance.
+
+A route can change the ceiling, not Mara's canonical voice identity.
+
+V3 should remain rare because repetition reduces value.
 
 ## Commerce segmentation
 
-Segment relevance may determine **which eligible product** is highlighted first.
+Routing may determine:
+- which eligible SKU appears first;
+- which modality/product ladder is most relevant;
+- whether the best next action is no offer.
 
-Examples:
-- voice lover → voice continuation;
-- agency/control lover → branching/control experience;
-- collector → collection/ownership surface;
-- World Builder → Capricho contribution surface;
-- findom-fantasy lane → defined consensual findom-themed experience/ritual SKU where permitted.
+It must not determine:
+- a hidden higher price because the user appears aroused/submissive/lonely;
+- financial pressure;
+- payment-conditioned warmth;
+- fake scarcity.
 
-It must not determine a hidden individualized price for the same equivalent SKU.
+Permanent rule:
 
-## Findom-specific commercial firewall
+> **SERVE THE MOMENT; NEVER EXPLOIT THE STATE.**
 
-Because financial domination intentionally eroticizes money/control, it requires a stronger separation between fantasy and real commercial pressure.
+## Privacy / sensitive routing
 
-Maintain two records:
+Adult desire lanes are private/sensitive product data.
 
-```text
-fantasy_preference: financial_domination
-```
+Do not expose raw labels in:
+- browser title;
+- public URL;
+- email subject;
+- push notification;
+- share card;
+- public profile;
+- generic analytics;
+- Caprichos community layer.
 
-and separately:
+Use opaque IDs where a generic analytics event needs routing metadata.
 
-```text
-commercial_state: ordinary transparent commerce
-```
+## Correction UX
 
-Never derive:
+Mara should accept:
+- `wrong`;
+- `not this`;
+- `less intense`;
+- `something else`;
+- `not today`;
+- route reset.
 
-```text
-financial_domination_preference → higher willingness_to_pay → personalized higher price/pressure
-```
+No relational punishment.
 
-The fantasy can be intense. The commercial contract must remain clear.
+## P0
 
-## Privacy / sensitive segmentation
+P0 should use deterministic fixtures and session/local state only.
 
-Sexual desire lanes are `adult_sensitive`.
+`/experience/segment-lab` should demonstrate eight macro-lanes across:
 
-Store only structured signals necessary for personalization.
+1. hero/entry;
+2. first experience;
+3. modality;
+4. pace;
+5. control direction;
+6. voice budget;
+7. session rhythm;
+8. Caprichos ordering;
+9. product ladder;
+10. privacy/correction.
 
-Do not send raw lane labels to generic third-party analytics.
-
-Do not expose them publicly.
-
-Do not use them for ad retargeting without an explicit future privacy/legal review.
-
-## Correction
-
-Mara should make segmentation feel fluid.
-
-Examples:
-- `Eso no era lo tuyo. Cambio de dirección.`
-- `Ok, esto sí te movió más.`
-
-The user must be able to reject, correct or reset adult-sensitive routing.
-
-## Segment × Surface Matrix
-
-P0 should explicitly test that segmentation changes more than chat copy.
-
-| Surface | What can adapt |
-| --- | --- |
-| Home/entry | hero framing, visual direction, CTA |
-| First Living Experience | first choice set, Mara energy, scenario family |
-| Fantasy Compiler | candidate eligibility/ranking |
-| Voice | tone/cadence within canonical Mara |
-| Caprichos | ordering, featured World Asset, payoff framing |
-| Collections | ordering and emphasis |
-| Commerce | eligible SKU highlighted first |
-| My History | relevant callbacks |
-| Return experience | next-best route |
+Use synthetic data. Do not persist real sexual profiles merely because fixtures exist.
 
 ## Metrics
 
-Measure per lane/surface:
-- entry → experience start;
-- experience completion;
-- Mara Guess Accuracy;
-- correction/rejection;
+Measure where implemented:
+- route selected;
+- perceived route fit;
+- correction;
+- same-Mara coherence;
+- modality fit;
+- pace fit;
+- voice/intensity fit;
+- ritual participation;
+- external-media return;
+- Capricho relevance;
 - premium intent;
-- contribution intent;
 - post-offer continuation;
-- return rate;
-- second-purchase potential;
+- return;
 - negative/creepy reaction.
 
-Revenue can be compared by lane, but do not optimize a sensitive lane solely for maximum extraction.
-
-## P0 recommendation
-
-Do not build a full personalization backend.
-
-Create a deterministic DEV routing fixture with 4–5 representative lanes and show how the same Mara changes across:
-1. hero/entry;
-2. first experience;
-3. featured Capricho;
-4. interaction tone;
-5. commercial surface.
-
-The goal is to prove:
-
-> **segmentation materially improves relevance without fracturing Mara's identity.**
+Revenue may be compared by route, but a sensitive route must not be optimized solely for extraction.
 
 ## Permanent principles
 
 > **ONE MARA. MANY DESIRE ROUTES.**
 
-> **SEGMENT THE EXPERIENCE, NOT MARA'S CORE IDENTITY.**
+> **FETISH-LED ACQUISITION. MARA-LED RETENTION.**
+
+> **FETISH = COMPOSITION, NOT IDENTITY.**
+
+> **CURRENT SESSION INTENT CAN OVERRIDE HISTORY.**
 
 > **ROUTE BY DESIRE; NEVER PRICE OR PRESSURE BY VULNERABILITY.**
 
-> **SENSITIVE SEGMENTS ARE PRIVATE, CORRECTABLE AND CONTEXTUAL.**
+> **SENSITIVE ROUTES ARE PRIVATE, CORRECTABLE AND TEMPORAL.**
 
-> **CAPRICHOS MAY BE RANKED BY FIT; THEIR TRUE TERMS DO NOT CHANGE BY SEGMENT.**
+> **CAPRICHOS MAY BE RANKED BY FIT; TRUE TERMS DO NOT CHANGE BY SEGMENT.**
 
-> **THE FANTASY MAY BE FINANCIAL DOMINATION. THE REAL COMMERCE MUST REMAIN TRANSPARENT AND VOLUNTARY.**
+> **THE FANTASY MAY BE FINANCIAL DOMINATION. REAL COMMERCE MUST REMAIN TRANSPARENT AND VOLUNTARY.**
