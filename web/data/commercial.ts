@@ -57,6 +57,23 @@ export const offers: OfferDefinition[] = [
     nextOfferId: "prototype_custom_slot_01",
   },
   {
+    id: "voice_short_continue_01",
+    sourceExperienceId: "voice_short_01",
+    moment: "curiosity",
+    type: "voice_upgrade",
+    maraLine: "Si sigo esto, lo sigo por voz. Escrito pierde la mitad.",
+    ctaLabel: "Quiero la continuación por voz",
+    scope: "Voice continuation P0. Intención solamente; no existe cobro activo.",
+    pricingState: "hypothesis",
+    availability: {
+      type: "always_available",
+      ownershipAfterPurchase: "permanent",
+    },
+    rewardStyle: "teasing",
+    rewardLine: "Ya. Te dije que escrito perdía la gracia.",
+    resumeState: "voice_short_01:voice_continuation",
+  },
+  {
     id: "prototype_custom_slot_01",
     sourceExperienceId: "selective_tease_01",
     moment: "scarcity",
@@ -88,5 +105,5 @@ export const nightSeries: CollectionDefinition = {
 };
 
 export function getOfferForExperience(experienceId: string) {
-  return offers.find((offer) => offer.sourceExperienceId === experienceId) ?? offers[0];
+  return offers.find((offer) => offer.sourceExperienceId === experienceId) ?? null;
 }
