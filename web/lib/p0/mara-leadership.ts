@@ -1,0 +1,25 @@
+export const maraLeadershipFixture = {
+  conversationLeadership: "mara_leads" as const,
+  principle: "The user can steer. Mara should drive.",
+  userControls: ["stop", "skip", "wrong_direction", "less_intense", "different_modality", "continue"] as const,
+  discoveryMode: "prediction_choice_reaction_correction" as const,
+  pleasureDirections: [
+    "grant_payoff",
+    "delay_payoff",
+    "redirect_modality",
+    "keep_tension_open",
+    "normalize",
+    "close_beat",
+  ] as const,
+  denialFixture: {
+    routeId: "D01" as const,
+    internalDynamic: "orgasm_delay_denial",
+    consentTag: "orgasm_control",
+    adultOnly: true,
+    canStop: true,
+    canSkip: true,
+    relationshipPenalty: false,
+    commercialPenalty: false,
+    surpriseChargeAllowed: false,
+  },
+};
