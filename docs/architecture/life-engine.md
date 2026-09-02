@@ -12,7 +12,7 @@ It exists to create the perception:
 
 > **Mara has a life between interactions.**
 
-It is not a full artificial-life simulator.
+It is not a full artificial-life simulator and it is not an advertising engine.
 
 ---
 
@@ -63,6 +63,8 @@ canon_status
 
 Not every life event belongs in the ledger. Use it for events that may need a callback, consequence or cross-surface consistency.
 
+Commercial eligibility, if any, belongs in a separate Momentum Commerce record referencing the Life Event. Do not turn the Narrative Ledger into a sales catalog.
+
 ---
 
 # 3. Event budget
@@ -80,7 +82,34 @@ A realistic quiet day is preferable to synthetic drama.
 
 ---
 
-# 4. Event classes
+# 4. Commercial event budget
+
+Only a minority of Life Events should create a commercial opportunity.
+
+Most events should remain:
+- private texture;
+- conversation;
+- free content;
+- ordinary continuity.
+
+A Life Event may become a candidate for [Momentum Commerce](momentum-commerce.md) only when:
+1. the event already makes narrative sense without a sale;
+2. a distinct paid experience has genuine value;
+3. the offer does not distort the canon;
+4. the availability claim can be enforced;
+5. declining the offer does not change Mara's baseline relational treatment.
+
+Examples of legitimate Life-linked commerce:
+- a real weekend narrative window;
+- a dated travel mini-series;
+- a manually capacity-limited custom response tied to current context;
+- a seasonal episode that closes when the stated window ends.
+
+Do not create fake trips, crises, jealousy or emotional emergencies simply to manufacture a paid drop.
+
+---
+
+# 5. Event classes
 
 ## Micro
 
@@ -132,7 +161,7 @@ During launch, major events require deliberate approval rather than autonomous g
 
 ---
 
-# 5. Event generation rule
+# 6. Event generation rule
 
 Before creating an event ask:
 
@@ -141,12 +170,13 @@ Before creating an event ask:
 3. Does it create useful texture, an open loop or meaningful content?
 4. Is a new event actually needed, or can a normal existing routine carry the day?
 5. Does it introduce a new named person unnecessarily?
+6. Would this event still exist if there were no product to sell from it?
 
 If the answer is weak, do not create the event.
 
 ---
 
-# 6. Time progression
+# 7. Time progression
 
 The Life Engine must reason in past, present and future.
 
@@ -170,9 +200,11 @@ Rules:
 - an event can remain unknown until Mara next needs the state, but it cannot remain temporally impossible;
 - prior current state becomes historical when changed.
 
+If a commercial drop is tied to a Life Event, its availability window must resolve consistently with the event timeline. A ended narrative window cannot remain falsely “live”.
+
 ---
 
-# 7. Off-camera life
+# 8. Off-camera life
 
 Not every event should generate public content.
 
@@ -183,11 +215,11 @@ Visibility modes:
 - `public_content` — can drive a post/story/reel;
 - `multi_surface` — intentionally coordinated across surfaces.
 
-This prevents the character from feeling as if life exists only when posting.
+This prevents the character from feeling as if life exists only when posting or selling.
 
 ---
 
-# 8. Open loops
+# 9. Open loops
 
 Open loops are one of the highest-value continuity mechanisms.
 
@@ -207,11 +239,13 @@ Lifecycle:
 created → pending → due → resolved / cancelled / dropped → optional memory
 ```
 
-Do not create loops only to manufacture callbacks. They should emerge from actual conversation/life planning.
+Do not create loops only to manufacture callbacks or paid cliffhangers. They should emerge from actual conversation/life planning.
+
+A legitimate paid continuation may attach to an existing narrative loop, but the loop must still make sense if the user does not purchase.
 
 ---
 
-# 9. World consistency
+# 10. World consistency
 
 Life state must align with the Visual Bible / World Bible.
 
@@ -226,7 +260,7 @@ The source of truth for the day should be the shared Life State, not independent
 
 ---
 
-# 10. Content Engine integration
+# 11. Content Engine integration
 
 Content should be able to emerge from life.
 
@@ -253,7 +287,29 @@ LIFE STATE → CONTENT BRIEF → APPROVED/PUBLISHED ASSET → NARRATIVE LEDGER U
 
 ---
 
-# 11. Voice integration
+# 12. Momentum Commerce integration
+
+Life Engine can provide temporal truth for real scarcity and narrative commerce.
+
+Conceptual flow:
+
+```text
+LIFE EVENT
+→ optional commercial candidate
+→ availability policy
+→ experience/drop
+→ event/window resolves
+→ new acquisition closes when promised
+→ owned history remains where applicable
+```
+
+Life Engine supplies context and dates. Momentum Commerce owns the offer, availability semantics, entitlement and commercial graph.
+
+Do not automatically monetize a Life Event merely because it can be productized.
+
+---
+
+# 13. Voice integration
 
 Voice delivery can consume a small `current_mood` / `energy` state.
 
@@ -268,7 +324,7 @@ Voice variation must remain inside the canonical Voice Bible. Current state chan
 
 ---
 
-# 12. Conversation integration
+# 14. Conversation integration
 
 When a user asks “¿qué haces?” Mara should answer from current state where available rather than inventing disconnected filler.
 
@@ -282,7 +338,7 @@ Mara should also volunteer relevant self-context instead of turning every messag
 
 ---
 
-# 13. Update cadence
+# 15. Update cadence
 
 During validation the Life Engine can update only when useful:
 
@@ -298,7 +354,7 @@ Post-traction options may include scheduled state updates and automated continui
 
 ---
 
-# 14. Continuity QA
+# 16. Continuity QA
 
 Before using an event or state, check:
 
@@ -310,7 +366,9 @@ Before using an event or state, check:
 - public/private visibility;
 - whether an open loop is overdue;
 - whether a major event was authorized;
-- whether another surface already established contradictory canon.
+- whether another surface already established contradictory canon;
+- whether a Life-linked scarcity window is still truthful;
+- whether the event has been distorted primarily to create commerce.
 
 Track recurring failure modes:
 
@@ -319,11 +377,12 @@ Track recurring failure modes:
 - accidental repeated events;
 - impossible location overlaps;
 - character drift;
-- new-NPC inflation.
+- new-NPC inflation;
+- stale commercial windows.
 
 ---
 
-# 15. Zero-cost launch implementation
+# 17. Zero-cost launch implementation
 
 For Phase 0/1, sufficient implementation can be:
 
@@ -331,9 +390,10 @@ For Phase 0/1, sufficient implementation can be:
 - `Social Graph` Markdown;
 - a lightweight Life State JSON or table maintained manually;
 - Narrative Ledger in a simple spreadsheet/JSON;
-- open loops manually curated.
+- open loops manually curated;
+- manually flagged commercial candidates only when needed.
 
-Do not build a scheduler, event-agent swarm or persistent simulation before there is evidence that continuity improves return behavior.
+Do not build a scheduler, event-agent swarm, scarcity service or persistent simulation before there is evidence that continuity/real availability improves return behavior.
 
 ## Build trigger for automation
 
@@ -342,6 +402,7 @@ Automation becomes justified when:
 1. returning-user volume makes manual state maintenance unreliable;
 2. continuity errors are measurable;
 3. manual TPAA / operations time becomes a bottleneck;
-4. retention data suggests Life/Memory callbacks are creating value.
+4. retention data suggests Life/Memory callbacks are creating value;
+5. real commercial windows become numerous enough that manual enforcement risks false scarcity claims.
 
 Until then: **simulate less, curate better.**
