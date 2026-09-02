@@ -22,7 +22,7 @@ npm run build
 
 Current P0 flow:
 
-**entry → 3 choices → Mara reactions → prediction → confirm/correct → temporary preference profile → rule-based recommendation → story/voice moment → Life State callback → local open loop → return session**
+**entry → safe user context → 3 choices → Mara reactions → prediction → confirm/correct → temporary preference profile → rule-based recommendation → story/voice moment → contextual commercial moment → Life State callback → local open loop → return session**
 
 Implementation deliberately stays lean:
 
@@ -55,6 +55,61 @@ The voice-note UI currently uses the browser Speech Synthesis API as a zero-cost
 
 This is **not Mara's canonical production voice** and must not be used to judge final voice identity or acting quality. It exists only to validate whether a native voice-note interaction improves the experience before authorizing a real voice production workflow/provider.
 
+## Momentum Commerce P0
+
+The `/experience` route now includes an in-context Momentum Commerce prototype rather than redirecting every premium moment to a store.
+
+Domain data:
+- `lib/p0/commercial.ts` — commercial moment, reward, availability, collection and mock-state types;
+- `data/commercial.ts` — P0 offers, continuation metadata, one collection and one clearly labeled scarcity prototype;
+- `components/momentum-commerce-prototype.tsx` — intent, DEV-only purchase/resume simulation, reward and collection UI.
+
+The P0 validates the product contract:
+
+**high-value moment → clear optional offer → premium intent → DEV-only mock entitlement → exact-state resume → Mara reward/payoff → continuation**.
+
+### No real payment
+
+Normal builds only record **premium intent**.
+
+A simulated `purchase → resume` button is rendered only when `NODE_ENV === "development"`. It:
+- creates no transaction;
+- creates no real entitlement;
+- is visibly labeled `DEV ONLY`;
+- exists only to validate post-purchase UX and analytics.
+
+`mock_purchase_completed` must never be counted as revenue or payer conversion.
+
+### Scarcity P0
+
+One capacity-limited offer exists as a **prototype example only**.
+
+Its UI explicitly says:
+
+`P0 PROTOTYPE AVAILABILITY — NOT REAL INVENTORY`
+
+The demo slot count must never be shipped/presented as real scarcity. A production scarcity claim requires a real enforceable source of truth for inventory/time/capacity.
+
+### Rewards
+
+Offer definitions may include `rewardStyle` and a mock reward line.
+
+Examples include praise such as `Good boy` where the selected interaction context makes it appropriate.
+
+The prototype rule is:
+- reward belongs to the experience/payoff;
+- payment does not raise relationship closeness;
+- payment does not buy baseline affection/respect;
+- reward can be rare/contextual rather than mechanically repeated.
+
+### Collection / ownership prototype
+
+`night_series_p0` demonstrates how an acquired continuation could become part of a collection/history.
+
+Collection acquisition is only simulated for offers explicitly linked to the collection. Other mock purchases do not increment it.
+
+No persistent ownership database exists in P0.
+
 ## Premium handoff
 
 Real payment/provider activation is intentionally disabled by default.
@@ -67,12 +122,10 @@ NEXT_PUBLIC_PREMIUM_URL=https://authorized-provider.example/path
 
 Do not populate this variable with a real provider until founder authorization and provider/compliance review are complete.
 
-The P0 `/experience` route also contains disabled/no-checkout **premium intent** moments. Clicking them records intent only; no charge occurs.
-
 ## Routes
 
 - `/` — conversion-first Home with `Enter Mara` as the primary action
-- `/experience` — Mara P0 First Living Experience
+- `/experience` — Mara P0 First Living Experience + Momentum Commerce prototype
 - `/meet-mara` — character/brand introduction
 - `/premium` — premium value and configurable handoff
 - `/legal` — AI disclosure, adult-only, consent, privacy and reporting requirements
@@ -81,6 +134,6 @@ The P0 `/experience` route also contains disabled/no-checkout **premium intent**
 
 The MVP dispatches provider-agnostic browser events through `lib/analytics.ts`. No analytics vendor is connected in this branch.
 
-P0 analytics record only interaction metadata such as choice step, prediction hit/miss, recommendation mode, experience ID, voice interaction, return/open-loop behavior and premium intent.
+P0 analytics record only interaction/commercial metadata such as choice step, prediction hit/miss, recommendation mode, experience ID, voice interaction, return/open-loop behavior, premium intent, offer type, availability type, DEV mock purchase/resume and reward style.
 
 Do not attach raw intimate answers, fantasy values, raw conversation content, payment data or identity documents to the generic analytics event layer.
