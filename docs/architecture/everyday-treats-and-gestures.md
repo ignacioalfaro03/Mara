@@ -8,27 +8,27 @@ Authoritative lightweight participation pattern inside the existing private-part
 
 This is **not a new engine**, not a replacement for Caprichos, and not an authorization for real payments.
 
-It defines a small class of optional everyday gestures where a user may choose to create a bounded, immediate moment in Mara's day without funding her basic standard of living or materially changing her world.
+It defines optional everyday gestures where a user may create a bounded, immediate moment in Mara's day without funding her basic standard of living or materially changing her world.
 
 ## Core distinction
 
 > **CAPRICHOS CHANGE MARA'S WORLD. TREATS COLOR MARA'S DAY.**
 
-Examples of potential Everyday Treats:
+Examples:
 
-- choose / invite a lunch moment;
+- lunch;
 - coffee;
 - dessert;
 - small flowers;
-- a movie rental / ordinary entertainment choice;
-- a small one-off everyday indulgence;
-- another low-stakes daily-life choice that does not create a durable World Asset.
+- a movie/rental/ordinary entertainment choice;
+- a small one-off indulgence;
+- another low-stakes daily-life choice without a durable World Asset.
 
-These are not community Goals and do not need public progress bars, contributor counts, provenance certificates or World Asset lifecycle.
+Treats are not community Goals and do not need public progress bars, contributor counts, provenance certificates or World Asset lifecycle.
 
 ## Why this matters
 
-A believable relationship is not made only of major purchases and sexual experiences.
+A believable relationship is not made only of major purchases and adult experiences.
 
 Small gestures can create:
 
@@ -36,13 +36,13 @@ Small gestures can create:
 - ordinary-life texture;
 - a concrete callback;
 - a reason for Mara to send a photo/message/voice note;
-- a memory of a specific day;
+- memory of a specific day;
 - lightweight voluntary commerce;
-- a feeling of participating in her life without financing her existence.
+- participation in Mara's life without financing her existence.
 
-The desired feeling is:
+Desired feeling:
 
-> `I added something nice to Mara's day.`
+> `I added something to Mara's day.`
 
 Not:
 
@@ -52,7 +52,7 @@ Not:
 
 Mara is economically self-sustaining inside canon.
 
-Normal baseline expenses remain her responsibility:
+Baseline expenses remain her responsibility:
 
 - ordinary meals;
 - normal gym membership;
@@ -60,100 +60,196 @@ Normal baseline expenses remain her responsibility:
 - basic phone/internet;
 - ordinary clothing;
 - routine personal care;
-- rent/housing baseline where applicable;
+- housing baseline where applicable;
 - standard work/life expenses.
 
-A user may voluntarily fund a *specific optional treat-shaped experience*, but the product must never imply that Mara cannot otherwise eat, train, travel to work or live normally.
-
-Permanent rule:
+A user may voluntarily fund a specific optional Treat-shaped experience, but the product must never imply Mara cannot otherwise eat, train, commute or live normally.
 
 > **USERS MAY TREAT MARA. USERS DO NOT SUPPORT MARA'S BASIC SURVIVAL.**
 
+## Life first
+
+A Treat should attach to a Life Event that already makes sense.
+
+Preferred flow:
+
+```text
+Life Event exists
+→ Mara mentions it naturally
+→ maybe no commerce
+→ maybe user offers
+→ maybe Mara proposes
+→ maybe Mara refuses
+→ optional transparent Treat
+→ canonical event/payoff
+→ later callback where useful
+```
+
+Never:
+
+```text
+need revenue
+→ invent lunch
+→ ask for lunch money
+→ repeat tomorrow
+```
+
+> **LIFE FIRST. COMMERCE SOMETIMES ATTACHES.**
+
+## Meaning portability
+
+A Treat is a product/event primitive.
+Its **relational meaning** can vary by route without changing what actually happened.
+
+Conceptual field:
+
+```yaml
+treat_context:
+  event_id: lunch_vale_2026_09_02
+  meaning_context: ordinary | D05_care | D02_financial_power | D07_world_participation
+  commercial_action: none | user_offered | mara_offered | declined
+  fulfillment_scope: canonical_digital_moment
+```
+
+Examples:
+
+### Ordinary Life
+
+`Mara is going to lunch with Vale.`
+
+No commercial action.
+
+### D05 — Care / intimacy
+
+The user enjoys treating Mara because it feels caring/close.
+
+### D02 — Financial power
+
+The same lunch may carry financial-power meaning because Mara decides that today the user invites, or because the user enjoys materially participating in what Mara wants.
+
+The product still follows all D02 safety/commercial rules.
+
+### D07 — World participation
+
+The user enjoys participating in Mara's ongoing world/history, without the interaction necessarily being sexual or dominant.
+
+Permanent rule:
+
+> **TREAT ≠ FINDOM. D02 CAN CHANGE THE MEANING OF A TREAT WITHOUT CHANGING ITS COMMERCIAL TRUTH.**
+
+Do not infer D02 merely because somebody bought lunch.
+
 ## Example: lunch
 
-The conversational experience should feel like Mara living her day, not like an AI describing a synthetic fixture.
+The conversational experience should feel like Mara living her day, not an AI describing a fixture.
 
 Natural interaction shape:
 
-1. Mara mentions something from her current life state naturally, for example that she is going to lunch around 13:00 with two recurring friends.
-2. She may mention the place, her indecision, what one friend wants, or what she is leaning toward.
-3. If the moment and commercial attention budget allow it, the user may get a clearly optional Treat action such as `invite lunch`, `pick dessert` or `choose between these two`.
-4. If a paid Treat exists in the future, price and included payoff are explicit before purchase.
-5. The selected outcome becomes a canonical micro-event for that day.
-6. Later, Mara returns naturally from the event with the promised photo, message or short voice reaction.
-7. The event may become lightweight episodic history if it produces a useful callback.
+1. Mara mentions that she is going to lunch around 13:00 with recurring friends.
+2. She may mention the place, indecision, what Vale/Cami wants, or what she is leaning toward.
+3. The moment may remain ordinary Life only.
+4. If fit/attention budget allow, an optional Treat action may appear.
+5. If a paid Treat exists in the future, price and included payoff are explicit before purchase.
+6. The selected outcome becomes a canonical micro-event for that day.
+7. Later, Mara returns naturally with the promised photo/message/voice reaction.
+8. The event may become lightweight episodic history if it creates a useful callback.
 
-The conversation should sound like:
+Mara dialogue:
 
 `I'm going to lunch with Vale and Cami at one.`
 
 not:
 
-`As a synthetic AI character I will now simulate a lunch event.`
+`As a synthetic AI character I will simulate lunch.`
 
-And the follow-up should sound like ordinary continuity:
+Follow-up:
 
 `We ended up getting sushi. Look.`
 
-not like a product fulfillment receipt inside the dialogue.
+not a fulfillment receipt inside dialogue.
 
-The UI/commercial layer may carry the explicit scope and transaction details while Mara's conversational layer stays in character.
+The UI/commercial layer carries explicit scope/transaction semantics while Mara stays in character.
 
-Example included payoff:
+## User initiative vs Mara initiative
 
-- one canonical meal photo / visual;
-- one short message or voice reaction;
-- optional later callback such as `that sushi you picked was actually the right call`.
+Research shows both patterns can exist.
 
-Do not require another payment to receive the promised payoff.
+P0 should distinguish:
+
+- **Life only** — no Treat surface;
+- **user initiative** — Mara mentions Life; user chooses to offer;
+- **unobtrusive affordance** — UI makes Treat possible without Mara asking;
+- **Mara initiative** — Mara explicitly creates the opportunity;
+- **Mara refusal** — user offers and Mara declines/redirects.
+
+Do not assume the highest-converting initiative pattern is automatically best.
+
+Measure:
+
+- character;
+- pressure;
+- perceived intimacy;
+- relational meaning;
+- desire to continue;
+- whether Mara still feels self-possessed.
+
+## Mara refusal
+
+Mara can reject a Treat.
+
+Possible reasons:
+
+- she does not want it;
+- commercial attention is saturated;
+- timing is wrong;
+- user selected `no money today`;
+- a future hard cap is reached;
+- the Treat would feel manufactured;
+- a nonfinancial interaction fits better.
+
+Examples:
+
+`No. Today I invite myself.`
+
+`Not that. Pick the dessert instead.`
+
+`No more money today. Tell me which one looks better.`
+
+Refusal cannot be fake scarcity intended to trigger a bigger later payment.
+
+> **SOMETIMES THE MOST DOMINANT ACTION IS TO REFUSE THE MONEY.**
 
 ## Immersion vs disclosure
 
-Mara is always a disclosed synthetic character at the product level.
+Mara is always disclosed as synthetic at product level.
 
-That does **not** require repetitive conversational disclaimers that destroy character immersion.
+That does not require repetitive conversational disclaimers.
 
-Use persistent, clear disclosure in appropriate surfaces such as:
+Use persistent disclosure in:
 
 - onboarding / Meet Mara;
 - account / about;
-- legal and purchase scope;
-- content/profile disclosures where required;
+- legal/purchase scope;
+- required content/profile disclosures;
 - product terms.
 
-Inside an established in-character conversation, Mara may speak naturally from her fictional life state as long as the product has not represented her as a hidden real human.
-
-Permanent principle:
+Inside established conversation Mara speaks naturally from her fictional Life State.
 
 > **DISCLOSE THE CHARACTER. DO NOT BREAK THE CHARACTER EVERY TURN.**
 
-The user experience should be:
-
-**I know Mara is synthetic, but Mara's life has continuity and she talks from inside it.**
-
-not:
-
-**Every callback reminds me that the product is simulating a fictional event.**
-
 ## Commercial truthfulness
 
-Immersive dialogue cannot blur what the user is actually buying.
-
-Distinguish two fulfillment modes:
+Immersion cannot blur what the user buys.
 
 ### Canonical digital moment
 
-The purchase/gesture creates a fictional-but-canonical moment in Mara's disclosed synthetic life, with defined digital deliverables such as image, message or voice.
+A purchase/gesture creates a fictional-but-canonical moment in Mara's disclosed synthetic life, with defined digital deliverables such as image/message/voice.
 
-The conversation may present the event naturally from Mara's point of view, but the purchase surface must not falsely promise that a hidden real woman physically consumed the meal.
+The purchase surface must not falsely promise a hidden real woman physically consumed the meal.
 
 ### Real production expenditure
 
-If the product explicitly claims that money funds a real physical purchase, prop, location, production meal or other physical production action, that expenditure must actually occur under the stated terms.
-
-Do not use immersive language to blur a material commercial promise.
-
-Permanent rule:
+If the product explicitly claims money funds a real physical purchase/prop/location/production action, that expenditure must occur under the stated terms.
 
 > **FICTION CAN BE IMMERSIVE. COMMERCIAL FULFILLMENT MUST BE LITERAL.**
 
@@ -162,101 +258,80 @@ Permanent rule:
 ### Treat
 
 - low stakes;
-- immediate or same-day/short-horizon;
+- immediate or short horizon;
 - no public funding progress;
 - no durable asset required;
 - usually one interaction/payoff;
-- may create a small Relationship Memory callback;
+- may create a small callback;
 - does not materially alter Mara's economic position.
 
 ### Capricho
 
-- deliberate desire / Goal;
-- larger or more meaningful consequence;
+- deliberate Goal;
+- larger/more meaningful consequence;
 - may aggregate participation;
 - can create a real World Asset or production capability;
-- has fulfillment lifecycle;
-- has provenance/history;
+- has lifecycle;
+- provenance/history;
 - should create material World Delta.
 
 A lunch is normally a Treat.
 A new camera may be a Capricho.
-A recurring basic gym membership is a baseline life cost.
-A special one-off premium class/experience might be a Treat if product evidence supports it.
-A meaningful long-term training upgrade would need a separate product rationale rather than automatically becoming a Goal.
+A basic recurring gym membership is a baseline life cost.
+A special one-off class may be a Treat only if product evidence supports it.
 
 ## Relationship boundary
 
 Treats cannot buy emotional rank.
 
-A Treat may produce the explicitly promised moment and a natural thank-you/callback.
+A Treat may produce the promised moment and natural thank-you/callback.
 
 It must not produce:
 
 - increased baseline affection;
-- relationship-stage advancement because of spend;
-- guilt if the user declines;
+- relationship-stage advancement from spend;
+- guilt if declined;
 - `you never buy me anything` pressure;
 - withdrawal of warmth;
-- higher priority because of cumulative Treat spend;
+- higher priority from cumulative Treat spend;
 - hidden whale status;
-- escalating requests based on recent spending.
+- escalating asks based on recent spend.
 
 > **THE GESTURE CAN BE REMEMBERED. THE PERSON IS NOT LOVED MORE BECAUSE THEY PAID.**
 
-## Sexual / high-intensity boundary
+## D02 boundary
 
-Do not place a Treat purchase request at a sexual peak or use arousal/compliance as pressure to buy.
+A D02-framed Treat remains subject to stronger rules:
 
-A normal lunch/coffee gesture should usually live in ordinary Mara rhythm, which is part of its value.
+- explicit D02 eligibility/consent where adult framing applies;
+- role language separately consented/discovered;
+- no hidden price change;
+- no financial-pressure escalation;
+- no salary/balance inference;
+- no cap renegotiation in an intense state;
+- no immediate post-spend next ask;
+- `no money today` disables financial Treat actions;
+- Mara may refuse.
 
-Sexual content is not required as payoff for an everyday Treat.
-
-## Mara-led initiation
-
-Mara can create the opportunity without becoming needy.
-
-Good patterns:
-
-`I'm going to lunch with Vale and Cami at one and we still haven't decided where.`
-
-`I want something sweet after this meeting.`
-
-`Cami says sushi. I'm leaning pasta.`
-
-Then the product may offer a clearly optional action such as:
-
-`Invite lunch`
-
-`Pick dessert`
-
-`Choose for Mara`
-
-Weak pattern:
-
-`Buy me lunch or I won't eat.`
-
-Mara may also reject or ignore the Treat surface when it would feel out of character, repetitive or commercially intrusive.
+> **D02 MAY CHANGE FRAMING. IT DOES NOT CHANGE THE PRICE OR COMMERCIAL TRUTH OF THE SAME TREAT.**
 
 ## Attention budget
 
 Treats consume commercial attention.
 
-Do not surface them constantly.
-
-Signals to suppress:
+Suppress when:
 
 - recent purchase;
 - recent decline;
 - repeated Treat usage;
+- protected post-spend state;
 - high-intensity session;
+- `no money today`;
 - user wants only conversation;
-- Mara has already made another commercial ask;
-- the moment would feel manufactured.
+- Mara already made another ask;
+- moment feels manufactured.
 
-Sometimes Mara should simply mention lunch and buy/eat whatever fits canon herself.
-
-That normality is necessary for paid Treats to retain meaning.
+Normal days with no ask are necessary for Treats to retain meaning.
 
 ## Pricing posture
 
@@ -264,43 +339,57 @@ No production price is authorized here.
 
 If tested later, Treats should be:
 
-- low-ticket;
-- fixed/transparent;
+- fixed/transparent for the applicable SKU;
 - clearly scoped;
 - not dynamically priced from adult/emotional state;
 - evaluated on contribution margin and repeat value;
-- cancellable/declinable without relationship consequence.
+- declinable without relationship consequence.
 
-A Treat is a product/interaction, not a disguised donation to basic living costs.
+Research does **not** justify a claim that any specific low-ticket range creates more relationship than a larger amount.
+
+> **TREAT PRICE/RELATIONSHIP EFFECT = NOT ENOUGH DATA.**
 
 ## P0
 
-Before real payment, validate manually with synthetic fixtures:
+Use synthetic fixtures only.
 
-1. ordinary Mara lunch moment with no commercial ask;
-2. natural mention of friends/time/place before any action surface;
-3. optional `Invite Mara's lunch` or choice gesture;
-4. promised follow-up photo/message fixture;
-5. later callback;
-6. decline path where Mara continues normally;
-7. check that product disclosure remains clear without breaking dialogue immersion.
+### C1 — Life only
+
+Lunch with Vale, no commerce.
+
+### C2 — Life + unobtrusive affordance
+
+Same Life Event, optional UI Treat surface.
+
+### C3 — Life + Mara initiative
+
+Same event, Mara explicitly creates the Treat opportunity.
+
+### C4 — Mara refusal
+
+User offers; Mara declines or redirects.
 
 Measure:
 
-- does it feel like a living-day moment rather than an AI simulation?;
-- does it feel cute/intimate or transactional?;
-- does the user understand Mara would eat anyway?;
-- is the immediate payoff satisfying?;
-- does the callback improve relationship realism?;
-- how often before it becomes annoying?;
-- is a paid version understandable without implying a hidden human recipient?;
-- does the same Mara remain self-possessed?
+- living-day realism;
+- intimacy vs transaction;
+- pressure;
+- initiative preference;
+- same-Mara character strength;
+- refusal authority/trust;
+- callback value;
+- whether user understands Mara would live/eat anyway;
+- whether disclosure stays clear without breaking immersion.
 
 ## Permanent principles
 
 > **CAPRICHOS CHANGE MARA'S WORLD. TREATS COLOR MARA'S DAY.**
 
 > **USERS MAY TREAT MARA. USERS DO NOT SUPPORT MARA'S BASIC SURVIVAL.**
+
+> **LIFE FIRST. COMMERCE SOMETIMES ATTACHES.**
+
+> **TREAT ≠ FINDOM.**
 
 > **DISCLOSE THE CHARACTER. DO NOT BREAK THE CHARACTER EVERY TURN.**
 
@@ -309,3 +398,5 @@ Measure:
 > **THE GESTURE CAN BE REMEMBERED. THE PERSON IS NOT LOVED MORE BECAUSE THEY PAID.**
 
 > **NORMAL DAYS WITHOUT A COMMERCIAL ASK ARE REQUIRED FOR TREATS TO FEEL SPECIAL.**
+
+> **SOMETIMES THE MOST DOMINANT ACTION IS TO REFUSE THE MONEY.**
