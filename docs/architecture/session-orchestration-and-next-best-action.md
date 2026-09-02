@@ -6,41 +6,13 @@ Last reviewed: 2026-09-02
 
 Authoritative orchestration contract inside the existing Desire Operating System.
 
-This is **not a new autonomous engine** and must not become a second Fantasy Compiler, second Desire Router, second Commercial Graph or second Relationship Engine.
+This is **not a new autonomous engine** and must not become a second Fantasy Compiler, Desire Router, Commercial Graph or Relationship Engine.
 
-Its job is narrower and more important:
+Its job is:
 
 > **Given the current eligible options, what should Mara do next?**
 
 The layer arbitrates among existing capabilities after Desire Routing, consent/policy filtering and current-session context have already done their jobs.
-
-## Why this layer exists
-
-Mara already has architecture for:
-
-- Desire Discovery;
-- Preference Graph;
-- Desire Routing / `surface_plan`;
-- Fantasy Compiler;
-- Voice;
-- Rituals;
-- External Media Companion;
-- Caprichos / World Assets;
-- Relationship Memory / open loops;
-- Momentum Commerce.
-
-Without an orchestration contract these systems can all be locally correct and still produce a globally bad session:
-
-- too many sexual peaks;
-- too many offers;
-- a ritual immediately after another ritual;
-- a V3 voice peak with no buildup;
-- an external-media handoff when the user wants Mara herself;
-- a Capricho interrupting a strong relationship moment;
-- a callback that feels creepy rather than useful;
-- an offer where the best action was simply to continue the experience.
-
-The orchestrator protects **session quality across systems**.
 
 ## Core principle
 
@@ -62,6 +34,8 @@ The best next action may be:
 - present a transparent paid continuation;
 - normalize after intensity;
 - create an open loop;
+- refuse a proposed financial action;
+- redirect a financial action into a nonfinancial action;
 - end/close the beat naturally;
 - do nothing commercial.
 
@@ -69,17 +43,18 @@ Commercial action is one candidate family, not the objective function.
 
 ## Inputs
 
-The orchestration decision can consume only bounded state from existing owners:
+The orchestration decision consumes bounded state only from existing owners.
 
 ### Desire Routing
 
 - current route;
-- `surface_plan`;
+- temporary `surface_plan`;
 - current-session intent;
 - modality preference;
 - pace;
 - control direction;
-- novelty mode.
+- novelty mode;
+- D02 temporary composition where applicable.
 
 ### Fantasy Compiler
 
@@ -93,11 +68,12 @@ The orchestration decision can consume only bounded state from existing owners:
 - adult eligibility;
 - consent scopes;
 - category/provider/channel eligibility;
-- rights constraints.
+- rights constraints;
+- user safety-control state where relevant.
 
 These are hard gates.
 
-### Voice / Ritual / Media layers
+### Voice / Ritual / Media
 
 - capability availability;
 - recent usage/cooldown;
@@ -125,11 +101,19 @@ These are hard gates.
 - commercial cooldown;
 - product scope/price already defined outside this layer.
 
-The orchestrator must never receive payment credentials, debt/financial-distress data or vulnerability scores.
+The orchestrator must never receive:
+
+- payment credentials;
+- debt/financial-distress data;
+- salary;
+- bank balance;
+- vulnerability scores;
+- compulsive-spend scores;
+- `maximum extractable WTP`.
 
 ## Session phase
 
-Every decision should know the current coarse session phase:
+Every decision should know the coarse session phase:
 
 ```text
 entry
@@ -150,9 +134,7 @@ Phase is a coordination variable, not an enforced script.
 
 ## Attention budgets
 
-Several resources lose value when overused.
-
-Track session/recent-window **budgets**, not psychological user scores:
+Track exposure budgets, not psychological scores:
 
 - commercial attention;
 - sexual/intensity peaks;
@@ -163,7 +145,7 @@ Track session/recent-window **budgets**, not psychological user scores:
 - memory callbacks;
 - Capricho mentions.
 
-Example conceptual state:
+Conceptual state:
 
 ```yaml
 attention_budget:
@@ -176,7 +158,7 @@ attention_budget:
   capricho: available
 ```
 
-This describes product exposure, not the user's psychology.
+These describe product exposure only.
 
 ## Hard constraints before ranking
 
@@ -188,10 +170,14 @@ Reject a candidate before scoring when:
 - prerequisite is missing;
 - real inventory/availability is unavailable;
 - user explicitly said no/not now;
-- candidate violates a cooldown that protects experience quality;
-- a paid scope is unclear;
-- the candidate would require a surprise charge;
-- the candidate depends on vulnerability inference.
+- user selected `no money today`;
+- a user-set financial cap has been reached;
+- candidate violates a cooldown;
+- paid scope is unclear;
+- candidate would require a surprise charge;
+- candidate depends on vulnerability inference;
+- candidate asks to renegotiate a financial cap inside a high-intensity D02 window;
+- candidate is a new commercial ask during protected post-spend recovery.
 
 ## Candidate scoring
 
@@ -219,18 +205,16 @@ next_action_score =
 
 Commercial relevance may be a bounded positive input only when a product genuinely fits the moment.
 
-Do not add:
+Never add:
 
 - arousal monetization;
 - loneliness;
 - desperation;
 - emotional dependency;
 - compulsive spending;
-- maximum extractable willingness to pay.
+- maximum extractable WTP.
 
 ## Interruption cost
-
-A key missing variable is **interruption cost**.
 
 Even a relevant action can be wrong if it breaks a better moment.
 
@@ -239,34 +223,95 @@ Examples:
 - strong personal callback underway → external-media handoff has high interruption cost;
 - user explicitly asks for a voice note → Capricho has high interruption cost;
 - peak just ended → immediate upsell has high interruption cost;
-- user is exploring World Assets → Capricho may have low interruption cost;
+- paid D02 beat just resolved → another financial ask has extreme interruption cost;
 - user returned specifically to continue a paid branch → entitlement continuation has very low interruption cost.
 
 This prevents locally optimized surfaces from fighting each other.
 
 ## No-offer as a first-class decision
 
-`no_commercial_action` must be an explicit candidate, not the absence of logic.
+`no_commercial_action` is an explicit candidate.
 
 The product should be able to decide:
 
 > **This moment becomes more valuable if Mara does not sell anything.**
 
-Reasons can include:
+Reasons include:
 
 - commercial action used recently;
 - relationship/open-loop moment is stronger;
 - user just declined;
+- user selected `no money today`;
 - payoff/recovery phase;
+- post-spend protected window;
 - no SKU is sufficiently relevant;
 - interruption cost is high;
 - trust/continuity value dominates.
 
-Do not artificially suppress value so the next session can be monetized.
+Do not artificially suppress value to manufacture a future sale.
+
+## D02 financial-power arbitration
+
+D02 must not collapse Session Orchestration into `ask for money`.
+
+Eligible D02 next actions may include:
+
+- ordinary conversation;
+- controlled authority;
+- ask one bounded question;
+- voice;
+- ritual;
+- waiting;
+- service instruction;
+- Life callback;
+- Treat;
+- Capricho mention;
+- paid continuation;
+- acknowledge prior gesture;
+- refuse financial action;
+- refuse + redirect to nonfinancial action;
+- normalize;
+- open loop;
+- no commercial action.
+
+### Refusal is a legitimate action
+
+Research supports refusal as a strong P0 hypothesis.
+
+Mara can refuse when:
+
+- a user-set cap is reached;
+- user appears to be trying to override a previously set limit;
+- commercial attention is saturated;
+- the gesture does not fit Mara;
+- Mara does not want the proposed thing;
+- a better nonfinancial action exists;
+- the moment would become transactional or needy.
+
+> **MARA CAN KNOW HOW TO TAKE THE MONEY AND STILL DECIDE NOT TO.**
+
+Refusal must not be fabricated as fake scarcity designed to force a larger later payment.
+
+### Zero-spend D02 continuity
+
+A D02 context may remain meaningful in sessions with no financial action through:
+
+- authority;
+- role language;
+- rules;
+- anticipation;
+- voice;
+- service;
+- waiting;
+- callbacks;
+- Life State;
+- refusal.
+
+This is a product hypothesis, not a claim that all findom users prefer zero-spend play.
 
 ## Recovery / normalization
 
-After a high-intensity moment the next best action often should be **lower intensity**.
+After a high-intensity moment the next best action often should be lower intensity.
 
 Possible recovery actions:
 
@@ -276,13 +321,50 @@ Possible recovery actions:
 - short acknowledgment;
 - story continuation;
 - pause/open loop;
-- mundane Life State beat.
+- mundane Life State beat;
+- space/close beat where that matches user preference.
 
 Permanent principle:
 
 > **PEAK → RECOVERY → CONTINUITY.**
 
 A peak that immediately triggers another peak becomes commodity adult-content logic.
+
+## Post-spend recovery
+
+D02 introduces a stronger commercial boundary.
+
+> **POST-SPEND VULNERABILITY IS A COMMERCIAL DEAD ZONE.**
+
+After a real or simulated paid financial-power beat:
+
+```text
+fulfill promised value
+→ acknowledge
+→ choose recovery preference
+→ no immediate new commercial action
+→ normal continuity / space / open loop
+```
+
+Do not:
+
+- immediately upsell;
+- ask for another send;
+- increase price;
+- ask to raise a cap;
+- reinterpret explicit regret as erotic consent;
+- use aftercare as a reactivation funnel.
+
+Possible recovery preferences:
+
+- `normal_conversation`;
+- `short_acknowledgment`;
+- `v0_voice`;
+- `space`;
+- `close_beat`;
+- `future_noncommercial_open_loop`.
+
+If explicit distress/regret appears, D02 should pause and commercial candidates should lose eligibility until the user deliberately re-enables the category later.
 
 ## Open-loop economics
 
@@ -295,8 +377,8 @@ Valid open loops arise from:
 - Mara Life State;
 - external-media return request;
 - World Asset progression;
-- a future reveal;
-- a harmless challenge continuation.
+- future reveal;
+- harmless challenge continuation.
 
 Do not intentionally withhold already-promised paid value to manufacture return.
 
@@ -304,18 +386,19 @@ Do not paywall every unresolved beat.
 
 ## Memory write gate
 
-The orchestration layer also defines when a completed action may emit a **memory candidate**.
-
-Action outcome → candidate signal → sensitivity/consent filter → Preference Graph or Relationship Memory owner decides whether to persist.
+Completed action → candidate signal → sensitivity/consent filter → Preference Graph or Relationship Memory owner decides persistence.
 
 Examples:
 
-- one surprise hit → low-confidence candidate, not durable truth;
+- one surprise hit → low-confidence candidate;
 - explicit correction → strong update candidate;
-- completed ritual → `ritual participated`, not intimate physical details by default;
+- completed ritual → ritual participation, not intimate physical details by default;
 - external-media debrief → structured component signal, not raw URL/title when unnecessary;
 - Capricho participation → grounded contributor-history event;
-- declined offer → commercial event only, never relationship rejection.
+- declined offer → commercial event only, never relationship rejection;
+- D02 refusal → can become a shared-history callback, not a `good spender/bad spender` score;
+- explicit `don't call me paypig` → strong role-language correction;
+- `no money today` → current safety/session state, not a psychological inference.
 
 The orchestrator does not write durable memory itself.
 
@@ -328,11 +411,13 @@ The orchestrator decides whether the current moment is appropriate to surface it
 A commercial candidate should lose when:
 
 - scope/price is not already clear;
-- user is in a recovery phase;
-- user just declined another offer;
-- a noncommercial action has clearly higher continuity value;
+- user is in recovery;
+- user just declined;
+- user selected `no money today`;
+- post-spend protected state is active;
+- noncommercial action has higher continuity value;
 - commercial budget is exhausted;
-- the action would feel like emotional/sexual pressure.
+- action would feel like emotional/sexual pressure.
 
 If an offer wins, payment state changes entitlement only.
 
@@ -348,7 +433,10 @@ The user can override orchestration quickly:
 - `less intense`;
 - `surprise me`;
 - `continue`;
-- `stop`.
+- `stop`;
+- `no money today`;
+- `don't call me that`;
+- `pause D02`.
 
 Explicit current input should usually dominate inferred history.
 
@@ -356,27 +444,37 @@ Correction is high-value learning, not failure.
 
 ## P0 orchestration lab
 
-Build a deterministic DEV fixture before any realtime orchestrator.
+Use deterministic DEV fixtures before realtime orchestration.
 
-Test several synthetic moments with the same candidate action inventory.
+Existing contexts remain:
 
-Recommended contexts:
-
-1. new user / curious / low intensity;
-2. returning user / unfinished callback;
-3. adult session / buildup complete / voice eligible;
+1. new curiosity / low intensity;
+2. returning callback;
+3. adult voice build;
 4. immediate post-peak recovery;
-5. World Builder / Capricho context;
+5. World Builder / Capricho;
 6. user just declined an offer;
-7. exploration session where approved external media is eligible;
+7. external-media exploration;
 8. no good commercial fit.
+
+Add D02 fixture comparisons inside the same lab rather than creating `/findom-lab`:
+
+9. generic immediate financial ask vs dynamic-before-commerce;
+10. direct `paypig` vs neutral authority vs discovered role language;
+11. Life-only lunch vs unobtrusive Treat affordance vs Mara-led Treat;
+12. accept vs refuse vs refuse+nonfinancial redirect;
+13. one-off send vs ritual with equivalent hypothetical value;
+14. zero-spend D02 continuity;
+15. post-spend next-offer vs normalize vs space/open-loop;
+16. V0/V1/V2 authority vs generic high-intensity voice.
 
 For each context show:
 
 - current session phase;
 - current intent;
-- available consent scopes;
+- consent scopes;
 - attention budgets;
+- safety-control state;
 - eligible candidates;
 - rejected candidates + bounded reason;
 - ranked next action;
@@ -387,13 +485,16 @@ Use synthetic data only.
 
 ## P0 hypotheses
 
-- users prefer different next actions even under the same desire route depending on session phase;
-- `no offer` sometimes feels more correct than a monetized action;
-- recovery after intensity makes Mara feel more coherent/human;
+- session phase changes the best action even under the same desire route;
+- no-offer sometimes feels more correct than commerce;
+- recovery after intensity makes Mara more coherent;
+- post-spend recovery reduces pressure without destroying continuity;
+- refusal can increase perceived authority/trust;
+- D02 can remain compelling in some zero-spend sessions;
+- discovered role language beats default `paypig` for many users;
+- natural authority voice may outperform maximal intensity;
 - interruption cost prevents obvious product mistakes;
-- current-session overrides improve relevance;
-- testers can understand the decision without seeing a psychological profile;
-- deterministic rules are sufficient before ML.
+- deterministic rules are enough before ML.
 
 ## Metrics
 
@@ -404,6 +505,10 @@ Future safe metrics may include:
 - continuation rate;
 - return after open loop;
 - recovery completion;
+- post-spend pressure rating;
+- refusal authority/trust rating;
+- role-language fit/cringe;
+- zero-spend D02 continuation;
 - offer interruption negative reaction;
 - no-offer session return;
 - ritual/media/voice fatigue;
@@ -411,18 +516,18 @@ Future safe metrics may include:
 - first→second purchase linkage;
 - trust/privacy concern.
 
-Do not optimize raw session duration as the sole North Star.
+Do not optimize raw session duration or immediate revenue as sole North Star.
 
 ## Build trigger
 
 Do not build realtime model-based orchestration until:
 
-1. P0 demonstrates that next-action choice materially changes perceived quality;
+1. P0 demonstrates next-action choice materially changes perceived quality;
 2. real users return often enough for session rhythm/history to matter;
 3. manual/deterministic rules become a measured bottleneck;
 4. consent/privacy architecture is ready;
-5. production inventory/providers are actually known;
-6. economics support the added complexity.
+5. production inventory/providers are known;
+6. economics support complexity.
 
 Until then use fixtures, deterministic rules and manual review.
 
@@ -437,5 +542,9 @@ Until then use fixtures, deterministic rules and manual review.
 > **CURRENT INTENT CAN OVERRIDE HISTORY.**
 
 > **PEAK → RECOVERY → CONTINUITY.**
+
+> **POST-SPEND VULNERABILITY IS A COMMERCIAL DEAD ZONE.**
+
+> **MARA CAN REFUSE MONEY WITHOUT IT COUNTING AS A LOST PRODUCT DECISION.**
 
 > **COORDINATE THE EXPERIENCE; DO NOT LET EACH SURFACE OPTIMIZE ITSELF.**
