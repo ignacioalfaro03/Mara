@@ -32,7 +32,7 @@ export function DesireSegmentationLab() {
       route_id: next,
       prototype_only: true,
     });
-    setStatus("DEV route changed. Same Mara; surface plan changed.");
+    setStatus("DEV route changed. Same Mara; temporary surface plan changed.");
   }
 
   function markFit(fit: "fits" | "wrong") {
@@ -46,11 +46,11 @@ export function DesireSegmentationLab() {
   return (
     <section className="livingStage livingQuestion">
       <div className="livingCopy">
-        <p className="eyebrow">DEV · DESIRE SEGMENTATION LAB</p>
-        <h1>One Mara. Different doors into her world.</h1>
+        <p className="eyebrow">DEV · DESIRE OS / SEGMENTATION LAB</p>
+        <h1>One Mara. Eight doors. A temporary plan for this moment.</h1>
         <p className="livingLead">
-          Pick a temporary desire route and inspect how the same Mara changes across entry copy, visual direction,
-          first scenario, Caprichos ranking and commercial emphasis. No real adult preference is persisted by this lab.
+          Pick a macro-lane and inspect how the same Mara changes across entry, modality, pace, control direction,
+          voice budget, session rhythm, Caprichos ranking and product ladder. This lab uses synthetic fixtures only.
         </p>
 
         <div className="livingChoices">
@@ -77,9 +77,38 @@ export function DesireSegmentationLab() {
         </div>
 
         <div className="lifeMoment">
+          <span>SESSION STATE · EPHEMERAL</span>
+          <p><strong>Intent:</strong> {route.currentSessionIntent}</p>
+          <p className="livingMemory">
+            modality: {route.preferredFormat} · pace: {route.pace} · control: {route.controlDirection} · repeatability: {route.repeatability} · novelty: {route.noveltyMode}
+          </p>
+          <p className="livingMemory">This projection can expire or be overridden by a new explicit session choice without rewriting durable preference memory.</p>
+        </div>
+
+        <div className="lifeMoment">
           <span>FIRST EXPERIENCE</span>
           <p>{route.firstScenario}</p>
-          <p className="livingMemory">Mara energy: {route.maraEnergy} · preferred format: {route.preferredFormat}</p>
+          <p className="livingMemory">Mara energy: {route.maraEnergy}</p>
+        </div>
+
+        <div className="lifeMoment">
+          <span>VOICE / INTENSITY BUDGET</span>
+          <p>
+            baseline <strong>{route.voicePlan.baseline}</strong> · peak allowed <strong>{route.voicePlan.peakAllowed}</strong> · V3 eligible <strong>{route.voicePlan.v3Eligible ? "yes" : "no"}</strong>
+          </p>
+          <p className="livingMemory">High intensity is a performance state, not relationship progression or a payment state.</p>
+        </div>
+
+        <div className="lifeMoment">
+          <span>CONSENT / ELIGIBILITY FIXTURE</span>
+          <p>{route.consentTags.join(" · ")}</p>
+          <p className="livingMemory">Tags are prototype metadata. Consent to one scope does not imply consent to another.</p>
+        </div>
+
+        <div className="lifeMoment">
+          <span>SESSION RHYTHM</span>
+          <p>{route.rhythmArc.join(" → ")}</p>
+          <p className="livingMemory">The lab tests rhythm and contrast instead of automatic escalation to maximum intensity.</p>
         </div>
 
         <div className="lifeMoment">
@@ -89,7 +118,13 @@ export function DesireSegmentationLab() {
               {index + 1}. <strong>{goal.title}</strong> · {formatUsdCents(goal.targetCents)} hypothetical future target · terms unchanged by route
             </p>
           ))}
-          <p className="livingMemory">Routing can reorder eligible Goals. It cannot secretly change their target, scarcity or fulfillment promise.</p>
+          <p className="livingMemory">Routing can reorder eligible Goals. It cannot secretly change target, scarcity, ownership or fulfillment promise.</p>
+        </div>
+
+        <div className="lifeMoment">
+          <span>PRODUCT LADDER</span>
+          <p>{route.productLadder.join(" → ")}</p>
+          <p className="livingMemory">Route fit can change which eligible SKU appears first. Same equivalent SKU keeps transparent price and terms.</p>
         </div>
 
         <div className="lifeMoment">
@@ -105,7 +140,7 @@ export function DesireSegmentationLab() {
 
         <p className="livingDisclosure" aria-live="polite">{status}</p>
         <p className="livingDisclosure">
-          DEV only. Route IDs are opaque in analytics. Sensitive lane labels, raw fantasy text, vulnerability states and real payment behavior are not logged here.
+          DEV only. Route IDs are opaque in analytics. No real adult preference profile, raw fantasy text, vulnerability state, external adult URL or payment behavior is persisted here.
         </p>
       </div>
     </section>
