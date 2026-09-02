@@ -48,14 +48,89 @@ export type MaraEvent =
   | "custom_slot_interest"
   | "voice_upgrade_interest";
 
+export type MaraEventRecord = {
+  event: MaraEvent;
+  properties: Record<string, string | number | boolean>;
+  timestamp: string;
+};
+
+const P0_DEV_LOG_KEY = "mara_p0_event_log";
+const P0_DEV_LOG_LIMIT = 250;
+
+const P0_DEV_LOG_EVENTS = new Set<MaraEvent>([
+  "first_living_experience_started",
+  "playable_onboarding_started",
+  "choice_made",
+  "onboarding_completed",
+  "mara_prediction_shown",
+  "prediction_hit",
+  "prediction_miss",
+  "reveal_confirmed",
+  "reveal_corrected",
+  "experience_recommended",
+  "experience_opened",
+  "voice_played",
+  "voice_completed",
+  "surprise_me_selected",
+  "premium_intent",
+  "open_loop_created",
+  "return_session",
+  "commercial_experiment_assigned",
+  "commercial_moment_shown",
+  "commercial_offer_dismissed",
+  "offer_opened",
+  "mock_purchase_completed",
+  "purchase_resume",
+  "reward_delivered",
+  "continuation_opened",
+  "collection_viewed",
+  "collection_item_acquired",
+  "scarcity_offer_viewed",
+  "custom_slot_interest",
+  "voice_upgrade_interest",
+]);
+
+function appendDevelopmentEvent(record: MaraEventRecord) {
+  if (process.env.NODE_ENV !== "development") return;
+  if (!P0_DEV_LOG_EVENTS.has(record.event)) return;
+
+  try {
+    const raw = window.sessionStorage.getItem(P0_DEV_LOG_KEY);
+    const previous = raw ? (JSON.parse(raw) as MaraEventRecord[]) : [];
+    const next = [...previous, record].slice(-P0_DEV_LOG_LIMIT);
+    window.sessionStorage.setItem(P0_DEV_LOG_KEY, JSON.stringify(next));
+  } catch {
+    // Debug logging must never break the user experience.
+  }
+}
+
+export function readP0DevelopmentEventLog(): MaraEventRecord[] {
+  if (typeof window === "undefined" || process.env.NODE_ENV !== "development") return [];
+
+  try {
+    const raw = window.sessionStorage.getItem(P0_DEV_LOG_KEY);
+    return raw ? (JSON.parse(raw) as MaraEventRecord[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function clearP0DevelopmentEventLog() {
+  if (typeof window === "undefined" || process.env.NODE_ENV !== "development") return;
+  window.sessionStorage.removeItem(P0_DEV_LOG_KEY);
+}
+
 export function track(event: MaraEvent, properties: Record<string, string | number | boolean> = {}) {
   if (typeof window === "undefined") return;
 
-  window.dispatchEvent(
-    new CustomEvent("mara:analytics", {
-      detail: { event, properties, timestamp: new Date().toISOString() },
-    }),
-  );
+  const detail: MaraEventRecord = {
+    event,
+    properties,
+    timestamp: new Date().toISOString(),
+  };
+
+  window.dispatchEvent(new CustomEvent("mara:analytics", { detail }));
+  appendDevelopmentEvent(detail);
 
   if (process.env.NODE_ENV === "development") {
     console.info("[mara:analytics]", event, properties);
