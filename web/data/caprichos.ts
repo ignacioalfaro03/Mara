@@ -18,6 +18,32 @@ export const caprichos: CaprichoDefinition[] = [
     failurePolicy: "open_ended",
     contributorPayoff: "First Look + private Mara callback",
     fantasyEligible: true,
+    fantasyAffordances: [
+      {
+        id: "bag_outfit_date",
+        family: "fashion_context",
+        intensity: "mainstream",
+        cadence: "common",
+        consentTags: [],
+        contributorCallbackEligible: true,
+      },
+      {
+        id: "bag_possession_tease",
+        family: "object_tease",
+        intensity: "adult_opt_in",
+        cadence: "occasional",
+        consentTags: ["adult_mode"],
+        contributorCallbackEligible: true,
+      },
+      {
+        id: "bag_pee_play",
+        family: "pee_play",
+        intensity: "niche_opt_in",
+        cadence: "rare",
+        consentTags: ["adult_mode", "pee_play"],
+        contributorCallbackEligible: true,
+      },
+    ],
   },
   {
     id: "camera_01",
@@ -54,6 +80,24 @@ export const caprichos: CaprichoDefinition[] = [
     failurePolicy: "open_ended",
     contributorPayoff: "Garage Crew marker + one contributor vote",
     fantasyEligible: true,
+    fantasyAffordances: [
+      {
+        id: "car_night_drive",
+        family: "night_drive",
+        intensity: "mainstream",
+        cadence: "common",
+        consentTags: [],
+        contributorCallbackEligible: true,
+      },
+      {
+        id: "car_backseat_context",
+        family: "adult_situational_roleplay",
+        intensity: "adult_opt_in",
+        cadence: "occasional",
+        consentTags: ["adult_mode"],
+        contributorCallbackEligible: true,
+      },
+    ],
     companyCofundCents: 1000000,
     teams: [
       { id: "black", label: "Team Black", prototypeFundedCents: 131000 },
