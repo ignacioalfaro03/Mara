@@ -6,6 +6,7 @@ import { desireRoutes } from "@/data/desire-routes";
 import { track } from "@/lib/analytics";
 import { formatUsdCents } from "@/lib/p0/caprichos";
 import { writeP0DesireRoute, type DesireRouteId } from "@/lib/p0/desire-routing";
+import { maraLeadershipFixture } from "@/lib/p0/mara-leadership";
 
 export function DesireSegmentationLab() {
   const [routeId, setRouteId] = useState<DesireRouteId>("D01");
@@ -52,6 +53,20 @@ export function DesireSegmentationLab() {
           Pick a macro-lane and inspect how the same Mara changes across entry, modality, pace, control direction,
           voice budget, session rhythm, Caprichos ranking and product ladder. This lab uses synthetic fixtures only.
         </p>
+
+        <div className="lifeMoment">
+          <span>MARA-LED CONVERSATION · GLOBAL DEFAULT</span>
+          <p><strong>{maraLeadershipFixture.principle}</strong></p>
+          <p className="livingMemory">
+            Mara proposes the next move and discovers through prediction → choice → reaction → correction. The route-specific control direction below describes the fantasy dynamic, not who drives the product conversation.
+          </p>
+          <p className="livingMemory">
+            User steering stays explicit: {maraLeadershipFixture.userControls.join(" · ")}
+          </p>
+          <p className="livingMemory">
+            D01 also contains a synthetic consent-gated orgasm delay/denial subdynamic for anticipation testing; it is not a separate user identity or macro-lane.
+          </p>
+        </div>
 
         <div className="livingChoices">
           {desireRoutes.map((candidate) => (
