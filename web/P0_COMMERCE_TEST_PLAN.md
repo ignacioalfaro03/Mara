@@ -99,6 +99,36 @@ Candidate directional metrics:
 
 Do not call a winner from tiny samples.
 
+## Local evidence capture — zero vendor
+
+Development mode keeps a capped **safe P0 event log** in `sessionStorage` under:
+
+`mara_p0_event_log`
+
+The `/experience` route exposes a DEV-only panel with:
+- `Copiar log P0`;
+- `Limpiar log`.
+
+The log is limited to selected P0 interaction/commerce events and capped at 250 records.
+
+It should contain metadata such as:
+- experiment variant;
+- offer ID/type;
+- premium intent or dismissal;
+- resume/reward events;
+- collection events;
+- voice interaction;
+- onboarding/prediction/return events.
+
+It must not be extended to capture:
+- raw conversation;
+- intimate answers;
+- fantasy text/labels;
+- payment details;
+- identity documents.
+
+This local log is for prototype observation only. It is not an analytics warehouse and does not justify adding a SaaS analytics vendor.
+
 ## Momentum rule
 
 A variant is commercially bad even with higher CTA intent if it materially increases:
