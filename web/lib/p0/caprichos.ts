@@ -31,6 +31,18 @@ export type WorldAssetStatus =
 export type ContributionIdentityMode = "anonymous" | "alias";
 export type AmountVisibility = "hidden" | "public";
 
+export type FantasyAffordanceIntensity = "mainstream" | "adult_opt_in" | "niche_opt_in";
+export type FantasyAffordanceCadence = "common" | "occasional" | "rare";
+
+export type WorldAssetFantasyAffordance = {
+  id: string;
+  family: string;
+  intensity: FantasyAffordanceIntensity;
+  cadence: FantasyAffordanceCadence;
+  consentTags: string[];
+  contributorCallbackEligible: boolean;
+};
+
 export type CaprichoTeam = {
   id: string;
   label: string;
@@ -54,6 +66,7 @@ export type CaprichoDefinition = {
   failurePolicy: "open_ended";
   contributorPayoff: string;
   fantasyEligible: boolean;
+  fantasyAffordances?: WorldAssetFantasyAffordance[];
   companyCofundCents?: number;
   teams?: CaprichoTeam[];
 };
