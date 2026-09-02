@@ -57,16 +57,37 @@ This is **not Mara's canonical production voice** and must not be used to judge 
 
 ## Momentum Commerce P0
 
-The `/experience` route now includes an in-context Momentum Commerce prototype rather than redirecting every premium moment to a store.
+The `/experience` route includes an in-context Momentum Commerce prototype rather than redirecting every premium moment to a store.
 
 Domain data:
 - `lib/p0/commercial.ts` — commercial moment, reward, availability, collection and mock-state types;
+- `lib/p0/commercial-experiment.ts` — lightweight P0 A/B/C assignment;
 - `data/commercial.ts` — P0 offers, continuation metadata, one collection and one clearly labeled scarcity prototype;
-- `components/momentum-commerce-prototype.tsx` — intent, DEV-only purchase/resume simulation, reward and collection UI.
+- `components/momentum-commerce-prototype.tsx` — intent, decline-without-penalty, DEV-only purchase/resume simulation, reward and collection UI.
 
 The P0 validates the product contract:
 
-**high-value moment → clear optional offer → premium intent → DEV-only mock entitlement → exact-state resume → Mara reward/payoff → continuation**.
+**high-value moment → clear optional offer → premium intent or no-penalty decline → DEV-only mock entitlement → exact-state resume → Mara payoff → continuation**.
+
+### P0 commercial experiment
+
+P0 assigns one sticky local variant:
+
+- `A_offer_only` — contextual offer only;
+- `B_reward` — contextual offer plus explicit post-unlock payoff/resume contract;
+- `C_ownership` — reward contract plus `My History with Mara` / collection ownership value.
+
+The assignment is deliberately lightweight and stored locally. It is suitable for qualitative/early directional testing only; it is **not** production experimentation/statistical infrastructure.
+
+A fourth concept — **real scarcity** — is intentionally excluded from normal A/B/C assignment until there is an actual enforceable capacity/time/edition constraint. The existing scarcity UI is only a developer-visible prototype example.
+
+Users can choose `Ahora no`. Declining an offer:
+- records `commercial_offer_dismissed`;
+- causes no relationship penalty;
+- causes no loss of state;
+- allows the surrounding Mara experience to continue normally.
+
+This is important for measuring whether commerce preserves momentum rather than merely maximizing CTA clicks.
 
 ### No real payment
 
@@ -102,11 +123,13 @@ The prototype rule is:
 - payment does not buy baseline affection/respect;
 - reward can be rare/contextual rather than mechanically repeated.
 
+Variant A intentionally uses a generic resume instead of a contextual reward so the reward layer can be tested against a control.
+
 ### Collection / ownership prototype
 
 `night_series_p0` demonstrates how an acquired continuation could become part of a collection/history.
 
-Collection acquisition is only simulated for offers explicitly linked to the collection. Other mock purchases do not increment it.
+Collection value is shown only in variant C and only for offers explicitly linked to the collection. Other mock purchases do not increment it.
 
 No persistent ownership database exists in P0.
 
@@ -134,6 +157,6 @@ Do not populate this variable with a real provider until founder authorization a
 
 The MVP dispatches provider-agnostic browser events through `lib/analytics.ts`. No analytics vendor is connected in this branch.
 
-P0 analytics record only interaction/commercial metadata such as choice step, prediction hit/miss, recommendation mode, experience ID, voice interaction, return/open-loop behavior, premium intent, offer type, availability type, DEV mock purchase/resume and reward style.
+P0 analytics record only interaction/commercial metadata such as choice step, prediction hit/miss, recommendation mode, experience ID, voice interaction, return/open-loop behavior, experiment variant, premium intent, offer dismissal, offer type, availability type, DEV mock purchase/resume and reward style.
 
 Do not attach raw intimate answers, fantasy values, raw conversation content, payment data or identity documents to the generic analytics event layer.
