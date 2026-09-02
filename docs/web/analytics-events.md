@@ -1,4 +1,4 @@
-# Mara Vera — Analytics Events v0.4
+# Mara Vera — Analytics Events v0.5
 
 ## Principle
 
@@ -72,6 +72,10 @@ Do not attach raw fantasy vectors or sensitive preference labels to general anal
 - `open_loop_created`
 - `open_loop_resolved`
 - `return_session`
+- `relational_friction_started`
+- `relational_repair_completed`
+
+Relational-friction events must never carry purchase-refusal or vulnerability labels as causes.
 
 ## Narrative / fantasy-commerce events
 - `story_started`
@@ -86,6 +90,30 @@ Do not attach raw fantasy vectors or sensitive preference labels to general anal
 - `custom_completed`
 - `build_it_started`
 - `build_it_completed`
+
+## Momentum Commerce events
+Track whether commerce preserves the experience:
+- `commercial_moment_shown`
+- `offer_opened`
+- `premium_intent`
+- `checkout_started`
+- `purchase_resume`
+- `reward_delivered`
+- `continuation_opened`
+- `collection_viewed`
+- `collection_item_acquired`
+- `collection_completed`
+- `scarcity_offer_viewed`
+- `scarcity_closed`
+- `custom_slot_interest`
+- `voice_upgrade_interest`
+- `commercial_offer_dismissed`
+- `commercial_session_abandoned`
+
+P0/development-only:
+- `mock_purchase_completed`
+
+`mock_purchase_completed` must never be counted as revenue or a real payer.
 
 ## Monetization events
 - `product_viewed`
@@ -131,8 +159,13 @@ Use only when relevant/non-sensitive:
 - recommendation mode (`known_fit`, `explore`, `surprise_me`);
 - experience family as a **non-sensitive experiment code**, not raw intimate label;
 - offer type;
+- commercial moment type;
+- availability type;
+- reward-style experiment code where non-sensitive;
+- collection identifier;
 - price bucket/public SKU;
-- acquisition cohort.
+- acquisition cohort;
+- development/test flag.
 
 Do not attach:
 - raw answer text;
@@ -141,7 +174,8 @@ Do not attach:
 - vulnerability scores;
 - psychological labels;
 - orientation inference;
-- raw conversation excerpts.
+- raw conversation excerpts;
+- claims that a prototype capacity number is real inventory.
 
 ## Funnel views
 
@@ -156,6 +190,9 @@ Game view → start → choices → prediction/reaction → reveal → confirm/c
 
 ### Compilation
 Preference projection → eligible candidate set → known-fit/explore/Surprise Me → recommendation → experience start → reaction/correction
+
+### Momentum Commerce
+High-value moment → contextual offer → intent/checkout → entitlement → exact-state resume → reward/payoff → continuation → ownership/progression
 
 ### Revenue
 Premium intent → first payer → second payment → repeat spender → retained spender
@@ -204,6 +241,24 @@ Return → repeat interaction/discovery → compiled recommendation/callback/con
 
 `Personalization Lift` compares an adapted/compiled experience against an appropriate generic/control experience. Do not calculate it from vulnerability targeting.
 
+### Momentum Commerce quality
+- Commercial Moment → Offer Open Rate
+- Offer → Premium Intent / Checkout Rate
+- Offer Dismissal Rate
+- Session Abandonment After Offer
+- Purchase Resume Success
+- Post-Purchase Continuation Rate
+- Commercial Inertia
+- Voice Attach Rate
+- Continuation Attach Rate
+- Collection Attach / Completion
+- Custom Slot Interest
+- Scarcity limited-vs-evergreen lift only when scarcity is real
+- Scarcity frustration/support rate
+- Reward acceptance/correction where tested
+
+`Commercial Inertia` is a product metric for whether commerce preserves momentum. A simple implementation can measure the share/time distribution from paid action to meaningful resumed interaction.
+
 ### Monetization
 - Visitor→first payer
 - First→second payer
@@ -230,6 +285,7 @@ Return → repeat interaction/discovery → compiled recommendation/callback/con
 - creepiness/negative reaction
 - personalized experience completion
 - voice engagement/replay
+- friction→repair completion where relevant
 
 ### Adult product health
 - adult-mode opt-in
@@ -237,6 +293,32 @@ Return → repeat interaction/discovery → compiled recommendation/callback/con
 - repeat adult session
 - refund/dispute
 - negative-reaction/support rate
+
+## Scarcity reporting
+
+For each scarcity experiment record the enforceable reason separately from general analytics, then report safe aggregate metrics such as:
+- availability type;
+- capacity/window utilization;
+- conversion vs appropriate evergreen control;
+- return during real drop window;
+- close/expiry behavior;
+- support/frustration.
+
+Never infer truth from client-side countdowns alone. Production scarcity requires server/operations-enforced source of truth before launch.
+
+## Commercial Memory reporting
+
+Commercial Memory may store purpose-limited product behavior such as:
+- acquired SKU/entitlement;
+- completion;
+- replay;
+- continuation request/purchase;
+- satisfaction;
+- collection progress.
+
+General analytics should receive only the minimum safe identifiers needed for aggregate decisions.
+
+Do not merge Commercial Memory into Relationship Memory or use it to create emotional closeness scores.
 
 ## Fantasy family performance reporting
 At aggregate, privacy-safe level compare:
@@ -254,7 +336,7 @@ At aggregate, privacy-safe level compare:
 Do not publish tiny-cohort sensitive preference statistics.
 
 ## Data separation
-General analytics should know **that** discovery/compilation occurred, not the intimate details of what a user chose.
+General analytics should know **that** discovery/compilation/commerce occurred, not the intimate details of what a user chose.
 
 Preference Graph / Relationship Memory / sensitive compiler inputs stay in purpose-limited storage/manual records with stronger controls.
 
@@ -269,7 +351,8 @@ Compare:
 - 30-day Retained Spenders
 - Revenue per Active Relationship
 - Paid Relationship Moments per Active Payer
+- Post-Purchase Continuation Rate
 
 A `Paid Relationship Moment` is a clearly purchased experience with perceived personal relevance; it is not merely a charge event.
 
-Prefer the metric that best predicts **repeat spend × retention × satisfaction × contribution margin**.
+Prefer the metric that best predicts **repeat spend × retention × satisfaction × contribution margin** while preserving trust and continuity.
