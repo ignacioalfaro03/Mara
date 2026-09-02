@@ -33,6 +33,7 @@ export function WtpLab() {
   }, [offer.id]);
 
   if (!price) return null;
+  const activePrice = price;
 
   function answer(next: WtpResponse) {
     if (response) return;
@@ -40,8 +41,8 @@ export function WtpLab() {
     track(
       next === "yes" ? "wtp_response_yes" : next === "maybe" ? "wtp_response_maybe" : "wtp_response_no",
       {
-        bucket: price!.bucket,
-        amount_usd_cents: price!.amountUsdCents,
+        bucket: activePrice.bucket,
+        amount_usd_cents: activePrice.amountUsdCents,
         offer_id: offer.id,
       },
     );
@@ -51,8 +52,8 @@ export function WtpLab() {
     if (!response || continued) return;
     setContinued(true);
     track("wtp_post_price_continued", {
-      bucket: price.bucket,
-      amount_usd_cents: price.amountUsdCents,
+      bucket: activePrice.bucket,
+      amount_usd_cents: activePrice.amountUsdCents,
       response,
       offer_id: offer.id,
     });
@@ -67,7 +68,7 @@ export function WtpLab() {
 
         <div className="premiumIntentCard">
           <span>PRECIO HIPOTÉTICO · NO SE COBRARÁ</span>
-          <strong>{price.display}</strong>
+          <strong>{activePrice.display}</strong>
           <p>
             Pago único hipotético por: {offer.scope.replace(" P0 intent only.", "")} No es suscripción.
             En P0 no existe checkout, cargo ni entitlement real.
