@@ -71,19 +71,33 @@ Permanent rule:
 
 ## Example: lunch
 
-A safe product concept could be:
+The conversational experience should feel like Mara living her day, not like an AI describing a synthetic fixture.
 
-**`Invítame / elige mi almuerzo de hoy`**
+Natural interaction shape:
 
-Possible interaction:
-
-1. Mara mentions naturally that she has not decided what to have for lunch.
-2. If the moment and commercial attention budget allow it, an optional Treat may appear.
-3. The user can choose among a small set of eligible options or decline.
+1. Mara mentions something from her current life state naturally, for example that she is going to lunch around 13:00 with two recurring friends.
+2. She may mention the place, her indecision, what one friend wants, or what she is leaning toward.
+3. If the moment and commercial attention budget allow it, the user may get a clearly optional Treat action such as `invite lunch`, `pick dessert` or `choose between these two`.
 4. If a paid Treat exists in the future, price and included payoff are explicit before purchase.
-5. The selected lunch becomes a canonical micro-event for that day.
-6. Mara may later send the promised photo, message or short voice reaction.
+5. The selected outcome becomes a canonical micro-event for that day.
+6. Later, Mara returns naturally from the event with the promised photo, message or short voice reaction.
 7. The event may become lightweight episodic history if it produces a useful callback.
+
+The conversation should sound like:
+
+`I'm going to lunch with Vale and Cami at one.`
+
+not:
+
+`As a synthetic AI character I will now simulate a lunch event.`
+
+And the follow-up should sound like ordinary continuity:
+
+`We ended up getting sushi. Look.`
+
+not like a product fulfillment receipt inside the dialogue.
+
+The UI/commercial layer may carry the explicit scope and transaction details while Mara's conversational layer stays in character.
 
 Example included payoff:
 
@@ -93,17 +107,45 @@ Example included payoff:
 
 Do not require another payment to receive the promised payoff.
 
-## Synthetic-character truthfulness
+## Immersion vs disclosure
 
-Mara is always disclosed as synthetic.
+Mara is always a disclosed synthetic character at the product level.
 
-Therefore distinguish two fulfillment modes:
+That does **not** require repetitive conversational disclaimers that destroy character immersion.
+
+Use persistent, clear disclosure in appropriate surfaces such as:
+
+- onboarding / Meet Mara;
+- account / about;
+- legal and purchase scope;
+- content/profile disclosures where required;
+- product terms.
+
+Inside an established in-character conversation, Mara may speak naturally from her fictional life state as long as the product has not represented her as a hidden real human.
+
+Permanent principle:
+
+> **DISCLOSE THE CHARACTER. DO NOT BREAK THE CHARACTER EVERY TURN.**
+
+The user experience should be:
+
+**I know Mara is synthetic, but Mara's life has continuity and she talks from inside it.**
+
+not:
+
+**Every callback reminds me that the product is simulating a fictional event.**
+
+## Commercial truthfulness
+
+Immersive dialogue cannot blur what the user is actually buying.
+
+Distinguish two fulfillment modes:
 
 ### Canonical digital moment
 
 The purchase/gesture creates a fictional-but-canonical moment in Mara's disclosed synthetic life, with defined digital deliverables such as image, message or voice.
 
-Do not imply that a hidden real woman physically consumed the meal.
+The conversation may present the event naturally from Mara's point of view, but the purchase surface must not falsely promise that a hidden real woman physically consumed the meal.
 
 ### Real production expenditure
 
@@ -174,13 +216,21 @@ Sexual content is not required as payoff for an everyday Treat.
 
 Mara can create the opportunity without becoming needy.
 
-Good pattern:
+Good patterns:
 
-`I still haven't decided what to eat.`
+`I'm going to lunch with Vale and Cami at one and we still haven't decided where.`
+
+`I want something sweet after this meeting.`
+
+`Cami says sushi. I'm leaning pasta.`
 
 Then the product may offer a clearly optional action such as:
 
-`Choose Mara's lunch`
+`Invite lunch`
+
+`Pick dessert`
+
+`Choose for Mara`
 
 Weak pattern:
 
@@ -228,13 +278,16 @@ A Treat is a product/interaction, not a disguised donation to basic living costs
 Before real payment, validate manually with synthetic fixtures:
 
 1. ordinary Mara lunch moment with no commercial ask;
-2. optional `Choose Mara's lunch` gesture;
-3. promised follow-up photo/message fixture;
-4. later callback;
-5. decline path where Mara continues normally.
+2. natural mention of friends/time/place before any action surface;
+3. optional `Invite Mara's lunch` or choice gesture;
+4. promised follow-up photo/message fixture;
+5. later callback;
+6. decline path where Mara continues normally;
+7. check that product disclosure remains clear without breaking dialogue immersion.
 
 Measure:
 
+- does it feel like a living-day moment rather than an AI simulation?;
 - does it feel cute/intimate or transactional?;
 - does the user understand Mara would eat anyway?;
 - is the immediate payoff satisfying?;
@@ -248,6 +301,8 @@ Measure:
 > **CAPRICHOS CHANGE MARA'S WORLD. TREATS COLOR MARA'S DAY.**
 
 > **USERS MAY TREAT MARA. USERS DO NOT SUPPORT MARA'S BASIC SURVIVAL.**
+
+> **DISCLOSE THE CHARACTER. DO NOT BREAK THE CHARACTER EVERY TURN.**
 
 > **FICTION CAN BE IMMERSIVE. COMMERCIAL FULFILLMENT MUST BE LITERAL.**
 
