@@ -45,6 +45,7 @@ It is:
 Never model:
 
 - `USER = FINDOM GUY`;
+- `USER = PAYPIG`;
 - `USER = SUBMISSIVE`;
 - `USER = FOOT GUY`;
 - `USER = TABOO GUY`;
@@ -131,18 +132,117 @@ Portable expressions:
 
 ### D02 — Financial Domination Fantasy
 
-Signals may include:
-- luxury;
-- status;
-- money/control symbolism;
-- tribute-themed consensual roleplay;
-- expensive-taste Mara framing.
+D02 is a **financial-power composition**, not one script and not a permanent identity.
+
+> **FINDOM = FINANCIAL POWER COMPOSITION, NOT ONE SCRIPT.**
+
+Community research shows at least two broad realities:
+
+1. for many users, money carries meaning through power, ritual, service, humiliation where consented, recognition, usefulness, lifestyle participation, anticipation or continuity;
+2. for another meaningful subset, the transfer itself is part of the stimulus because it makes surrender/materiality real.
+
+Therefore do not canonize either extreme:
+
+- `money is always only symbolic`;
+- `money is always the whole experience`.
+
+A temporary D02 composition may include:
+
+```text
+power_style
+financial_materiality_affinity
+giving_meaning
+service_affinity
+lifestyle_participation_affinity
+humiliation_language_scope
+authority_affinity
+ritual_affinity
+anticipation_affinity
+recognition_style
+voice_affinity
+pace
+commercial_today
+current_consent
+current_recovery_state
+```
+
+Potential signals may include:
+
+- luxury/status symbolism;
+- giving/tribute interest;
+- service/usefulness;
+- Mara deciding what she wants;
+- ritualized financial action;
+- lifestyle participation;
+- financial materiality;
+- approved humiliation/status language;
+- anticipation/waiting;
+- remembered prior gesture;
+- continuity of a private power dynamic.
+
+`paypig`, `wallet`, `ATM`, `slave`, `loser`, `finsub` or similar language is never assumed.
+
+> **PAYPIG IS A CONSENTED ROLE, NOT A DEFAULT USER IDENTITY.**
+
+Role language should be:
+
+- explicitly selected;
+- discovered through bounded interaction;
+- correctable;
+- scoped to context;
+- removable/resettable.
+
+D02 may continue across some sessions with **zero commercial action** through:
+
+- authority;
+- rules;
+- voice;
+- service;
+- ritual;
+- waiting;
+- callbacks;
+- Life updates;
+- selective refusal.
+
+This does not claim that findom universally requires no money. It means:
+
+> **A D02 RELATIONSHIP CONTEXT DOES NOT REQUIRE A TRANSACTION IN EVERY SESSION.**
+
+Mara may also refuse a financial action where appropriate.
+
+Candidate reasons:
+
+- user's explicit cap;
+- commercial cooldown;
+- safety;
+- saturation;
+- no meaningful fit;
+- Mara does not want the proposed thing;
+- character/relationship continuity is stronger without commerce.
+
+> **MARA CAN KNOW HOW TO TAKE THE MONEY AND STILL DECIDE NOT TO.**
 
 Permanent firewall:
 
 > **FINDOM FANTASY DOES NOT AUTHORIZE REAL FINANCIAL EXPLOITATION.**
 
-Never derive higher hidden prices, debt pressure, unlimited spend pressure, payment-conditioned affection or financial distress targeting from this lane.
+Never derive:
+
+- higher hidden prices;
+- debt pressure;
+- borrowing;
+- unlimited-spend pressure;
+- financial credentials;
+- payment-conditioned affection;
+- financial distress targeting;
+- salary/bank-balance profiling;
+- compulsive-spend targeting;
+- hot-session cap renegotiation;
+- immediate post-spend upsell.
+
+D02 may change **framing, modality, rhythm and meaning**.
+
+It may not change the price of the same applicable SKU because the user appears aroused, submissive, financially motivated or emotionally attached.
 
 ### D03 — Authority / Power
 
@@ -234,7 +334,22 @@ Example: `authority_affinity` can influence:
 - reward style;
 - product ladder.
 
-Do not implement one isolated authority system per surface.
+D02 adds another important portability rule:
+
+The **same underlying Life Event / Treat / Capricho** can have different meanings without becoming different products.
+
+Example:
+
+```text
+Lunch with Vale
+→ ordinary Life only
+→ D05 care/intimacy
+→ D02 financial-power Treat
+→ D07 world participation
+```
+
+The event remains true.
+The meaning changes.
 
 > **FETISH PORTABILITY = ONE UNDERLYING VARIABLE, MANY ELIGIBLE PRODUCT EXPRESSIONS.**
 
@@ -253,6 +368,14 @@ Model at least:
 - `novelty` — known-fit/adjacent/surprise;
 - eligible voice intensity ceiling.
 
+For D02 additionally consider temporary:
+
+- `financial_materiality`;
+- `giving_meaning`;
+- `role_language_scope`;
+- `commercial_today`;
+- `recovery_state`.
+
 This prevents shallow category personalization.
 
 ## Signal hierarchy
@@ -269,11 +392,13 @@ Negative signals matter:
 - `wrong`;
 - `not this`;
 - `not today`;
+- `no money today`;
+- `don't call me that`;
 - `too much`;
 - `boring`;
 - repeated skip.
 
-One click or one contribution is weak evidence.
+One click, one surprise response or one contribution is weak evidence.
 
 ## Surface Plan
 
@@ -281,28 +406,29 @@ Conceptual shape:
 
 ```yaml
 surface_plan:
-  route_id: D03
-  current_session_intent: authority
+  route_id: D02
+  current_session_intent: financial_power
   hero_tone: controlled
-  visual_direction: office_editorial
-  first_experience_family: authority_roleplay
+  first_experience_family: authority_service
   preferred_modality: voice
-  pace: story_led
+  pace: gradual
   control_direction: mara_leads
-  repeatability: repeat_comfort
-  novelty_mode: adjacent
+  repeatability: contextual
+  novelty_mode: known_fit
+  d02:
+    financial_materiality: medium
+    giving_meaning: service
+    role_language: none_assumed
+    commercial_today: available_but_not_required
+    recovery_state: neutral
   voice_plan:
-    baseline: V1
+    baseline: V0
     peak_allowed: V2
     V3_eligible: false
   consent_tags:
     - adult_mode
-    - authority_roleplay
-    - voice_v2
-  capricho_order:
-    - black_bag_01
-    - camera_01
-  next_best_action: voice_branch
+    - financial_domination_fantasy
+  next_best_action: noncommercial_rule
   expires: end_of_session_or_new_explicit_intent
 ```
 
@@ -315,7 +441,9 @@ Recompute on:
 - new explicit intent;
 - correction;
 - category opt-out;
+- `no money today`;
 - meaningful context shift;
+- post-spend recovery state;
 - session restart;
 - time expiry;
 - saturation change.
@@ -328,7 +456,7 @@ Public acquisition can demonstrate specificity while remaining channel-safe.
 
 Examples:
 - control creative → D01 entry;
-- luxury/status creative → D02 entry;
+- luxury/status / selective standards creative → possible D02 entry;
 - authority creative → D03 entry;
 - voice/intimacy creative → D05 entry;
 - object/lifestyle creative → D06 entry;
@@ -345,21 +473,22 @@ Public surfaces can signal:
 - confidence;
 - dominance;
 - mystery;
-- luxury;
+- taste;
+- standards;
+- selective luxury;
 - authority;
 - voice;
 - teasing;
-- exclusivity;
 - personality.
 
 Deep adult personalization belongs first-party after age/consent eligibility.
 
 ## Caprichos routing
 
-Same Goals. Different ordering.
+Same Goals. Different ordering or private meaning.
 
 Examples:
-- D02 → car/jewelry/bag may rank higher;
+- D02 → a wanted object may acquire financial-power meaning;
 - D06 → shoes/outfit/bag/accessories may rank higher;
 - D07 → camera/set/vehicle/provenance may rank higher;
 - D05 → assets with strong callbacks/history may rank higher;
@@ -370,7 +499,8 @@ Rules:
 - no fake scarcity;
 - no segment-specific fulfillment promise;
 - no spend-weighted affection;
-- contribution does not imply consent to every fantasy affordance.
+- contribution does not imply consent to every fantasy affordance;
+- a D02 framing never makes public contribution progress sexual or user-identifying by default.
 
 ## External media routing
 
@@ -413,35 +543,48 @@ Not every session uses every step.
 
 High-intensity and commercial moments both consume attention budget.
 
+For D02:
+
+> **POST-SPEND VULNERABILITY IS A COMMERCIAL DEAD ZONE.**
+
+After a paid/financial-power beat, the default route should favor fulfillment, acknowledgment, normalization, recovery preference, ordinary conversation or close/open-loop continuity rather than another immediate offer.
+
 ## Voice handoff
 
 Routing may define a temporary performance range:
 
-- V0 natural presence;
-- V1 flirty;
-- V2 seductive;
+- V0 natural presence / controlled authority;
+- V1 flirty / playful dominance;
+- V2 seductive authority;
 - V3 rare high-intensity intimate performance.
 
 A route can change the ceiling, not Mara's canonical voice identity.
 
-V3 should remain rare because repetition reduces value.
+D02 must not assume V3 is best.
+
+> **AUTHORITY MAY BE MORE VALUABLE THAN MAXIMUM EXPLICITNESS.**
 
 ## Commerce segmentation
 
 Routing may determine:
 - which eligible SKU appears first;
 - which modality/product ladder is most relevant;
-- whether the best next action is no offer.
+- whether the best next action is no offer;
+- whether Mara should refuse/redirect a proposed D02 financial action.
 
 It must not determine:
-- a hidden higher price because the user appears aroused/submissive/lonely;
+- a hidden higher price because the user appears aroused/submissive/lonely/financially motivated;
 - financial pressure;
 - payment-conditioned warmth;
-- fake scarcity.
+- fake scarcity;
+- salary/balance collection;
+- a cap increase inside a high-intensity D02 window.
 
-Permanent rule:
+Permanent rules:
 
 > **SERVE THE MOMENT; NEVER EXPLOIT THE STATE.**
+
+> **D02 MAY CHANGE FRAMING. IT DOES NOT CHANGE THE PRICE OF THE SAME SKU.**
 
 ## Privacy / sensitive routing
 
@@ -457,6 +600,14 @@ Do not expose raw labels in:
 - generic analytics;
 - Caprichos community layer.
 
+Never expose:
+
+- `paypig` status;
+- financial domination preference;
+- lifetime spend;
+- D02 role language;
+- private limits.
+
 Use opaque IDs where a generic analytics event needs routing metadata.
 
 ## Correction UX
@@ -467,7 +618,10 @@ Mara should accept:
 - `less intense`;
 - `something else`;
 - `not today`;
-- route reset.
+- `no money today`;
+- `don't call me that`;
+- route reset;
+- D02 pause.
 
 No relational punishment.
 
@@ -475,20 +629,20 @@ No relational punishment.
 
 P0 should use deterministic fixtures and session/local state only.
 
-`/experience/segment-lab` should demonstrate eight macro-lanes across:
+`/experience/segment-lab` and `/experience/orchestration-lab` should test D02 without creating a separate findom lab.
 
-1. hero/entry;
-2. first experience;
-3. modality;
-4. pace;
-5. control direction;
-6. voice budget;
-7. session rhythm;
-8. Caprichos ordering;
-9. product ladder;
-10. privacy/correction.
+Priority D02 comparisons:
 
-Use synthetic data. Do not persist real sexual profiles merely because fixtures exist.
+1. cash-grab vs dynamic-before-commerce;
+2. immediate `paypig` language vs neutral authority vs discovered role language;
+3. Life-only lunch vs unobtrusive Treat affordance vs Mara-led Treat;
+4. accept vs refuse vs refuse+nonfinancial redirect;
+5. one-off send vs ritual with equivalent hypothetical value;
+6. D02 with zero commercial action;
+7. post-spend immediate offer vs normalization vs space/open loop;
+8. V0/V1/V2 authority vs generic high-intensity performance.
+
+Use synthetic data. Do not persist real sexual/financial profiles merely because fixtures exist.
 
 ## Metrics
 
@@ -500,8 +654,13 @@ Measure where implemented:
 - modality fit;
 - pace fit;
 - voice/intensity fit;
+- role-language cringe/fit;
 - ritual participation;
-- external-media return;
+- Treat relational value;
+- refusal authority/trust;
+- post-spend pressure;
+- recovery preference;
+- no-spend D02 continuation;
 - Capricho relevance;
 - premium intent;
 - post-offer continuation;
@@ -518,12 +677,22 @@ Revenue may be compared by route, but a sensitive route must not be optimized so
 
 > **FETISH = COMPOSITION, NOT IDENTITY.**
 
+> **FINDOM = FINANCIAL POWER COMPOSITION, NOT ONE SCRIPT.**
+
+> **PAYPIG IS A CONSENTED ROLE, NOT A DEFAULT USER IDENTITY.**
+
 > **CURRENT SESSION INTENT CAN OVERRIDE HISTORY.**
 
 > **ROUTE BY DESIRE; NEVER PRICE OR PRESSURE BY VULNERABILITY.**
 
 > **SENSITIVE ROUTES ARE PRIVATE, CORRECTABLE AND TEMPORAL.**
 
+> **A D02 CONTEXT MAY CONTINUE WITHOUT A TRANSACTION IN EVERY SESSION.**
+
 > **CAPRICHOS MAY BE RANKED BY FIT; TRUE TERMS DO NOT CHANGE BY SEGMENT.**
+
+> **POST-SPEND VULNERABILITY IS A COMMERCIAL DEAD ZONE.**
+
+> **MARA CAN KNOW HOW TO TAKE THE MONEY AND STILL DECIDE NOT TO.**
 
 > **THE FANTASY MAY BE FINANCIAL DOMINATION. REAL COMMERCE MUST REMAIN TRANSPARENT AND VOLUNTARY.**
