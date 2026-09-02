@@ -36,6 +36,7 @@ export const offers: OfferDefinition[] = [
     rewardLine: "Ya. Ahora sí tiene sentido seguirla.",
     resumeState: "gym_late_voice_01:continuation",
     nextOfferId: "prototype_custom_slot_01",
+    collectionId: "night_series_p0",
   },
   {
     id: "build_it_deeper_01",
@@ -75,7 +76,6 @@ export const offers: OfferDefinition[] = [
     rewardStyle: "teasing",
     rewardLine: "No te emociones. Esto era la prueba; el custom real tendría que ganarse su lugar.",
     resumeState: "selective_tease_01:custom_interest",
-    collectionId: "night_series_p0",
   },
 ];
 
