@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { track } from "@/lib/analytics";
+import { MaraPortrait, MaraVoiceMoment } from "@/components/mara-presence";
 
 const STORAGE_KEY = "mara_launch_state_v1";
 
@@ -110,7 +111,7 @@ export function LaunchExperience() {
   if (step === "return") {
     return (
       <section className="livingStage">
-        <div className="livingPortrait livingPortraitCompact" aria-hidden="true"><span>M</span></div>
+        <MaraPortrait compact />
         <div className="livingCopy">
           <p className="eyebrow">VOLVISTE</p>
           <h1>Bien. Me había quedado algo pendiente contigo.</h1>
@@ -131,17 +132,17 @@ export function LaunchExperience() {
   }
 
   if (step === "return_moment") {
+    const voiceLine = state.pace === "teasing"
+      ? "Te voy a dejar otra cosa sin cerrar. Si vuelves una tercera vez, ahí sí te digo si mi teoría sobre ti sigue viva o se cayó."
+      : "Voy a ir directo: me interesa más cómo cambias de opinión que acertarte un perfil perfecto a la primera.";
+
     return (
       <section className="livingStage">
-        <div className="livingPortrait livingPortraitCompact" aria-hidden="true"><span>M</span></div>
+        <MaraPortrait compact />
         <div className="livingCopy experienceBody">
           <p className="eyebrow">MARA · HOY</p>
           <h1>{prediction === "surprise" ? "Bien. Entonces no te voy a dar exactamente lo que esperabas." : "Esta vez no necesito preguntarte tanto."}</h1>
-          <p className="livingLead">
-            {state.pace === "teasing"
-              ? "Te voy a dejar otra cosa sin cerrar. Si vuelves una tercera vez, ahí sí te digo si mi teoría sobre ti sigue viva o se cayó."
-              : "Voy a ir directo: me interesa más cómo cambias de opinión que acertarte un perfil perfecto a la primera."}
-          </p>
+          <MaraVoiceMoment transcript={voiceLine} />
           <div className="lifeMoment">
             <span>MIENTRAS TANTO</span>
             <p>Hoy tuve un día bastante normal. Trabajo, café, mensajes atrasados y cero ganas de convertir cada cosa que hago en un evento.</p>
@@ -155,7 +156,7 @@ export function LaunchExperience() {
   if (step === "intro") {
     return (
       <section className="livingStage livingIntro">
-        <div className="livingPortrait" aria-label="Mara Vera"><span>M</span></div>
+        <MaraPortrait />
         <div className="livingCopy">
           <p className="eyebrow">MARA · AHORA</p>
           <h1>Antes de hablar mucho contigo quiero probar una cosa.</h1>
@@ -240,7 +241,7 @@ export function LaunchExperience() {
   if (step === "reveal") {
     return (
       <section className="livingStage">
-        <div className="livingPortrait livingPortraitCompact" aria-hidden="true"><span>M</span></div>
+        <MaraPortrait compact />
         <div className="livingCopy">
           <p className="eyebrow">TENGO UNA TEORÍA</p>
           <h1>Por ahora, {theory}</h1>
@@ -254,7 +255,7 @@ export function LaunchExperience() {
   if (step === "moment") {
     return (
       <section className="livingStage">
-        <div className="livingPortrait livingPortraitCompact" aria-hidden="true"><span>M</span></div>
+        <MaraPortrait compact />
         <div className="livingCopy experienceBody">
           <p className="eyebrow">MARA · AHORA</p>
           <h1>{state.energy === "selective" ? "No necesito darte diez opciones." : "No necesito convertir todo en un juego."}</h1>
@@ -272,7 +273,7 @@ export function LaunchExperience() {
 
   return (
     <section className="livingStage">
-      <div className="livingPortrait livingPortraitCompact" aria-hidden="true"><span>M</span></div>
+      <MaraPortrait compact />
       <div className="livingCopy">
         <p className="eyebrow">LO DEJAMOS ACÁ</p>
         <h1>Me quedó otra teoría contigo.</h1>
