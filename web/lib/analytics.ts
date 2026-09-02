@@ -36,6 +36,7 @@ export type MaraEvent =
   | "commercial_experiment_assigned"
   | "commercial_moment_shown"
   | "commercial_offer_dismissed"
+  | "commercial_post_offer_continued"
   | "offer_opened"
   | "mock_purchase_completed"
   | "purchase_resume"
@@ -78,6 +79,7 @@ const P0_DEV_LOG_EVENTS = new Set<MaraEvent>([
   "commercial_experiment_assigned",
   "commercial_moment_shown",
   "commercial_offer_dismissed",
+  "commercial_post_offer_continued",
   "offer_opened",
   "mock_purchase_completed",
   "purchase_resume",
