@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "mode": "private_conversation",
   "mara_identity": {
     "character_summary_ref": "docs/character/character-bible.md",
@@ -15,10 +15,29 @@
     "user_id": null,
     "preferred_name": null,
     "relationship_stage": "new",
+    "commercial_state": null,
     "relevant_memories": [],
+    "relevant_preferences": [
+      {
+        "category": "format_affinity",
+        "value": "voice",
+        "confidence": "high",
+        "explicit": true,
+        "context": "private",
+        "sensitivity": "normal",
+        "status": "active"
+      }
+    ],
     "open_loops": [],
     "preferred_tone": null,
     "explicit_boundaries": []
+  },
+  "discovery_context": {
+    "active": false,
+    "format": null,
+    "prediction_allowed": false,
+    "recommendation_mode": "known_fit",
+    "surprise_me": false
   },
   "current_conversation": {
     "recent_turns": []
@@ -26,12 +45,17 @@
   "retrieval_metadata": {
     "memories_considered": 0,
     "memories_included": 0,
+    "preferences_considered": 0,
+    "preferences_included": 0,
     "sensitive_candidates_excluded": 0,
-    "low_confidence_candidates_excluded": 0
+    "low_confidence_candidates_excluded": 0,
+    "rejected_or_expired_preferences_excluded": 0
   },
   "post_turn_candidates": {
     "memory_writes": [],
     "memory_updates": [],
+    "preference_candidates": [],
+    "preference_corrections": [],
     "open_loops_created": [],
     "open_loops_resolved": [],
     "mara_life_events_created": []
