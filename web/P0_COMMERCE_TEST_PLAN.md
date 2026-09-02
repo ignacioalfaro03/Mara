@@ -60,6 +60,31 @@ Do not include real scarcity in comparison until one of these exists:
 
 The current `12/12` capacity example is developer prototype data and must remain labeled `NOT REAL INVENTORY`.
 
+## Running the P0 commerce lab
+
+The development-only `P0 COMMERCE LAB` panel makes qualitative sessions repeatable without external analytics.
+
+For each tester:
+1. choose the intended variant (`A_offer_only`, `B_reward` or `C_ownership`) in the DEV panel;
+2. forcing a variant clears the previous P0 living state and safe session event log, stores the selected variant and reloads;
+3. let the tester use Mara without coaching the commercial decision;
+4. if an offer appears, allow either premium intent or `Ahora no` naturally;
+5. after either path, `Seguir con Mara` / `Seguimos` records whether the person explicitly continues after commerce;
+6. at the end, update and copy the DEV scorecard;
+7. copy the raw P0 event log only when deeper debugging is useful;
+8. capture the qualitative interview separately without putting intimate answers into generic analytics.
+
+The scorecard is directional only. It summarizes safe counts such as:
+- commercial moments;
+- premium intents;
+- declines;
+- post-offer continuations;
+- DEV mock purchases;
+- delivered rewards;
+- collection views.
+
+Do not combine different testers in one uncleared local P0 session.
+
 ## Stage 1 — UX sanity
 
 Use a very small qualitative sample first.
@@ -90,6 +115,7 @@ If recruitment is feasible, expand each variant enough to identify directional d
 Candidate directional metrics:
 - `commercial_moment_shown → premium_intent`;
 - `commercial_moment_shown → commercial_offer_dismissed`;
+- `intent/decline → commercial_post_offer_continued`;
 - session continuation after offer exposure;
 - session continuation after decline;
 - qualitative perceived-value score;
@@ -106,15 +132,19 @@ Development mode keeps a capped **safe P0 event log** in `sessionStorage` under:
 `mara_p0_event_log`
 
 The `/experience` route exposes a DEV-only panel with:
+- forced A/B/C variant controls;
+- an on-device scorecard;
+- `Copiar scorecard`;
 - `Copiar log P0`;
 - `Limpiar log`.
 
 The log is limited to selected P0 interaction/commerce events and capped at 250 records.
 
-It should contain metadata such as:
+It may contain metadata such as:
 - experiment variant;
 - offer ID/type;
 - premium intent or dismissal;
+- explicit post-offer continuation;
 - resume/reward events;
 - collection events;
 - voice interaction;
@@ -140,6 +170,12 @@ A variant is commercially bad even with higher CTA intent if it materially incre
 - lower desire to return.
 
 This is the practical meaning of **Commercial Inertia**.
+
+Pre-payment proxy:
+
+> **Post-Offer Continuation = users who explicitly continue after intent/decline ÷ users who made an offer decision.**
+
+This is not the future Post-Purchase Continuation Rate. It is an early indicator of whether the commercial interruption preserved momentum.
 
 ## No-penalty decline test
 
