@@ -1,0 +1,34 @@
+{
+  "schema_version": "0.1",
+  "user_id": null,
+  "preferences": [
+    {
+      "preference_id": "pref_example",
+      "category": "format_affinity",
+      "value": "voice",
+      "context": {
+        "surface": "private",
+        "modality": null,
+        "scenario": null
+      },
+      "source": {
+        "type": "explicit_statement",
+        "source_refs": []
+      },
+      "explicit": true,
+      "confidence": "high",
+      "stability": "emerging",
+      "sensitivity": "normal",
+      "consent_scope": "personalization",
+      "created_at": null,
+      "last_observed_at": null,
+      "last_confirmed_at": null,
+      "contradiction_count": 0,
+      "status": "active",
+      "notes": null
+    }
+  ],
+  "corrections": [],
+  "excluded_prohibited_inferences": [],
+  "updated_at": null
+}
