@@ -9,7 +9,13 @@ import {
   type CommercialExperimentVariant,
 } from "@/lib/p0/commercial-experiment";
 
-export function MomentumCommercePrototype({ experienceId }: { experienceId: string }) {
+type MomentumCommercePrototypeProps = {
+  experienceId: string;
+  onIntentCaptured?: () => void;
+  onDeclined?: () => void;
+};
+
+export function MomentumCommercePrototype({ experienceId, onIntentCaptured, onDeclined }: MomentumCommercePrototypeProps) {
   const offer = useMemo(() => getOfferForExperience(experienceId), [experienceId]);
   const [variant, setVariant] = useState<CommercialExperimentVariant>("A_offer_only");
   const [variantReady, setVariantReady] = useState(false);
@@ -52,6 +58,7 @@ export function MomentumCommercePrototype({ experienceId }: { experienceId: stri
 
   function captureIntent() {
     setIntentCaptured(true);
+    onIntentCaptured?.();
     track("offer_opened", { offer_id: activeOffer.id, offer_type: activeOffer.type, variant });
     track("premium_intent", { offer_id: activeOffer.id, offer_type: activeOffer.type, variant });
 
@@ -66,6 +73,7 @@ export function MomentumCommercePrototype({ experienceId }: { experienceId: stri
 
   function dismissOffer() {
     setDismissed(true);
+    onDeclined?.();
     track("commercial_offer_dismissed", {
       offer_id: activeOffer.id,
       offer_type: activeOffer.type,
