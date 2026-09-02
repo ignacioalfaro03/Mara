@@ -8,11 +8,11 @@ Authoritative commercial architecture for the Foundation outcome. It extends `mo
 
 Turn desire and personal relevance into **repeatable, transparent, high-margin revenue** without making spending a proxy for affection or relationship closeness.
 
-The commercial priority is not maximum extraction from one session. It is:
+Commercial priority:
 
 **first purchase → value confirmation → second purchase → repeat spend → retained relationship**.
 
-The [Desire Discovery Engine](../architecture/desire-discovery-engine.md) and [Preference Graph](../architecture/preference-graph.md) may improve **offer relevance**. They must never become vulnerability scoring or opaque individualized pricing infrastructure.
+The [Desire Discovery Engine](../architecture/desire-discovery-engine.md), [Preference Graph](../architecture/preference-graph.md) and [Fantasy Compiler](../architecture/fantasy-compiler.md) may improve **offer relevance and experience composition**. They must never become vulnerability scoring or opaque individualized pricing infrastructure.
 
 ## Monetization ladder
 
@@ -24,13 +24,12 @@ Surfaces:
 - lifestyle/editorial imagery;
 - platform-safe teasing;
 - short voice/video clips;
-- humor and opinions;
-- mini stories;
-- open narrative loops;
+- humor/opinions;
+- mini stories/open loops;
 - public personality;
-- platform-safe polls / A-B choices.
+- platform-safe polls/A-B choices.
 
-The free layer should create curiosity about Mara, not reveal the entire premium value.
+The free layer creates curiosity about Mara, not complete premium fulfillment.
 
 ### Layer 1 — Free relationship + playable discovery
 Purpose: move from follower to identified/returning user while making personalization enjoyable.
@@ -39,44 +38,36 @@ Candidate experiences:
 - limited conversation;
 - 3-choice playable onboarding;
 - Fast Five / Mara Test;
-- lightweight preference discovery;
+- preference discovery;
 - Mara predictions;
 - correction/reveal loops;
-- lightweight/manual callbacks;
-- previews;
-- small story choices;
+- lightweight callbacks;
+- previews/story choices;
 - first voice exposure;
-- explicit adult-mode discovery without automatic escalation.
+- adult-mode discovery without automatic escalation.
 
-At launch this can be partially manual and rule-based. Persistent infrastructure is not required.
+P0 can remain manual/rule-based.
 
 ### Layer 2 — Low-ticket first purchase
-Purpose: create the lowest-friction proof of willingness to pay.
+Purpose: lowest-friction proof of willingness to pay.
 
-Candidate products:
+Candidates:
 - special audio;
 - mini story;
-- small themed unlock;
+- themed unlock;
 - continuation;
 - personalized short message;
 - visual pack;
 - bounded mini experience;
 - simple interactive branch;
-- discovery-informed experience recommendation.
+- compiled mini experience.
 
-Primary metrics:
-- visitor → registration;
-- registration → first paid;
-- time to first purchase;
-- average first ticket;
-- first-product conversion;
-- preference-relevant vs generic conversion;
-- refund/dispute rate.
+Measure visitor→registration, registration→first paid, time to first purchase, first ticket, conversion, refund/dispute and preference-relevant vs generic performance.
 
 ### Layer 3 — Repeat purchases
-Purpose: prove value delivery.
+Purpose: prove delivered value.
 
-Candidate repeatable surfaces:
+Candidates:
 - sequels;
 - episodic stories;
 - additional voice moments;
@@ -84,87 +75,109 @@ Candidate repeatable surfaces:
 - follow-up personalization;
 - branching continuations;
 - bundles;
-- co-created `Build It` experiences.
+- co-created `Build It` experiences;
+- compiled variations that meaningfully differ.
 
-The commercial proof point is **first payer → second payer**.
+Commercial proof point: **first payer → second payer**.
 
 ### Layer 4 — Membership
-Do not assume subscription is the default answer.
+Do not assume subscription is default.
 
-Membership becomes attractive when users have demonstrated repeat usage and desire continuity.
+Membership becomes attractive only after repeat usage proves recurring value.
 
 Potential benefits:
-- recurrent drops;
+- recurring drops;
 - selected premium content;
 - deeper interaction allowance;
 - additional voice;
 - continuity conveniences;
 - earlier access;
 - selected personalization;
-- member-only story arcs.
+- member-only arcs.
 
-Membership must feel like a better ongoing Mara experience, not merely removal of a paywall.
-
-### Layer 5 — Custom / premium experiences
+### Layer 5 — Custom / premium
 Higher-value experiences may include:
 - personalized voice;
-- longer narrative experiences;
+- longer narratives;
 - multi-format bundles;
-- user-configured themes within policy;
-- clearly scoped roleplay;
-- limited or priority experiences;
+- bounded configurable themes;
+- scoped roleplay;
+- priority/limited scope;
 - co-created story direction.
 
-High ticket must come from scope, personalization and perceived value—not financial pressure.
+High ticket comes from scope, personalization and perceived value, not financial/emotional pressure.
+
+## Fantasy Compiler commercial role
+
+The Fantasy Compiler changes the business from selling categories to selling **relevant combinations**.
+
+Instead of:
+
+> Dominance Pack / Roleplay Pack / Audio Pack
+
+Mara may compose:
+
+> selective energy + teasing + voice + work context + continuation + medium novelty
+
+and route the user to a suitable free or paid experience.
+
+This is commercially useful because it can improve:
+- perceived relevance;
+- discovery;
+- conversion;
+- continuation;
+- repeat purchase;
+- content reuse;
+- defensibility.
+
+It must not optimize for “maximum extractable spend”.
 
 ## Discovery-informed offer relevance
 
-Preference signals can improve **product-market fit per user**.
-
-Examples:
-- high explicit/reliable voice affinity → feature a voice experience;
-- strong narrative affinity → feature a story continuation;
-- personalization affinity → feature a custom experience;
-- exploration preference → feature `Surprise Me` / novel experience;
-- repeated co-creation engagement → feature `Build It`.
-
-The system may change:
+Preference signals can change:
 - recommendation order;
 - highlighted experience;
-- content modality;
+- modality;
 - story family;
-- continuation priority.
+- continuation priority;
+- known-fit vs exploration mode.
 
-The system must not use Preference Graph data to:
-- estimate the maximum price an individual will tolerate;
-- target debt/financial distress;
+Examples:
+- reliable voice affinity → feature voice experience;
+- narrative affinity → feature continuation;
+- personalization affinity → custom experience;
+- exploration preference → `Surprise Me`;
+- repeated co-creation → `Build It`.
+
+Do not use Preference Graph/Fantasy Compiler to:
+- estimate maximum price tolerance;
+- target financial distress/debt;
 - exploit loneliness/dependency;
-- suppress cheaper equivalent options based on vulnerability;
+- hide cheaper equivalents based on vulnerability;
 - alter emotional treatment based on expected spend.
 
 Pricing remains transparent and SKU/cohort-based.
 
 ## Personalized storefront
 
-A future storefront can rank products differently for different users using:
-- explicit preferences;
-- high-confidence inferred preferences;
-- prior purchased entitlements;
-- story history;
-- format affinity;
-- current context;
-- relationship continuity;
-- exploration mode.
+Future sections:
+- `For You`;
+- `Mara's Pick`;
+- `Continue`;
+- `Surprise Me`;
+- `Build It`;
+- `New`;
+- `Trending` only with real data.
 
-Two users may see different **ordering/highlighting** while the same SKU retains the same applicable price and terms under the current pricing rule.
+A future storefront may rank differently using explicit/high-confidence preference data, purchased entitlements, story history, format affinity, current context, relationship continuity and exploration mode.
 
-Preference relevance should be auditable enough to explain product logic internally without storing raw intimate answers in commerce systems.
+Same SKU retains the same applicable price/terms under current pricing rules.
 
-## Experience Configurator
+## Experience Configurator / Build It
 
 Do not treat custom requests as an unstructured inbox forever.
 
-A future configurator may expose safe, bounded variables such as:
+Bounded variables may include:
 - tone;
 - theme/scenario;
 - outfit/content direction;
@@ -174,82 +187,63 @@ A future configurator may expose safe, bounded variables such as:
 - format;
 - voice;
 - narrative style;
-- ending/continuation type;
+- ending/continuation;
 - personalization depth.
 
-The `Build It` playable format can become the front-end UX for this configurator.
+`Build It` can become the user-facing composition surface.
 
-Pricing may eventually depend on:
-- generation/review cost;
-- duration;
-- number of modalities;
-- personalization depth;
-- exclusivity;
-- operational priority.
+Pricing may eventually depend on real cost/scope drivers such as duration, modalities, personalization depth, exclusivity and operational priority.
 
-The strategic target is:
+Strategic target:
 
 **mass personalization with premium perceived value**.
 
 ## Fantasy commerce instead of flat catalog
 
-Avoid presenting the premium surface as only `Pack 1`, `Pack 2`, `Video 3`.
+Prefer recognizable situations and continuations to file-store framing.
 
-Prefer productized situations and stories with clear scope.
+Examples:
+- “Llegué del gimnasio”;
+- “No puedo dormir”;
+- “Tengo algo que contarte”;
+- “Tú eliges el outfit”;
+- “Anoche quedó algo pendiente”;
+- “Tengo una sorpresa”.
 
-Examples of non-explicit commercial framing:
-- "Llegué del gimnasio";
-- "No puedo dormir";
-- "Tengo algo que contarte";
-- "Tú eliges el outfit";
-- "Anoche quedó algo pendiente";
-- "Tengo una sorpresa";
-- "Quieres saber qué pasó después".
-
-A product may have:
-- preview;
-- discovery choice;
-- unlock;
-- continuation;
-- callback;
-- sequel.
-
-This creates a catalog that behaves like **narrative commerce**, not a file store.
+A product may contain preview, choice, compiled variation, unlock, callback, continuation and sequel.
 
 ## Bundles
 
-Candidate bundle logic:
-
 ### Date Night
 - story;
-- visual component;
+- visual;
 - audio;
-- follow-up interaction.
+- follow-up.
 
 ### Voice Pack
-- short greeting;
+- greeting;
 - narrative audio;
 - personalized message;
 - follow-up.
 
 ### Custom Experience
 - configured scenario;
-- one or more content formats;
+- one or more modalities;
 - personalized component;
 - continuation.
 
-Measure whether bundles increase AOV and repeat discovery without obscuring individual pricing.
+Measure AOV, repeat discovery and contribution margin without obscuring individual pricing.
 
 ## Drops, scarcity and collectibility
 
-Permitted:
+Allowed:
 - real limited drops;
 - dated releases;
 - themed series;
 - episodic collections;
 - seasonal moments;
-- user-visible history of acquired episodes/experiences;
-- safe discovery badges/results where useful.
+- user-visible acquired history;
+- safe discovery milestones.
 
 Prohibited:
 - fake countdowns;
@@ -257,54 +251,40 @@ Prohibited:
 - fake scarcity;
 - fabricated urgency.
 
-Collectibility can support "My history with Mara" through purchased episodes, milestones, discovery history and remembered story arcs. It must not create artificial emotional debt.
+Collectibility supports continuity/ownership, not emotional debt.
 
 ## High-value users
 
-Commercial state may identify a `high_value` segment for service and offer relevance.
+Commercial state may identify `high_value` for service and offer relevance.
 
-Permitted levers:
-- larger bundles;
-- higher personalization;
-- priority fulfillment;
-- exclusive product scope;
+Allowed levers:
+- bigger bundles;
+- deeper personalization;
+- priority fulfillment where sold;
+- exclusive scope;
 - early access;
 - longer custom experiences;
-- optional status/collection mechanics.
+- optional collection/status mechanics.
 
-Never use:
-- debt;
-- financial distress;
-- loneliness;
-- bereavement;
-- inferred dependency;
-- compulsive-spending signals;
-- threats or withdrawal of baseline respect.
+Never use debt, distress, loneliness, bereavement, inferred dependency, compulsive-spending signals, threats or withdrawal of baseline respect.
 
 **High ARPPU through value, not coercion.**
 
 ## Contextual microtransactions
 
-Principle:
-
 > **Monetize moments of high perceived value, not every click.**
 
-Each paid action must make clear:
-- what is being purchased;
-- price;
-- scope;
-- whether it is recurring;
-- what happens next.
+Each paid action must clearly state product, price, scope, recurring/nonrecurring status and next step.
 
-Do not insert surprise monetization inside an adult/aroused moment.
+A discovery/compiler result may lead to a relevant product, but the transition from play to commerce must be obvious.
 
-A discovery game may lead to a relevant product, but the transition from play to commerce must be obvious.
+Do not surprise-charge inside adult/aroused moments.
 
 ## Pricing architecture
 
-All numeric pricing is experimental until real purchase data exists.
+All numeric pricing is experimental until purchase data exists.
 
-Test dimensions:
+Test:
 - product type;
 - bundle composition;
 - duration;
@@ -313,126 +293,132 @@ Test dimensions:
 - exclusivity;
 - membership structure.
 
-Measure:
-- conversion;
-- revenue;
-- first → second purchase;
-- AOV;
-- ARPPU;
-- repeat purchase;
-- refund/dispute;
-- churn after purchase;
-- contribution margin;
-- qualitative satisfaction.
+Measure conversion, revenue, first→second purchase, AOV, ARPPU, repeat purchase, refund/dispute, churn after purchase, contribution margin and qualitative satisfaction.
 
-Avoid opaque individualized pricing. Early tests should use cohort/offer-level hypotheses.
+Avoid opaque individualized pricing.
 
-## Unit economics
+## Compiled experience economics
 
-For every paid product record:
+For every compiled paid experience:
 
-**Contribution Margin = Revenue − variable generation − review/moderation − storage/delivery − provider/payment fees − support/refund cost**
+**Contribution Margin = Revenue − variable generation − review/moderation − storage/delivery − provider/payment fees − support/refund cost**.
 
-Track at minimum:
-- revenue per unit;
-- variable cost per unit;
-- contribution margin %;
-- fulfillment time;
+Also track:
+- number of reused content blocks;
+- incremental personalization cost;
+- compile/fulfillment time;
+- voice/video cost;
 - approval/rework rate;
-- repeat-purchase linkage;
-- personalization/discovery operational cost where relevant.
+- conversion;
+- continuation;
+- second-purchase linkage;
+- repeat-family/cross-family behavior;
+- Personalization Lift.
 
-Prefer products with:
+Do not assume deeper personalization is automatically more profitable.
 
-**high perceived value / low marginal cost / high repeatability / low policy risk**.
+Prefer:
 
-Voice, text personalization and discovery-informed recommendations are hypotheses to validate, not assumed winners.
+**high perceived value / low marginal cost / high repeatability / controlled risk**.
+
+A key Fantasy Compiler hypothesis is **mass personalization without mass production**.
+
+## Fantasy family performance
+
+Do not rank families only by gross revenue.
+
+For each family evaluate:
+- demand;
+- conversion;
+- return;
+- second purchase;
+- retention;
+- contribution margin;
+- production complexity;
+- support burden;
+- compliance/platform/payment risk.
+
+Best family = **best healthy economics**, not maximum explicitness.
 
 ## Commercial segmentation
 
-Use commercial segments for offers and analytics only:
+Use commercial segments for commerce/analytics only:
+- `observer`;
+- `curious`;
+- `buyer`;
+- `member`;
+- `enthusiast`;
+- `high_value`;
+- `lapsed_payer`.
 
-- `observer` — free consumption;
-- `curious` — interacts, no purchase;
-- `buyer` — one/occasional purchase;
-- `member` — recurring membership;
-- `enthusiast` — repeat custom/premium use;
-- `high_value` — high recurring revenue;
-- `lapsed_payer` — previously paid, no recent purchase.
-
-Relationship state and Preference Graph remain separate from commercial segmentation.
+Relationship state and Preference Graph remain separate.
 
 ## MVP monetization experiments
 
-Prioritize evidence over infrastructure.
+1. Static visual vs visual + Mara voice.
+2. Generic unlock vs personalized short message/audio.
+3. Flat category vs compiled combination.
+4. Flat catalog vs situation framing.
+5. One-variable vs multi-variable personalization.
+6. Generic recommendation vs compiler-informed recommendation.
+7. User chooses everything vs Mara curates.
+8. Known fit vs `Surprise Me`.
+9. Finished product vs `Build It`.
+10. One-shot vs continuation.
+11. Generic scenario vs Life State-connected scenario.
+12. One-off purchase vs transparent bundle.
+13. Value-before-offer timing.
+14. Membership intent only after repeat-use evidence.
 
-1. Static visual preview vs visual + Mara voice.
-2. Generic paid unlock vs personalized short message/audio.
-3. Flat catalog item vs narrative/situation framing.
-4. One-off purchase vs clearly scoped bundle.
-5. No callback vs relevant callback after a paid experience.
-6. Standard continuation vs branching continuation.
-7. Generic recommendation vs Preference Graph-informed recommendation.
-8. Finished product vs `Build It` co-created offer.
-9. Discovery result only vs discovery result + immediately relevant offer.
-10. Free-depth timing: early offer vs value-before-offer.
-11. Membership intent only after repeat use evidence.
-
-Do not declare winners from tiny samples. Use qualitative signal until volume supports stronger inference.
+Use qualitative signal until volume supports stronger inference.
 
 ## KPIs
 
 Acquisition:
-- social → web CTR;
-- social quiz → web CTR;
-- visitor → signup/identified user.
+- social→web CTR;
+- social quiz→web CTR;
+- visitor→identified user.
 
 Activation:
 - conversation start;
-- first meaningful interaction;
+- meaningful interaction;
 - playable onboarding completion;
-- first voice play;
-- adult-mode eligible/opt-in where relevant.
+- first voice play.
 
-Discovery quality:
-- quiz start/completion;
-- choices per session;
-- repeat discovery rate;
+Discovery/compiler:
+- discovery completion;
+- compiler recommendation CTR;
 - Mara Guess Accuracy;
-- correction/confirmation rate;
-- Personalization Lift.
+- correction/confirmation;
+- Surprise Acceptance;
+- Personalization Lift;
+- saturation/skip signal.
 
 Monetization:
 - premium intent;
 - first payer;
-- first → second payer;
-- personalized vs generic offer conversion;
+- first→second payer;
+- personalized/compiled vs generic conversion;
 - AOV;
-- ARPU;
-- ARPPU;
+- ARPU/ARPPU;
 - purchase frequency;
-- bundle attach rate;
-- custom conversion;
+- bundle/custom conversion;
 - contribution margin.
 
 Retention:
 - D1/D7/D30 return;
-- repeat payer rate;
+- repeat payer;
 - days between purchases;
-- narrative continuation rate;
+- narrative continuation;
 - 30-day retained spender.
 
 Quality/safety:
 - refund/dispute;
 - voluntary stop/skip;
-- negative-reaction rate;
-- preference correction rate;
-- memory/personalization creepiness rate.
+- negative reaction;
+- preference correction;
+- memory/personalization creepiness.
 
 ## Commercial decision rule
 
-Prioritize a monetization feature only if it plausibly improves at least one of:
-
-**conversion, repeat spend, retention, margin or defensibility**
-
-and does not create disproportionate legal, policy, privacy, trust or operating risk.
+Prioritize only features that plausibly improve **conversion, repeat spend, retention, margin or defensibility** without disproportionate legal, policy, privacy, trust or operating risk.
