@@ -47,7 +47,13 @@ export type MaraEvent =
   | "scarcity_offer_viewed"
   | "scarcity_closed"
   | "custom_slot_interest"
-  | "voice_upgrade_interest";
+  | "voice_upgrade_interest"
+  | "wtp_price_assigned"
+  | "wtp_price_shown"
+  | "wtp_response_yes"
+  | "wtp_response_maybe"
+  | "wtp_response_no"
+  | "wtp_post_price_continued";
 
 export type MaraEventRecord = {
   event: MaraEvent;
@@ -90,6 +96,12 @@ const P0_DEV_LOG_EVENTS = new Set<MaraEvent>([
   "scarcity_offer_viewed",
   "custom_slot_interest",
   "voice_upgrade_interest",
+  "wtp_price_assigned",
+  "wtp_price_shown",
+  "wtp_response_yes",
+  "wtp_response_maybe",
+  "wtp_response_no",
+  "wtp_post_price_continued",
 ]);
 
 function appendDevelopmentEvent(record: MaraEventRecord) {
