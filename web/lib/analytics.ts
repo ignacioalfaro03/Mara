@@ -65,7 +65,11 @@ export type MaraEvent =
   | "contributor_history_viewed"
   | "world_asset_reveal_viewed"
   | "goal_completion_simulated"
-  | "goal_share_intent";
+  | "goal_share_intent"
+  | "desire_route_selected"
+  | "desire_surface_plan_viewed"
+  | "desire_route_fit"
+  | "desire_route_correction";
 
 export type MaraEventRecord = {
   event: MaraEvent;
@@ -126,6 +130,10 @@ const P0_DEV_LOG_EVENTS = new Set<MaraEvent>([
   "world_asset_reveal_viewed",
   "goal_completion_simulated",
   "goal_share_intent",
+  "desire_route_selected",
+  "desire_surface_plan_viewed",
+  "desire_route_fit",
+  "desire_route_correction",
 ]);
 
 function appendDevelopmentEvent(record: MaraEventRecord) {
