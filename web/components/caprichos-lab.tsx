@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { caprichos, getCapricho } from "@/data/caprichos";
 import { track } from "@/lib/analytics";
 import {
@@ -27,8 +27,7 @@ export function CaprichosLab() {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [status, setStatus] = useState("");
 
-  const selectedGoal = getCapricho(selectedGoalId);
-  const activeGoal = selectedGoal;
+  const activeGoal = getCapricho(selectedGoalId);
   const progress = caprichoProgressPercent(activeGoal);
   const myParticipation = useMemo(
     () => participations.find((item) => item.caprichoId === activeGoal.id) ?? null,
@@ -156,6 +155,10 @@ export function CaprichosLab() {
     setStatus("Share intent registrado. No se publicó ni compartió nada.");
   }
 
+  function updateAlias(event: ChangeEvent<HTMLInputElement>) {
+    setAlias(event.target.value);
+  }
+
   return (
     <section className="livingStage livingQuestion">
       <div className="livingCopy">
@@ -222,7 +225,7 @@ export function CaprichosLab() {
           {identityMode === "alias" ? (
             <label className="livingMemory">
               Mara alias
-              <input value={alias} maxLength={24} onChange={(event) => setAlias(event.target.value)} />
+              <input value={alias} maxLength={24} onChange={updateAlias} />
             </label>
           ) : null}
           <div className="correctionRow">
