@@ -73,3 +73,27 @@ Do not activate Stripe or PayPal for Mara's intended adult/sensual AI scope unde
 - Capricho: `black_bag_capricho_01`, custom contribution toward goal `black_bag_01`, target `US$420.00`, private participation by default.
 
 Payment buys concrete experience value only. It does not buy affection, emotional priority or personality changes.
+
+## Variable-cost consumption boundary
+
+`MARA_UNIT_ECONOMICS_MANDATE.md` is authoritative for any future open-ended LLM, voice, media-generation or other materially metered capability.
+
+Permanent rule:
+
+> **NO USER GETS UNBOUNDED VARIABLE COST AT MARA'S EXPENSE.**
+
+Commercial implications:
+
+- free usage must have a hard allowance/cost ceiling;
+- Plus/subscription must include a defined usage allowance rather than economically unlimited compute;
+- a user who already paid for Plus or previous unlocks may still require a prepaid top-up once incremental variable consumption exceeds the stated included allowance;
+- exhaustion must lead to top-up, allowance renewal wait or a bounded fallback/stop before cost becomes uncapped;
+- no retroactive surprise overage billing;
+- no plan may be activated until its full allowed included consumption is modeled against real provider/payment/refund-reserve costs and the configured contribution-margin floor;
+- all materially expensive operations require server-authoritative metering, preflight budget authorization, postflight settlement and global/per-user circuit breakers.
+
+Existing purchased entitlements remain authoritative. Consumption limits cannot silently erase a concrete unlock the user already bought.
+
+The economic trigger must be usage/cost based. Do not raise price or increase purchase pressure from inferred loneliness, distress, dependency or arousal.
+
+Open-ended chat/voice is therefore not production-ready merely because a model/provider can respond. It is production-ready only when the metering, allowance, credit/top-up and spend-kill-switch contract is also in place.
