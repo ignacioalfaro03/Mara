@@ -179,3 +179,5 @@ jobs:
           echo "MARA_PUBLIC_ALPHA_DEPLOY PASS"
           echo "VERIFIED_SHA=$GITHUB_SHA"
           echo "VERIFIED_URL=$DEPLOYMENT_URL"
+
+# deploy trigger: situational-first-contact-2026-09-03
