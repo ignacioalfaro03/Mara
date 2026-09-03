@@ -1,70 +1,103 @@
-# Mara Vera — Launch Visual Production Pack v1.0
+# Mara Vera — Launch Visual Production Pack v2.0
 
-## Purpose
+## Status
 
-Convert the Visual Bible into a launch-ready production system.
+Authoritative launch production pack.
 
-This is not a moodboard and not a generic image-generation backlog. It is the minimum canonical asset pack required to make Mara Vera recognizable across owned web and social distribution without character drift.
+This v2 supersedes the pre-freeze identity-selection language from v1.
 
-Authoritative dependency:
+Authoritative dependencies:
 - `docs/character/visual-bible.md`
+- `docs/character/canonical-visual-reference.md`
+
+Mara's identity is already frozen by founder decision.
 
 Permanent rule:
 
-> ONE MARA. MANY CONTEXTS.
+> **ONE MARA. MANY CONTEXTS.**
 
-A beautiful image that does not look like the same Mara is a rejected asset.
+A beautiful image that does not look like the founder-approved canonical Mara is a rejected asset.
 
 ---
 
-## 1. Launch target
+## 1. Production objective
 
-Produce and approve an initial **12-asset canonical visual pack**.
-
-The pack must prove Mara can remain recognizably the same adult synthetic woman across:
+Produce a compact launch asset library that proves the **same canonical adult synthetic woman** can remain recognizably Mara across:
 - face-forward portrait;
 - full-body / silhouette;
-- mirror selfie;
+- selfie;
 - apartment / ordinary life;
 - gym;
 - café / outside-home life;
 - evening / night;
-- close, more personal owned-web framing.
+- closer owned-web framing.
 
-Do not optimize for raw volume.
+Target pack:
+- 12 planned launch shots;
+- at least 9 strong approved assets before launch;
+- no pressure to complete all 12 if the first 9 already cover every required surface.
 
-The first milestone is:
+Do not optimize for image count.
 
-> 12 approved assets that clearly look like one person with one life.
-
----
-
-## 2. Canonical identity lock
-
-Before approving asset 02+, freeze the following from the strongest first-generation candidate:
-
-- facial identity;
-- apparent age: 24–29;
-- skin-tone family;
-- hair color / length family;
-- eyebrow shape family;
-- eye shape / gaze signature;
-- lip proportions;
-- cheekbone / jaw balance;
-- body archetype;
-- waist-to-hip family;
-- bust family;
-- leg / glute volume family;
-- baseline makeup intensity;
-- overall confident / selective energy.
-
-These are not regenerated creatively in every scene.
-
-They are identity constraints.
+> **IDENTITY CONTINUITY > ASSET VOLUME.**
 
 ---
 
-## 3. Launch asset naming convention
+## 2. Canonical identity is not a variable
+
+Do **not** select, re-cast or creatively reinterpret Mara while producing this pack.
+
+Every shot must preserve the approved canonical reference registered in `docs/character/canonical-visual-reference.md`.
+
+Fixed launch traits:
+- clearly adult, apparent age target 25–29;
+- original synthetic face;
+- fair/light skin;
+- non-Latina / European visual read;
+- blonde to dark-blonde / honey-blonde hair family, natural darker roots allowed;
+- structured adult face;
+- defined cheekbones and feminine jaw;
+- direct confident eyes;
+- composed / evaluative baseline expression;
+- curvy natural hourglass body;
+- visibly thick thighs;
+- full hips;
+- substantial but anatomically plausible glutes;
+- medium-to-large proportionate bust;
+- visible believable waist;
+- natural human softness;
+- not ultra-thin;
+- not overweight;
+- no plastic BBL caricature;
+- dominant, selective, self-possessed presence.
+
+Permanent facial principle:
+
+> **Mara should look more like the person judging the room than the person asking whether the room likes her.**
+
+Permanent dominance principle:
+
+> **DOMINANCE IS COMPOSURE BEFORE IT IS COSTUME.**
+
+If the face/body identity changes materially, regenerate the scene. Do not rationalize the drift as styling.
+
+---
+
+## 3. Canonical conditioning rule
+
+Where tooling supports reference conditioning, use the founder-approved canonical reference as the primary identity input.
+
+Where tooling does not support image conditioning:
+- use the Visual Bible conceptual anchor;
+- minimize identity-changing prompt creativity;
+- compare every result directly with the canonical reference before approval;
+- reject rather than “close enough”.
+
+Do not substitute a visually similar woman because the exact reference is temporarily inconvenient.
+
+---
+
+## 4. Launch asset naming convention
 
 Use:
 
@@ -76,131 +109,126 @@ Examples:
 - `mara_launch_07_gym_mirror_v1`
 - `mara_launch_11_night_restaurant_v1`
 
-If an asset is rejected, do not reuse the same filename as approved canon.
+Rejected candidates must not reuse an approved filename.
 
 Keep rejected candidates out of public asset directories.
 
 ---
 
-## 4. The 12-shot launch pack
+## 5. The 12-shot launch pack
 
-### 01 — Canonical face / identity anchor
+### 01 — Canonical face / identity proof
 
-**Purpose:** establish the face every later asset must match.
+**Purpose:** prove the approved face survives a clean new context.
 
 Frame:
 - chest-up portrait;
 - apartment or neutral premium interior;
 - natural window light;
 - direct gaze;
-- subtle half-smile or controlled neutral expression;
+- controlled neutral expression or knowing restrained half-smile;
 - minimal visual clutter.
 
 Wardrobe:
-- fitted black / off-white top;
-- no statement accessory.
+- fitted black / cream / off-white top;
+- no distracting statement accessory.
 
 Must prove:
-- original face;
-- adult presentation;
+- exact Mara identity;
+- clearly adult face;
 - realistic skin;
-- Mara's calm confidence.
+- composed dominance.
 
 Primary use:
-- canonical reference;
+- profile / avatar crop;
 - Meet Mara;
-- profile / avatar crops;
-- generation identity reference.
-
----
+- first social identity beat;
+- identity QA reference beside the canonical source.
 
 ### 02 — Close social-native selfie
 
-**Purpose:** prove Mara feels like a socially native person, not a model render.
+**Purpose:** prove Mara feels socially native rather than like a studio render.
 
 Frame:
-- phone selfie framing;
+- phone-selfie framing;
 - slightly imperfect composition;
 - face + upper torso;
 - natural indoor light;
 - direct but casual gaze.
 
 Must not feel:
+- eager / approval-seeking;
 - studio-shot;
 - hyperretouched;
 - generic AI influencer.
 
 Primary use:
-- Instagram post;
-- story;
-- owned-web callback visual.
+- Instagram/TikTok still or motion derivative;
+- Story;
+- owned-web callback.
 
----
+### 03 — Full-body silhouette proof
 
-### 03 — Full-body silhouette anchor
-
-**Purpose:** freeze the canonical body proportions.
+**Purpose:** prove canonical body continuity.
 
 Frame:
 - full body;
-- neutral apartment or hallway;
+- apartment, hallway or terrace;
 - realistic focal length;
-- standing naturally.
+- natural standing posture.
 
 Wardrobe:
-- fitted jeans + silhouette-aware top;
-- simple shoes.
+- fitted jeans + silhouette-aware top, or another platform-safe fitted look;
+- simple shoes / restrained heels where coherent.
 
-Must prove:
-- defined waist;
-- wider hips;
-- shapely legs;
-- prominent but plausible glutes;
+Must preserve:
+- defined believable waist;
+- full hips;
+- thick thighs;
+- substantial plausible glutes;
 - proportionate bust;
+- natural softness;
 - no BBL caricature.
 
 Primary use:
-- body reference;
-- website visual candidate;
+- body continuity reference;
+- website candidate;
 - social post.
-
----
 
 ### 04 — Apartment mirror selfie
 
-**Purpose:** establish a recurring visual grammar for ordinary Mara.
+**Purpose:** establish recurring ordinary-Mara visual grammar.
 
 Frame:
 - mirror photo;
-- credible apartment / bedroom / dressing area;
+- credible bedroom / dressing area / apartment;
 - phone visible where natural;
 - casual, not overposed.
 
 Wardrobe:
 - bodysuit or fitted casual outfit;
-- neutral palette.
+- neutral/dark palette.
 
 Must communicate:
-- private life;
-- attractiveness without an explicit sales pose;
-- repeatable environment.
+- private adult life;
+- attraction without explicit sales pose;
+- repeatable environment;
+- same face/body as canon.
 
 Primary use:
 - high-frequency social format;
-- story;
-- content continuity.
-
----
+- Story;
+- continuity.
 
 ### 05 — Home / couch ordinary-life frame
 
-**Purpose:** demonstrate that Mara has a life when nothing commercial is happening.
+**Purpose:** prove Mara exists when nothing commercial is happening.
 
 Frame:
-- sitting on sofa / armchair;
+- sofa / armchair;
 - coffee, laptop, phone or ordinary object;
 - relaxed posture;
-- not looking at camera is acceptable.
+- looking away from camera is allowed.
 
 Wardrobe:
 - fitted but ordinary home clothes.
@@ -208,87 +236,82 @@ Wardrobe:
 Must communicate:
 - mundane specificity;
 - believable downtime;
-- LIFE FIRST.
+- LIFE FIRST;
+- dominance can soften without turning into a different personality.
 
 Primary use:
 - Life Engine posts;
 - web continuity;
-- noncommercial day content.
-
----
+- no-CTA content.
 
 ### 06 — Café / urban daytime
 
-**Purpose:** move Mara outside the home while preserving identity.
+**Purpose:** move Mara outside the home while preserving exact identity.
 
 Frame:
 - café table / sidewalk / terrace;
 - candid or friend-shot feeling;
-- modern South American urban context.
+- credible contemporary city context;
+- environment should not be used to re-code Mara's ethnicity.
 
 Wardrobe:
-- jeans / fitted top / casual jacket;
-- small accessories.
+- fitted top / jeans / casual jacket;
+- restrained accessories.
 
 Must communicate:
-- socially real adult life;
-- tasteful urban femininity;
-- no luxury cosplay.
+- adult urban life;
+- taste;
+- no fake luxury;
+- same Mara.
 
 Primary use:
 - lifestyle feed;
-- stories;
-- Treat / everyday-life context.
-
----
+- Stories;
+- ordinary-life continuity.
 
 ### 07 — Gym mirror
 
 **Purpose:** establish fitness as a recurring acquisition and Life State surface.
 
 Frame:
-- mirror or believable gym phone shot;
+- believable gym mirror / phone shot;
 - full or 3/4 body;
-- real gym background;
-- anatomy and equipment correct.
+- correct anatomy/equipment/background.
 
 Wardrobe:
 - coordinated leggings + sports top;
-- dark / earth-tone palette.
+- black, charcoal, earth, cream or muted palette.
 
-Must communicate:
-- canonical silhouette naturally;
-- fitness without becoming a fetish-only frame;
-- confident body awareness.
+Must preserve:
+- canonical lower-body silhouette;
+- realistic softness and proportions;
+- confident body awareness;
+- not a fetish-only composition.
 
 Primary use:
 - social acquisition;
-- `/experience` gym callback candidate;
-- recurring gym storyline.
-
----
+- `/experience` gym callback;
+- recurring storyline.
 
 ### 08 — Gym close / post-workout
 
-**Purpose:** create a closer, less polished fitness moment.
+**Purpose:** show the same face under a less produced setup.
 
 Frame:
 - face / upper body;
-- slightly flushed / realistic post-workout cues;
+- slight realistic post-workout cues;
 - minimal makeup;
 - phone-native crop.
 
 Must communicate:
-- naturalism;
-- same face under a less produced setup;
-- visual robustness.
+- human naturalism;
+- exact face continuity;
+- ordinary physical effort rather than beauty-shoot perfection.
 
 Primary use:
-- stories;
+- Stories;
 - callback;
-- voice-note pairing later.
-
----
+- future voice-note pairing.
 
 ### 09 — Getting-ready / bathroom mirror
 
@@ -296,73 +319,70 @@ Primary use:
 
 Frame:
 - bathroom / mirror / dressing moment;
-- visually premium but believable;
-- partial outfit preparation.
+- premium but believable;
+- event in progress, not final glamour shot.
 
 Wardrobe:
-- evening base look or fitted black outfit.
+- evening base look / fitted black outfit / wine or burgundy where useful.
 
 Must communicate:
 - anticipation;
-- a life event in progress;
-- controlled sensuality.
+- adult self-possession;
+- controlled sensuality;
+- same Mara.
 
 Primary use:
 - open loops;
-- social stories;
-- nightlife arc.
-
----
+- Stories;
+- night arc.
 
 ### 10 — Evening full-body
 
-**Purpose:** define night identity without losing realism.
+**Purpose:** define higher-intensity night presence without identity drift.
 
 Frame:
-- elevator, lobby, restaurant entrance or urban night setting;
+- elevator, lobby, restaurant entrance, terrace or urban night setting;
 - full-body or 3/4 body;
-- soft low-light photography.
+- believable low-light photography.
 
 Wardrobe:
-- fitted black / wine dress;
-- restrained heels / accessories.
+- fitted black / wine / dark-neutral silhouette;
+- restrained heels/accessories.
 
 Must communicate:
-- stronger seductive energy;
-- same Mara as daytime;
-- premium, not generic glamour.
+- stronger seductive authority;
+- calm dominance;
+- same face/body as daytime;
+- premium rather than generic glamour.
 
 Primary use:
-- hero alternatives;
 - social acquisition;
-- private-world transition.
-
----
+- night continuity;
+- first-party visual alternative.
 
 ### 11 — Restaurant / bar candid
 
-**Purpose:** show Mara in a social world with life beyond the camera.
+**Purpose:** show Mara in a social world beyond the user.
 
 Frame:
-- table / bar / lounge;
+- restaurant / bar / lounge;
 - friend-shot or candid feeling;
-- other people may exist only as non-identifying background presence.
+- non-identifying background people allowed;
+- no implied real relationship claims that are not canonically defined.
 
 Must communicate:
 - she has plans;
 - she is not waiting online for the user;
-- ordinary social adulthood.
+- ordinary adult social life.
 
 Primary use:
 - Life Engine;
-- open loop: where she went / what happened later;
+- open loop;
 - social feed.
 
----
+### 12 — Owned-web closer portrait
 
-### 12 — Owned-web intimate portrait
-
-**Purpose:** create the strongest first-party conversion visual without making public Mara pornographic.
+**Purpose:** create strongest first-party conversion visual while keeping public launch platform-safe.
 
 Frame:
 - close portrait or seated 3/4 frame;
@@ -377,7 +397,8 @@ Wardrobe:
 Must communicate:
 - selective closeness;
 - `you are now in Mara's space`;
-- difference between public social and owned-web intimacy.
+- a meaningful difference between public social and owned-web intimacy;
+- exact canonical Mara.
 
 Primary use:
 - Home hero candidate;
@@ -386,29 +407,29 @@ Primary use:
 
 ---
 
-## 5. Platform mapping
+## 6. Platform mapping
 
 ### Website Home
-Preferred launch order:
+Preferred:
 1. asset 12;
 2. asset 03;
 3. asset 10.
 
 Hero criteria:
-- strong face recognition;
-- enough body signal to communicate attraction;
+- unmistakable face recognition;
+- enough silhouette signal to communicate attraction;
 - premium composition;
-- clean negative space for copy when possible;
+- usable negative space for copy where possible;
 - platform-safe.
 
 ### `/experience`
 Preferred:
-- 01 for intro / face-first;
-- 07/08 when gym state is active;
-- 05 for ordinary return;
-- 12 for closer private beat.
+- 01 intro;
+- 07/08 gym state;
+- 05 ordinary return;
+- 12 closer private beat.
 
-P0/Alpha does not need dynamic image orchestration yet. Start with one canonical portrait and manually change by known scene only when useful.
+Alpha does not need dynamic image orchestration to prove value. Start simple.
 
 ### Meet Mara
 Use:
@@ -417,8 +438,8 @@ Use:
 - 05;
 - 10.
 
-### Social launch
-Initial 9-grid candidate:
+### Public social
+Initial grid/library candidate:
 - 02 selfie;
 - 03 silhouette;
 - 06 café;
@@ -433,36 +454,33 @@ Do not make the first grid nine sexualized body shots.
 
 ---
 
-## 6. First 10 organic content uses
+## 7. Launch-week content mapping
 
-1. **Face reveal** — asset 01. Minimal caption. No explanation dump.
-2. **Mirror ordinary Mara** — asset 04. Short first-person day note.
-3. **Gym decision** — asset 07. Tie to Mara's recurring gym Life State.
-4. **Café / workday** — asset 06. Mundane specificity.
-5. **Close selfie** — asset 02. Character line with selective energy.
-6. **Night prep** — asset 09. Open loop without telling the ending.
-7. **Night out** — asset 10 or 11. Callback to prior post.
-8. **Home reset** — asset 05. Explicitly no commercial ask.
-9. **"I have a theory about you"** — asset 12 with CTA to owned web.
-10. **Gym callback / return** — asset 08 with CTA only if natural.
+Map the Launch Week Operating Pack to assets as follows:
 
-CTA budget:
-- most pieces: no CTA;
-- periodic: `Enter Mara`;
-- never every post.
+- Day 0 Introduction → 01 + 03 + optional 05/06 ordinary-life cut;
+- Day 0 ordinary-life Story → 07 or 05 depending the truthful day beat used;
+- Day 1 Mara Predicts → 02/01 plus simple A/B graphic or two safe choice visuals;
+- Day 2 Taste / Refusal → 04/09 with two wardrobe choices;
+- Day 3 Ordinary Life → 05 or 06;
+- Day 4 Theory About You → 12;
+- Day 5 Mara Chooses → 04/09/10;
+- Day 6 Comment Response → 02 or 06;
+- Day 7 Return / Continuity → 08/12.
+
+Do not force the asset number if a stronger approved canonical frame already exists.
 
 ---
 
-## 7. Identity-consistency review process
+## 8. Identity-consistency QA
 
-Every candidate is scored 0–2 on:
-
+Score each candidate 0–2 on:
 - face match;
-- age match;
-- hair match;
-- skin-tone match;
+- apparent-age match;
+- fair/non-Latina visual read;
+- blonde/dark-blonde hair-family match;
 - body match;
-- expression / character match;
+- expression / dominant-character match;
 - realism;
 - anatomy;
 - wardrobe fit;
@@ -472,103 +490,102 @@ Every candidate is scored 0–2 on:
 
 Maximum = 24.
 
-### Approval threshold
-- 21–24: canonical candidate;
-- 18–20: revise / secondary use only;
+Approval guidance:
+- 21–24: canonical production candidate;
+- 18–20: revise / limited secondary use;
 - <=17: reject.
 
-Any hard failure overrides score:
-- looks underage / age ambiguous;
-- resembles identifiable real person;
-- severe anatomical artifact;
+Hard failures override score:
+- underage / age-ambiguous read;
+- identifiable real-person resemblance;
 - face identity drift;
-- obvious AI-generation error;
-- cheap pornographic branding for a public asset.
+- material body-identity drift;
+- dark-hair/Latina-coded reversion inconsistent with current launch canon;
+- severe anatomical artifact;
+- obvious AI error;
+- plastic BBL caricature;
+- approval-seeking / “sweet innocent” default face;
+- cheap pornographic public branding.
+
+A beautiful image that fails continuity is not Mara.
 
 ---
 
-## 8. Canonical reference selection
+## 9. Real-person inspiration rule
 
-Do not declare a face canonical after one attractive generation automatically.
+Real creators are benchmark inputs only for category-level patterns such as:
+- silhouette families;
+- natural softness;
+- posing;
+- wardrobe;
+- framing;
+- confidence;
+- social-native presentation.
 
-Select the identity that best balances:
-- attractiveness;
-- originality;
-- consistency potential;
-- adult clarity;
-- recognizability;
-- believable South American signal;
-- fit with Mara's selective / slightly dominant character.
+Never reproduce:
+- face;
+- biometric likeness;
+- voice;
+- tattoos as identity markers;
+- distinctive identity cues;
+- exact signature styling intended to impersonate.
 
-Once selected, future generation should treat the canonical reference as a production constraint, not inspiration.
-
----
-
-## 9. Generation policy
-
-For the launch pack:
-- original synthetic adult only;
-- do not name or request likeness to real influencers;
-- use category-level body / fashion references only;
-- no real-person face transfer;
-- no face cloning;
-- no "make her look exactly like X" workflow;
-- no minor-coded styling;
-- public assets remain platform appropriate.
+Mara remains original synthetic IP.
 
 ---
 
 ## 10. Lean production rule
 
-Do not subscribe to multiple image providers just to compare toys.
+Do not subscribe to multiple image providers merely to compare tools.
 
-Use the strongest already-available generation workflow first.
+Use already-available generation/editing capacity first.
 
-Only spend when the free / already-available workflow cannot deliver:
-- stable face;
-- stable body;
+Only consider spend when an observed bottleneck prevents:
+- stable canonical face;
+- stable canonical body;
 - realistic anatomy;
-- enough output quality for public social.
+- sufficient public quality;
+- useful throughput after real audience signal.
 
-The bottleneck must be observed before paid tooling is authorized.
+No recurring spend is justified by launch anxiety alone.
 
 ---
 
 ## 11. Launch exit criteria
 
 Visual production is launch-ready when:
-
-- one canonical face is frozen;
-- at least 9 of the 12 required shots pass QA;
+- the founder-approved canonical reference remains the identity anchor;
+- at least 9 strong shots pass QA;
 - one Home hero exists;
 - one `/experience` portrait exists;
 - one gym asset exists;
 - one night asset exists;
 - one ordinary-life asset exists;
-- at least 6 social posts can be published without repeating the same frame;
-- the assets look like one woman, not one prompt.
+- at least 6 public posts can be produced without repeating the same frame;
+- the library looks like one woman's life rather than one prompt family.
 
-Do not delay Alpha for all 12 if 9 strong canonical assets already cover the required surfaces.
+Do not delay Alpha for all 12 if the required surfaces are already covered.
 
 ---
 
 ## 12. Production order
 
-Produce in this order:
-
-1. 01 canonical face;
-2. 03 silhouette anchor;
+Produce/approve in this order:
+1. 01 canonical face proof;
+2. 03 silhouette proof;
 3. 02 close selfie;
 4. 04 mirror selfie;
 5. 07 gym mirror;
 6. 05 ordinary home;
-7. 12 owned-web intimate portrait;
+7. 12 owned-web closer portrait;
 8. 06 café;
 9. 08 gym close;
 10. 09 getting ready;
 11. 10 evening full-body;
 12. 11 restaurant/bar candid.
 
-Do not move deep into the pack if 01 + 03 cannot remain the same person.
+If shots 01 and 03 do not clearly look like the already-approved Mara, stop and fix identity continuity before producing volume.
 
-The first technical goal is identity continuity, not content volume.
+There is no second casting decision.
+
+> **THIS WOMAN IS MARA.**
