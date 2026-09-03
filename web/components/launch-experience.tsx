@@ -5,6 +5,7 @@ import { track } from "@/lib/analytics";
 import { MaraPortrait, MaraVoiceMoment } from "@/components/mara-presence";
 
 const STORAGE_KEY = "mara_launch_state_v1";
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 type Step =
   | "intro"
@@ -24,6 +25,7 @@ type LaunchState = {
   trainedToday?: boolean;
   completed?: boolean;
   returnCount?: number;
+  firstSeenAt?: string;
   lastSeenAt?: string;
 };
 
@@ -40,6 +42,33 @@ function readState(): LaunchState | null {
 function saveState(state: LaunchState) {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function returnCountBucket(count: number): "1" | "2" | "3-4" | "5+" {
+  if (count <= 1) return "1";
+  if (count === 2) return "2";
+  if (count <= 4) return "3-4";
+  return "5+";
+}
+
+function daysSinceFirstBucket(firstSeenAt?: string): "same_day" | "1-2d" | "3-7d" | "8+d" | "unknown" {
+  if (!firstSeenAt) return "unknown";
+  const firstSeen = Date.parse(firstSeenAt);
+  if (!Number.isFinite(firstSeen)) return "unknown";
+
+  const elapsedDays = Math.max(0, (Date.now() - firstSeen) / DAY_MS);
+  if (elapsedDays < 1) return "same_day";
+  if (elapsedDays < 3) return "1-2d";
+  if (elapsedDays < 8) return "3-7d";
+  return "8+d";
+}
+
+function returnTelemetry(state: LaunchState, count: number) {
+  return {
+    surface: "launch_experience",
+    return_count_bucket: returnCountBucket(count),
+    days_since_first_bucket: daysSinceFirstBucket(state.firstSeenAt),
+  };
 }
 
 function Choice({ children, onClick }: { children: React.ReactNode; onClick: () => void }) {
@@ -59,9 +88,14 @@ export function LaunchExperience() {
   useEffect(() => {
     const saved = readState();
     if (saved?.completed) {
-      setState(saved);
+      const hydrated: LaunchState = {
+        ...saved,
+        firstSeenAt: saved.firstSeenAt ?? saved.lastSeenAt,
+      };
+      setState(hydrated);
+      if (!saved.firstSeenAt && hydrated.firstSeenAt) saveState(hydrated);
       setStep("return");
-      track("returning_user", { surface: "launch_experience" });
+      track("returning_user", returnTelemetry(hydrated, (hydrated.returnCount ?? 0) + 1));
     }
   }, []);
 
@@ -83,11 +117,13 @@ export function LaunchExperience() {
   }
 
   function finishSession() {
+    const now = new Date().toISOString();
     const next: LaunchState = {
       ...state,
       completed: true,
       returnCount: state.returnCount ?? 0,
-      lastSeenAt: new Date().toISOString(),
+      firstSeenAt: state.firstSeenAt ?? now,
+      lastSeenAt: now,
     };
     setState(next);
     saveState(next);
@@ -96,16 +132,18 @@ export function LaunchExperience() {
   }
 
   function continueReturn(mode: "known" | "surprise") {
+    const nextCount = (state.returnCount ?? 0) + 1;
     const next: LaunchState = {
       ...state,
-      returnCount: (state.returnCount ?? 0) + 1,
+      returnCount: nextCount,
+      firstSeenAt: state.firstSeenAt ?? state.lastSeenAt ?? new Date().toISOString(),
       lastSeenAt: new Date().toISOString(),
     };
     setState(next);
     saveState(next);
     setPrediction(mode);
     setStep("return_moment");
-    track("launch_return_continued", { surface: "launch_experience" });
+    track("launch_return_continued", returnTelemetry(next, nextCount));
   }
 
   if (step === "return") {
