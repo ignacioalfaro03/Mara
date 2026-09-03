@@ -32,11 +32,69 @@ Primary behavioral question:
 
 > **DO PEOPLE VOLUNTARILY COME BACK TO MARA?**
 
-## 2. Automated release gates
+## 2. Canonical Mara web-asset integrity
+
+Default runtime visual:
+
+`web/public/mara/mara-v1-reference.jpg`
+
+Runtime URL:
+
+`/mara/mara-v1-reference.jpg`
+
+Public Alpha manifest:
+
+`web/public/mara/ASSET_MANIFEST.md`
+
+Expected Git blob SHA-1:
+
+`1c4c4d3615eac915cf42efd9416ed20479eb8126`
+
+Committed web derivative dimensions:
+
+`1024 × 1536`
+
+The asset was introduced by commit:
+
+`257fa744ff62b3926cdcf27d6ae8941f3008d01a`
+
+with commit message:
+
+`launch: add canonical Mara image to public web`
+
+Foundation registers the founder-approved source reference separately, including:
+- generation ID `deb9733e-63aa-4068-a38a-090bc2c30bc9`;
+- original PNG dimensions `1024 × 1536`;
+- source PNG SHA-256 `b931964b5317460e02ce7ebc77f2182d81a101bdcc4b451377fdf6033204143c`.
+
+The committed JPG is the web launch derivative. Different encodings have different binary hashes, so the manifest does not claim byte identity between the JPG and source PNG.
+
+Both `Web Launch CI` and the one-shot production deploy gate now verify:
+
+```bash
+git hash-object public/mara/mara-v1-reference.jpg
+```
+
+against the expected Git blob SHA before release work continues.
+
+Success marker:
+
+`MARA_CANONICAL_ASSET PASS`
+
+If the file is silently replaced while preserving its filename, CI/deploy must fail.
+
+Changing the expected blob is an explicit canonical-asset decision, not routine content maintenance.
+
+> **THIS WOMAN IS MARA.**
+
+> **ONE MARA. MANY CONTEXTS.**
+
+## 3. Automated release gates
 
 `Web Launch CI` must be green on the exact branch head intended for deployment.
 
 Required gates:
+- canonical Mara web-asset blob guard;
 - locked install via `npm ci`;
 - production dependency audit;
 - DEV-lab production guards;
@@ -62,13 +120,13 @@ Terminal smoke success marker:
 
 `MARA_LAUNCH_SMOKE PASS`
 
-## 3. Current external blocker
+## 4. Current external blocker
 
 The release candidate is not currently claimed as deployed.
 
 Verified blockers are credential/access related, not application-code failures.
 
-Connected Vercel tooling still reports no accessible team scope for the intended account/project path.
+Connected Vercel tooling still reports no accessible team scope for the intended account/project path. Direct access to the historical `ignacioalfaz-6766 / mara-vera` scope returns `403 Forbidden`, confirming this is an authorization/scope problem rather than simple project discovery.
 
 A previous one-shot GitHub Actions deploy attempt failed before running any Vercel command because these repository secrets were absent:
 - `VERCEL_TOKEN`
@@ -79,7 +137,7 @@ No production state changed in that failed attempt.
 
 There is no committed `.vercel/project.json`; the deploy job must establish and verify the intended link at runtime from the three existing secrets above.
 
-## 4. Hardened one-shot deployment gate
+## 5. Hardened one-shot deployment gate
 
 Workflow:
 
@@ -93,21 +151,34 @@ A normal Web/P0 push does **not** deploy production.
 
 The gate now:
 1. checks out exactly `github.sha` and asserts `HEAD == GITHUB_SHA`;
-2. requires the three Vercel credentials before any Vercel command;
-3. installs the committed dependency graph with `npm ci`;
-4. re-runs production audit, DEV-lab guard audit, typecheck and build;
-5. uses pinned release tooling for the deployment pass;
-6. runs `vercel pull --environment=production` before deployment;
-7. reads the generated `.vercel/project.json` and fails if its `projectId` or `orgId` differs from the supplied secrets;
-8. deploys that exact snapshot with `--prod`;
-9. waits for terminal Vercel state;
-10. verifies `/api/health` first;
-11. runs the full production mobile smoke against the returned deployment URL;
-12. prints the verified SHA and URL only after every gate passes.
+2. verifies the canonical Mara web-asset Git blob before any deploy work;
+3. requires the three Vercel credentials before any Vercel command;
+4. installs the committed dependency graph with `npm ci`;
+5. re-runs production audit, DEV-lab guard audit, typecheck and build;
+6. uses pinned release tooling for the deployment pass;
+7. runs `vercel pull --environment=production` before deployment;
+8. reads the generated `.vercel/project.json` and fails if its `projectId` or `orgId` differs from the supplied secrets;
+9. deploys that exact snapshot with `--prod`;
+10. waits for terminal Vercel state;
+11. verifies `/api/health` first;
+12. runs the full production mobile smoke against the returned deployment URL;
+13. prints the verified SHA and URL only after every gate passes.
 
-The hardening commit was intentionally created **without** `[deploy-alpha]`. GitHub parsed the workflow and the resulting push run was `skipped`, confirming the production guard remained closed.
+The latest asset-guard deploy-workflow commit was intentionally created **without** `[deploy-alpha]`:
 
-## 5. Deployment rule
+`fbef9cc4635c9cd3be65a4290ad210fda06b0add`
+
+GitHub Actions push run:
+
+`33711797995`
+
+Result:
+
+**SKIPPED**
+
+This confirms the production guard remained closed and no deployment was attempted.
+
+## 6. Deployment rule
 
 Deploy only the exact Web/P0 head whose `Web Launch CI` is green.
 
@@ -118,11 +189,12 @@ A deployment becomes launch-verified only after:
 2. `/api/health` returns the expected Alpha contract;
 3. the production smoke passes against the actual deployment URL;
 4. public routes are reachable;
-5. DEV labs remain 404 in production.
+5. DEV labs remain 404 in production;
+6. canonical Mara asset integrity passes.
 
-## 6. Post-deploy verification
+## 7. Post-deploy verification
 
-The one-shot deploy gate now performs the production smoke itself.
+The one-shot deploy gate performs the production smoke itself.
 
 For an independent repeat from `web/`, with Playwright available:
 
@@ -149,7 +221,13 @@ Expected JSON shape:
 Expected cache behavior:
 - `Cache-Control` contains `no-store`.
 
-## 7. Manual launch sanity check
+Canonical local file check from `web/`:
+
+```bash
+test "$(git hash-object public/mara/mara-v1-reference.jpg)" = "1c4c4d3615eac915cf42efd9416ed20479eb8126"
+```
+
+## 8. Manual launch sanity check
 
 After automated smoke passes, manually inspect once:
 - mobile Home hierarchy;
@@ -167,7 +245,7 @@ After automated smoke passes, manually inspect once:
 
 A physical-iPhone Safari pass is useful but is not required to pretend current Chromium automation already tested Safari. Keep evidence claims literal.
 
-## 8. What does not block this Alpha
+## 9. What does not block this Alpha
 
 Do not hold the free Alpha for:
 - realtime canonical voice;
@@ -182,10 +260,11 @@ Do not hold the free Alpha for:
 
 Those layers are gated by real user signal and/or separate compliance/commercial decisions.
 
-## 9. Stop conditions
+## 10. Stop conditions
 
 Do not proceed or claim launch completion if:
 - CI is red on the intended head;
+- canonical Mara web-asset blob differs from the expected release asset;
 - Vercel project/org link does not match the expected credentials;
 - health endpoint is not 200/`ok`;
 - canonical Mara image fails;
@@ -196,7 +275,7 @@ Do not proceed or claim launch completion if:
 - deployment status is not terminal READY;
 - production smoke fails.
 
-## 10. Merge boundary
+## 11. Merge boundary
 
 Deployment authorization and merge authorization are separate.
 
