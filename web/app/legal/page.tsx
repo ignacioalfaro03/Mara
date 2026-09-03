@@ -2,38 +2,37 @@ export default function LegalPage() {
   return (
     <main className="pageShell legalPage">
       <section className="editorialHeader">
-        <p className="eyebrow">TRANSPARENCY</p>
-        <h1>Clear identity. Clear boundaries.</h1>
-        <p className="lede">This MVP defines the product surfaces that must exist before real monetization is activated.</p>
+        <p className="eyebrow">TRANSPARENCIA</p>
+        <h1>Mara es ficción. Los límites, no.</h1>
+        <p className="lede">Lo importante, sin letra chica.</p>
       </section>
 
       <section className="legalSections">
         <article>
-          <h2>AI disclosure</h2>
-          <p>Mara Vera is a fictional, AI-generated virtual character. She is not a real human person.</p>
+          <h2>Quién es Mara</h2>
+          <p>Mara Vera es un personaje virtual ficticio generado con inteligencia artificial. No es una persona humana real.</p>
         </article>
         <article>
-          <h2>Adults only</h2>
-          <p>The experience is intended for adults aged 18 and over. Adult-oriented premium paths must not be accessed by minors.</p>
+          <h2>Solo adultos</h2>
+          <p>Esta experiencia está dirigida exclusivamente a personas de 18 años o más.</p>
         </article>
         <article>
-          <h2>Consent and boundaries</h2>
-          <p>More intense or roleplay-oriented experiences require active user choice. Users can stop or decline at any time.</p>
+          <h2>Consentimiento</h2>
+          <p>Puedes detenerte, rechazar una opción o salir cuando quieras. Las experiencias de mayor intensidad, si existen más adelante, deben ser siempre opt-in.</p>
         </article>
         <article>
-          <h2>Pricing</h2>
-          <p>Paid experiences must display price and scope before purchase. This branch does not activate real payments.</p>
+          <h2>Privacidad</h2>
+          <p>La Alpha guarda un pequeño estado en tu navegador para poder continuar cuando vuelves. La telemetría pública no debe recibir conversaciones íntimas, fantasías ni texto libre sensible.</p>
         </article>
         <article>
-          <h2>Privacy</h2>
-          <p>Only data required for a defined product purpose should be collected. Sensitive conversation content must not be sent to general analytics tools.</p>
+          <h2>Pagos</h2>
+          <p>Esta Alpha es gratuita. No hay suscripciones, checkout ni cobros activos.</p>
         </article>
         <article>
-          <h2>Reporting and deletion</h2>
-          <p>Before launch, a working contact path for abuse reports, impersonation concerns and data/deletion requests must be configured.</p>
+          <h2>Borrar y reportar</h2>
+          <p>Puedes borrar el estado local desde la propia experiencia. No envíes información sensible dentro de Mara para reportar un problema; el canal formal de reportes se publicará antes de cualquier modalidad comercial.</p>
         </article>
       </section>
-      <p className="legalNote">These MVP disclosures are product requirements and must be replaced or supplemented by launch-jurisdiction legal terms before production activation.</p>
     </main>
   );
 }
