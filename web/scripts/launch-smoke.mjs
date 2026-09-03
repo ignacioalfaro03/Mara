@@ -22,6 +22,17 @@ async function assertNoHorizontalOverflow(page, path) {
   assert(overflow <= 1, `${path} has horizontal overflow of ${overflow}px`);
 }
 
+async function assertMaraImageLoaded(page, contextLabel) {
+  const image = page.locator('img[alt="Mara Vera"]').first();
+  await image.waitFor();
+  await page.waitForFunction(() => {
+    const img = document.querySelector('img[alt="Mara Vera"]');
+    return img instanceof HTMLImageElement && img.complete && img.naturalWidth > 0;
+  });
+  const dimensions = await image.evaluate((img) => ({ width: img.naturalWidth, height: img.naturalHeight }));
+  assert(dimensions.width > 0 && dimensions.height > 0, `${contextLabel}: canonical Mara image did not decode`);
+}
+
 const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({
   viewport: { width: 390, height: 844 },
@@ -46,9 +57,8 @@ try {
   await page.getByRole("dialog").waitFor();
   await page.getByRole("dialog").locator("button").first().click();
   await page.getByText("Llegaste justo.").waitFor();
-  await page.locator('img[alt="Mara Vera"]').first().waitFor();
-  const maraLoaded = await page.locator('img[alt="Mara Vera"]').first().evaluate((img) => img.complete && img.naturalWidth > 0);
-  assert(maraLoaded, "Canonical Mara image did not load");
+  await page.getByText(/Necesito una decisión rápida/).waitFor();
+  await assertMaraImageLoaded(page, "home");
   await assertNoHorizontalOverflow(page, "/");
 
   for (const path of publicPaths.slice(1)) {
@@ -63,21 +73,36 @@ try {
 
   await page.goto(`${baseUrl}/experience`, { waitUntil: "networkidle" });
   await assertNoHorizontalOverflow(page, "/experience");
-  await page.getByRole("button", { name: "Ya." }).click();
-  await page.getByText("Te pillé mirándome.").waitFor();
-  await page.locator(".livingChoice").first().click();
+  await assertMaraImageLoaded(page, "experience intro");
+  await page.getByRole("button", { name: "Métete." }).click();
+
+  await page.getByText("Negro o crema.").waitFor();
+  await page.getByRole("button", { name: "Negro." }).click();
+  await page.getByText("Obvio.").waitFor();
   await page.getByRole("button", { name: "Sigue." }).click();
-  await page.getByText("Estoy por irme.").waitFor();
-  await page.locator(".livingChoice").first().click();
-  await page.getByText("Después te mando dos mensajes.").waitFor();
-  await page.locator(".livingChoice").first().click();
-  await page.getByRole("button", { name: "¿Y?" }).click();
-  await page.getByRole("button", { name: "Ya, anda." }).click();
+
+  await page.getByText("Te pillé mirando.").waitFor();
+  await page.getByRole("button", { name: "Voy hacia ti." }).click();
+  await page.getByText("Eso fue rápido.").waitFor();
+  await page.getByRole("button", { name: "Ajá." }).click();
+
+  await page.getByText("Tu teléfono vibra dos veces.").waitFor();
+  await page.getByRole("button", { name: "Voy." }).click();
+  await page.getByText("Sabía.").waitFor();
+  await page.getByRole("button", { name: "Ya." }).click();
+
+  await page.getByText("No. Ahora espera tú.").waitFor();
+  await page.getByRole("button", { name: "Déjalo ahí." }).click();
 
   const storedState = await page.evaluate(() => window.localStorage.getItem("mara_launch_state_v1"));
   assert(storedState, "Launch experience did not persist state");
   const parsedState = JSON.parse(storedState);
   assert(parsedState.completed === true, "Launch experience did not persist completed state");
+  assert(parsedState.outfitChoice === "black", "Outfit consequence was not persisted");
+  assert(parsedState.barChoice === "approach", "Bar behavior was not persisted");
+  assert(parsedState.messageChoice === "follow", "Message behavior was not persisted");
+  assert(parsedState.signals?.approaches === 1, "Approach signal was not persisted");
+  assert(parsedState.signals?.follows === 1, "Follow signal was not persisted");
   assert(typeof parsedState.firstSeenAt === "string", "Launch experience did not persist firstSeenAt locally");
 
   const returningTelemetryPromise = page.waitForRequest((request) => {
@@ -98,8 +123,15 @@ try {
   assert(!("campaign" in (returningPayload?.properties ?? {})), "Arbitrary campaign query data must not leave the browser");
   assert(!("anonymous_id" in (returningPayload?.properties ?? {})), "Return telemetry must not contain an anonymous identifier");
 
-  await page.getByText("Volviste justo a tiempo.").waitFor();
-  await page.getByText(/La otra vez me quedó claro/).waitFor();
+  await page.getByText("Volviste.").waitFor();
+  await page.getByText(/La última vez te dije “ven” y viniste/).waitFor();
+  await page.getByText(/Solo me acuerdo/).waitFor();
+  await assertMaraImageLoaded(page, "return");
+  await page.getByRole("button", { name: "Métete." }).click();
+  await page.getByText("Estoy por saltarme el último ejercicio.").waitFor();
+  await page.getByRole("button", { name: "Termínalo." }).click();
+  await page.getByText("Pesado. Ya. Lo termino.").waitFor();
+  await page.getByRole("button", { name: "Déjalo ahí." }).click();
   await assertNoHorizontalOverflow(page, "/experience return");
 
   for (const path of labPaths) {
