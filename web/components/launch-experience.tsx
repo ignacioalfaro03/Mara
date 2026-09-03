@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { track } from "@/lib/analytics";
+import { loadRelationshipState, syncRelationshipState } from "@/lib/relationship-client";
 import { MaraPortrait } from "@/components/mara-presence";
 import { VisualPreferenceChoice, type PoseChoice } from "@/components/visual-preference-choice";
 import { AccountMemoryCta } from "@/components/account-memory-cta";
@@ -69,6 +70,39 @@ function readState(): LaunchState | null {
 function saveState(state: LaunchState) {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function timestamp(value?: string | null) {
+  if (!value) return null;
+  const parsed = Date.parse(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function earliestIso(a?: string | null, b?: string | null) {
+  const aTime = timestamp(a);
+  const bTime = timestamp(b);
+  if (aTime === null) return b ?? undefined;
+  if (bTime === null) return a ?? undefined;
+  return aTime <= bTime ? a ?? undefined : b ?? undefined;
+}
+
+function latestIso(a?: string | null, b?: string | null) {
+  const aTime = timestamp(a);
+  const bTime = timestamp(b);
+  if (aTime === null) return b ?? undefined;
+  if (bTime === null) return a ?? undefined;
+  return aTime >= bTime ? a ?? undefined : b ?? undefined;
+}
+
+function persistRelationship(state: LaunchState) {
+  if (!state.firstSeenAt || !state.lastSeenAt) return;
+  void syncRelationshipState({
+    returnCount: state.returnCount ?? 0,
+    firstSeenAt: state.firstSeenAt,
+    lastSeenAt: state.lastSeenAt,
+    lastVisualChoice: state.poseChoice ?? null,
+    launchCompleted: Boolean(state.completed),
+  });
 }
 
 function returnCountBucket(count: number): "1" | "2" | "3-4" | "5+" {
@@ -141,24 +175,57 @@ export function LaunchExperience() {
   const [state, setState] = useState<LaunchState>({ signals: EMPTY_SIGNALS });
   const [predictionHit, setPredictionHit] = useState<boolean | null>(null);
   const [returnReaction, setReturnReaction] = useState<string>("");
+  const interactionStarted = useRef(false);
 
   useEffect(() => {
+    let cancelled = false;
     const saved = readState();
+    let localCompleted = false;
+
     if (saved?.completed) {
       const hydrated: LaunchState = {
         ...saved,
         signals: saved.signals ?? EMPTY_SIGNALS,
         firstSeenAt: saved.firstSeenAt ?? saved.lastSeenAt,
       };
+      localCompleted = true;
       setState(hydrated);
       if (!saved.firstSeenAt && hydrated.firstSeenAt) saveState(hydrated);
       setStep("return");
+      persistRelationship(hydrated);
       track("returning_user", returnTelemetry(hydrated, (hydrated.returnCount ?? 0) + 1));
     }
+
+    void loadRelationshipState().then((remote) => {
+      if (cancelled || interactionStarted.current || !remote?.launchCompleted) return;
+
+      const local = readState();
+      const hydrated: LaunchState = {
+        ...(local ?? {}),
+        signals: local?.signals ?? EMPTY_SIGNALS,
+        poseChoice: local?.poseChoice ?? remote.lastVisualChoice ?? undefined,
+        completed: true,
+        returnCount: Math.max(local?.returnCount ?? 0, remote.returnCount),
+        firstSeenAt: earliestIso(local?.firstSeenAt ?? local?.lastSeenAt, remote.firstSeenAt ?? remote.lastSeenAt),
+        lastSeenAt: latestIso(local?.lastSeenAt, remote.lastSeenAt),
+      };
+
+      setState(hydrated);
+      saveState(hydrated);
+      setStep("return");
+      if (!localCompleted) {
+        track("returning_user", returnTelemetry(hydrated, (hydrated.returnCount ?? 0) + 1));
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   function reset() {
     window.localStorage.removeItem(STORAGE_KEY);
+    interactionStarted.current = false;
     setState({ signals: EMPTY_SIGNALS });
     setPredictionHit(null);
     setReturnReaction("");
@@ -177,6 +244,7 @@ export function LaunchExperience() {
     };
     setState(next);
     saveState(next);
+    persistRelationship(next);
     setStep("open_loop");
     track("launch_session_completed", { surface: "launch_experience" });
   }
@@ -185,6 +253,7 @@ export function LaunchExperience() {
     const nextCount = (state.returnCount ?? 0) + 1;
     const next: LaunchState = {
       ...state,
+      completed: true,
       returnCount: nextCount,
       returnScene: returnSceneFor(nextCount),
       firstSeenAt: state.firstSeenAt ?? state.lastSeenAt ?? new Date().toISOString(),
@@ -192,6 +261,7 @@ export function LaunchExperience() {
     };
     setState(next);
     saveState(next);
+    persistRelationship(next);
     setStep("return_scene");
     track("launch_return_continued", returnTelemetry(next, nextCount));
   }
@@ -206,7 +276,7 @@ export function LaunchExperience() {
           <p className="livingLead">{callbackLine(state)}</p>
           <p className="livingLead">No te voy a sacar una conclusión por eso. Solo me acuerdo.</p>
           <button type="button" className="primaryCta buttonReset" onClick={continueReturn}>Métete.</button>
-          <button type="button" className="livingReset" onClick={reset}>Empezar de cero</button>
+          <button type="button" className="livingReset" onClick={reset}>Empezar de cero aquí</button>
         </div>
       </section>
     );
@@ -286,6 +356,7 @@ export function LaunchExperience() {
             type="button"
             className="primaryCta buttonReset"
             onClick={() => {
+              interactionStarted.current = true;
               setStep("outfit");
               track("launch_experience_started", { surface: "launch_experience" });
             }}
