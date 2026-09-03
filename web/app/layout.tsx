@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
 import { AgeGate } from "@/components/age-gate";
+import { PublicPageTracker } from "@/components/public-page-tracker";
 
 export const metadata: Metadata = {
   title: "Mara Vera",
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="es">
       <body>
+        <PublicPageTracker />
         <AgeGate />
         <header className="siteHeader">
           <Link href="/" className="wordmark">MARA VERA</Link>
