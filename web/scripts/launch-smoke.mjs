@@ -217,9 +217,8 @@ try {
   const remotePage = await remoteContext.newPage();
   await remotePage.goto(`${baseUrl}/experience`, { waitUntil: "domcontentloaded" });
   const remoteDialog = remotePage.getByRole("dialog");
-  if (await remoteDialog.isVisible().catch(() => false)) {
-    await remoteDialog.locator("button").first().click();
-  }
+  await remoteDialog.waitFor({ state: "visible" });
+  await remoteDialog.locator("button").first().click();
   await remotePage.getByText("Volviste.").waitFor();
 
   const hydratedRemoteState = await remotePage.evaluate(() => window.localStorage.getItem("mara_launch_state_v1"));
