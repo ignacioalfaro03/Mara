@@ -182,6 +182,62 @@ Once production runtime-log access exists, filter/search for `MARA_TELEMETRY` an
 
 Do not export or enrich those logs with fingerprinting or unrelated personal data just to manufacture a unique-user metric.
 
+## Zero-cost Alpha signal report
+
+A local zero-dependency reporting tool is committed at:
+
+`scripts/alpha-signal-report.mjs`
+
+Its purpose is to turn exported/runtime log text into a Day 7 directional summary without adding a paid analytics dashboard or persistent user identity.
+
+From `web/`:
+
+```bash
+npm run alpha:report -- mara-runtime.log
+```
+
+Or pipe logs directly:
+
+```bash
+cat mara-runtime.log | npm run alpha:report
+```
+
+Machine-readable output:
+
+```bash
+npm run alpha:report -- mara-runtime.log --json
+```
+
+The report produces:
+- accepted telemetry record count;
+- malformed telemetry line count;
+- event counts;
+- coarse `entry_source` counts;
+- return-depth bucket counts;
+- return-latency bucket counts;
+- core events grouped by source;
+- directional event ratios for completion/start, return-continuation/return and prediction hit/result.
+
+Those ratios are explicitly **event ratios**.
+
+They are not unique-user conversion rates or retention metrics.
+
+Self-test:
+
+```bash
+npm run alpha:report:selftest
+```
+
+CI must pass the self-test before the release candidate is considered green.
+
+The report intentionally does **not** automatically classify Mara as GREEN / AMBER / RED / UNKNOWN. The founder decision remains a human evidence review against:
+
+`docs/launch/alpha-signal-scorecard.md`
+
+This prevents an arbitrary threshold from manufacturing a product conclusion.
+
+> **AUTOMATE THE COUNTING. NOT THE SELF-DECEPTION.**
+
 ## Launch-link convention
 
 Once the public URL is verified, preferred channel links are simply:
