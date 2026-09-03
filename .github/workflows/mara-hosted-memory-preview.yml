@@ -1,18 +1,7 @@
 name: Mara Real Supabase Identity E2E
 
 on:
-  push:
-    branches:
-      - feature/identity-preference-memory
-    paths:
-      - ".github/workflows/mara-hosted-memory-preview.yml"
-      - "web/scripts/hosted-memory-e2e.mjs"
-      - "web/app/api/auth/**"
-      - "web/app/api/preferences/**"
-      - "web/app/api/relationship/**"
-      - "web/lib/auth-session.ts"
-      - "web/lib/preference-client.ts"
-      - "web/lib/relationship-client.ts"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -33,8 +22,6 @@ jobs:
     steps:
       - name: Checkout exact PR snapshot
         uses: actions/checkout@v7.0.1
-        with:
-          ref: ${{ github.sha }}
 
       - name: Setup Node
         uses: actions/setup-node@v7.0.0
@@ -116,4 +103,5 @@ jobs:
           echo "MARA_VERCEL_PREVIEW_BLOCKED=GitHub repository has no VERCEL_TOKEN/VERCEL_ORG_ID/VERCEL_PROJECT_ID secrets"
           echo "PRODUCTION_ALIAS_UNTOUCHED=https://mara-vera.vercel.app"
 
-# Real Supabase E2E harness. No Vercel deployment and no production mutation.
+# Manual-only because Supabase built-in confirmation email delivery is rate-limited.
+# No Vercel deployment and no production mutation.
