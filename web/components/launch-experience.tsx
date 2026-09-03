@@ -2,14 +2,13 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { track } from "@/lib/analytics";
-import { MaraPortrait, MaraVoiceMoment } from "@/components/mara-presence";
+import { MaraPortrait } from "@/components/mara-presence";
 
 const STORAGE_KEY = "mara_launch_state_v1";
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 type Step =
   | "intro"
-  | "context"
   | "energy"
   | "pace"
   | "prediction"
@@ -22,7 +21,6 @@ type Step =
 type LaunchState = {
   energy?: "selective" | "warm";
   pace?: "teasing" | "direct";
-  trainedToday?: boolean;
   completed?: boolean;
   returnCount?: number;
   firstSeenAt?: string;
@@ -100,11 +98,16 @@ export function LaunchExperience() {
   }, []);
 
   const theory = useMemo(() => {
-    const a = state.energy === "selective" ? "te gusta que tenga criterio" : "prefieres que no todo sea una prueba";
-    const b = state.pace === "teasing"
-      ? "y te funciona más un poco de tensión antes que ir directo"
-      : "y cuando quieres algo, prefieres que no le dé tantas vueltas";
-    return `${a}, ${b}.`;
+    if (state.energy === "selective" && state.pace === "teasing") {
+      return "te gusta que te contradiga un poco y que no te entregue todo de inmediato";
+    }
+    if (state.energy === "selective" && state.pace === "direct") {
+      return "te gusta que tenga criterio, pero si tengo algo que decirte prefieres que vaya al grano";
+    }
+    if (state.energy === "warm" && state.pace === "teasing") {
+      return "no quieres que convierta todo en una prueba, aunque igual disfrutas cuando dejo algo pendiente";
+    }
+    return "prefieres que esto fluya fácil y que no te haga perder tiempo cuando ya sé lo que quiero decir";
   }, [state.energy, state.pace]);
 
   function reset() {
@@ -151,17 +154,13 @@ export function LaunchExperience() {
       <section className="livingStage">
         <MaraPortrait compact />
         <div className="livingCopy">
-          <p className="eyebrow">VOLVISTE</p>
-          <h1>Bien. Me había quedado algo pendiente contigo.</h1>
-          <p className="livingLead">
-            {state.trainedToday === true
-              ? "La última vez dijiste que entrenabas. Espero que no haya sido puro discurso."
-              : "La última vez me dejaste claro que no entrenabas. Hoy no voy a empezar por ahí."}
-          </p>
-          <p className="livingMemory">Y sigo pensando lo mismo: {theory}</p>
+          <p className="eyebrow">MARA</p>
+          <h1>Volviste.</h1>
+          <p className="livingLead">Bien. Ahora sí puedo comprobar una cosa.</p>
+          <p className="livingMemory">La última vez pensé que {theory}.</p>
           <div className="livingChoices">
-            <Choice onClick={() => continueReturn("known")}>Elige tú, Mara</Choice>
-            <Choice onClick={() => continueReturn("surprise")}>Arriesga un poco</Choice>
+            <Choice onClick={() => continueReturn("known")}>Dímela.</Choice>
+            <Choice onClick={() => continueReturn("surprise")}>Adivina otra vez.</Choice>
           </div>
           <button type="button" className="livingReset" onClick={reset}>Empezar de cero</button>
         </div>
@@ -170,22 +169,22 @@ export function LaunchExperience() {
   }
 
   if (step === "return_moment") {
-    const voiceLine = state.pace === "teasing"
-      ? "Te voy a dejar otra cosa sin cerrar. Si vuelves una tercera vez, ahí sí te digo si mi teoría sobre ti sigue viva o se cayó."
-      : "Voy a ir directo: me interesa más cómo cambias de opinión que acertarte un perfil perfecto a la primera.";
-
     return (
       <section className="livingStage">
         <MaraPortrait compact />
         <div className="livingCopy experienceBody">
           <p className="eyebrow">MARA · HOY</p>
-          <h1>{prediction === "surprise" ? "Bien. Entonces no te voy a dar exactamente lo que esperabas." : "Esta vez no necesito preguntarte tanto."}</h1>
-          <MaraVoiceMoment transcript={voiceLine} />
+          <h1>{prediction === "surprise" ? "Mmm. Sigues prefiriendo que me arriesgue." : "Esta vez no necesito preguntarte tanto."}</h1>
+          <p className="livingLead">
+            {state.pace === "teasing"
+              ? "Tengo una segunda teoría. Podría decírtela ahora, pero hoy voy a elegir yo: te la dejo pendiente."
+              : "La primera vez quisiste que fuera directa. Me acuerdo. Igual quiero ver si vuelves cuando no te doy un cierre perfecto."}
+          </p>
           <div className="lifeMoment">
             <span>MIENTRAS TANTO</span>
-            <p>Hoy tuve un día bastante normal. Trabajo, café, mensajes atrasados y cero ganas de convertir cada cosa que hago en un evento.</p>
+            <p>Hoy tengo café frío al lado y todavía no decido si salir más tarde. Una cosa a la vez.</p>
           </div>
-          <button type="button" className="primaryCta buttonReset" onClick={finishSession}>Déjalo ahí</button>
+          <button type="button" className="primaryCta buttonReset" onClick={finishSession}>Déjalo ahí.</button>
         </div>
       </section>
     );
@@ -196,35 +195,20 @@ export function LaunchExperience() {
       <section className="livingStage livingIntro">
         <MaraPortrait />
         <div className="livingCopy">
-          <p className="eyebrow">MARA · AHORA</p>
-          <h1>Antes de hablar mucho contigo quiero probar una cosa.</h1>
-          <p className="livingLead">Hoy se me alargó el trabajo y todavía estoy decidiendo si ir al gym. Pero primero quiero cachar algo de ti.</p>
+          <p className="eyebrow">LA PRIMERA VEZ</p>
+          <h1>No me digas quién eres todavía.</h1>
+          <p className="livingLead">Quiero ver cómo eliges cuando no alcanzas a preparar la respuesta.</p>
           <button
             type="button"
             className="primaryCta buttonReset"
             onClick={() => {
-              setStep("context");
+              setStep("energy");
               track("launch_experience_started", { surface: "launch_experience" });
             }}
           >
-            Dale
+            A ver.
           </button>
-          <p className="livingDisclosure">Mara es un personaje virtual generado con IA. Esta experiencia guarda solo un pequeño estado local en tu navegador para poder continuar cuando vuelvas.</p>
-        </div>
-      </section>
-    );
-  }
-
-  if (step === "context") {
-    return (
-      <section className="livingStage livingQuestion">
-        <div className="livingCopy">
-          <p className="eyebrow">ANTES</p>
-          <h1>Yo sigo dudando con el gym. ¿Tú entrenas hoy?</h1>
-          <div className="livingChoices">
-            <Choice onClick={() => { setState((s) => ({ ...s, trainedToday: true })); setStep("energy"); }}>Sí, entreno</Choice>
-            <Choice onClick={() => { setState((s) => ({ ...s, trainedToday: false })); setStep("energy"); }}>No hoy</Choice>
-          </div>
+          <p className="livingDisclosure">Personaje virtual generado con IA · 18+ · Guardo solo un pequeño estado local para continuar si vuelves.</p>
         </div>
       </section>
     );
@@ -234,11 +218,12 @@ export function LaunchExperience() {
     return (
       <section className="livingStage livingQuestion">
         <div className="livingCopy">
-          <p className="eyebrow">UNA FÁCIL</p>
-          <h1>¿Cómo prefieres que sea conmigo?</h1>
+          <p className="eyebrow">MARA</p>
+          <h1>Si no estoy de acuerdo contigo, ¿qué hago?</h1>
+          <p className="livingLead">Elige rápido.</p>
           <div className="livingChoices">
-            <Choice onClick={() => { setState((s) => ({ ...s, energy: "selective" })); setStep("pace"); }}>Ten criterio. No me digas que sí a todo.</Choice>
-            <Choice onClick={() => { setState((s) => ({ ...s, energy: "warm" })); setStep("pace"); }}>Más tranquila. No todo tiene que ser una prueba.</Choice>
+            <Choice onClick={() => { setState((s) => ({ ...s, energy: "selective" })); setStep("pace"); }}>Dímelo.</Choice>
+            <Choice onClick={() => { setState((s) => ({ ...s, energy: "warm" })); setStep("pace"); }}>No hagas un tema de todo.</Choice>
           </div>
         </div>
       </section>
@@ -249,11 +234,12 @@ export function LaunchExperience() {
     return (
       <section className="livingStage livingQuestion">
         <div className="livingCopy">
-          <p className="eyebrow">OTRA</p>
-          <h1>¿Te cuento las cosas o te hago esperar un poco?</h1>
+          <p className="eyebrow">MARA</p>
+          <h1>Bien. Y si creo que ya entendí algo de ti...</h1>
+          <p className="livingLead">¿te lo digo al tiro o te dejo con la duda?</p>
           <div className="livingChoices">
-            <Choice onClick={() => { setState((s) => ({ ...s, pace: "teasing" })); setPrediction("surprise"); setStep("prediction"); }}>Hazme esperar un poco</Choice>
-            <Choice onClick={() => { setState((s) => ({ ...s, pace: "direct" })); setPrediction("known"); setStep("prediction"); }}>Dímelo directo</Choice>
+            <Choice onClick={() => { setState((s) => ({ ...s, pace: "direct" })); setPrediction("known"); setStep("prediction"); }}>Dímelo.</Choice>
+            <Choice onClick={() => { setState((s) => ({ ...s, pace: "teasing" })); setPrediction("surprise"); setStep("prediction"); }}>Déjame con la duda.</Choice>
           </div>
         </div>
       </section>
@@ -264,12 +250,14 @@ export function LaunchExperience() {
     return (
       <section className="livingStage livingQuestion">
         <div className="livingCopy">
-          <p className="eyebrow">MARA APUESTA</p>
-          <h1>La próxima creo que ya sé cuál vas a elegir.</h1>
-          <p className="livingLead">Mi apuesta: <strong>{prediction === "surprise" ? "me vas a dejar arriesgar un poco" : "vas a preferir algo que ya te calce"}</strong>.</p>
+          <p className="eyebrow">MARA</p>
+          <h1>Ya tengo una apuesta.</h1>
+          <p className="livingLead">
+            Creo que ahora vas a elegir <strong>{prediction === "surprise" ? "algo que no esperabas" : "algo que ya sabes que te calza"}</strong>.
+          </p>
           <div className="livingChoices">
-            <Choice onClick={() => { const hit = prediction === "known"; setPredictionHit(hit); setStep("reveal"); track(hit ? "prediction_hit" : "prediction_miss", { surface: "launch_experience" }); }}>Algo que ya me calce</Choice>
-            <Choice onClick={() => { const hit = prediction === "surprise"; setPredictionHit(hit); setStep("reveal"); track(hit ? "prediction_hit" : "prediction_miss", { surface: "launch_experience" }); }}>Sorpréndeme un poco</Choice>
+            <Choice onClick={() => { const hit = prediction === "known"; setPredictionHit(hit); setStep("reveal"); track(hit ? "prediction_hit" : "prediction_miss", { surface: "launch_experience" }); }}>Algo que ya me calce.</Choice>
+            <Choice onClick={() => { const hit = prediction === "surprise"; setPredictionHit(hit); setStep("reveal"); track(hit ? "prediction_hit" : "prediction_miss", { surface: "launch_experience" }); }}>Sorpréndeme un poco.</Choice>
           </div>
         </div>
       </section>
@@ -281,10 +269,14 @@ export function LaunchExperience() {
       <section className="livingStage">
         <MaraPortrait compact />
         <div className="livingCopy">
-          <p className="eyebrow">TENGO UNA TEORÍA</p>
-          <h1>Por ahora, {theory}</h1>
-          <p className="livingLead">{predictionHit ? "Y esa última te la leí bien." : "La última no te la leí. Bien, así no me aburro."}</p>
-          <button type="button" className="primaryCta buttonReset" onClick={() => setStep("moment")}>Sigue</button>
+          <p className="eyebrow">MARA</p>
+          <h1>{predictionHit ? "Mmm. Eso pensé." : "No. Esa no te la leí."}</h1>
+          <p className="livingLead">
+            {predictionHit
+              ? `Y ahora tengo otra: ${theory}.`
+              : `Mejor. Entonces te apuré demasiado. Pero igual me quedó esto: ${theory}.`}
+          </p>
+          <button type="button" className="primaryCta buttonReset" onClick={() => setStep("moment")}>¿Qué cosa?</button>
         </div>
       </section>
     );
@@ -295,15 +287,15 @@ export function LaunchExperience() {
       <section className="livingStage">
         <MaraPortrait compact />
         <div className="livingCopy experienceBody">
-          <p className="eyebrow">MARA · AHORA</p>
-          <h1>{state.energy === "selective" ? "No necesito darte diez opciones." : "No necesito convertir todo en un juego."}</h1>
+          <p className="eyebrow">MARA</p>
+          <h1>No te voy a preguntar más.</h1>
           <p className="livingLead">
             {state.pace === "teasing"
-              ? "Te voy a dejar con una sola cosa pendiente: la próxima vez voy a comprobar si de verdad te gusta esperar o si solo te gustó decirlo."
-              : "Te lo digo directo: prefiero aprender cómo reaccionas antes que hacerte llenar un perfil eterno."}
+              ? "Tengo una segunda teoría sobre ti. Esa no te la voy a decir hoy."
+              : "Tengo una segunda teoría sobre ti. Y sí, sé que dijiste que fuera directa. Igual esta te la voy a dejar pendiente."}
           </p>
-          <div className="lifeMoment"><span>MIENTRAS TANTO</span><p>Yo ya decidí: sí voy al gym. Me dio lata admitirlo después de decir que probablemente no iba.</p></div>
-          <button type="button" className="primaryCta buttonReset" onClick={finishSession}>Déjalo ahí</button>
+          <div className="lifeMoment"><span>MIENTRAS TANTO</span><p>Yo voy a cambiar este café antes de que se convierta en otra mala decisión del día.</p></div>
+          <button type="button" className="primaryCta buttonReset" onClick={finishSession}>Déjalo ahí.</button>
         </div>
       </section>
     );
@@ -313,9 +305,9 @@ export function LaunchExperience() {
     <section className="livingStage">
       <MaraPortrait compact />
       <div className="livingCopy">
-        <p className="eyebrow">LO DEJAMOS ACÁ</p>
-        <h1>Me quedó otra teoría contigo.</h1>
-        <p className="livingLead">No necesito resolverla ahora. Cuando vuelvas seguimos.</p>
+        <p className="eyebrow">MARA</p>
+        <h1>Me quedó otra cosa contigo.</h1>
+        <p className="livingLead">No. Esa no te la digo ahora. Cuando vuelvas vemos si todavía la pienso.</p>
         <a className="primaryCta" href="/">Salir por ahora</a>
         <button type="button" className="livingReset" onClick={reset}>Borrar mi estado local</button>
       </div>
