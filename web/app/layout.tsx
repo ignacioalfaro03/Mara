@@ -4,7 +4,16 @@ import "./globals.css";
 import { AgeGate } from "@/components/age-gate";
 import { PublicPageTracker } from "@/components/public-page-tracker";
 
+function resolveMetadataBase() {
+  const explicitSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  const vercelUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL;
+  const siteUrl = explicitSiteUrl ?? (vercelUrl ? `https://${vercelUrl}` : "http://localhost:3000");
+
+  return new URL(siteUrl);
+}
+
 export const metadata: Metadata = {
+  metadataBase: resolveMetadataBase(),
   title: "Mara Vera",
   description: "Conoce a Mara Vera: un personaje virtual sintético con criterio, continuidad y una experiencia propia.",
   openGraph: {
