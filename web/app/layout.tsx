@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
+import "./first-impression.css";
 import { AgeGate } from "@/components/age-gate";
 import { PublicPageTracker } from "@/components/public-page-tracker";
 
@@ -15,10 +16,10 @@ function resolveMetadataBase() {
 export const metadata: Metadata = {
   metadataBase: resolveMetadataBase(),
   title: "Mara Vera",
-  description: "Llegaste justo. Mara ya estaba en medio de algo.",
+  description: "No soy tu asistente. Llegaste en medio de mi vida. Elige algo y vemos qué pasa después.",
   openGraph: {
     title: "Mara Vera",
-    description: "Entraste en medio de algo. A ver qué haces.",
+    description: "No soy tu asistente. Llegaste en medio de algo. A ver qué haces.",
     images: ["/mara/mara-v1-reference.jpg"],
     type: "website",
   },
