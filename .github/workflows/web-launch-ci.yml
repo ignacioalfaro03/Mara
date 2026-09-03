@@ -51,6 +51,9 @@ jobs:
       - name: Audit production dependencies
         run: npm audit --omit=dev --audit-level=high
 
+      - name: Verify Alpha signal report parser
+        run: npm run alpha:report:selftest
+
       - name: Verify DEV labs are blocked in production
         shell: bash
         run: |
