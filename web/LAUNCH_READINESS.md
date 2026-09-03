@@ -32,6 +32,10 @@ Primary behavioral question:
 
 > **DO PEOPLE VOLUNTARILY COME BACK TO MARA?**
 
+Secondary acquisition question:
+
+> **WHICH PUBLIC CHANNELS CREATE FIRST-PARTY BEHAVIOR, NOT JUST ATTENTION?**
+
 ## 2. Canonical Mara web-asset integrity
 
 Default runtime visual:
@@ -69,7 +73,7 @@ Foundation registers the founder-approved source reference separately, including
 
 The committed JPG is the web launch derivative. Different encodings have different binary hashes, so the manifest does not claim byte identity between the JPG and source PNG.
 
-Both `Web Launch CI` and the one-shot production deploy gate now verify:
+Both `Web Launch CI` and the one-shot production deploy gate verify:
 
 ```bash
 git hash-object public/mara/mara-v1-reference.jpg
@@ -89,7 +93,57 @@ Changing the expected blob is an explicit canonical-asset decision, not routine 
 
 > **ONE MARA. MANY CONTEXTS.**
 
-## 3. Automated release gates
+## 3. Privacy-safe channel attribution
+
+Launch acquisition links may use one coarse source parameter:
+
+`?src=<source>`
+
+Supported values:
+- `ig`
+- `tt`
+- `x`
+- `direct`
+- `other`
+
+Any other non-empty `src` value collapses to `other`.
+
+The browser stores only the coarse source in `sessionStorage` for the current browsing session under:
+
+`mara_public_entry_source_v1`
+
+The telemetry property is:
+
+`entry_source`
+
+This is **session attribution, not user attribution**.
+
+The launch implementation deliberately does not transmit:
+- arbitrary `campaign` or UTM strings;
+- click IDs;
+- referrer URLs;
+- handles;
+- post IDs as free text;
+- persistent acquisition identity.
+
+The server independently validates `entry_source` against the same fixed source allowlist.
+
+The production smoke starts with:
+
+`/?src=ig&campaign=must-not-leak`
+
+and asserts that a later actual UI-emitted return event contains:
+- `entry_source=ig`;
+- no `campaign` property;
+- no `anonymous_id`.
+
+Measurement contract:
+
+`web/ALPHA_MEASUREMENT.md`
+
+> **CHANNEL DIRECTION > PERSON-LEVEL TRACKING.**
+
+## 4. Automated release gates
 
 `Web Launch CI` must be green on the exact branch head intended for deployment.
 
@@ -110,6 +164,8 @@ Required gates:
 - completion persistence;
 - reload / return callback;
 - privacy-minimal return telemetry buckets;
+- privacy-safe session `entry_source` attribution;
+- proof arbitrary campaign query data does not leave the browser through public telemetry;
 - `/meet-mara`;
 - `/legal`;
 - all `*-lab` routes return production 404;
@@ -120,13 +176,13 @@ Terminal smoke success marker:
 
 `MARA_LAUNCH_SMOKE PASS`
 
-## 4. Current external blocker
+## 5. Current external blocker
 
 The release candidate is not currently claimed as deployed.
 
 Verified blockers are credential/access related, not application-code failures.
 
-Connected Vercel tooling still reports no accessible team scope for the intended account/project path. Direct access to the historical `ignacioalfaz-6766 / mara-vera` scope returns `403 Forbidden`, confirming this is an authorization/scope problem rather than simple project discovery.
+Connected Vercel tooling still cannot access the intended historical project scope. Direct access to `ignacioalfaz-6766 / mara-vera` returns `403 Forbidden`, confirming this is an authorization/scope problem rather than simple project discovery.
 
 A previous one-shot GitHub Actions deploy attempt failed before running any Vercel command because these repository secrets were absent:
 - `VERCEL_TOKEN`
@@ -137,7 +193,7 @@ No production state changed in that failed attempt.
 
 There is no committed `.vercel/project.json`; the deploy job must establish and verify the intended link at runtime from the three existing secrets above.
 
-## 5. Hardened one-shot deployment gate
+## 6. Hardened one-shot deployment gate
 
 Workflow:
 
@@ -161,7 +217,7 @@ The gate now:
 9. deploys that exact snapshot with `--prod`;
 10. waits for terminal Vercel state;
 11. verifies `/api/health` first;
-12. runs the full production mobile smoke against the returned deployment URL;
+12. runs the full production mobile smoke against the returned deployment URL, including attribution/privacy checks;
 13. prints the verified SHA and URL only after every gate passes.
 
 The latest asset-guard deploy-workflow commit was intentionally created **without** `[deploy-alpha]`:
@@ -178,7 +234,7 @@ Result:
 
 This confirms the production guard remained closed and no deployment was attempted.
 
-## 6. Deployment rule
+## 7. Deployment rule
 
 Deploy only the exact Web/P0 head whose `Web Launch CI` is green.
 
@@ -190,9 +246,10 @@ A deployment becomes launch-verified only after:
 3. the production smoke passes against the actual deployment URL;
 4. public routes are reachable;
 5. DEV labs remain 404 in production;
-6. canonical Mara asset integrity passes.
+6. canonical Mara asset integrity passes;
+7. attribution/privacy smoke passes.
 
-## 7. Post-deploy verification
+## 8. Post-deploy verification
 
 The one-shot deploy gate performs the production smoke itself.
 
@@ -227,7 +284,19 @@ Canonical local file check from `web/`:
 test "$(git hash-object public/mara/mara-v1-reference.jpg)" = "1c4c4d3615eac915cf42efd9416ed20479eb8126"
 ```
 
-## 8. Manual launch sanity check
+## 9. Launch link convention
+
+Once the public URL is verified, use:
+
+- Instagram: `<PUBLIC_URL>/?src=ig`
+- TikTok: `<PUBLIC_URL>/?src=tt`
+- X: `<PUBLIC_URL>/?src=x`
+
+Direct/owned links may omit `src`; they resolve to `direct` for the session when no source is already present.
+
+Do not append free-form campaign tracking merely because conventional marketing stacks do.
+
+## 10. Manual launch sanity check
 
 After automated smoke passes, manually inspect once:
 - mobile Home hierarchy;
@@ -245,7 +314,7 @@ After automated smoke passes, manually inspect once:
 
 A physical-iPhone Safari pass is useful but is not required to pretend current Chromium automation already tested Safari. Keep evidence claims literal.
 
-## 9. What does not block this Alpha
+## 11. What does not block this Alpha
 
 Do not hold the free Alpha for:
 - realtime canonical voice;
@@ -260,7 +329,7 @@ Do not hold the free Alpha for:
 
 Those layers are gated by real user signal and/or separate compliance/commercial decisions.
 
-## 10. Stop conditions
+## 12. Stop conditions
 
 Do not proceed or claim launch completion if:
 - CI is red on the intended head;
@@ -271,11 +340,12 @@ Do not proceed or claim launch completion if:
 - age gate fails;
 - a DEV lab is publicly reachable;
 - telemetry accepts unknown intimate payloads;
+- arbitrary campaign/source strings escape the attribution allowlist;
 - a mock commercial state appears public;
 - deployment status is not terminal READY;
 - production smoke fails.
 
-## 11. Merge boundary
+## 13. Merge boundary
 
 Deployment authorization and merge authorization are separate.
 
