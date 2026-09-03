@@ -51,10 +51,10 @@ jobs:
           echo "::add-mask::$QA_PASSWORD"
           mkdir -p /tmp/mara-qa-node
           npm install --prefix /tmp/mara-qa-node --no-save --no-package-lock --no-audit --no-fund bcryptjs >/dev/null
-          export BOOTSTRAP_PASSWORD
+          export BOOTSTRAP_EMAIL BOOTSTRAP_PASSWORD BOOTSTRAP_USER_ID QA_EMAIL QA_PASSWORD
           BOOTSTRAP_BCRYPT="$(node -e 'const bcrypt=require("/tmp/mara-qa-node/node_modules/bcryptjs");process.stdout.write(bcrypt.hashSync(process.env.BOOTSTRAP_PASSWORD,10))')"
-          python -c 'import json,os; json.dump({"bootstrap_user_id":os.environ["BOOTSTRAP_USER_ID"],"bootstrap_email":os.environ["BOOTSTRAP_EMAIL"],"bootstrap_bcrypt":os.environ["BOOTSTRAP_BCRYPT"],"signup_email":os.environ["QA_EMAIL"]},open("/tmp/mara-qa-provision.json","w"))' \
-            BOOTSTRAP_BCRYPT="$BOOTSTRAP_BCRYPT"
+          export BOOTSTRAP_BCRYPT
+          python -c 'import json,os; json.dump({"bootstrap_user_id":os.environ["BOOTSTRAP_USER_ID"],"bootstrap_email":os.environ["BOOTSTRAP_EMAIL"],"bootstrap_bcrypt":os.environ["BOOTSTRAP_BCRYPT"],"signup_email":os.environ["QA_EMAIL"]},open("/tmp/mara-qa-provision.json","w"))'
 
       - name: Upload safe QA provisioning artifact
         uses: actions/upload-artifact@v4
