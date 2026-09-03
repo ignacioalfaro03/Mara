@@ -21,7 +21,12 @@ const ALLOWED_PROPERTY_KEYS = new Set([
   "surface",
   "target",
   "placement",
+  "return_count_bucket",
+  "days_since_first_bucket",
 ]);
+
+const RETURN_COUNT_BUCKETS = new Set(["1", "2", "3-4", "5+"]);
+const DAYS_SINCE_FIRST_BUCKETS = new Set(["same_day", "1-2d", "3-7d", "8+d", "unknown"]);
 
 type TelemetryPayload = {
   event?: unknown;
@@ -35,10 +40,22 @@ function sanitizeProperties(value: unknown): Record<string, string | number | bo
   const safe: Record<string, string | number | boolean> = {};
   for (const [key, raw] of Object.entries(value)) {
     if (!ALLOWED_PROPERTY_KEYS.has(key)) continue;
+
+    if (key === "return_count_bucket") {
+      if (typeof raw === "string" && RETURN_COUNT_BUCKETS.has(raw)) safe[key] = raw;
+      continue;
+    }
+
+    if (key === "days_since_first_bucket") {
+      if (typeof raw === "string" && DAYS_SINCE_FIRST_BUCKETS.has(raw)) safe[key] = raw;
+      continue;
+    }
+
     if (typeof raw === "boolean" || typeof raw === "number") {
       safe[key] = raw;
       continue;
     }
+
     if (typeof raw === "string") {
       safe[key] = raw.slice(0, 80);
     }
@@ -65,7 +82,7 @@ export async function POST(request: Request) {
 
   // Intentionally anonymous launch telemetry. Do not add user IDs, IP-derived
   // identity, conversation content, fantasies, sexual history or commercial
-  // vulnerability data here.
+  // vulnerability data here. Return measurement uses coarse local buckets only.
   console.info("MARA_TELEMETRY", JSON.stringify({
     event: payload.event,
     properties: sanitizeProperties(payload.properties),
