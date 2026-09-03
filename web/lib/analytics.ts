@@ -15,6 +15,10 @@ export type MaraEvent =
   | "repeat_paid_action"
   | "returning_user"
   | "high_intent_session"
+  | "launch_experience_started"
+  | "launch_session_completed"
+  | "launch_return_continued"
+  | "launch_state_reset"
   | "first_living_experience_started"
   | "playable_onboarding_started"
   | "choice_made"
@@ -156,6 +160,26 @@ const P0_DEV_LOG_EVENTS = new Set<MaraEvent>([
   "ritual_reward_preference",
 ]);
 
+// Only these public-alpha events may leave the browser through the first-party
+// telemetry endpoint. No conversation text, intimate answers, aliases, payment
+// data or user identifiers are accepted by this launch path.
+const PUBLIC_ALPHA_TELEMETRY_EVENTS = new Set<MaraEvent>([
+  "page_view",
+  "hero_cta_click",
+  "social_to_web",
+  "age_gate_view",
+  "age_gate_pass",
+  "age_gate_fail",
+  "meet_mara_view",
+  "returning_user",
+  "launch_experience_started",
+  "launch_session_completed",
+  "launch_return_continued",
+  "launch_state_reset",
+  "prediction_hit",
+  "prediction_miss",
+]);
+
 function appendDevelopmentEvent(record: MaraEventRecord) {
   if (process.env.NODE_ENV !== "development") return;
   if (!P0_DEV_LOG_EVENTS.has(record.event)) return;
@@ -167,6 +191,23 @@ function appendDevelopmentEvent(record: MaraEventRecord) {
     window.sessionStorage.setItem(P0_DEV_LOG_KEY, JSON.stringify(next));
   } catch {
     // Debug logging must never break the user experience.
+  }
+}
+
+function sendPublicAlphaTelemetry(record: MaraEventRecord) {
+  if (process.env.NODE_ENV !== "production") return;
+  if (!PUBLIC_ALPHA_TELEMETRY_EVENTS.has(record.event)) return;
+
+  try {
+    void fetch("/api/telemetry", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(record),
+      keepalive: true,
+      credentials: "same-origin",
+    }).catch(() => undefined);
+  } catch {
+    // Telemetry must never interrupt Mara.
   }
 }
 
@@ -197,6 +238,7 @@ export function track(event: MaraEvent, properties: Record<string, string | numb
 
   window.dispatchEvent(new CustomEvent("mara:analytics", { detail }));
   appendDevelopmentEvent(detail);
+  sendPublicAlphaTelemetry(detail);
 
   if (process.env.NODE_ENV === "development") {
     console.info("[mara:analytics]", event, properties);
