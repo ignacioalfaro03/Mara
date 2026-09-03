@@ -151,8 +151,11 @@ function callbackLine(state: LaunchState) {
   if (state.barChoice === "approach") {
     return "La primera vez viniste apenas te hice un gesto.";
   }
-  if (state.poseChoice) {
-    return "La última vez elegiste una foto sin pensarlo tanto como querías aparentar.";
+  if (state.poseChoice === "pose_a") {
+    return "La última vez te quedaste con la primera. Sí, me fijé.";
+  }
+  if (state.poseChoice === "pose_b") {
+    return "La última vez te quedaste con la segunda. Sí, me fijé.";
   }
   return "La última vez dejaste una escena a medias conmigo.";
 }

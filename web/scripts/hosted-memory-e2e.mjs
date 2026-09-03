@@ -170,7 +170,7 @@ try {
   const pageB = await contextB.newPage();
   await signIn(pageB);
   await pageB.getByText("Volviste.").waitFor({ timeout: 15000 });
-  await pageB.getByText(/La última vez elegiste una foto/).waitFor({ timeout: 15000 });
+  await pageB.getByText("La última vez te quedaste con la segunda. Sí, me fijé.").waitFor({ timeout: 15000 });
   await pageB.getByText(/Solo me acuerdo/).waitFor();
 
   const hydratedRaw = await pageB.evaluate(() => window.localStorage.getItem("mara_launch_state_v1"));
