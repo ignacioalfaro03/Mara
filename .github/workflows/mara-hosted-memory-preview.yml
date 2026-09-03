@@ -7,6 +7,12 @@ on:
     paths:
       - ".github/workflows/mara-hosted-memory-preview.yml"
       - "web/scripts/hosted-memory-e2e.mjs"
+      - "web/app/api/auth/**"
+      - "web/app/api/preferences/**"
+      - "web/app/api/relationship/**"
+      - "web/lib/auth-session.ts"
+      - "web/lib/preference-client.ts"
+      - "web/lib/relationship-client.ts"
 
 permissions:
   contents: read
