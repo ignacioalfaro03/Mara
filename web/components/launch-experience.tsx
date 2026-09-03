@@ -6,6 +6,7 @@ import { loadRelationshipState, syncRelationshipState } from "@/lib/relationship
 import { MaraPortrait } from "@/components/mara-presence";
 import { VisualPreferenceChoice, type PoseChoice } from "@/components/visual-preference-choice";
 import { AccountMemoryCta } from "@/components/account-memory-cta";
+import { LaunchCommerceSpine } from "@/components/launch-commerce-spine";
 
 const STORAGE_KEY = "mara_launch_state_v1";
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -250,6 +251,7 @@ export function LaunchExperience() {
     persistRelationship(next);
     setStep("open_loop");
     track("launch_session_completed", { surface: "launch_experience" });
+    track("experience_completed", { surface: "launch_experience" });
   }
 
   function continueReturn() {
@@ -362,6 +364,7 @@ export function LaunchExperience() {
               interactionStarted.current = true;
               setStep("outfit");
               track("launch_experience_started", { surface: "launch_experience" });
+              track("experience_started", { surface: "launch_experience" });
             }}
           >
             Métete.
@@ -413,6 +416,7 @@ export function LaunchExperience() {
           setState((current) => ({ ...current, poseChoice: choice }));
           setStep("pose_result");
           track("visual_choice_completed", { surface: "launch_experience" });
+          track("preference_selected", { surface: "launch_experience", preference_group: "pose_pair_launch_v1" });
         }}
       />
     );
@@ -533,6 +537,7 @@ export function LaunchExperience() {
         <h1>Después te cuento qué pasó.</h1>
         <p className="livingLead">O no. Depende de cómo vuelva la noche.</p>
         <AccountMemoryCta />
+        <LaunchCommerceSpine />
         <a className="primaryCta" href="/">Salir por ahora</a>
         <button type="button" className="livingReset" onClick={reset}>Borrar mi estado local</button>
       </div>

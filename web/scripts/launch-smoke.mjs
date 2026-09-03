@@ -59,6 +59,14 @@ try {
   assert(memoryHealthBody?.service === "mara-identity-memory", "Memory health service contract changed");
   assert(typeof memoryHealthBody?.configured === "boolean", "Memory health must expose a boolean configured state");
 
+  const commerceLaunch = await context.request.get(`${baseUrl}/api/commerce/launch`);
+  assert(commerceLaunch.status() === 200, `/api/commerce/launch returned ${commerceLaunch.status()}`);
+  const commerceLaunchBody = await commerceLaunch.json();
+  assert(commerceLaunchBody?.offers?.fixed?.slug === "private_after_scene_note_v1", "Launch commerce fixed offer missing");
+  assert(commerceLaunchBody?.offers?.capricho?.slug === "black_bag_capricho_01", "Launch commerce Capricho offer missing");
+  assert(commerceLaunchBody?.goals?.capricho?.slug === "black_bag_01", "Launch commerce goal missing");
+  assert(["configured", "not_configured"].includes(commerceLaunchBody?.payment?.status), "Commerce provider status contract changed");
+
   const authPage = await context.request.get(`${baseUrl}/auth`);
   assert(authPage.status() === 200, `/auth returned ${authPage.status()}`);
 
@@ -115,6 +123,9 @@ try {
 
   await page.getByText("No. Ahora espera tú.").waitFor();
   await page.getByRole("button", { name: "Déjalo ahí." }).click();
+  await page.getByText("Nota privada de la noche").waitFor();
+  await page.getByText("Capricho: Black Bag").waitFor();
+  await page.getByText("Checkout no activo").first().waitFor();
 
   const storedState = await page.evaluate(() => window.localStorage.getItem("mara_launch_state_v1"));
   assert(storedState, "Launch experience did not persist state");
@@ -164,12 +175,15 @@ try {
 
   const allowedTelemetry = await context.request.post(`${baseUrl}/api/telemetry`, {
     data: {
-      event: "returning_user",
+      event: "commerce_checkout_blocked",
       properties: {
         surface: "launch_smoke",
         entry_source: "x",
-        return_count_bucket: "3-4",
-        days_since_first_bucket: "3-7d",
+        offer_slug: "private_after_scene_note_v1",
+        offer_type: "fixed_unlock",
+        amount_bucket: "under_5",
+        currency: "USD",
+        provider_status: "not_configured",
       },
       timestamp: new Date().toISOString(),
     },

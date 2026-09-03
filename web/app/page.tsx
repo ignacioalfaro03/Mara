@@ -21,7 +21,10 @@ export default function HomePage() {
             <Link
               href="/experience"
               className="primaryCta"
-              onClick={() => track("hero_cta_click", { target: "launch_experience" })}
+              onClick={() => {
+                track("hero_cta_click", { target: "launch_experience" });
+                track("mara_entered", { surface: "home", target: "launch_experience" });
+              }}
             >
               Métete.
             </Link>

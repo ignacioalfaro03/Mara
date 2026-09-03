@@ -10,6 +10,11 @@ const CORE_EVENTS = [
   "launch_return_continued",
   "prediction_hit",
   "prediction_miss",
+  "commerce_offer_viewed",
+  "commerce_checkout_started",
+  "commerce_checkout_blocked",
+  "commerce_entitlement_unlocked",
+  "commerce_contribution_progress_viewed",
 ];
 
 function increment(map, key) {

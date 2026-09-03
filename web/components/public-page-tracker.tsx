@@ -12,6 +12,7 @@ export function PublicPageTracker() {
   useEffect(() => {
     if (!PUBLIC_SURFACES.has(pathname)) return;
     track("page_view", { surface: pathname });
+    if (pathname === "/") track("landing_view", { surface: pathname });
   }, [pathname]);
 
   return null;

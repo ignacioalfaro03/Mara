@@ -1,25 +1,35 @@
 export type MaraEvent =
   | "page_view"
+  | "landing_view"
   | "hero_cta_click"
+  | "mara_entered"
   | "social_to_web"
   | "age_gate_view"
   | "age_gate_pass"
+  | "age_gate_accepted"
   | "age_gate_fail"
   | "meet_mara_view"
   | "premium_view"
   | "premium_cta_click"
   | "external_checkout_click"
   | "signup_start"
+  | "signup_started"
   | "signup_complete"
+  | "signup_completed"
+  | "signin_started"
+  | "signin_completed"
   | "first_paid_action"
   | "repeat_paid_action"
   | "returning_user"
   | "high_intent_session"
   | "launch_experience_started"
+  | "experience_started"
   | "launch_session_completed"
+  | "experience_completed"
   | "launch_return_continued"
   | "launch_state_reset"
   | "visual_choice_completed"
+  | "preference_selected"
   | "first_living_experience_started"
   | "playable_onboarding_started"
   | "choice_made"
@@ -42,6 +52,12 @@ export type MaraEvent =
   | "commercial_moment_shown"
   | "commercial_offer_dismissed"
   | "commercial_post_offer_continued"
+  | "commerce_offer_viewed"
+  | "commerce_checkout_started"
+  | "commerce_checkout_blocked"
+  | "commerce_checkout_returned"
+  | "commerce_entitlement_unlocked"
+  | "commerce_contribution_progress_viewed"
   | "offer_opened"
   | "mock_purchase_completed"
   | "purchase_resume"
@@ -121,6 +137,12 @@ const P0_DEV_LOG_EVENTS = new Set<MaraEvent>([
   "commercial_moment_shown",
   "commercial_offer_dismissed",
   "commercial_post_offer_continued",
+  "commerce_offer_viewed",
+  "commerce_checkout_started",
+  "commerce_checkout_blocked",
+  "commerce_checkout_returned",
+  "commerce_entitlement_unlocked",
+  "commerce_contribution_progress_viewed",
   "offer_opened",
   "mock_purchase_completed",
   "purchase_resume",
@@ -170,19 +192,37 @@ const P0_DEV_LOG_EVENTS = new Set<MaraEvent>([
 // data or user identifiers are accepted by this launch path.
 const PUBLIC_ALPHA_TELEMETRY_EVENTS = new Set<MaraEvent>([
   "page_view",
+  "landing_view",
   "hero_cta_click",
+  "mara_entered",
   "social_to_web",
   "age_gate_view",
   "age_gate_pass",
+  "age_gate_accepted",
   "age_gate_fail",
   "meet_mara_view",
   "returning_user",
   "launch_experience_started",
+  "experience_started",
   "launch_session_completed",
+  "experience_completed",
   "launch_return_continued",
   "launch_state_reset",
+  "visual_choice_completed",
+  "preference_selected",
   "prediction_hit",
   "prediction_miss",
+  "signup_started",
+  "signup_completed",
+  "signin_started",
+  "signin_completed",
+  "capricho_viewed",
+  "commerce_offer_viewed",
+  "commerce_checkout_started",
+  "commerce_checkout_blocked",
+  "commerce_checkout_returned",
+  "commerce_entitlement_unlocked",
+  "commerce_contribution_progress_viewed",
 ]);
 
 function publicEntrySource(): PublicEntrySource {

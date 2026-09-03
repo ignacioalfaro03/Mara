@@ -22,17 +22,17 @@ npm run build
 
 Current P0 flow:
 
-**entry → safe user context → 3 choices → Mara reactions → prediction → confirm/correct → temporary preference profile → rule-based recommendation → story/voice moment → contextual commercial moment → Life State callback → local open loop → return session**
+**entry → choices → Mara reactions → visual preference → server-capable relationship memory → return callback → launch open loop → optional account-backed commerce**
 
 Implementation deliberately stays lean:
 
-- no auth;
-- no database;
+- optional Supabase Auth-backed memory;
+- optional Supabase commerce kernel;
 - no persistent Relationship Engine;
 - no ML recommender;
 - no embeddings/vector DB;
 - no realtime voice;
-- no payment provider;
+- no active real payment provider;
 - no analytics vendor.
 
 The P0 stores only a small low-sensitivity prototype state in browser `localStorage` under `mara_p0_living_experience`. The experience includes an explicit local reset action.
@@ -174,15 +174,9 @@ See `P0_COMMERCE_TEST_PLAN.md` for the qualitative/directional test protocol.
 
 ## Premium handoff
 
-Real payment/provider activation is intentionally disabled by default.
+Real payment/provider activation is intentionally disabled by default. Current commerce activation details live in `LAUNCH_REVENUE_LOOP.md`.
 
-To configure an authorized external premium destination:
-
-```bash
-NEXT_PUBLIC_PREMIUM_URL=https://authorized-provider.example/path
-```
-
-Do not populate this variable with a real provider until founder authorization and provider/compliance review are complete.
+Do not configure a real provider until founder authorization, provider acceptance of Mara's exact adult/sensual AI scope, webhook verification and hosted Preview QA are complete.
 
 ## Routes
 
@@ -192,6 +186,9 @@ Do not populate this variable with a real provider until founder authorization a
 - `/meet-mara` — character/brand introduction
 - `/premium` — premium value and configurable handoff
 - `/legal` — AI disclosure, adult-only, consent, privacy and reporting requirements
+- `/api/commerce/launch` — public offer/progress/provider-status contract
+- `/api/commerce/checkout` — authenticated checkout intent creation; no browser payment truth
+- `/api/commerce/me` — authenticated private purchase/entitlement/contribution state
 
 ## Analytics
 

@@ -2,19 +2,37 @@ import { NextResponse } from "next/server";
 
 const ALLOWED_EVENTS = new Set([
   "page_view",
+  "landing_view",
   "hero_cta_click",
+  "mara_entered",
   "social_to_web",
   "age_gate_view",
   "age_gate_pass",
+  "age_gate_accepted",
   "age_gate_fail",
   "meet_mara_view",
   "returning_user",
   "launch_experience_started",
+  "experience_started",
   "launch_session_completed",
+  "experience_completed",
   "launch_return_continued",
   "launch_state_reset",
+  "visual_choice_completed",
+  "preference_selected",
   "prediction_hit",
   "prediction_miss",
+  "signup_started",
+  "signup_completed",
+  "signin_started",
+  "signin_completed",
+  "capricho_viewed",
+  "commerce_offer_viewed",
+  "commerce_checkout_started",
+  "commerce_checkout_blocked",
+  "commerce_checkout_returned",
+  "commerce_entitlement_unlocked",
+  "commerce_contribution_progress_viewed",
 ]);
 
 const ALLOWED_PROPERTY_KEYS = new Set([
@@ -24,11 +42,20 @@ const ALLOWED_PROPERTY_KEYS = new Set([
   "entry_source",
   "return_count_bucket",
   "days_since_first_bucket",
+  "preference_group",
+  "offer_slug",
+  "offer_type",
+  "capricho_slug",
+  "amount_bucket",
+  "currency",
+  "provider_status",
 ]);
 
 const ENTRY_SOURCES = new Set(["ig", "tt", "x", "direct", "other"]);
 const RETURN_COUNT_BUCKETS = new Set(["1", "2", "3-4", "5+"]);
 const DAYS_SINCE_FIRST_BUCKETS = new Set(["same_day", "1-2d", "3-7d", "8+d", "unknown"]);
+const AMOUNT_BUCKETS = new Set(["under_5", "5_9", "10_24", "25_99", "100_plus"]);
+const PROVIDER_STATUSES = new Set(["configured", "not_configured"]);
 
 type TelemetryPayload = {
   event?: unknown;
@@ -55,6 +82,16 @@ function sanitizeProperties(value: unknown): Record<string, string | number | bo
 
     if (key === "days_since_first_bucket") {
       if (typeof raw === "string" && DAYS_SINCE_FIRST_BUCKETS.has(raw)) safe[key] = raw;
+      continue;
+    }
+
+    if (key === "amount_bucket") {
+      if (typeof raw === "string" && AMOUNT_BUCKETS.has(raw)) safe[key] = raw;
+      continue;
+    }
+
+    if (key === "provider_status") {
+      if (typeof raw === "string" && PROVIDER_STATUSES.has(raw)) safe[key] = raw;
       continue;
     }
 

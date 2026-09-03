@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { flushPendingPreferenceEvents } from "@/lib/preference-client";
+import { track } from "@/lib/analytics";
 import styles from "./auth.module.css";
 
 type Mode = "signup" | "signin";
@@ -31,6 +32,8 @@ export function AccountEntry() {
     event.preventDefault();
     setBusy(true);
     setMessage("");
+    track(mode === "signup" ? "signup_started" : "signin_started", { surface: "auth" });
+    if (mode === "signup") track("signup_start", { surface: "auth" });
 
     try {
       const response = await fetch(mode === "signup" ? "/api/auth/signup" : "/api/auth/signin", {
@@ -56,6 +59,8 @@ export function AccountEntry() {
       }
 
       await flushPendingPreferenceEvents();
+      track(mode === "signup" ? "signup_completed" : "signin_completed", { surface: "auth" });
+      if (mode === "signup") track("signup_complete", { surface: "auth" });
       window.location.assign("/experience?account=ready");
     } catch {
       setMessage("No pude conectar con la memoria de Mara.");
