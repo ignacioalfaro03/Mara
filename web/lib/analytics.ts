@@ -91,8 +91,12 @@ export type MaraEventRecord = {
   timestamp: string;
 };
 
+type PublicEntrySource = "ig" | "tt" | "x" | "direct" | "other";
+
 const P0_DEV_LOG_KEY = "mara_p0_event_log";
 const P0_DEV_LOG_LIMIT = 250;
+const PUBLIC_ENTRY_SOURCE_KEY = "mara_public_entry_source_v1";
+const PUBLIC_ENTRY_SOURCES = new Set<PublicEntrySource>(["ig", "tt", "x", "direct", "other"]);
 
 const P0_DEV_LOG_EVENTS = new Set<MaraEvent>([
   "first_living_experience_started",
@@ -180,6 +184,45 @@ const PUBLIC_ALPHA_TELEMETRY_EVENTS = new Set<MaraEvent>([
   "prediction_miss",
 ]);
 
+function publicEntrySource(): PublicEntrySource {
+  if (typeof window === "undefined") return "direct";
+
+  try {
+    const raw = new URLSearchParams(window.location.search).get("src")?.trim().toLowerCase();
+    if (raw) {
+      const source = PUBLIC_ENTRY_SOURCES.has(raw as PublicEntrySource)
+        ? (raw as PublicEntrySource)
+        : "other";
+      window.sessionStorage.setItem(PUBLIC_ENTRY_SOURCE_KEY, source);
+      return source;
+    }
+
+    const stored = window.sessionStorage.getItem(PUBLIC_ENTRY_SOURCE_KEY);
+    if (stored && PUBLIC_ENTRY_SOURCES.has(stored as PublicEntrySource)) {
+      return stored as PublicEntrySource;
+    }
+
+    window.sessionStorage.setItem(PUBLIC_ENTRY_SOURCE_KEY, "direct");
+    return "direct";
+  } catch {
+    return "direct";
+  }
+}
+
+function publicAlphaProperties(
+  event: MaraEvent,
+  properties: Record<string, string | number | boolean>,
+): Record<string, string | number | boolean> {
+  if (!PUBLIC_ALPHA_TELEMETRY_EVENTS.has(event)) return properties;
+
+  // Entry attribution is intentionally coarse and session-scoped. We do not
+  // forward arbitrary UTM/campaign strings, referrers, social handles or IDs.
+  return {
+    ...properties,
+    entry_source: publicEntrySource(),
+  };
+}
+
 function appendDevelopmentEvent(record: MaraEventRecord) {
   if (process.env.NODE_ENV !== "development") return;
   if (!P0_DEV_LOG_EVENTS.has(record.event)) return;
@@ -232,7 +275,7 @@ export function track(event: MaraEvent, properties: Record<string, string | numb
 
   const detail: MaraEventRecord = {
     event,
-    properties,
+    properties: publicAlphaProperties(event, properties),
     timestamp: new Date().toISOString(),
   };
 
@@ -241,6 +284,6 @@ export function track(event: MaraEvent, properties: Record<string, string | numb
   sendPublicAlphaTelemetry(detail);
 
   if (process.env.NODE_ENV === "development") {
-    console.info("[mara:analytics]", event, properties);
+    console.info("[mara:analytics]", event, detail.properties);
   }
 }
