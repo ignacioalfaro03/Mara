@@ -1,0 +1,173 @@
+name: Mara Hosted Revenue Preview E2E
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  VERCEL_CLI_VERSION: "59.11.1"
+  PLAYWRIGHT_VERSION: "1.62.1"
+  VERCEL_ORG_ID: "team_KAPFjrSQT78GUeQyGZCdQRdz"
+  VERCEL_PROJECT_ID: "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK"
+  NEXT_PUBLIC_SUPABASE_URL: "https://hctykprkwenhatbjxkpb.supabase.co"
+  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_VQ-2Db0Di57kA3DEkeml9A_vZMYHDwi"
+
+jobs:
+  hosted-revenue-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: web
+
+    steps:
+      - name: Checkout exact workflow snapshot
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Assert non-production branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "$GITHUB_REF_NAME" in
+            main|master|web/mvp-owned-funnel)
+              echo "::error::Hosted revenue QA may not run from a production/base branch."
+              exit 1
+              ;;
+          esac
+          echo "HOSTED_REVENUE_SHA=$GITHUB_SHA"
+
+      - name: Verify required private credentials
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          missing=0
+          for name in VERCEL_TOKEN SUPABASE_SERVICE_ROLE_KEY; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Missing required GitHub Secret: $name"
+              missing=1
+            fi
+          done
+          test "$missing" -eq 0
+
+      - name: Generate ephemeral signed-test secret
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "MARA_PAYMENT_WEBHOOK_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+
+      - name: Setup Node
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install locked app dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Typecheck hosted candidate
+        run: npm run typecheck
+
+      - name: Build hosted candidate
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+        run: npm run build
+
+      - name: Install deploy and browser tooling
+        run: |
+          npm install --no-save --no-package-lock --no-audit --no-fund \
+            "vercel@${VERCEL_CLI_VERSION}" \
+            "playwright@${PLAYWRIGHT_VERSION}"
+          npx playwright install --with-deps chromium
+
+      - name: Pin the exact Vercel project without touching production aliases
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .vercel
+          printf '{"orgId":"%s","projectId":"%s"}\n' "$VERCEL_ORG_ID" "$VERCEL_PROJECT_ID" > .vercel/project.json
+          node - <<'NODE'
+          const fs = require('fs');
+          const linked = JSON.parse(fs.readFileSync('.vercel/project.json', 'utf8'));
+          if (linked.orgId !== process.env.VERCEL_ORG_ID) throw new Error('Vercel org mismatch');
+          if (linked.projectId !== process.env.VERCEL_PROJECT_ID) throw new Error('Vercel project mismatch');
+          console.log('MARA_VERCEL_PREVIEW_LINK PASS');
+          NODE
+
+      - name: Deploy exact SHA as ephemeral Preview
+        id: deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx vercel deploy --yes --token "$VERCEL_TOKEN" \
+            --build-env "NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL" \
+            --build-env "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" \
+            --env "NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL" \
+            --env "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" \
+            --env "SUPABASE_SERVICE_ROLE_KEY=$SUPABASE_SERVICE_ROLE_KEY" \
+            --env "MARA_PAYMENT_PROVIDER=signed_test" \
+            --env "MARA_PAYMENT_WEBHOOK_SECRET=$MARA_PAYMENT_WEBHOOK_SECRET" \
+            2>&1 | tee /tmp/mara-revenue-preview.log
+
+          deployment_url=$(grep -Eo 'https://[^[:space:]]+\.vercel\.app' /tmp/mara-revenue-preview.log | tail -n 1)
+          if [ -z "$deployment_url" ]; then
+            echo "::error::Vercel CLI did not expose a Preview URL."
+            exit 1
+          fi
+          echo "deployment_url=$deployment_url" >> "$GITHUB_OUTPUT"
+          echo "MARA_REVENUE_PREVIEW_CREATED=$deployment_url"
+
+      - name: Wait for Preview readiness
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
+        run: npx vercel inspect "$DEPLOYMENT_URL" --wait --token "$VERCEL_TOKEN"
+
+      - name: Prove hosted revenue loop against real Mara Supabase
+        env:
+          BASE_URL: ${{ steps.deploy.outputs.deployment_url }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/hosted-revenue-e2e.mjs
+
+      - name: Publish hosted proof evidence
+        if: success()
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
+        shell: bash
+        run: |
+          echo "MARA_HOSTED_REVENUE_PROOF PASS"
+          echo "VERIFIED_SHA=$GITHUB_SHA"
+          echo "VERIFIED_PREVIEW=$DEPLOYMENT_URL"
+          echo "PRODUCTION_ALIAS_UNTOUCHED=https://mara-vera.vercel.app"
+
+      - name: Remove ephemeral Preview
+        if: always() && steps.deploy.outputs.deployment_url != ''
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
+        shell: bash
+        run: |
+          set +e
+          npx vercel remove "$DEPLOYMENT_URL" --yes --token "$VERCEL_TOKEN"
+          exit_code=$?
+          if [ "$exit_code" -ne 0 ]; then
+            echo "::warning::Ephemeral Preview cleanup failed; remove $DEPLOYMENT_URL manually."
+            exit "$exit_code"
+          fi
+          echo "MARA_EPHEMERAL_PREVIEW_REMOVED PASS"
+
+# This workflow is intentionally manual-only.
+# It never uses --prod, never changes the canonical production alias, and deletes its temporary Preview after the proof.
