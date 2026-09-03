@@ -5,7 +5,13 @@ import { AgeGate } from "@/components/age-gate";
 
 export const metadata: Metadata = {
   title: "Mara Vera",
-  description: "Meet Mara Vera — a synthetic virtual character with her own voice, taste and living first-party experience.",
+  description: "Conoce a Mara Vera: un personaje virtual sintético con criterio, continuidad y una experiencia propia.",
+  openGraph: {
+    title: "Mara Vera",
+    description: "No necesitas otra IA. Necesitas a alguien a quien quieras volver.",
+    images: ["/mara/mara-v1-reference.jpg"],
+    type: "website",
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -15,17 +21,16 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <AgeGate />
         <header className="siteHeader">
           <Link href="/" className="wordmark">MARA VERA</Link>
-          <nav aria-label="Primary navigation">
-            <Link href="/experience">Enter Mara</Link>
-            <Link href="/meet-mara">Meet Mara</Link>
-            <Link href="/premium">Private</Link>
+          <nav aria-label="Navegación principal">
+            <Link href="/experience">Entrar</Link>
+            <Link href="/meet-mara">Conocer a Mara</Link>
           </nav>
         </header>
         {children}
         <footer className="siteFooter">
-          <span>Mara Vera is an AI-generated virtual character.</span>
+          <span>Mara Vera es un personaje virtual generado con IA.</span>
           <div>
-            <Link href="/legal">Privacy · Terms · AI disclosure</Link>
+            <Link href="/legal">Privacidad · Términos · Divulgación IA</Link>
           </div>
         </footer>
       </body>
