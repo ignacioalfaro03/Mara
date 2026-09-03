@@ -79,7 +79,12 @@ try {
   await page.getByText("Negro o crema.").waitFor();
   await page.getByRole("button", { name: "Negro." }).click();
   await page.getByText("Obvio.").waitFor();
-  await page.getByRole("button", { name: "Sigue." }).click();
+  await page.getByRole("button", { name: "Espera." }).click();
+
+  await page.getByText("¿Cuál te gusta más?").waitFor();
+  await page.getByRole("button", { name: "Elegir la primera foto de Mara" }).click();
+  await page.getByText("La primera. Ya.").waitFor();
+  await page.getByRole("button", { name: "Ahora sí." }).click();
 
   await page.getByText("Te pillé mirando.").waitFor();
   await page.getByRole("button", { name: "Voy hacia ti." }).click();
@@ -99,6 +104,7 @@ try {
   const parsedState = JSON.parse(storedState);
   assert(parsedState.completed === true, "Launch experience did not persist completed state");
   assert(parsedState.outfitChoice === "black", "Outfit consequence was not persisted");
+  assert(parsedState.poseChoice === "pose_a", "Visual preference was not persisted locally");
   assert(parsedState.barChoice === "approach", "Bar behavior was not persisted");
   assert(parsedState.messageChoice === "follow", "Message behavior was not persisted");
   assert(parsedState.signals?.approaches === 1, "Approach signal was not persisted");
