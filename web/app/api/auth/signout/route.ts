@@ -4,7 +4,7 @@ import { clearSessionCookies } from "@/lib/auth-session";
 export const runtime = "nodejs";
 
 export async function POST() {
-  const response = NextResponse.json({ ok: true });
+  const response = new NextResponse(null, { status: 204 });
   clearSessionCookies(response);
   return response;
 }
