@@ -32,6 +32,9 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+
       - name: Verify DEV labs are blocked in production
         shell: bash
         run: |
@@ -48,6 +51,8 @@ jobs:
         run: npm run typecheck
 
       - name: Build
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
         run: npm run build
 
       - name: Install Chromium smoke runtime
@@ -57,6 +62,8 @@ jobs:
 
       - name: Production mobile smoke
         shell: bash
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
         run: |
           npm start > /tmp/mara-next.log 2>&1 &
           server_pid=$!
