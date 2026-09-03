@@ -1,9 +1,9 @@
-import { LaunchExperience } from "@/components/launch-experience";
+import { DmExperience } from "@/components/dm-experience";
 
 export default function ExperiencePage() {
   return (
-    <main className="livingShell">
-      <LaunchExperience />
+    <main>
+      <DmExperience />
     </main>
   );
 }
