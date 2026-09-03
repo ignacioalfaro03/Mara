@@ -58,8 +58,14 @@ export async function POST(request: Request) {
   };
 
   if (!authResponse.ok) {
+    if (authResponse.status === 429 || payload.code === "over_email_send_rate_limit") {
+      return NextResponse.json({ error: "signup_rate_limited" }, { status: 429 });
+    }
+    if (payload.code === "email_address_invalid") {
+      return NextResponse.json({ error: "invalid_email" }, { status: 400 });
+    }
     return NextResponse.json(
-      { error: "signup_failed", code: payload.code ?? null },
+      { error: "signup_failed" },
       { status: authResponse.status >= 500 ? 502 : 400 },
     );
   }
