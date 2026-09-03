@@ -1,0 +1,467 @@
+.maraMediaStage {
+  position: relative;
+  min-height: 72vh;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #0c0c0c;
+}
+
+.maraMediaVideo,
+.maraMediaFallback {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 32%;
+}
+
+.maraMediaFallback {
+  position: absolute;
+  inset: 0;
+}
+
+.maraMediaShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,.04) 20%, rgba(0,0,0,.72) 100%);
+  pointer-events: none;
+}
+
+.maraMediaNow {
+  position: absolute;
+  z-index: 2;
+  top: 20px;
+  left: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  background: rgba(8,8,8,.72);
+  border: 1px solid rgba(255,255,255,.18);
+  backdrop-filter: blur(12px);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .14em;
+}
+
+.maraMediaDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 4px rgba(239,228,214,.08);
+}
+
+.maraMediaWhisper {
+  position: absolute;
+  z-index: 2;
+  left: 24px;
+  right: 24px;
+  bottom: 24px;
+  margin: 0;
+  max-width: 560px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(24px, 3vw, 40px);
+  line-height: 1.03;
+}
+
+.dailyMomentsSection,
+.mediaFormatsSection,
+.subscriptionIntent {
+  width: min(calc(100% - 40px), var(--max));
+  margin-inline: auto;
+  padding: 126px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.dailyMomentsIntro,
+.mediaFormatsIntro {
+  max-width: 800px;
+  margin-bottom: 54px;
+}
+
+.dailyMomentsIntro h2,
+.mediaFormatsIntro h2,
+.subscriptionIntent h2 {
+  margin: 12px 0 20px;
+}
+
+.dailyMomentsIntro > p:not(.eyebrow),
+.mediaFormatsIntro > p:not(.eyebrow),
+.subscriptionIntentCopy > p:not(.eyebrow) {
+  color: var(--muted);
+  max-width: 720px;
+}
+
+.dailyMomentsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.dailyMomentCard {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #0d0d0d;
+}
+
+.dailyMomentMediaWrap {
+  height: 430px;
+  background: #111;
+  border-bottom: 1px solid var(--line);
+}
+
+.dailyMomentStill {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.dailyMomentStill img {
+  object-fit: cover;
+}
+
+.dailyMomentStillShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,.06) 30%, rgba(0,0,0,.68) 100%);
+  pointer-events: none;
+}
+
+.dailyMomentMedia {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  background: #0a0a0a;
+}
+
+.formatBadge,
+.voiceTeaserBadge {
+  position: absolute;
+  z-index: 2;
+}
+
+.formatBadge {
+  top: 16px;
+  left: 16px;
+  padding: 8px 10px;
+  border: 1px solid rgba(255,255,255,.2);
+  background: rgba(8,8,8,.66);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .14em;
+}
+
+.voiceTeaserBadge {
+  left: 18px;
+  right: 18px;
+  bottom: 18px;
+  padding: 18px;
+  background: rgba(10,10,10,.76);
+  border: 1px solid rgba(255,255,255,.2);
+  backdrop-filter: blur(12px);
+}
+
+.voiceTeaserBadge > span {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: .15em;
+  font-weight: 700;
+}
+
+.voiceTeaserBadge > strong {
+  display: block;
+  margin-top: 8px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.voiceTeaserBadge audio {
+  width: 100%;
+  margin-top: 14px;
+}
+
+.dailyMomentBody {
+  padding: 28px;
+}
+
+.dailyMomentMeta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .14em;
+}
+
+.dailyMomentBody h3 {
+  margin: 14px 0 10px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(27px, 3vw, 38px);
+  line-height: 1.04;
+  font-weight: 400;
+}
+
+.dailyMomentBody > p {
+  min-height: 48px;
+  color: var(--muted);
+}
+
+.dailyMomentChoices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 22px;
+}
+
+.dailyMomentChoices button,
+.dailyMomentReaction button {
+  min-height: 48px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.dailyMomentChoices button:hover,
+.dailyMomentChoices button:focus-visible,
+.dailyMomentReaction button:hover,
+.dailyMomentReaction button:focus-visible {
+  border-color: #756d64;
+}
+
+.dailyMomentReaction {
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.dailyMomentReaction > span {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .14em;
+}
+
+.dailyMomentReaction > strong {
+  display: block;
+  margin: 10px 0 16px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 24px;
+  font-weight: 400;
+}
+
+.dailyMomentReaction button {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid currentColor;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.dailyMomentsPrivacy {
+  margin-top: 20px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.mediaFormatGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.mediaFormatCard {
+  min-height: 330px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 30px;
+  background: var(--bg);
+}
+
+.mediaFormatIcon {
+  width: 50px;
+  height: 50px;
+  display: grid;
+  place-items: center;
+  margin-bottom: auto;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 20px;
+}
+
+.mediaFormatCard > span,
+.subscriptionBenefits span,
+.privateAccessGrid span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .15em;
+}
+
+.mediaFormatCard > strong {
+  margin-top: 12px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 27px;
+  line-height: 1.08;
+  font-weight: 400;
+}
+
+.mediaFormatCard > p {
+  color: var(--muted);
+}
+
+.subscriptionIntent {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(48px, 8vw, 110px);
+  align-items: center;
+}
+
+.subscriptionIntentCopy {
+  max-width: 650px;
+}
+
+.subscriptionDisclosure {
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.subscriptionBenefits {
+  border-top: 1px solid var(--line);
+}
+
+.subscriptionBenefits article {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 24px;
+  align-items: start;
+  padding: 25px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.subscriptionBenefits strong {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 23px;
+  line-height: 1.12;
+  font-weight: 400;
+}
+
+.privateAccessPage {
+  padding-top: 72px;
+}
+
+.privateAccessHero {
+  max-width: 980px;
+}
+
+.privateAccessGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin-bottom: 100px;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.privateAccessGrid article {
+  min-height: 230px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 30px;
+  background: var(--bg);
+}
+
+.privateAccessGrid strong {
+  display: block;
+  margin-top: 10px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 28px;
+  font-weight: 400;
+}
+
+.privateAccessGrid p {
+  color: var(--muted);
+}
+
+.privateAccessClosing {
+  width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+@media (max-width: 800px) {
+  .maraMediaStage {
+    min-height: 58svh;
+  }
+
+  .maraMediaWhisper {
+    font-size: 27px;
+  }
+
+  .dailyMomentsSection,
+  .mediaFormatsSection,
+  .subscriptionIntent {
+    width: min(calc(100% - 28px), var(--max));
+    padding-top: 78px;
+    padding-bottom: 78px;
+  }
+
+  .dailyMomentsGrid,
+  .mediaFormatGrid,
+  .subscriptionIntent,
+  .privateAccessGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .dailyMomentMediaWrap {
+    height: 55svh;
+    min-height: 390px;
+  }
+
+  .dailyMomentBody {
+    padding: 24px 20px 28px;
+  }
+
+  .dailyMomentChoices {
+    grid-template-columns: 1fr;
+  }
+
+  .mediaFormatCard {
+    min-height: 260px;
+    padding: 26px 22px;
+  }
+
+  .subscriptionBenefits article {
+    grid-template-columns: 100px 1fr;
+    gap: 16px;
+  }
+
+  .privateAccessPage {
+    padding-top: 48px;
+  }
+
+  .privateAccessGrid {
+    margin-bottom: 70px;
+  }
+
+  .privateAccessGrid article {
+    min-height: 200px;
+    padding: 26px 22px;
+  }
+}
