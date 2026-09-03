@@ -1,7 +1,7 @@
 import { chromium } from "playwright";
 
 const baseUrl = process.env.BASE_URL || "http://127.0.0.1:3000";
-const publicPaths = ["/", "/meet-mara", "/legal", "/premium"];
+const publicPaths = ["/legal", "/premium"];
 const labPaths = [
   "/experience/caprichos-lab",
   "/experience/commerce-lab",
@@ -57,11 +57,22 @@ try {
   await page.getByRole("dialog").waitFor();
   await page.getByRole("dialog").locator("button").first().click();
   await page.getByText("Llegaste justo.").waitFor();
-  await page.getByText(/Necesito una decisión rápida/).waitFor();
+  await page.getByText(/ya cambié de idea dos veces/).first().waitFor();
+  await page.getByText("Prefiero mirar qué haces.").waitFor();
+  await page.getByText("¿Cuál te gusta más?").first().waitFor();
+  await page.getByText("La gracia empieza cuando no partimos de cero.").waitFor();
   await assertMaraImageLoaded(page, "home");
   await assertNoHorizontalOverflow(page, "/");
 
-  for (const path of publicPaths.slice(1)) {
+  const meetMara = await page.goto(`${baseUrl}/meet-mara`, { waitUntil: "networkidle" });
+  assert(meetMara?.status() === 200, `/meet-mara returned ${meetMara?.status()}`);
+  await page.getByText("Mi vida no empieza cuando abres la página.").waitFor();
+  await page.getByText("No existo para darte siempre la razón.").waitFor();
+  await page.getByText("No me interesa que te describas perfecto.").waitFor();
+  await assertMaraImageLoaded(page, "meet-mara");
+  await assertNoHorizontalOverflow(page, "/meet-mara");
+
+  for (const path of publicPaths) {
     const response = await page.goto(`${baseUrl}${path}`, { waitUntil: "networkidle" });
     assert(response?.status() === 200, `${path} returned ${response?.status()}`);
     await assertNoHorizontalOverflow(page, path);
