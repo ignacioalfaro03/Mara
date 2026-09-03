@@ -13,9 +13,9 @@ export default function HomePage() {
         </div>
         <div className="heroCopy">
           <p className="eyebrow">MARA · LA PRIMERA VEZ</p>
-          <h1>Ya llegaste.</h1>
+          <h1>Llegaste justo.</h1>
           <p className="lede">
-            No me cuentes nada todavía. Quiero ver si te leo bien a la primera.
+            Necesito que elijas algo por mí. No lo pienses demasiado.
           </p>
           <div className="ctaRow">
             <Link
@@ -23,9 +23,9 @@ export default function HomePage() {
               className="primaryCta"
               onClick={() => track("hero_cta_click", { target: "launch_experience" })}
             >
-              A ver.
+              Ya.
             </Link>
-            <Link href="/meet-mara" className="textCta">Antes quiero saber quién eres</Link>
+            <Link href="/meet-mara" className="textCta">Antes quiero cacharte un poco</Link>
           </div>
           <p className="disclosure">Personaje virtual generado con IA · Solo adultos · Alpha gratuito</p>
         </div>
