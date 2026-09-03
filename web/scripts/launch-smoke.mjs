@@ -33,6 +33,14 @@ const context = await browser.newContext({
 const page = await context.newPage();
 
 try {
+  const health = await context.request.get(`${baseUrl}/api/health`);
+  assert(health.status() === 200, `/api/health returned ${health.status()}`);
+  const healthBody = await health.json();
+  assert(healthBody?.status === "ok", `/api/health status is ${healthBody?.status}`);
+  assert(healthBody?.service === "mara-vera-web", `/api/health service is ${healthBody?.service}`);
+  assert(healthBody?.release === "public-alpha", `/api/health release is ${healthBody?.release}`);
+  assert(health.headers()["cache-control"]?.includes("no-store"), "/api/health must not be cached");
+
   const home = await page.goto(`${baseUrl}/`, { waitUntil: "networkidle" });
   assert(home?.status() === 200, `Home returned ${home?.status()}`);
   await page.getByRole("dialog").waitFor();
