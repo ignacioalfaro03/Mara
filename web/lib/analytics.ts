@@ -19,6 +19,7 @@ export type MaraEvent =
   | "launch_session_completed"
   | "launch_return_continued"
   | "launch_state_reset"
+  | "visual_choice_completed"
   | "first_living_experience_started"
   | "playable_onboarding_started"
   | "choice_made"

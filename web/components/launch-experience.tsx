@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { track } from "@/lib/analytics";
+import { loadRelationshipState, syncRelationshipState } from "@/lib/relationship-client";
 import { MaraPortrait } from "@/components/mara-presence";
+import { VisualPreferenceChoice, type PoseChoice } from "@/components/visual-preference-choice";
+import { AccountMemoryCta } from "@/components/account-memory-cta";
 
 const STORAGE_KEY = "mara_launch_state_v1";
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -11,6 +14,8 @@ type Step =
   | "intro"
   | "outfit"
   | "outfit_result"
+  | "pose"
+  | "pose_result"
   | "bar"
   | "bar_result"
   | "message"
@@ -33,6 +38,7 @@ type Signals = {
 type LaunchState = {
   signals?: Signals;
   outfitChoice?: "black" | "cream";
+  poseChoice?: PoseChoice;
   barChoice?: "approach" | "wait";
   messageChoice?: "follow" | "challenge";
   returnScene?: "gym" | "story" | "late_plan";
@@ -64,6 +70,39 @@ function readState(): LaunchState | null {
 function saveState(state: LaunchState) {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function timestamp(value?: string | null) {
+  if (!value) return null;
+  const parsed = Date.parse(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function earliestIso(a?: string | null, b?: string | null) {
+  const aTime = timestamp(a);
+  const bTime = timestamp(b);
+  if (aTime === null) return b ?? undefined;
+  if (bTime === null) return a ?? undefined;
+  return aTime <= bTime ? a ?? undefined : b ?? undefined;
+}
+
+function latestIso(a?: string | null, b?: string | null) {
+  const aTime = timestamp(a);
+  const bTime = timestamp(b);
+  if (aTime === null) return b ?? undefined;
+  if (bTime === null) return a ?? undefined;
+  return aTime >= bTime ? a ?? undefined : b ?? undefined;
+}
+
+function persistRelationship(state: LaunchState) {
+  if (!state.firstSeenAt || !state.lastSeenAt) return;
+  void syncRelationshipState({
+    returnCount: state.returnCount ?? 0,
+    firstSeenAt: state.firstSeenAt,
+    lastSeenAt: state.lastSeenAt,
+    lastVisualChoice: state.poseChoice ?? null,
+    launchCompleted: Boolean(state.completed),
+  });
 }
 
 function returnCountBucket(count: number): "1" | "2" | "3-4" | "5+" {
@@ -112,6 +151,12 @@ function callbackLine(state: LaunchState) {
   if (state.barChoice === "approach") {
     return "La primera vez viniste apenas te hice un gesto.";
   }
+  if (state.poseChoice === "pose_a") {
+    return "La última vez te quedaste con la primera. Sí, me fijé.";
+  }
+  if (state.poseChoice === "pose_b") {
+    return "La última vez te quedaste con la segunda. Sí, me fijé.";
+  }
   return "La última vez dejaste una escena a medias conmigo.";
 }
 
@@ -133,24 +178,57 @@ export function LaunchExperience() {
   const [state, setState] = useState<LaunchState>({ signals: EMPTY_SIGNALS });
   const [predictionHit, setPredictionHit] = useState<boolean | null>(null);
   const [returnReaction, setReturnReaction] = useState<string>("");
+  const interactionStarted = useRef(false);
 
   useEffect(() => {
+    let cancelled = false;
     const saved = readState();
+    let localCompleted = false;
+
     if (saved?.completed) {
       const hydrated: LaunchState = {
         ...saved,
         signals: saved.signals ?? EMPTY_SIGNALS,
         firstSeenAt: saved.firstSeenAt ?? saved.lastSeenAt,
       };
+      localCompleted = true;
       setState(hydrated);
       if (!saved.firstSeenAt && hydrated.firstSeenAt) saveState(hydrated);
       setStep("return");
+      persistRelationship(hydrated);
       track("returning_user", returnTelemetry(hydrated, (hydrated.returnCount ?? 0) + 1));
     }
+
+    void loadRelationshipState().then((remote) => {
+      if (cancelled || interactionStarted.current || !remote?.launchCompleted) return;
+
+      const local = readState();
+      const hydrated: LaunchState = {
+        ...(local ?? {}),
+        signals: local?.signals ?? EMPTY_SIGNALS,
+        poseChoice: local?.poseChoice ?? remote.lastVisualChoice ?? undefined,
+        completed: true,
+        returnCount: Math.max(local?.returnCount ?? 0, remote.returnCount),
+        firstSeenAt: earliestIso(local?.firstSeenAt ?? local?.lastSeenAt, remote.firstSeenAt ?? remote.lastSeenAt),
+        lastSeenAt: latestIso(local?.lastSeenAt, remote.lastSeenAt),
+      };
+
+      setState(hydrated);
+      saveState(hydrated);
+      setStep("return");
+      if (!localCompleted) {
+        track("returning_user", returnTelemetry(hydrated, (hydrated.returnCount ?? 0) + 1));
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   function reset() {
     window.localStorage.removeItem(STORAGE_KEY);
+    interactionStarted.current = false;
     setState({ signals: EMPTY_SIGNALS });
     setPredictionHit(null);
     setReturnReaction("");
@@ -169,6 +247,7 @@ export function LaunchExperience() {
     };
     setState(next);
     saveState(next);
+    persistRelationship(next);
     setStep("open_loop");
     track("launch_session_completed", { surface: "launch_experience" });
   }
@@ -177,6 +256,7 @@ export function LaunchExperience() {
     const nextCount = (state.returnCount ?? 0) + 1;
     const next: LaunchState = {
       ...state,
+      completed: true,
       returnCount: nextCount,
       returnScene: returnSceneFor(nextCount),
       firstSeenAt: state.firstSeenAt ?? state.lastSeenAt ?? new Date().toISOString(),
@@ -184,6 +264,7 @@ export function LaunchExperience() {
     };
     setState(next);
     saveState(next);
+    persistRelationship(next);
     setStep("return_scene");
     track("launch_return_continued", returnTelemetry(next, nextCount));
   }
@@ -198,7 +279,7 @@ export function LaunchExperience() {
           <p className="livingLead">{callbackLine(state)}</p>
           <p className="livingLead">No te voy a sacar una conclusión por eso. Solo me acuerdo.</p>
           <button type="button" className="primaryCta buttonReset" onClick={continueReturn}>Métete.</button>
-          <button type="button" className="livingReset" onClick={reset}>Empezar de cero</button>
+          <button type="button" className="livingReset" onClick={reset}>Empezar de cero aquí</button>
         </div>
       </section>
     );
@@ -278,13 +359,14 @@ export function LaunchExperience() {
             type="button"
             className="primaryCta buttonReset"
             onClick={() => {
+              interactionStarted.current = true;
               setStep("outfit");
               track("launch_experience_started", { surface: "launch_experience" });
             }}
           >
             Métete.
           </button>
-          <p className="livingDisclosure">Personaje virtual generado con IA · 18+ · Guardo solo un pequeño estado local para continuar si vuelves.</p>
+          <p className="livingDisclosure">Personaje virtual generado con IA · 18+ · Empiezo con memoria local; una cuenta opcional permite conservar elecciones entre dispositivos.</p>
         </div>
       </section>
     );
@@ -318,7 +400,33 @@ export function LaunchExperience() {
               ? "Ya lo tenía puesto. Solo quería saber si coincidíamos."
               : "Iba a decirte que no. Ahora me hiciste cambiar. Qué molesto."}
           </p>
-          <button type="button" className="primaryCta buttonReset" onClick={() => setStep("bar")}>Sigue.</button>
+          <button type="button" className="primaryCta buttonReset" onClick={() => setStep("pose")}>Espera.</button>
+        </div>
+      </section>
+    );
+  }
+
+  if (step === "pose") {
+    return (
+      <VisualPreferenceChoice
+        onChoose={(choice) => {
+          setState((current) => ({ ...current, poseChoice: choice }));
+          setStep("pose_result");
+          track("visual_choice_completed", { surface: "launch_experience" });
+        }}
+      />
+    );
+  }
+
+  if (step === "pose_result") {
+    return (
+      <section className="livingStage">
+        <MaraPortrait compact />
+        <div className="livingCopy">
+          <p className="eyebrow">MARA</p>
+          <h1>{state.poseChoice === "pose_a" ? "La primera. Ya." : "La segunda. Mmm."}</h1>
+          <p className="livingLead">No voy a inventarme una teoría sobre ti por una foto. Pero sí me acuerdo de cuál elegiste.</p>
+          <button type="button" className="primaryCta buttonReset" onClick={() => setStep("bar")}>Ahora sí.</button>
         </div>
       </section>
     );
@@ -424,6 +532,7 @@ export function LaunchExperience() {
         <p className="eyebrow">MARA</p>
         <h1>Después te cuento qué pasó.</h1>
         <p className="livingLead">O no. Depende de cómo vuelva la noche.</p>
+        <AccountMemoryCta />
         <a className="primaryCta" href="/">Salir por ahora</a>
         <button type="button" className="livingReset" onClick={reset}>Borrar mi estado local</button>
       </div>
