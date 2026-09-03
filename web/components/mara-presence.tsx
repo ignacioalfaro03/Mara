@@ -1,22 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 const DEFAULT_MARA_IMAGE_URL = "/mara/mara-v1-reference.jpg";
-const MARA_IMAGE_URL = process.env.NEXT_PUBLIC_MARA_HERO_IMAGE?.trim() || DEFAULT_MARA_IMAGE_URL;
+const DEFAULT_MARA_IMAGE_VERSION = "1c4c4d3";
+const ENV_MARA_IMAGE_URL = process.env.NEXT_PUBLIC_MARA_HERO_IMAGE?.trim();
+const MARA_IMAGE_URL = ENV_MARA_IMAGE_URL || `${DEFAULT_MARA_IMAGE_URL}?v=${DEFAULT_MARA_IMAGE_VERSION}`;
 const MARA_VOICE_URL = process.env.NEXT_PUBLIC_MARA_VOICE_URL?.trim();
 
 function MaraImage({ className, compact = false, label }: { className: string; compact?: boolean; label: string }) {
-  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  const sources = useMemo(() => {
+    if (ENV_MARA_IMAGE_URL) return [ENV_MARA_IMAGE_URL];
+    return [MARA_IMAGE_URL, DEFAULT_MARA_IMAGE_URL];
+  }, []);
+  const failed = attempt >= sources.length;
 
-  if (MARA_IMAGE_URL && !failed) {
+  if (!failed) {
     return (
       <div className={className} aria-label={label} style={{ padding: 0, overflow: "hidden" }}>
         <img
-          src={MARA_IMAGE_URL}
+          src={sources[attempt]}
           alt={label}
           loading={compact ? "lazy" : "eager"}
-          onError={() => setFailed(true)}
+          decoding="async"
+          fetchPriority={compact ? "auto" : "high"}
+          onError={() => setAttempt((current) => current + 1)}
           style={{
             width: "100%",
             height: "100%",
@@ -32,7 +41,7 @@ function MaraImage({ className, compact = false, label }: { className: string; c
 
   return (
     <div className={className} aria-label={label}>
-      <span>M</span>
+      <span>MARA</span>
     </div>
   );
 }
