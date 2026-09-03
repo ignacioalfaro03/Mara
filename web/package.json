@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "alpha:report": "node scripts/alpha-signal-report.mjs",
+    "alpha:report:selftest": "node scripts/alpha-signal-report.mjs --self-test"
   },
   "dependencies": {
     "next": "16.3.3",
