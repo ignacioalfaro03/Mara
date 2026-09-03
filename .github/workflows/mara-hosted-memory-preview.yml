@@ -6,6 +6,7 @@ on:
       - feature/identity-preference-memory
     paths:
       - ".github/workflows/mara-hosted-memory-preview.yml"
+      - "web/scripts/hosted-memory-e2e.mjs"
 
 permissions:
   contents: read
@@ -98,7 +99,7 @@ jobs:
           }
           console.log('MARA_REAL_SUPABASE_CONFIG PASS');
           NODE
-          export QA_EMAIL="mara.qa.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}@example.com"
+          export QA_EMAIL="mara.qa.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}@gmail.com"
           export QA_PASSWORD="$(openssl rand -hex 18)"
           node scripts/hosted-memory-e2e.mjs
 
