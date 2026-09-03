@@ -15,10 +15,10 @@ function resolveMetadataBase() {
 export const metadata: Metadata = {
   metadataBase: resolveMetadataBase(),
   title: "Mara Vera",
-  description: "No me cuentes nada todavía. Quiero ver si te leo bien a la primera.",
+  description: "Llegaste justo. Mara ya estaba en medio de algo.",
   openGraph: {
     title: "Mara Vera",
-    description: "Ya llegaste. A ver si Mara te lee bien a la primera.",
+    description: "Entraste en medio de algo. A ver qué haces.",
     images: ["/mara/mara-v1-reference.jpg"],
     type: "website",
   },
