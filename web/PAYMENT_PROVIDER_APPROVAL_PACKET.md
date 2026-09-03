@@ -103,12 +103,37 @@ Launch controls to disclose clearly:
 
 Any later expansion into open generation, uploads, live creators, marketplace behavior or materially different adult content requires a new processor/compliance review before activation.
 
-## 7. Processor questions — obtain written answers before integration
+## 7. Merchant domicile gate — resolve before prioritizing a processor
 
-Send the same product description to Segpay and CCBill and request explicit written confirmation for Mara's exact scope.
+Processor content acceptance and merchant eligibility are two separate gates.
+
+Published requirements currently create a material domicile constraint:
+
+- Segpay's Adult Content Website Checklist states that the business should be registered in the US, EU or UK, have a director in the same country, and prove material presence there.
+- CCBill states that Visa/Mastercard merchants need business and legal presence in a supported region. Its published designated-country list covers the US, Canada and participating European countries; Chile is not listed.
+
+Therefore Segpay and CCBill are **conditional candidates**, not automatically viable launch processors.
+
+Before spending engineering time on either integration, establish the exact merchant-of-record facts:
+
+- legal entity/country that will contract with the processor;
+- principal/director location;
+- material-presence evidence;
+- business bank account country;
+- payout currency and settlement destination;
+- beneficial owner/KYC documentation.
+
+If Mara will initially operate only through a Chilean merchant entity, do not assume Segpay or CCBill can board it. Ask both processors for written confirmation first, and in parallel investigate an adult/AI-capable processor that explicitly supports the merchant's actual domicile.
+
+This gate is intentionally commercial/legal due diligence, not a reason to change the existing provider-agnostic commerce kernel.
+
+## 8. Processor questions — obtain written answers before integration
+
+Send the same product description and merchant-domicile facts to each candidate and request explicit written confirmation for Mara's exact scope.
 
 Required answers:
 
+- Is the merchant entity/country eligible for onboarding and card acquiring?
 - Is this exact adult/sensual AI virtual-character product acceptable?
 - Are scripted interactive adult experiences acceptable?
 - Are one-time digital unlocks acceptable?
@@ -130,20 +155,31 @@ Required answers:
 - Required legal pages, content moderation evidence and screenshots.
 - Whether future open AI generation or user uploads would require re-underwriting.
 
-Do not build a provider-specific production adapter until one provider answers the above and accepts the product scope in writing.
+Do not build a provider-specific production adapter until one provider answers the above and accepts both the merchant entity and product scope in writing.
 
-## 8. Preferred decision sequence
+## 9. Preferred decision sequence
 
-1. Segpay underwriting/due diligence first because it publishes specific guidance for adult AI sites.
-2. CCBill in parallel as a second adult/high-risk candidate.
-3. Compare written approval, reserve, effective take rate, settlement, chargeback treatment and technical integration.
-4. Select one launch processor.
-5. Implement only that processor adapter behind the existing server fulfillment contract.
-6. Run sandbox E2E.
-7. Re-run hosted payment proof.
-8. Production activation remains a separate founder-authorized decision.
+1. Resolve merchant domicile/entity eligibility first.
+2. If eligible under published domicile requirements, send Segpay underwriting/due-diligence package because it publishes specific guidance for adult AI sites.
+3. If eligible, run CCBill in parallel as a second established adult/high-risk candidate.
+4. If the launch merchant entity is outside those published regions, source and verify an adult/AI-capable processor that explicitly supports the actual merchant domicile before integration.
+5. Compare written approval, reserve, effective take rate, settlement, chargeback treatment and technical integration.
+6. Select one launch processor.
+7. Implement only that processor adapter behind the existing server fulfillment contract.
+8. Run sandbox E2E.
+9. Re-run hosted payment proof.
+10. Production activation remains a separate founder-authorized decision.
 
-## 9. Known non-candidates under current public policy
+## 10. Provider contact points for underwriting
+
+Use provider sales/onboarding rather than generic support and preserve written confirmation in the project record.
+
+- Segpay: `sales@segpay.com`
+- CCBill: `sales@ccbill.com`
+
+Do not represent Mara as general-audience or conceal the adult/AI nature of the product. Underwriting should receive the exact launch scope described in this packet.
+
+## 11. Known non-candidates under current public policy
 
 Do not activate Stripe or PayPal for Mara's intended adult/sensual AI launch scope unless their applicable policies materially change and explicit written approval is obtained.
 
@@ -152,17 +188,22 @@ References:
 - Stripe restricted businesses: https://stripe.com/legal/restricted-businesses
 - PayPal Acceptable Use Policy: https://www.paypal.com/us/legalhub/paypal/acceptableuse-full
 - PayPal sexually oriented goods/services policy: https://www.paypal.com/us/cshelp/article/what-is-paypal%E2%80%99s-policy-on-transactions-that-involve-sexually-oriented-goods-and-services-help384
-- Segpay high-risk/adult: https://segpay.com/verticals/high-risk/
+- Segpay adult content checklist: https://segpay.com/wp-content/uploads/2024/12/Adult_Content_Website_Checklist.pdf
 - Segpay adult AI approval roadmap: https://segpay.com/blog/your-roadmap-for-adult-ai-site-approval/
+- Segpay UGC requirements: https://gethelp.segpay.com/docs/Content/ComplianceDocs/UserGeneratedContent.htm
+- Segpay merchant onboarding: https://segpay.com/solutions/merchant-services/
+- CCBill merchant eligibility: https://ccbill.com/merchants
+- CCBill supported Visa/Mastercard merchant regions: https://ccbill.com/doc/list-of-countries-for-visa-and-mastercard-processing
 - CCBill adult businesses: https://ccbill.com/industries/adult-business
 - CCBill webhooks: https://ccbill.com/doc/webhooks-overview
 
-## 10. Current activation boundary
+## 12. Current activation boundary
 
 Provider due diligence is not provider approval.
 
 No real payment method should be exposed publicly until:
 
+- the merchant entity is eligible for the selected processor/acquirer;
 - the provider explicitly accepts Mara's exact scope;
 - merchant/entity onboarding is approved;
 - sandbox credentials and webhook signing material are issued;
