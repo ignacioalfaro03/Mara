@@ -1,0 +1,157 @@
+name: Mara Hosted Encrypted Access One-Shot
+
+on:
+  push:
+    branches:
+      - qa/hosted-memory-e2e-20260903
+    paths:
+      - ".github/workflows/mara-hosted-encrypted-access-one-shot.yml"
+
+permissions:
+  contents: read
+
+env:
+  PLAYWRIGHT_VERSION: "1.62.1"
+  BASE_URL: "https://mara-vera-9kqan3njy-ignacioalfaz-6766.vercel.app"
+  PR_SHA: "4088783cc0452dec8691569cfa9f32200fe5110a"
+
+jobs:
+  hosted-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout exact PR application snapshot
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ env.PR_SHA }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: "24"
+
+      - name: Generate QA identity and one-run public key
+        shell: bash
+        run: |
+          set -euo pipefail
+          QA_EMAIL="mara.qa.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}@gmail.com"
+          QA_PASSWORD="$(openssl rand -hex 24)"
+          echo "QA_EMAIL=$QA_EMAIL" >> "$GITHUB_ENV"
+          echo "QA_PASSWORD=$QA_PASSWORD" >> "$GITHUB_ENV"
+          echo "::add-mask::$QA_PASSWORD"
+          openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out /tmp/mara-qa-private.pem >/dev/null 2>&1
+          openssl pkey -in /tmp/mara-qa-private.pem -pubout -out /tmp/mara-qa-public.pem >/dev/null 2>&1
+          mkdir -p /tmp/mara-handoff
+          cp /tmp/mara-qa-public.pem /tmp/mara-handoff/public.pem
+          printf '%s' "$QA_EMAIL" > /tmp/mara-handoff/signup-email.txt
+
+      - name: Upload safe handoff artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mara-encrypted-access-${{ github.run_id }}
+          path: /tmp/mara-handoff
+          retention-days: 1
+
+      - name: Wait for encrypted Vercel Preview grant
+        shell: bash
+        run: |
+          set -euo pipefail
+          access_url="https://raw.githubusercontent.com/ignacioalfaro03/Mara/qa/hosted-memory-e2e-20260903/qa/preview-access-${GITHUB_RUN_ID}.b64"
+          for attempt in {1..120}; do
+            if curl -fsSL "$access_url" -o /tmp/access.b64; then
+              base64 -d /tmp/access.b64 > /tmp/access.bin
+              if openssl pkeyutl -decrypt \
+                -inkey /tmp/mara-qa-private.pem \
+                -in /tmp/access.bin \
+                -pkeyopt rsa_padding_mode:oaep \
+                -pkeyopt rsa_oaep_md:sha256 \
+                -out /tmp/share-url.txt; then
+                SHARE_URL=$(cat /tmp/share-url.txt)
+                case "$SHARE_URL" in
+                  https://*.vercel.app/*_vercel_share=*) ;;
+                  *) echo "Decrypted Preview grant had an unexpected shape" >&2; exit 2 ;;
+                esac
+                echo "::add-mask::$SHARE_URL"
+                echo "VERCEL_SHARE_URL=$SHARE_URL" >> "$GITHUB_ENV"
+                rm -f /tmp/access.b64 /tmp/access.bin /tmp/share-url.txt
+                echo "MARA_ENCRYPTED_PREVIEW_HANDOFF=PASS"
+                exit 0
+              fi
+            fi
+            sleep 5
+          done
+          echo "Encrypted Preview access was not supplied" >&2
+          exit 1
+
+      - name: Verify protected Preview access
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -sSL -c /tmp/vercel-cookies "$VERCEL_SHARE_URL" -o /dev/null
+          status=$(curl -sS -b /tmp/vercel-cookies -o /tmp/health.json -w '%{http_code}' "$BASE_URL/api/health-memory")
+          test "$status" = "200"
+          node -e 'const fs=require("fs");const b=JSON.parse(fs.readFileSync("/tmp/health.json","utf8"));if(b?.service!=="mara-identity-memory"||b?.configured!==true)process.exit(2);console.log("MARA_PROTECTED_PREVIEW_ACCESS=PASS")'
+
+      - name: Respect confirmation-mail cooldown
+        shell: bash
+        run: |
+          set -euo pipefail
+          target=$(date -u -d '2026-09-03 20:40:00 UTC' +%s)
+          now=$(date -u +%s)
+          if [ "$now" -lt "$target" ]; then sleep $((target-now)); fi
+
+      - name: Install locked app and browser runtime
+        working-directory: web
+        run: |
+          npm ci --no-audit --no-fund
+          npm install --no-save --no-package-lock --no-audit --no-fund "playwright@${PLAYWRIGHT_VERSION}"
+          npx playwright install --with-deps chromium
+
+      - name: Generate protected hosted E2E from authoritative harness
+        working-directory: web
+        shell: python
+        run: |
+          from pathlib import Path
+          source = Path('scripts/hosted-memory-e2e.mjs').read_text()
+          source = source.replace(
+              'const qaPassword = process.env.QA_PASSWORD;',
+              'const qaPassword = process.env.QA_PASSWORD;\nconst vercelShareUrl = process.env.VERCEL_SHARE_URL;'
+          )
+          source = source.replace(
+              'if (!baseUrl || !qaEmail || !qaPassword) {\n  throw new Error("BASE_URL, QA_EMAIL and QA_PASSWORD are required");\n}',
+              'if (!baseUrl || !qaEmail || !qaPassword || !vercelShareUrl) {\n  throw new Error("BASE_URL, QA_EMAIL, QA_PASSWORD and VERCEL_SHARE_URL are required");\n}'
+          )
+          helper_marker = 'async function getRelationship(page) {'
+          helper = '''async function authorizeProtectedPreview(context) {
+            const page = await context.newPage();
+            await page.goto(vercelShareUrl, { waitUntil: "networkidle" });
+            await page.evaluate(() => { localStorage.clear(); sessionStorage.clear(); });
+            await page.close();
+          }
+
+          '''.replace('          ', '')
+          if helper_marker not in source: raise SystemExit('helper marker missing')
+          source = source.replace(helper_marker, helper + helper_marker)
+          replacements = {
+            '  const probeContext = await browser.newContext(contextOptions);\n  const memoryHealth = await probeContext.request.get(`${baseUrl}/api/health-memory`);':'  const probeContext = await browser.newContext(contextOptions);\n  await authorizeProtectedPreview(probeContext);\n  const memoryHealth = await probeContext.request.get(`${baseUrl}/api/health-memory`);',
+            '  contextA = await browser.newContext(contextOptions);\n  const pageA = await contextA.newPage();':'  contextA = await browser.newContext(contextOptions);\n  await authorizeProtectedPreview(contextA);\n  const pageA = await contextA.newPage();',
+            '  contextB = await browser.newContext(contextOptions);\n  const pageB = await contextB.newPage();\n  await signIn(pageB);':'  contextB = await browser.newContext(contextOptions);\n  await authorizeProtectedPreview(contextB);\n  const pageB = await contextB.newPage();\n  await pageB.goto(`${baseUrl}/auth`, { waitUntil: "domcontentloaded" });\n  const browserBPreState = await pageB.evaluate(() => ({ local: localStorage.getItem("mara_launch_state_v1"), session: sessionStorage.length }));\n  assert(browserBPreState.local === null && browserBPreState.session === 0, `Browser B was not clean: ${JSON.stringify(browserBPreState)}`);\n  console.log("MARA_BROWSER_B_CLEAN local=null session=0");\n  await signIn(pageB);',
+            '  contextC = await browser.newContext(contextOptions);\n  const pageC = await contextC.newPage();':'  contextC = await browser.newContext(contextOptions);\n  await authorizeProtectedPreview(contextC);\n  const pageC = await contextC.newPage();',
+            'assert(anonymousState?.poseChoice === "pose_b", "Anonymous pose_b choice was not kept locally");':'assert(anonymousState?.poseChoice === "pose_b", "Anonymous pose_b choice was not kept locally");\n  console.log("MARA_BROWSER_A_ANONYMOUS pose=pose_b completed=true");',
+            'assert(accountReady, "QA account was not confirmed within the E2E wait window");':'assert(accountReady, "QA account was not confirmed within the E2E wait window");\n  console.log("MARA_BROWSER_A_ACCOUNT_READY PASS");',
+            'assert(persisted.returnCount === 0, `Initial returnCount expected 0, got ${persisted.returnCount}`);':'assert(persisted.returnCount === 0, `Initial returnCount expected 0, got ${persisted.returnCount}`);\n  console.log(`MARA_BROWSER_A_PERSISTED ${JSON.stringify(persisted)}`);',
+            'assert(signedOut?.authenticated === false, "Browser A remained authenticated after signout");':'assert(signedOut?.authenticated === false, "Browser A remained authenticated after signout");\n  console.log("MARA_BROWSER_A_SIGNOUT status=204 authenticated=false");',
+            'assert(hydrated.poseChoice === "pose_b", `Browser B expected pose_b, got ${hydrated.poseChoice}`);':'assert(hydrated.poseChoice === "pose_b", `Browser B expected pose_b, got ${hydrated.poseChoice}`);\n  console.log(`MARA_BROWSER_B_HYDRATED ${JSON.stringify({completed:hydrated.completed,poseChoice:hydrated.poseChoice,returnCount:hydrated.returnCount})}`);\n  console.log("MARA_BROWSER_B_CALLBACK pose_b_specific=PASS");',
+            'assert(afterReturn.returnCount >= 1, "Return count did not increment on Browser B");':'assert(afterReturn.returnCount >= 1, "Return count did not increment on Browser B");\n  console.log(`MARA_BROWSER_B_RETURN ${JSON.stringify(afterReturn)}`);',
+            'assert(afterStale.launchCompleted === true, "Stale write reverted launch_completed");':'assert(afterStale.launchCompleted === true, "Stale write reverted launch_completed");\n  console.log(`MARA_BROWSER_C_STALE_PROTECTED ${JSON.stringify(afterStale)}`);',
+            '  console.log(`MARA_QA_EMAIL=${qaEmail}`);\n':''
+          }
+          for old,new in replacements.items():
+              if old not in source: raise SystemExit(f'missing marker: {old[:90]}')
+              source = source.replace(old,new)
+          Path('scripts/qa-hosted-encrypted-access.generated.mjs').write_text(source)
+
+      - name: Run real hosted Browser A B C
+        working-directory: web
+        run: node scripts/qa-hosted-encrypted-access.generated.mjs
