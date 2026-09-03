@@ -21,10 +21,12 @@ const ALLOWED_PROPERTY_KEYS = new Set([
   "surface",
   "target",
   "placement",
+  "entry_source",
   "return_count_bucket",
   "days_since_first_bucket",
 ]);
 
+const ENTRY_SOURCES = new Set(["ig", "tt", "x", "direct", "other"]);
 const RETURN_COUNT_BUCKETS = new Set(["1", "2", "3-4", "5+"]);
 const DAYS_SINCE_FIRST_BUCKETS = new Set(["same_day", "1-2d", "3-7d", "8+d", "unknown"]);
 
@@ -40,6 +42,11 @@ function sanitizeProperties(value: unknown): Record<string, string | number | bo
   const safe: Record<string, string | number | boolean> = {};
   for (const [key, raw] of Object.entries(value)) {
     if (!ALLOWED_PROPERTY_KEYS.has(key)) continue;
+
+    if (key === "entry_source") {
+      if (typeof raw === "string" && ENTRY_SOURCES.has(raw)) safe[key] = raw;
+      continue;
+    }
 
     if (key === "return_count_bucket") {
       if (typeof raw === "string" && RETURN_COUNT_BUCKETS.has(raw)) safe[key] = raw;
@@ -82,7 +89,8 @@ export async function POST(request: Request) {
 
   // Intentionally anonymous launch telemetry. Do not add user IDs, IP-derived
   // identity, conversation content, fantasies, sexual history or commercial
-  // vulnerability data here. Return measurement uses coarse local buckets only.
+  // vulnerability data here. Entry attribution is a coarse allowlisted source
+  // only; arbitrary campaigns, referrers and handles are not accepted.
   console.info("MARA_TELEMETRY", JSON.stringify({
     event: payload.event,
     properties: sanitizeProperties(payload.properties),
