@@ -34,13 +34,14 @@ async function assertMaraImageLoaded(page, contextLabel) {
 }
 
 const browser = await chromium.launch({ headless: true });
-const context = await browser.newContext({
+const contextOptions = {
   viewport: { width: 390, height: 844 },
   deviceScaleFactor: 3,
   isMobile: true,
   hasTouch: true,
   locale: "es-CL",
-});
+};
+const context = await browser.newContext(contextOptions);
 const page = await context.newPage();
 
 try {
@@ -51,6 +52,22 @@ try {
   assert(healthBody?.service === "mara-vera-web", `/api/health service is ${healthBody?.service}`);
   assert(healthBody?.release === "public-alpha", `/api/health release is ${healthBody?.release}`);
   assert(health.headers()["cache-control"]?.includes("no-store"), "/api/health must not be cached");
+
+  const memoryHealth = await context.request.get(`${baseUrl}/api/health-memory`);
+  assert(memoryHealth.status() === 200, `/api/health-memory returned ${memoryHealth.status()}`);
+  const memoryHealthBody = await memoryHealth.json();
+  assert(memoryHealthBody?.service === "mara-identity-memory", "Memory health service contract changed");
+  assert(typeof memoryHealthBody?.configured === "boolean", "Memory health must expose a boolean configured state");
+
+  const authPage = await context.request.get(`${baseUrl}/auth`);
+  assert(authPage.status() === 200, `/auth returned ${authPage.status()}`);
+
+  if (!memoryHealthBody.configured) {
+    const backendlessSignin = await context.request.post(`${baseUrl}/api/auth/signin`, {
+      data: { email: "backendless@example.invalid", password: "not-a-real-password" },
+    });
+    assert(backendlessSignin.status() === 503, `Backendless signin should return 503, got ${backendlessSignin.status()}`);
+  }
 
   const home = await page.goto(`${baseUrl}/?src=ig&campaign=must-not-leak`, { waitUntil: "networkidle" });
   assert(home?.status() === 200, `Home returned ${home?.status()}`);
@@ -163,6 +180,66 @@ try {
     data: { event: "raw_intimate_text", properties: { text: "must-not-log" } },
   });
   assert(rejectedTelemetry.status() === 400, `Unknown telemetry event should be rejected, got ${rejectedTelemetry.status()}`);
+
+  // Simulate a different device with no Mara localStorage and an authenticated server memory.
+  // This is intentionally network-mocked: CI must remain able to validate backendless behavior
+  // without carrying production credentials, while still proving the browser hydration contract.
+  const remoteContext = await browser.newContext(contextOptions);
+  const relationshipPosts = [];
+  await remoteContext.route("**/api/relationship", async (route) => {
+    const request = route.request();
+    if (request.method() === "GET") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          state: {
+            returnCount: 4,
+            firstSeenAt: "2026-08-20T12:00:00.000Z",
+            lastSeenAt: "2026-09-03T12:00:00.000Z",
+            lastVisualChoice: "pose_b",
+            launchCompleted: true,
+          },
+        }),
+      });
+      return;
+    }
+
+    if (request.method() === "POST") {
+      relationshipPosts.push(request.postDataJSON());
+      await route.fulfill({ status: 204, body: "" });
+      return;
+    }
+
+    await route.continue();
+  });
+
+  const remotePage = await remoteContext.newPage();
+  await remotePage.goto(`${baseUrl}/experience`, { waitUntil: "domcontentloaded" });
+  const remoteDialog = remotePage.getByRole("dialog");
+  if (await remoteDialog.isVisible().catch(() => false)) {
+    await remoteDialog.locator("button").first().click();
+  }
+  await remotePage.getByText("Volviste.").waitFor();
+
+  const hydratedRemoteState = await remotePage.evaluate(() => window.localStorage.getItem("mara_launch_state_v1"));
+  assert(hydratedRemoteState, "Remote relationship state was not hydrated into the device cache");
+  const parsedRemoteState = JSON.parse(hydratedRemoteState);
+  assert(parsedRemoteState.completed === true, "Remote launch completion was not hydrated");
+  assert(parsedRemoteState.returnCount === 4, `Remote returnCount expected 4, got ${parsedRemoteState.returnCount}`);
+  assert(parsedRemoteState.poseChoice === "pose_b", `Remote visual choice expected pose_b, got ${parsedRemoteState.poseChoice}`);
+
+  await remotePage.getByRole("button", { name: "Métete." }).click();
+  await remotePage.waitForFunction(() => {
+    const raw = window.localStorage.getItem("mara_launch_state_v1");
+    return raw ? JSON.parse(raw).returnCount === 5 : false;
+  });
+  await remotePage.waitForTimeout(50);
+  assert(
+    relationshipPosts.some((snapshot) => snapshot?.returnCount === 5 && snapshot?.launchCompleted === true && snapshot?.lastVisualChoice === "pose_b"),
+    "Remote continuation did not sync the monotonic 4→5 relationship snapshot",
+  );
+  await remoteContext.close();
 
   console.log("MARA_LAUNCH_SMOKE PASS");
 } finally {
