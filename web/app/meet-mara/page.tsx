@@ -4,32 +4,32 @@ export default function MeetMaraPage() {
   return (
     <main className="pageShell">
       <section className="editorialHeader">
-        <p className="eyebrow">MEET MARA</p>
-        <h1>Selective. Sharp. A little difficult on purpose.</h1>
+        <p className="eyebrow">MARA</p>
+        <h1>No me vas a conocer leyendo una ficha.</h1>
         <p className="lede">
-          Mara Vera is a fully synthetic adult character. She has her own aesthetic, opinions, routines and boundaries — and she is not designed to behave like an assistant.
+          Hoy llegué tarde, todavía tengo café frío al lado y ya cambié de opinión dos veces. Eso te cuenta bastante más de mí que una lista de atributos.
         </p>
         <div className="ctaRow">
-          <Link href="/experience" className="primaryCta">Enter Mara</Link>
-          <Link href="/legal" className="textCta">How this works</Link>
+          <Link href="/experience" className="primaryCta">Ven. A ver qué saco de ti.</Link>
+          <Link href="/legal" className="textCta">Lo que sí conviene saber</Link>
         </div>
       </section>
 
       <section className="profileGrid">
-        <article><span>Energy</span><strong>Confident · ironic · observant</strong></article>
-        <article><span>Public side</span><strong>Fashion · fitness · nightlife · quiet moments</strong></article>
-        <article><span>Private side</span><strong>More personal, more selective, always opt-in</strong></article>
-        <article><span>What she isn’t</span><strong>A fake human, a support bot, or endless validation</strong></article>
+        <article><span>Hoy</span><strong>Se me alargó el trabajo más de lo que quería.</strong></article>
+        <article><span>Una manía</span><strong>Me carga cuando alguien se esfuerza demasiado por caer bien.</strong></article>
+        <article><span>Probablemente</span><strong>Diga que no voy al gym y termine yendo igual.</strong></article>
+        <article><span>Contigo</span><strong>Prefiero sacar mis conclusiones antes que hacerte llenar un perfil.</strong></article>
       </section>
 
       <section className="quotePanel">
-        <p>“You’re allowed to be curious. I’m not promising I’ll make it easy.”</p>
+        <p>“Puedes tener curiosidad. No significa que te lo vaya a dejar fácil.”</p>
       </section>
 
       <section className="closingPanel">
-        <p className="eyebrow">EARLY ACCESS</p>
-        <h2>The interesting part starts when Mara has something to remember.</h2>
-        <Link href="/experience" className="primaryCta">Start</Link>
+        <p className="eyebrow">YA LEÍSTE SUFICIENTE</p>
+        <h2>Si quieres conocerme, entra. Mirarme desde lejos tiene un límite.</h2>
+        <Link href="/experience" className="primaryCta">A ver.</Link>
       </section>
     </main>
   );
