@@ -41,7 +41,7 @@ try {
   assert(healthBody?.release === "public-alpha", `/api/health release is ${healthBody?.release}`);
   assert(health.headers()["cache-control"]?.includes("no-store"), "/api/health must not be cached");
 
-  const home = await page.goto(`${baseUrl}/`, { waitUntil: "networkidle" });
+  const home = await page.goto(`${baseUrl}/?src=ig&campaign=must-not-leak`, { waitUntil: "networkidle" });
   assert(home?.status() === 200, `Home returned ${home?.status()}`);
   await page.getByRole("dialog").waitFor();
   await page.getByRole("dialog").locator("button").first().click();
@@ -89,6 +89,8 @@ try {
   const returningPayload = returningTelemetry.postDataJSON();
   assert(returningPayload?.properties?.return_count_bucket === "1", "First return must emit return_count_bucket=1");
   assert(returningPayload?.properties?.days_since_first_bucket === "same_day", "Immediate smoke return must emit days_since_first_bucket=same_day");
+  assert(returningPayload?.properties?.entry_source === "ig", "Session source attribution must persist as entry_source=ig");
+  assert(!("campaign" in (returningPayload?.properties ?? {})), "Arbitrary campaign query data must not leave the browser");
   assert(!("anonymous_id" in (returningPayload?.properties ?? {})), "Return telemetry must not contain an anonymous identifier");
 
   await page.getByText("VOLVISTE").waitFor();
@@ -105,6 +107,7 @@ try {
       event: "returning_user",
       properties: {
         surface: "launch_smoke",
+        entry_source: "x",
         return_count_bucket: "3-4",
         days_since_first_bucket: "3-7d",
       },
