@@ -139,9 +139,7 @@ jobs:
       - name: Prove hosted revenue loop against real Mara Supabase
         env:
           BASE_URL: ${{ steps.deploy.outputs.deployment_url }}
-          SUPABASE_URL: ${{ env.NEXT_PUBLIC_SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          MARA_PAYMENT_WEBHOOK_SECRET: ${{ env.MARA_PAYMENT_WEBHOOK_SECRET }}
         run: node scripts/hosted-revenue-e2e.mjs
 
       - name: Publish hosted proof evidence
