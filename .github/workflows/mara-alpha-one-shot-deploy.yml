@@ -13,6 +13,7 @@ permissions:
 env:
   VERCEL_CLI_VERSION: "59.11.1"
   PLAYWRIGHT_VERSION: "1.62.1"
+  CANONICAL_MARA_WEB_BLOB: "1c4c4d3615eac915cf42efd9416ed20479eb8126"
 
 jobs:
   deploy:
@@ -34,6 +35,19 @@ jobs:
         run: |
           echo "MARA_RELEASE_SHA=${GITHUB_SHA}"
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+
+      - name: Verify canonical Mara web asset
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s public/mara/mara-v1-reference.jpg
+          actual_blob=$(git hash-object public/mara/mara-v1-reference.jpg)
+          echo "Canonical Mara web blob: $actual_blob"
+          if [ "$actual_blob" != "$CANONICAL_MARA_WEB_BLOB" ]; then
+            echo "::error::Canonical Mara web asset changed. Expected $CANONICAL_MARA_WEB_BLOB, got $actual_blob"
+            exit 1
+          fi
+          echo "MARA_CANONICAL_ASSET PASS"
 
       - name: Verify existing Vercel credentials
         env:
