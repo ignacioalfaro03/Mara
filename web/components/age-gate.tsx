@@ -33,11 +33,11 @@ export function AgeGate() {
     <div className="gate" role="dialog" aria-modal="true" aria-labelledby="age-gate-title">
       <div className="gateCard">
         <p className="eyebrow">MARA VERA</p>
-        <h1 id="age-gate-title">For adults only.</h1>
-        <p>You must be 18 or older to enter. Mara Vera is an AI-generated virtual character.</p>
+        <h1 id="age-gate-title">Solo para adultos.</h1>
+        <p>Debes tener 18 años o más para entrar. Mara Vera es un personaje virtual generado con IA.</p>
         <div className="gateActions">
-          <button onClick={confirmAdult}>I’m 18+</button>
-          <button className="secondary" onClick={decline}>Leave</button>
+          <button onClick={confirmAdult}>Tengo 18+</button>
+          <button className="secondary" onClick={decline}>Salir</button>
         </div>
       </div>
     </div>
