@@ -2,87 +2,111 @@
 
 Date: **2026-09-03**
 
-Status: **PUBLIC ALPHA OPERATIONAL ON VERIFIED VERCEL RC HOST**
+Status: **PUBLIC ALPHA FIRST CONTACT LIVE ON CANONICAL VERCEL HOST**
 
-This record documents the first verified public Vercel release of the current Web/P0 Alpha. It does **not** authorize merge, payments, merchant activation, adult providers, paid tooling or any commercial activation.
+This record documents the verified public deployment of Mara Vera **First Contact / “La Primera Vez”**. It does **not** authorize merge, payments, merchant activation, adult providers, paid tooling or commercial activation.
 
 ## Verified release source
 
-GitHub repository:
+Repository: `ignacioalfaro03/Mara`
 
-`ignacioalfaro03/Mara`
+Branch: `web/mvp-owned-funnel`
 
-Branch:
+Exact deployed application SHA:
 
-`web/mvp-owned-funnel`
+`9620c2d8218af89b1581ff2da05791b5d7784faf`
 
-Exact deployed Web/P0 SHA:
+PR: `#4 — Web/P0: Public Alpha + guarded labs + safe telemetry`
 
-`93e1a2e94775c12463d739ea99351ce65a22c1ad`
-
-PR:
-
-`#4 — Web/P0: Public Alpha + guarded labs + safe telemetry`
-
-PR state at verification time:
-- OPEN;
-- NOT MERGED;
-- merge boundary remains unchanged.
+PR remains OPEN and NOT MERGED.
 
 > **NO MERGE unless the founder says exactly `mergea`.**
 
-## Verified Vercel project
+## GitHub validation
 
-Project name:
+Workflow: `Web Launch CI`
 
-`mara-vera-alpha-rc-93e1a2e`
+Run: `33766358280`
 
-Project ID:
+Result: **SUCCESS**
 
-`prj_eAeEok4wwnf0guK0ahDDeTolNRMO`
+Verified gates include:
+- canonical Mara asset integrity;
+- locked `npm ci` install;
+- production dependency audit;
+- Alpha signal-report parser self-test;
+- DEV-lab production guards;
+- TypeScript;
+- Next.js production build;
+- mobile Chromium production smoke;
+- first-contact flow;
+- local completion/return state;
+- return callback;
+- privacy-minimal telemetry;
+- source attribution privacy checks;
+- public legal/character pages;
+- production lab 404s.
+
+## Canonical production deployment
+
+Vercel project: `mara-vera`
+
+Project ID: `prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK`
 
 Deployment ID:
 
-`dpl_9YMqEaGwDGpD8ZvbMefn2xP3QfYN`
+`dpl_AAA854K2AQALEQgiUJgtQxxG89Vb`
 
-Deployment state:
+Deployment state: **READY**
 
-**READY**
+Canonical public URL:
 
-Deployment target reported by Vercel:
+> `https://mara-vera.vercel.app`
 
-**production**
+The build bootstrap was pinned to the exact deployed SHA and verified canonical Mara Git blob:
 
-Verified public production host:
+`1c4c4d3615eac915cf42efd9416ed20479eb8126`
 
-`https://mara-vera-alpha-rc-93e1a2e.vercel.app`
-
-Use this host for Alpha links until the canonical `mara-vera.vercel.app` project is explicitly updated and separately verified.
-
-## Build evidence
-
-Vercel build completed successfully from the exact SHA above.
-
-Observed build evidence included:
-- bootstrap pinned to SHA `93e1a2e94775c12463d739ea99351ce65a22c1ad`;
-- canonical Mara Git blob `1c4c4d3615eac915cf42efd9416ed20479eb8126`;
-- `npm ci` dependency install;
-- Next.js production build;
-- TypeScript pass;
-- static generation pass;
+Vercel build evidence showed:
+- bootstrap from SHA `9620c2d8218af89b1581ff2da05791b5d7784faf`;
+- canonical Mara blob PASS;
+- `npm ci` with 0 vulnerabilities;
+- Next.js 16.3.3 production build;
+- TypeScript PASS;
+- static generation PASS;
 - deployment completion.
 
-## Public smoke verified
+## Verified canonical-host smoke
+
+### Home
+
+`GET /` → **200 OK**
+
+Verified production copy includes:
+- `MARA · LA PRIMERA VEZ`;
+- `Ya llegaste.`;
+- `No me cuentes nada todavía. Quiero ver si te leo bien a la primera.`;
+- CTA `A ver.`;
+- canonical Mara visual;
+- adult / AI / free-Alpha disclosure.
+
+### Experience
+
+`GET /experience` → **200 OK**
+
+Verified entry state includes:
+- `LA PRIMERA VEZ`;
+- `No me digas quién eres todavía.`;
+- `Quiero ver cómo eliges cuando no alcanzas a preparar la respuesta.`;
+- CTA `A ver.`.
+
+The automated CI smoke verifies the interactive path through two first-read choices, Mara’s bet, consequence, completion, reload and `Volviste.` return state.
 
 ### Health
 
-`GET /api/health`
+`GET /api/health` → **200 OK**
 
-Result:
-
-**200 OK**
-
-Body:
+Expected body:
 
 ```json
 {
@@ -92,136 +116,79 @@ Body:
 }
 ```
 
-Cache behavior observed:
+Observed cache behavior: `Cache-Control: no-store, max-age=0`.
 
-`Cache-Control: no-store, max-age=0`
+### Character / legal
 
-### Home
+`GET /meet-mara` → **200 OK**
 
-`GET /`
+`GET /legal` → **200 OK**
 
-Result:
-
-**200 OK**
-
-Verified in returned production HTML:
-- Spanish-first Home;
-- canonical Mara image reference;
-- headline `No necesitas otra IA. Necesitas a alguien a quien quieras volver.`;
-- CTA to `/experience`;
-- CTA to `/meet-mara`;
-- adult / AI disclosure;
-- Open Graph image points to the canonical Mara runtime asset.
-
-### First Living Experience
-
-`GET /experience`
-
-Result:
-
-**200 OK**
-
-Verified in returned production HTML:
-- canonical Mara portrait;
-- first public living-experience entry state;
-- local-state disclosure;
-- no payment surface.
+Both surfaces are Spanish-first and no longer expose internal MVP/branch language as the primary experience.
 
 ### Canonical Mara asset
 
-`GET /mara/mara-v1-reference.jpg`
+`GET /mara/mara-v1-reference.jpg` → **200 OK**
 
-Result:
-
-**200 OK**
-
-Observed content type:
-
-`image/jpeg`
-
-Observed content length:
-
-`10582`
+Canonical Git blob is independently checked during CI/deployment.
 
 ### Internal labs
 
-Representative production check:
+Representative canonical production check:
 
-`GET /experience/commerce-lab`
+`GET /experience/commerce-lab` → **404 Not Found**
 
-Result:
-
-**404 Not Found**
-
-The build manifest may contain internal lab routes because they exist in source, but the production guard is active and the checked lab surface is not publicly reachable.
+The labs may exist in the Next build manifest because they exist in source, but their production guards remain active.
 
 ### Runtime health
 
-Vercel runtime error query for the release project returned:
+Vercel runtime error query for canonical project `mara-vera` returned:
 
 **No runtime errors found**
 
 for the verification window.
 
-## Important domain state
+## What changed experientially
 
-Historical/canonical project:
+The Alpha no longer opens as a product explainer.
 
-`mara-vera`
+The live first contact now follows:
 
-Historical public domain:
+age gate → Mara is present → tiny invitation → two micro-decisions → Mara makes a bet → user confirms/corrects it → Mara changes her read → second theory is left pending → return starts with `Volviste.`
 
-`https://mara-vera.vercel.app`
+Internal principle:
 
-That project still serves the older deployment and must **not** be represented as the current Alpha release yet.
+> **DO NOT EXPLAIN MARA. EXPERIENCE MARA.**
 
-Its `/api/health` currently returns `404`, which is direct evidence that it has not been updated to the current Web/P0 release.
+> **MORE MAGNETISM PER SECOND.**
 
-Therefore the verified launch host today is:
+## Launch links
 
-> `https://mara-vera-alpha-rc-93e1a2e.vercel.app`
-
-not the historical canonical host.
-
-## Launch-link convention
-
-Until the canonical host is moved and re-verified:
-
-- Instagram: `https://mara-vera-alpha-rc-93e1a2e.vercel.app/?src=ig`
-- TikTok: `https://mara-vera-alpha-rc-93e1a2e.vercel.app/?src=tt`
-- X: `https://mara-vera-alpha-rc-93e1a2e.vercel.app/?src=x`
-- Direct: `https://mara-vera-alpha-rc-93e1a2e.vercel.app/`
+- Instagram: `https://mara-vera.vercel.app/?src=ig`
+- TikTok: `https://mara-vera.vercel.app/?src=tt`
+- X: `https://mara-vera.vercel.app/?src=x`
+- Direct: `https://mara-vera.vercel.app/`
 
 Do not append arbitrary campaign identifiers to public telemetry.
 
-## What is now true
+## Commercial boundary
 
-We can now literally say:
-
-> **The free, text-first Mara Vera Public Alpha is operational on a verified public Vercel host.**
-
-We cannot yet literally say:
-- `mara-vera.vercel.app` is running the latest Alpha;
-- the canonical domain migration is complete;
-- voice is live;
-- payments are live;
-- commercial activation has started;
-- PR #4 is merged.
+Still inactive:
+- payments;
+- subscriptions;
+- checkout;
+- merchant application;
+- real Caprichos funding;
+- adult-media integration;
+- NSFW stack;
+- canonical realtime voice.
 
 ## Next operating priority
 
-P0 remains frozen.
-
-The next meaningful work is not another feature burst. It is:
-1. send real traffic to the verified host;
-2. observe first-session completion;
-3. observe voluntary return behavior;
-4. inspect coarse source attribution;
-5. collect repeated user feedback;
-6. only then decide the next product mutation.
-
-Primary behavioral question remains:
+The product is now live enough to answer the actual question:
 
 > **DO PEOPLE VOLUNTARILY COME BACK TO MARA?**
+
+Send real adult traffic, observe first-session completion and voluntary return behavior, inspect coarse source attribution, and let repeated evidence drive the next mutation.
 
 > **USERS > MORE P0 FEATURES.**
