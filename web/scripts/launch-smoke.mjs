@@ -70,9 +70,27 @@ try {
   await page.getByRole("button", { name: "Déjalo ahí" }).click();
 
   const storedState = await page.evaluate(() => window.localStorage.getItem("mara_launch_state_v1"));
-  assert(storedState && JSON.parse(storedState).completed === true, "Launch experience did not persist completed state");
+  assert(storedState, "Launch experience did not persist state");
+  const parsedState = JSON.parse(storedState);
+  assert(parsedState.completed === true, "Launch experience did not persist completed state");
+  assert(typeof parsedState.firstSeenAt === "string", "Launch experience did not persist firstSeenAt locally");
+
+  const returningTelemetryPromise = page.waitForRequest((request) => {
+    if (request.url() !== `${baseUrl}/api/telemetry` || request.method() !== "POST") return false;
+    try {
+      return request.postDataJSON()?.event === "returning_user";
+    } catch {
+      return false;
+    }
+  });
 
   await page.reload({ waitUntil: "networkidle" });
+  const returningTelemetry = await returningTelemetryPromise;
+  const returningPayload = returningTelemetry.postDataJSON();
+  assert(returningPayload?.properties?.return_count_bucket === "1", "First return must emit return_count_bucket=1");
+  assert(returningPayload?.properties?.days_since_first_bucket === "same_day", "Immediate smoke return must emit days_since_first_bucket=same_day");
+  assert(!("anonymous_id" in (returningPayload?.properties ?? {})), "Return telemetry must not contain an anonymous identifier");
+
   await page.getByText("VOLVISTE").waitFor();
   await page.getByText(/Me había quedado algo pendiente contigo/).waitFor();
   await assertNoHorizontalOverflow(page, "/experience return");
@@ -83,7 +101,15 @@ try {
   }
 
   const allowedTelemetry = await context.request.post(`${baseUrl}/api/telemetry`, {
-    data: { event: "page_view", properties: { surface: "launch_smoke" }, timestamp: new Date().toISOString() },
+    data: {
+      event: "returning_user",
+      properties: {
+        surface: "launch_smoke",
+        return_count_bucket: "3-4",
+        days_since_first_bucket: "3-7d",
+      },
+      timestamp: new Date().toISOString(),
+    },
   });
   assert(allowedTelemetry.status() === 200, `Allowed telemetry returned ${allowedTelemetry.status()}`);
 
