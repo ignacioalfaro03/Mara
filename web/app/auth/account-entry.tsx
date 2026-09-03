@@ -13,6 +13,7 @@ function messageFor(error?: string) {
     case "invalid_password": return "Usa una contraseña de al menos 8 caracteres.";
     case "adult_confirmation_required": return "Para crear una cuenta debes confirmar que tienes 18 años o más.";
     case "invalid_credentials": return "Correo o contraseña incorrectos.";
+    case "signup_rate_limited": return "Hay demasiados correos de confirmación en este momento. Espera un poco y prueba otra vez.";
     case "signup_failed": return "No pude crear la cuenta con esos datos.";
     default: return "No pude completar eso. Inténtalo otra vez.";
   }
