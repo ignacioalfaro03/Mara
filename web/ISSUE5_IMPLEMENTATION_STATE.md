@@ -1,1 +1,0 @@
-Issue #5 implementation currently includes optional account Auth, private preference-event persistence, RLS migration, a visual-choice interaction inside the launch experience, pending-event replay after sign-in, and low-sensitivity relationship-state scaffolding. Dedicated backend creation/configuration and final distinct pose assets remain activation prerequisites.
