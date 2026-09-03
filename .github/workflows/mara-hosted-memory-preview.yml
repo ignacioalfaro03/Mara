@@ -1,0 +1,184 @@
+name: Mara Hosted Memory Preview E2E
+
+on:
+  push:
+    branches:
+      - feature/identity-preference-memory
+    paths:
+      - ".github/workflows/mara-hosted-memory-preview.yml"
+
+permissions:
+  contents: read
+
+env:
+  VERCEL_CLI_VERSION: "59.11.1"
+  PLAYWRIGHT_VERSION: "1.62.1"
+  EXPECTED_VERCEL_PROJECT_ID: "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK"
+  NEXT_PUBLIC_SUPABASE_URL: "https://hctykprkwenhatbjxkpb.supabase.co"
+  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_VQ-2Db0Di57kA3DEkeml9A_vZMYHDwi"
+
+jobs:
+  hosted-memory-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: web
+
+    steps:
+      - name: Checkout exact PR snapshot
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Verify Vercel deployment boundary
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Missing existing GitHub Secret: $name"
+              exit 1
+            fi
+          done
+          if [ "$VERCEL_PROJECT_ID" != "$EXPECTED_VERCEL_PROJECT_ID" ]; then
+            echo "::error::Refusing to deploy: VERCEL_PROJECT_ID does not match canonical mara-vera project."
+            exit 1
+          fi
+          echo "PREVIEW_ONLY_BOUNDARY PASS"
+
+      - name: Setup Node
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Install preview tooling
+        run: |
+          npm install --no-save --no-package-lock --no-audit --no-fund \
+            "vercel@${VERCEL_CLI_VERSION}" \
+            "playwright@${PLAYWRIGHT_VERSION}"
+          npx playwright install --with-deps chromium
+
+      - name: Link canonical Vercel project for Preview only
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx vercel pull --yes --environment=preview --token "$VERCEL_TOKEN"
+          node <<'NODE'
+          const fs = require('fs');
+          const linked = JSON.parse(fs.readFileSync('.vercel/project.json', 'utf8'));
+          if (linked.projectId !== process.env.VERCEL_PROJECT_ID) throw new Error('Vercel project mismatch');
+          if (linked.orgId !== process.env.VERCEL_ORG_ID) throw new Error('Vercel org mismatch');
+          console.log('VERCEL_PREVIEW_LINK PASS');
+          NODE
+
+      - name: Deploy exact snapshot as Vercel Preview
+        id: deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx vercel deploy --yes --token "$VERCEL_TOKEN" \
+            --build-env NEXT_PUBLIC_SUPABASE_URL="$NEXT_PUBLIC_SUPABASE_URL" \
+            --build-env NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" \
+            --env NEXT_PUBLIC_SUPABASE_URL="$NEXT_PUBLIC_SUPABASE_URL" \
+            --env NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" \
+            2>&1 | tee /tmp/mara-preview-deploy.log
+          deployment_url=$(grep -Eo 'https://[^[:space:]]+\.vercel\.app' /tmp/mara-preview-deploy.log | tail -n 1)
+          if [ -z "$deployment_url" ]; then
+            echo "::error::Vercel CLI did not expose a preview URL."
+            exit 1
+          fi
+          echo "deployment_url=$deployment_url" >> "$GITHUB_OUTPUT"
+          echo "MARA_PREVIEW_URL=$deployment_url"
+          if [[ "$deployment_url" == "https://mara-vera.vercel.app" ]]; then
+            echo "::error::Preview deployment unexpectedly resolved to canonical production alias."
+            exit 1
+          fi
+
+      - name: Wait for Preview readiness
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
+        run: npx vercel inspect "$DEPLOYMENT_URL" --wait --token "$VERCEL_TOKEN"
+
+      - name: Verify hosted backend connection
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          code=$(curl -L -sS -o /tmp/memory-health.json -w '%{http_code}' "$DEPLOYMENT_URL/api/health-memory")
+          echo "/api/health-memory -> $code"
+          test "$code" = "200"
+          node - <<'NODE'
+          const fs = require('fs');
+          const body = JSON.parse(fs.readFileSync('/tmp/memory-health.json','utf8'));
+          if (body.service !== 'mara-identity-memory' || body.configured !== true) {
+            throw new Error(`Hosted memory backend not configured: ${JSON.stringify(body)}`);
+          }
+          console.log('MARA_HOSTED_MEMORY_CONFIG PASS');
+          NODE
+
+      - name: Probe Supabase Auth posture
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -sS "$NEXT_PUBLIC_SUPABASE_URL/auth/v1/settings" \
+            -H "apikey: $NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" > /tmp/mara-auth-settings.json
+          node - <<'NODE'
+          const fs = require('fs');
+          const settings = JSON.parse(fs.readFileSync('/tmp/mara-auth-settings.json','utf8'));
+          console.log('MARA_AUTH_POSTURE', JSON.stringify({
+            disable_signup: settings.disable_signup,
+            mailer_autoconfirm: settings.mailer_autoconfirm,
+            email_enabled: settings.external?.email,
+          }));
+          if (settings.disable_signup === true || settings.external?.email === false) {
+            throw new Error('Email/password signup is disabled in Supabase Auth');
+          }
+          NODE
+
+      - name: Run real hosted identity and memory E2E
+        env:
+          BASE_URL: ${{ steps.deploy.outputs.deployment_url }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          export QA_EMAIL="mara.qa.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}@example.com"
+          export QA_PASSWORD="$(openssl rand -hex 18)"
+          node scripts/hosted-memory-e2e.mjs
+
+      - name: Publish Preview evidence
+        if: always()
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
+        shell: bash
+        run: |
+          echo "MARA_HOSTED_PREVIEW_SHA=$GITHUB_SHA"
+          echo "MARA_HOSTED_PREVIEW_URL=$DEPLOYMENT_URL"
+          echo "PRODUCTION_ALIAS_UNTOUCHED=https://mara-vera.vercel.app"
+
+# Preview-only activation harness. Never add --prod here.
