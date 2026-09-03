@@ -4,7 +4,7 @@ Status: **RELEASE CANDIDATE — READY EXCEPT EXTERNAL DEPLOY CREDENTIALS**
 
 This document is the operational handoff for the public, free, text-first Mara Alpha.
 
-It does not authorize merge, payments, merchant activation, adult providers, paid tools or production changes outside the already-authorized free Alpha deployment attempt.
+It does not authorize merge, payments, merchant activation, adult providers, paid tools or production changes outside an explicitly authorized Alpha deployment action.
 
 ## 1. Public Alpha contract
 
@@ -51,6 +51,7 @@ Required gates:
 - prediction interaction;
 - completion persistence;
 - reload / return callback;
+- privacy-minimal return telemetry buckets;
 - `/meet-mara`;
 - `/legal`;
 - all `*-lab` routes return production 404;
@@ -67,16 +68,46 @@ The release candidate is not currently claimed as deployed.
 
 Verified blockers are credential/access related, not application-code failures.
 
-Connected Vercel tooling currently cannot access the intended project/team scope.
+Connected Vercel tooling still reports no accessible team scope for the intended account/project path.
 
-A separate one-shot GitHub Actions deploy attempt failed before running any Vercel command because these repository secrets were absent:
+A previous one-shot GitHub Actions deploy attempt failed before running any Vercel command because these repository secrets were absent:
 - `VERCEL_TOKEN`
 - `VERCEL_ORG_ID`
 - `VERCEL_PROJECT_ID`
 
 No production state changed in that failed attempt.
 
-## 4. Deployment rule
+There is no committed `.vercel/project.json`; the deploy job must establish and verify the intended link at runtime from the three existing secrets above.
+
+## 4. Hardened one-shot deployment gate
+
+Workflow:
+
+`.github/workflows/mara-alpha-one-shot-deploy.yml`
+
+The deployment job is intentionally inert unless the workflow-file push commit message contains:
+
+`[deploy-alpha]`
+
+A normal Web/P0 push does **not** deploy production.
+
+The gate now:
+1. checks out exactly `github.sha` and asserts `HEAD == GITHUB_SHA`;
+2. requires the three Vercel credentials before any Vercel command;
+3. installs the committed dependency graph with `npm ci`;
+4. re-runs production audit, DEV-lab guard audit, typecheck and build;
+5. uses pinned release tooling for the deployment pass;
+6. runs `vercel pull --environment=production` before deployment;
+7. reads the generated `.vercel/project.json` and fails if its `projectId` or `orgId` differs from the supplied secrets;
+8. deploys that exact snapshot with `--prod`;
+9. waits for terminal Vercel state;
+10. verifies `/api/health` first;
+11. runs the full production mobile smoke against the returned deployment URL;
+12. prints the verified SHA and URL only after every gate passes.
+
+The hardening commit was intentionally created **without** `[deploy-alpha]`. GitHub parsed the workflow and the resulting push run was `skipped`, confirming the production guard remained closed.
+
+## 5. Deployment rule
 
 Deploy only the exact Web/P0 head whose `Web Launch CI` is green.
 
@@ -89,9 +120,11 @@ A deployment becomes launch-verified only after:
 4. public routes are reachable;
 5. DEV labs remain 404 in production.
 
-## 5. Post-deploy verification
+## 6. Post-deploy verification
 
-From `web/`, with Playwright available, run:
+The one-shot deploy gate now performs the production smoke itself.
+
+For an independent repeat from `web/`, with Playwright available:
 
 ```bash
 BASE_URL="https://<actual-deployment-host>" node scripts/launch-smoke.mjs
@@ -116,7 +149,7 @@ Expected JSON shape:
 Expected cache behavior:
 - `Cache-Control` contains `no-store`.
 
-## 6. Manual launch sanity check
+## 7. Manual launch sanity check
 
 After automated smoke passes, manually inspect once:
 - mobile Home hierarchy;
@@ -134,7 +167,7 @@ After automated smoke passes, manually inspect once:
 
 A physical-iPhone Safari pass is useful but is not required to pretend current Chromium automation already tested Safari. Keep evidence claims literal.
 
-## 7. What does not block this Alpha
+## 8. What does not block this Alpha
 
 Do not hold the free Alpha for:
 - realtime canonical voice;
@@ -149,10 +182,11 @@ Do not hold the free Alpha for:
 
 Those layers are gated by real user signal and/or separate compliance/commercial decisions.
 
-## 8. Stop conditions
+## 9. Stop conditions
 
 Do not proceed or claim launch completion if:
 - CI is red on the intended head;
+- Vercel project/org link does not match the expected credentials;
 - health endpoint is not 200/`ok`;
 - canonical Mara image fails;
 - age gate fails;
@@ -162,7 +196,7 @@ Do not proceed or claim launch completion if:
 - deployment status is not terminal READY;
 - production smoke fails.
 
-## 9. Merge boundary
+## 10. Merge boundary
 
 Deployment authorization and merge authorization are separate.
 
