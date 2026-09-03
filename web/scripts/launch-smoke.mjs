@@ -45,7 +45,7 @@ try {
   assert(home?.status() === 200, `Home returned ${home?.status()}`);
   await page.getByRole("dialog").waitFor();
   await page.getByRole("dialog").locator("button").first().click();
-  await page.getByText("Ya llegaste.").waitFor();
+  await page.getByText("Llegaste justo.").waitFor();
   await page.locator('img[alt="Mara Vera"]').first().waitFor();
   const maraLoaded = await page.locator('img[alt="Mara Vera"]').first().evaluate((img) => img.complete && img.naturalWidth > 0);
   assert(maraLoaded, "Canonical Mara image did not load");
@@ -63,12 +63,16 @@ try {
 
   await page.goto(`${baseUrl}/experience`, { waitUntil: "networkidle" });
   await assertNoHorizontalOverflow(page, "/experience");
-  await page.getByRole("button", { name: "A ver." }).click();
-  for (let index = 0; index < 3; index += 1) {
-    await page.locator(".livingChoice").first().click();
-  }
-  await page.getByRole("button", { name: "¿Qué cosa?" }).click();
-  await page.getByRole("button", { name: "Déjalo ahí." }).click();
+  await page.getByRole("button", { name: "Ya." }).click();
+  await page.getByText("Te pillé mirándome.").waitFor();
+  await page.locator(".livingChoice").first().click();
+  await page.getByRole("button", { name: "Sigue." }).click();
+  await page.getByText("Estoy por irme.").waitFor();
+  await page.locator(".livingChoice").first().click();
+  await page.getByText("Después te mando dos mensajes.").waitFor();
+  await page.locator(".livingChoice").first().click();
+  await page.getByRole("button", { name: "¿Y?" }).click();
+  await page.getByRole("button", { name: "Ya, anda." }).click();
 
   const storedState = await page.evaluate(() => window.localStorage.getItem("mara_launch_state_v1"));
   assert(storedState, "Launch experience did not persist state");
@@ -94,8 +98,8 @@ try {
   assert(!("campaign" in (returningPayload?.properties ?? {})), "Arbitrary campaign query data must not leave the browser");
   assert(!("anonymous_id" in (returningPayload?.properties ?? {})), "Return telemetry must not contain an anonymous identifier");
 
-  await page.getByText("Volviste.").waitFor();
-  await page.getByText(/Ahora sí puedo comprobar una cosa/).waitFor();
+  await page.getByText("Volviste justo a tiempo.").waitFor();
+  await page.getByText(/La otra vez me quedó claro/).waitFor();
   await assertNoHorizontalOverflow(page, "/experience return");
 
   for (const path of labPaths) {
