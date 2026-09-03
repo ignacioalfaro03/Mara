@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { track } from "@/lib/analytics";
 import { MaraPortrait } from "@/components/mara-presence";
+import { VisualPreferenceChoice, type PoseChoice } from "@/components/visual-preference-choice";
+import { AccountMemoryCta } from "@/components/account-memory-cta";
 
 const STORAGE_KEY = "mara_launch_state_v1";
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -11,6 +13,8 @@ type Step =
   | "intro"
   | "outfit"
   | "outfit_result"
+  | "pose"
+  | "pose_result"
   | "bar"
   | "bar_result"
   | "message"
@@ -33,6 +37,7 @@ type Signals = {
 type LaunchState = {
   signals?: Signals;
   outfitChoice?: "black" | "cream";
+  poseChoice?: PoseChoice;
   barChoice?: "approach" | "wait";
   messageChoice?: "follow" | "challenge";
   returnScene?: "gym" | "story" | "late_plan";
@@ -111,6 +116,9 @@ function callbackLine(state: LaunchState) {
   }
   if (state.barChoice === "approach") {
     return "La primera vez viniste apenas te hice un gesto.";
+  }
+  if (state.poseChoice) {
+    return "La última vez elegiste una foto sin pensarlo tanto como querías aparentar.";
   }
   return "La última vez dejaste una escena a medias conmigo.";
 }
@@ -284,7 +292,7 @@ export function LaunchExperience() {
           >
             Métete.
           </button>
-          <p className="livingDisclosure">Personaje virtual generado con IA · 18+ · Guardo solo un pequeño estado local para continuar si vuelves.</p>
+          <p className="livingDisclosure">Personaje virtual generado con IA · 18+ · Empiezo con memoria local; una cuenta opcional permite conservar elecciones entre dispositivos.</p>
         </div>
       </section>
     );
@@ -318,7 +326,33 @@ export function LaunchExperience() {
               ? "Ya lo tenía puesto. Solo quería saber si coincidíamos."
               : "Iba a decirte que no. Ahora me hiciste cambiar. Qué molesto."}
           </p>
-          <button type="button" className="primaryCta buttonReset" onClick={() => setStep("bar")}>Sigue.</button>
+          <button type="button" className="primaryCta buttonReset" onClick={() => setStep("pose")}>Espera.</button>
+        </div>
+      </section>
+    );
+  }
+
+  if (step === "pose") {
+    return (
+      <VisualPreferenceChoice
+        onChoose={(choice) => {
+          setState((current) => ({ ...current, poseChoice: choice }));
+          setStep("pose_result");
+          track("visual_choice_completed", { surface: "launch_experience" });
+        }}
+      />
+    );
+  }
+
+  if (step === "pose_result") {
+    return (
+      <section className="livingStage">
+        <MaraPortrait compact />
+        <div className="livingCopy">
+          <p className="eyebrow">MARA</p>
+          <h1>{state.poseChoice === "pose_a" ? "La primera. Ya." : "La segunda. Mmm."}</h1>
+          <p className="livingLead">No voy a inventarme una teoría sobre ti por una foto. Pero sí me acuerdo de cuál elegiste.</p>
+          <button type="button" className="primaryCta buttonReset" onClick={() => setStep("bar")}>Ahora sí.</button>
         </div>
       </section>
     );
@@ -424,6 +458,7 @@ export function LaunchExperience() {
         <p className="eyebrow">MARA</p>
         <h1>Después te cuento qué pasó.</h1>
         <p className="livingLead">O no. Depende de cómo vuelva la noche.</p>
+        <AccountMemoryCta />
         <a className="primaryCta" href="/">Salir por ahora</a>
         <button type="button" className="livingReset" onClick={reset}>Borrar mi estado local</button>
       </div>
