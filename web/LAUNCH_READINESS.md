@@ -143,7 +143,57 @@ Measurement contract:
 
 > **CHANNEL DIRECTION > PERSON-LEVEL TRACKING.**
 
-## 4. Automated release gates
+## 4. Zero-cost Day 7 signal report
+
+The launch branch contains a zero-dependency runtime-log parser:
+
+`web/scripts/alpha-signal-report.mjs`
+
+From `web/`:
+
+```bash
+npm run alpha:report -- mara-runtime.log
+```
+
+Pipe mode:
+
+```bash
+cat mara-runtime.log | npm run alpha:report
+```
+
+JSON output:
+
+```bash
+npm run alpha:report -- mara-runtime.log --json
+```
+
+It summarizes only directional Alpha evidence:
+- event counts;
+- coarse `entry_source` counts;
+- return-depth buckets;
+- return-latency buckets;
+- core events by source;
+- completion/start event ratio;
+- return-continuation/return event ratio;
+- prediction hit/result event ratio.
+
+These are event aggregates, not unique-user metrics.
+
+The parser deliberately does not auto-classify product success. Day 7 classification remains a founder evidence decision against:
+
+`docs/launch/alpha-signal-scorecard.md`
+
+Self-test:
+
+```bash
+npm run alpha:report:selftest
+```
+
+`Web Launch CI` must pass the parser self-test before the release candidate is green.
+
+> **AUTOMATE THE COUNTING. NOT THE SELF-DECEPTION.**
+
+## 5. Automated release gates
 
 `Web Launch CI` must be green on the exact branch head intended for deployment.
 
@@ -151,6 +201,7 @@ Required gates:
 - canonical Mara web-asset blob guard;
 - locked install via `npm ci`;
 - production dependency audit;
+- Alpha signal-report parser self-test;
 - DEV-lab production guards;
 - TypeScript;
 - Next production build;
@@ -176,7 +227,7 @@ Terminal smoke success marker:
 
 `MARA_LAUNCH_SMOKE PASS`
 
-## 5. Current external blocker
+## 6. Current external blocker
 
 The release candidate is not currently claimed as deployed.
 
@@ -193,7 +244,7 @@ No production state changed in that failed attempt.
 
 There is no committed `.vercel/project.json`; the deploy job must establish and verify the intended link at runtime from the three existing secrets above.
 
-## 6. Hardened one-shot deployment gate
+## 7. Hardened one-shot deployment gate
 
 Workflow:
 
@@ -234,7 +285,7 @@ Result:
 
 This confirms the production guard remained closed and no deployment was attempted.
 
-## 7. Deployment rule
+## 8. Deployment rule
 
 Deploy only the exact Web/P0 head whose `Web Launch CI` is green.
 
@@ -249,7 +300,7 @@ A deployment becomes launch-verified only after:
 6. canonical Mara asset integrity passes;
 7. attribution/privacy smoke passes.
 
-## 8. Post-deploy verification
+## 9. Post-deploy verification
 
 The one-shot deploy gate performs the production smoke itself.
 
@@ -284,7 +335,7 @@ Canonical local file check from `web/`:
 test "$(git hash-object public/mara/mara-v1-reference.jpg)" = "1c4c4d3615eac915cf42efd9416ed20479eb8126"
 ```
 
-## 9. Launch link convention
+## 10. Launch link convention
 
 Once the public URL is verified, use:
 
@@ -296,7 +347,7 @@ Direct/owned links may omit `src`; they resolve to `direct` for the session when
 
 Do not append free-form campaign tracking merely because conventional marketing stacks do.
 
-## 10. Manual launch sanity check
+## 11. Manual launch sanity check
 
 After automated smoke passes, manually inspect once:
 - mobile Home hierarchy;
@@ -314,7 +365,7 @@ After automated smoke passes, manually inspect once:
 
 A physical-iPhone Safari pass is useful but is not required to pretend current Chromium automation already tested Safari. Keep evidence claims literal.
 
-## 11. What does not block this Alpha
+## 12. What does not block this Alpha
 
 Do not hold the free Alpha for:
 - realtime canonical voice;
@@ -329,7 +380,7 @@ Do not hold the free Alpha for:
 
 Those layers are gated by real user signal and/or separate compliance/commercial decisions.
 
-## 12. Stop conditions
+## 13. Stop conditions
 
 Do not proceed or claim launch completion if:
 - CI is red on the intended head;
@@ -341,11 +392,12 @@ Do not proceed or claim launch completion if:
 - a DEV lab is publicly reachable;
 - telemetry accepts unknown intimate payloads;
 - arbitrary campaign/source strings escape the attribution allowlist;
+- Alpha signal-report self-test fails;
 - a mock commercial state appears public;
 - deployment status is not terminal READY;
 - production smoke fails.
 
-## 13. Merge boundary
+## 14. Merge boundary
 
 Deployment authorization and merge authorization are separate.
 
