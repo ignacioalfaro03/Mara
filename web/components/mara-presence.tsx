@@ -1,31 +1,40 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 const DEFAULT_MARA_IMAGE_URL = "/mara/mara-v1-reference.jpg";
 const DEFAULT_MARA_IMAGE_VERSION = "1c4c4d3";
 const ENV_MARA_IMAGE_URL = process.env.NEXT_PUBLIC_MARA_HERO_IMAGE?.trim();
-const MARA_IMAGE_URL = ENV_MARA_IMAGE_URL || `${DEFAULT_MARA_IMAGE_URL}?v=${DEFAULT_MARA_IMAGE_VERSION}`;
 const MARA_VOICE_URL = process.env.NEXT_PUBLIC_MARA_VOICE_URL?.trim();
+const MAX_IMAGE_ATTEMPTS = 3;
+
+function imageUrlForAttempt(attempt: number) {
+  const base = ENV_MARA_IMAGE_URL || DEFAULT_MARA_IMAGE_URL;
+  const separator = base.includes("?") ? "&" : "?";
+  return `${base}${separator}mara_v=${DEFAULT_MARA_IMAGE_VERSION}&retry=${attempt}`;
+}
 
 function MaraImage({ className, compact = false, label }: { className: string; compact?: boolean; label: string }) {
   const [attempt, setAttempt] = useState(0);
-  const sources = useMemo(() => {
-    if (ENV_MARA_IMAGE_URL) return [ENV_MARA_IMAGE_URL];
-    return [MARA_IMAGE_URL, DEFAULT_MARA_IMAGE_URL];
-  }, []);
-  const failed = attempt >= sources.length;
+  const failed = attempt >= MAX_IMAGE_ATTEMPTS;
 
   if (!failed) {
+    const src = imageUrlForAttempt(attempt);
     return (
       <div className={className} aria-label={label} style={{ padding: 0, overflow: "hidden" }}>
         <img
-          src={sources[attempt]}
+          key={src}
+          src={src}
           alt={label}
-          loading={compact ? "lazy" : "eager"}
+          width={1024}
+          height={1536}
+          loading="eager"
           decoding="async"
           fetchPriority={compact ? "auto" : "high"}
-          onError={() => setAttempt((current) => current + 1)}
+          data-mara-image-attempt={attempt}
+          onError={() => {
+            window.setTimeout(() => setAttempt((current) => current + 1), 250 * (attempt + 1));
+          }}
           style={{
             width: "100%",
             height: "100%",
@@ -40,7 +49,7 @@ function MaraImage({ className, compact = false, label }: { className: string; c
   }
 
   return (
-    <div className={className} aria-label={label}>
+    <div className={className} aria-label={`${label} · imagen temporalmente no disponible`}>
       <span>MARA</span>
     </div>
   );
