@@ -1,1 +1,0 @@
-Issue #5 is stacked on PR #4 because PR #4 contains the current Public Alpha implementation and remains intentionally unmerged. This branch must be reviewed as a delta against `web/mvp-owned-funnel`, not as a replacement for Foundation or Web/P0.
