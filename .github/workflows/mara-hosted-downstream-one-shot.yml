@@ -1,0 +1,142 @@
+name: Mara Hosted Downstream One-Shot
+
+on:
+  push:
+    branches:
+      - qa/hosted-memory-e2e-20260903
+    paths:
+      - ".github/workflows/mara-hosted-downstream-one-shot.yml"
+
+permissions:
+  contents: read
+
+env:
+  PLAYWRIGHT_VERSION: "1.62.1"
+  BASE_URL: "https://mara-vera-9kqan3njy-ignacioalfaz-6766.vercel.app"
+  PR_SHA: "4088783cc0452dec8691569cfa9f32200fe5110a"
+
+jobs:
+  hosted-downstream:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: web
+
+    steps:
+      - name: Checkout exact PR application snapshot
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ env.PR_SHA }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install locked app and ephemeral QA dependencies
+        run: |
+          npm ci --no-audit --no-fund
+          npm install --no-save --no-package-lock --no-audit --no-fund "playwright@${PLAYWRIGHT_VERSION}" bcryptjs
+          npx playwright install --with-deps chromium
+
+      - name: Generate ephemeral QA identity in runner memory
+        shell: bash
+        run: |
+          set -euo pipefail
+          QA_EMAIL="mara.qa.hosted.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}@example.test"
+          QA_PASSWORD="$(openssl rand -hex 24)"
+          QA_USER_ID="$(python - <<'PY'
+          import uuid
+          print(uuid.uuid4())
+          PY
+          )"
+          echo "QA_EMAIL=$QA_EMAIL" >> "$GITHUB_ENV"
+          echo "QA_PASSWORD=$QA_PASSWORD" >> "$GITHUB_ENV"
+          echo "QA_USER_ID=$QA_USER_ID" >> "$GITHUB_ENV"
+          echo "::add-mask::$QA_PASSWORD"
+          export QA_PASSWORD
+          QA_BCRYPT="$(node - <<'NODE'
+          const bcrypt = require('bcryptjs');
+          process.stdout.write(bcrypt.hashSync(process.env.QA_PASSWORD, 10));
+          NODE
+          )"
+          echo "MARA_QA_USER_ID=$QA_USER_ID"
+          echo "MARA_QA_EMAIL=$QA_EMAIL"
+          echo "MARA_QA_BCRYPT=$QA_BCRYPT"
+          echo "MARA_QA_SETUP_STATE=WAITING_FOR_EXTERNAL_DB_PROVISION"
+
+      - name: Wait for isolated QA user provisioning
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in {1..120}; do
+            status=$(curl -sS -o /tmp/signin.json -c /tmp/qa-cookies -w '%{http_code}' \
+              -X POST "$BASE_URL/api/auth/signin" \
+              -H 'Content-Type: application/json' \
+              --data-binary "$(node -e 'process.stdout.write(JSON.stringify({email:process.env.QA_EMAIL,password:process.env.QA_PASSWORD}))')")
+            if [ "$status" = "200" ]; then
+              echo "MARA_QA_SETUP_STATE=READY"
+              curl -sS -o /dev/null -b /tmp/qa-cookies -X POST "$BASE_URL/api/auth/signout" || true
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "QA provisioning was not completed in the allowed window" >&2
+          exit 1
+
+      - name: Generate downstream hosted E2E from authoritative harness
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path('scripts/hosted-memory-e2e.mjs')
+          source = path.read_text()
+          start_marker = '  await pageA.getByRole("link", { name: "Haz que me acuerde" }).waitFor({ timeout: 10000 });'
+          end_marker = '  await pageA.getByText("Volviste.").waitFor({ timeout: 15000 });'
+          start = source.index(start_marker)
+          end = source.index(end_marker, start)
+          replacement = '''  await pageA.getByRole("link", { name: "Haz que me acuerde" }).waitFor({ timeout: 10000 });
+          await pageA.getByRole("link", { name: "Haz que me acuerde" }).click();
+          await pageA.getByText("¿Quieres que me acuerde?").waitFor();
+          await pageA.getByRole("button", { name: "Entrar", exact: true }).click();
+          await pageA.getByLabel("Correo").fill(qaEmail);
+          await pageA.getByLabel("Contraseña").fill(qaPassword);
+          await pageA.getByRole("button", { name: "Seguir", exact: true }).click();
+          await pageA.waitForURL(/\\/experience\\?account=ready/, { timeout: 30000 });
+          console.log("MARA_BROWSER_A_SIGNIN_AFTER_ANONYMOUS PASS");
+
+          '''.replace('          ', '')
+          source = source[:start] + replacement + source[end:]
+          source = source.replace(
+              'assert(anonymousState?.poseChoice === "pose_b", "Anonymous pose_b choice was not kept locally");',
+              'assert(anonymousState?.poseChoice === "pose_b", "Anonymous pose_b choice was not kept locally");\n  console.log("MARA_BROWSER_A_ANONYMOUS pose=pose_b completed=true");'
+          )
+          source = source.replace(
+              'assert(persisted.returnCount === 0, `Initial returnCount expected 0, got ${persisted.returnCount}`);',
+              'assert(persisted.returnCount === 0, `Initial returnCount expected 0, got ${persisted.returnCount}`);\n  console.log(`MARA_BROWSER_A_PERSISTED ${JSON.stringify(persisted)}`);'
+          )
+          source = source.replace(
+              'assert(signedOut?.authenticated === false, "Browser A remained authenticated after signout");',
+              'assert(signedOut?.authenticated === false, "Browser A remained authenticated after signout");\n  console.log("MARA_BROWSER_A_SIGNOUT status=204 authenticated=false");'
+          )
+          source = source.replace(
+              'assert(hydrated.poseChoice === "pose_b", `Browser B expected pose_b, got ${hydrated.poseChoice}`);',
+              'assert(hydrated.poseChoice === "pose_b", `Browser B expected pose_b, got ${hydrated.poseChoice}`);\n  console.log(`MARA_BROWSER_B_HYDRATED ${JSON.stringify({completed:hydrated.completed,poseChoice:hydrated.poseChoice,returnCount:hydrated.returnCount})}`);'
+          )
+          source = source.replace(
+              'assert(afterReturn.returnCount >= 1, "Return count did not increment on Browser B");',
+              'assert(afterReturn.returnCount >= 1, "Return count did not increment on Browser B");\n  console.log(`MARA_BROWSER_B_RETURN ${JSON.stringify(afterReturn)}`);'
+          )
+          source = source.replace(
+              'assert(afterStale.launchCompleted === true, "Stale write reverted launch_completed");',
+              'assert(afterStale.launchCompleted === true, "Stale write reverted launch_completed");\n  console.log(`MARA_BROWSER_C_STALE_PROTECTED ${JSON.stringify(afterStale)}`);'
+          )
+          source = source.replace('  console.log(`MARA_QA_EMAIL=${qaEmail}`);\n', '')
+          generated = Path('scripts/qa-hosted-memory-e2e.generated.mjs')
+          generated.write_text(source)
+
+      - name: Run real hosted Browser A B C
+        run: node scripts/qa-hosted-memory-e2e.generated.mjs
