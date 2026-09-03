@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "canon_status": "template",
+  "as_of": null,
+  "mara": {
+    "current_mood": {
+      "label": null,
+      "intensity": null,
+      "cause": null
+    },
+    "work_state": {
+      "mode": null,
+      "current_focus": null,
+      "energy": null
+    },
+    "social_state": {
+      "recent_people": [],
+      "upcoming_plans": []
+    },
+    "fitness_state": {
+      "last_activity": null,
+      "next_intent": null
+    },
+    "current_location_context": null,
+    "current_interests": [],
+    "recent_events": [],
+    "upcoming_events": [],
+    "open_loops": [],
+    "recent_content": [],
+    "relationship_changes": []
+  },
+  "continuity_checks": {
+    "overdue_open_loops": [],
+    "location_conflicts": [],
+    "timeline_conflicts": [],
+    "new_npcs_pending_review": []
+  }
+}
