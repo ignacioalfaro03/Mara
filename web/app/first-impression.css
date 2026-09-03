@@ -1,0 +1,557 @@
+.momentRail,
+.manifestoSplit,
+.preferenceTeaser,
+.memorySection,
+.lifeSection,
+.closingExperience {
+  width: min(calc(100% - 40px), var(--max));
+  margin-inline: auto;
+}
+
+.momentRail {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  margin-top: 1px;
+  background: var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.momentRail article {
+  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 34px 30px;
+  background: var(--bg);
+}
+
+.momentRail span,
+.behaviorSteps span,
+.preferenceRule span,
+.lifeCards span,
+.maraTimeline span,
+.maraReadCards span,
+.maraBoundariesGrid span,
+.maraReturnMessage > span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.momentRail strong {
+  margin-top: 12px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 28px;
+  font-weight: 400;
+}
+
+.momentRail p,
+.manifestoCopy > p:not(.eyebrow),
+.behaviorSteps p,
+.preferenceCopy > p:not(.eyebrow),
+.preferenceRule p,
+.memoryCopy > p:not(.eyebrow),
+.lifeSectionIntro > p:not(.eyebrow),
+.lifeCards p,
+.closingExperience p,
+.maraToday p,
+.maraCharacterSplit p,
+.maraReadsYou p,
+.maraBoundaries p,
+.maraReturnPreview p {
+  color: var(--muted);
+}
+
+.manifestoSplit {
+  display: grid;
+  grid-template-columns: .9fr 1.1fr;
+  gap: clamp(48px, 8vw, 120px);
+  padding: 130px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.manifestoCopy {
+  align-self: center;
+  max-width: 560px;
+}
+
+.manifestoCopy h2,
+.preferenceCopy h2,
+.memorySection h2,
+.lifeSection h2,
+.closingExperience h2,
+.maraToday h2,
+.maraCharacterSplit h2,
+.maraReadsYou h2,
+.maraBoundaries h2,
+.maraReturnPreview h2 {
+  margin: 12px 0 22px;
+}
+
+.behaviorSteps {
+  border-top: 1px solid var(--line);
+}
+
+.behaviorSteps article {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  gap: 12px 18px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.behaviorSteps strong {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 30px;
+  font-weight: 400;
+}
+
+.behaviorSteps p {
+  grid-column: 2;
+  margin: 0;
+  max-width: 520px;
+}
+
+.preferenceTeaser {
+  display: grid;
+  grid-template-columns: .9fr 1.1fr;
+  gap: clamp(44px, 7vw, 100px);
+  align-items: center;
+  padding: 130px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.preferenceCopy {
+  max-width: 600px;
+}
+
+.preferenceRule {
+  margin-top: 28px;
+  padding: 20px 0;
+  border-top: 1px solid var(--line);
+}
+
+.preferenceRule strong {
+  display: block;
+  margin-top: 8px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 27px;
+  font-weight: 400;
+}
+
+.preferenceRule p {
+  margin: 6px 0 0;
+}
+
+.preferenceRuleMuted {
+  opacity: .72;
+  margin-top: 0;
+}
+
+.posePreview {
+  min-height: 620px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.poseCard {
+  position: relative;
+  min-width: 0;
+  min-height: 620px;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.poseCard::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 52%, rgba(0,0,0,.78));
+  pointer-events: none;
+}
+
+.poseCard img {
+  object-fit: cover;
+  transition: transform .4s ease;
+}
+
+.poseCardA img {
+  object-position: 40% 32%;
+  transform: scale(1.04);
+}
+
+.poseCardB img {
+  object-position: 68% 42%;
+  transform: scale(1.18);
+}
+
+.poseCard figcaption {
+  position: absolute;
+  z-index: 2;
+  left: 18px;
+  right: 18px;
+  bottom: 18px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 17px;
+}
+
+.poseCard figcaption span {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255,255,255,.5);
+  border-radius: 50%;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+}
+
+.memorySection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 620px;
+  border-bottom: 1px solid var(--line);
+}
+
+.memoryScene,
+.memoryCopy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(42px, 7vw, 86px);
+}
+
+.memoryScene {
+  border-right: 1px solid var(--line);
+  background: linear-gradient(150deg, #151310, #0c0c0c 66%);
+}
+
+.memoryMessage {
+  margin-top: 20px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  background: #0b0b0b;
+}
+
+.memoryMessage span {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: .16em;
+  font-weight: 700;
+}
+
+.memoryMessage p {
+  margin: 10px 0 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(22px, 2.4vw, 34px);
+  line-height: 1.16;
+  color: var(--text);
+}
+
+.memoryGuardrail {
+  max-width: 560px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.lifeSection {
+  padding: 130px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.lifeSectionIntro {
+  max-width: 760px;
+  margin-bottom: 56px;
+}
+
+.lifeCards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.lifeCards article {
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 34px;
+  background: var(--bg);
+}
+
+.lifeCards strong {
+  display: block;
+  margin-top: 12px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 29px;
+  line-height: 1.12;
+  font-weight: 400;
+}
+
+.closingExperience {
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 60px;
+  padding: 90px 0;
+}
+
+.closingExperience > div {
+  max-width: 760px;
+}
+
+/* Meet Mara */
+.maraProfilePage {
+  padding-top: 42px;
+}
+
+.maraProfileHero {
+  display: grid;
+  grid-template-columns: .9fr 1.1fr;
+  min-height: 720px;
+  border-bottom: 1px solid var(--line);
+}
+
+.maraProfileVisual {
+  position: relative;
+  min-height: 720px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+
+.maraProfileVisual img {
+  object-fit: cover;
+  object-position: 50% 32%;
+}
+
+.maraProfileCopy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 70px 0 70px clamp(44px, 7vw, 90px);
+}
+
+.maraToday,
+.maraReadsYou,
+.maraBoundaries,
+.maraReturnPreview,
+.maraCharacterSplit {
+  padding: 110px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.maraTodayIntro,
+.maraReadsIntro,
+.maraBoundariesIntro {
+  max-width: 760px;
+  margin-bottom: 52px;
+}
+
+.maraTimeline,
+.maraReadCards,
+.maraBoundariesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.maraTimeline article,
+.maraReadCards article,
+.maraBoundariesGrid article {
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 30px;
+  background: var(--bg);
+}
+
+.maraTimeline strong,
+.maraReadCards strong,
+.maraBoundariesGrid strong {
+  margin-top: 10px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 28px;
+  line-height: 1.13;
+  font-weight: 400;
+}
+
+.maraCharacterSplit {
+  display: grid;
+  grid-template-columns: 1fr .9fr;
+  gap: clamp(50px, 8vw, 120px);
+  align-items: center;
+}
+
+.maraCharacterSplit > div {
+  max-width: 640px;
+}
+
+.maraQuoteBlock {
+  margin: 0;
+  padding: 48px;
+  border-left: 1px solid var(--line);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(34px, 4.4vw, 60px);
+  line-height: 1.05;
+}
+
+.maraReturnPreview {
+  display: grid;
+  grid-template-columns: 1fr .8fr;
+  gap: clamp(50px, 8vw, 110px);
+  align-items: center;
+}
+
+.maraReturnCopy {
+  max-width: 700px;
+}
+
+.maraReturnMessage {
+  padding: 36px;
+  border: 1px solid var(--line);
+  background: linear-gradient(150deg, #171410, #0e0e0e 70%);
+}
+
+.maraReturnMessage strong {
+  display: block;
+  margin-top: 18px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 30px;
+  line-height: 1.15;
+  font-weight: 400;
+}
+
+.maraClosingPanel {
+  width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+@media (max-width: 800px) {
+  .momentRail,
+  .manifestoSplit,
+  .preferenceTeaser,
+  .memorySection,
+  .lifeSection,
+  .closingExperience {
+    width: min(calc(100% - 28px), var(--max));
+  }
+
+  .momentRail,
+  .manifestoSplit,
+  .preferenceTeaser,
+  .memorySection,
+  .maraProfileHero,
+  .maraCharacterSplit,
+  .maraReturnPreview {
+    grid-template-columns: 1fr;
+  }
+
+  .momentRail article {
+    min-height: 190px;
+    padding: 28px 22px;
+  }
+
+  .manifestoSplit,
+  .preferenceTeaser,
+  .lifeSection,
+  .maraToday,
+  .maraReadsYou,
+  .maraBoundaries,
+  .maraReturnPreview,
+  .maraCharacterSplit {
+    padding-top: 78px;
+    padding-bottom: 78px;
+  }
+
+  .posePreview {
+    min-height: 440px;
+    gap: 7px;
+  }
+
+  .poseCard {
+    min-height: 440px;
+  }
+
+  .poseCard figcaption {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    align-items: flex-start;
+    flex-direction: column;
+    font-size: 14px;
+  }
+
+  .memoryScene,
+  .memoryCopy {
+    padding: 52px 22px;
+  }
+
+  .memoryScene {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .lifeCards,
+  .maraTimeline,
+  .maraReadCards,
+  .maraBoundariesGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .lifeCards article,
+  .maraTimeline article,
+  .maraReadCards article,
+  .maraBoundariesGrid article {
+    min-height: 200px;
+    padding: 28px 22px;
+  }
+
+  .closingExperience {
+    min-height: 360px;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+    gap: 26px;
+    padding: 70px 0;
+  }
+
+  .maraProfilePage {
+    padding-top: 22px;
+  }
+
+  .maraProfileHero,
+  .maraProfileVisual {
+    min-height: 0;
+  }
+
+  .maraProfileVisual {
+    height: 58svh;
+  }
+
+  .maraProfileCopy {
+    padding: 48px 0 62px;
+  }
+
+  .maraQuoteBlock {
+    padding: 34px 0 0;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+}
