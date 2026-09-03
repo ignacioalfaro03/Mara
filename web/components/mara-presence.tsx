@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 
-const MARA_IMAGE_URL = process.env.NEXT_PUBLIC_MARA_HERO_IMAGE?.trim();
+const DEFAULT_MARA_IMAGE_URL = "/mara/mara-v1-reference.jpg";
+const MARA_IMAGE_URL = process.env.NEXT_PUBLIC_MARA_HERO_IMAGE?.trim() || DEFAULT_MARA_IMAGE_URL;
 const MARA_VOICE_URL = process.env.NEXT_PUBLIC_MARA_VOICE_URL?.trim();
 
 function MaraImage({ className, compact = false, label }: { className: string; compact?: boolean; label: string }) {
@@ -16,7 +17,14 @@ function MaraImage({ className, compact = false, label }: { className: string; c
           alt={label}
           loading={compact ? "lazy" : "eager"}
           onError={() => setFailed(true)}
-          style={{ width: "100%", height: "100%", minHeight: "inherit", objectFit: "cover", display: "block" }}
+          style={{
+            width: "100%",
+            height: "100%",
+            minHeight: "inherit",
+            objectFit: "cover",
+            objectPosition: compact ? "50% 28%" : "50% 34%",
+            display: "block",
+          }}
         />
       </div>
     );
