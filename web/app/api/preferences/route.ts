@@ -76,6 +76,28 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "preference_persist_failed" }, { status: 502 });
   }
 
+  const relationshipResponse = await fetch(
+    `${config.url}/rest/v1/relationship_state?user_id=eq.${encodeURIComponent(session.user.id)}`,
+    {
+      method: "PATCH",
+      headers: {
+        apikey: config.publishableKey,
+        Authorization: `Bearer ${session.accessToken}`,
+        "Content-Type": "application/json",
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify({
+        last_visual_choice: body.selectedOption,
+        updated_at: new Date().toISOString(),
+      }),
+      cache: "no-store",
+    },
+  );
+
+  if (!relationshipResponse.ok) {
+    return NextResponse.json({ error: "relationship_projection_failed" }, { status: 502 });
+  }
+
   const response = new NextResponse(null, { status: 204 });
   if (session.refreshedSession) setSessionCookies(response, session.refreshedSession);
   return response;
