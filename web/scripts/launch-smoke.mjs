@@ -57,11 +57,20 @@ try {
   await page.getByRole("dialog").waitFor();
   await page.getByRole("dialog").locator("button").first().click();
   await page.getByText("Llegaste justo.").waitFor();
-  await page.getByText(/ya cambié de idea dos veces/).first().waitFor();
+  await page.getByText(/ya cambié de plan dos veces/i).waitFor();
+  await page.getByText("No llegas a una pantalla. Llegas a su día.").waitFor();
   await page.getByText("Prefiero mirar qué haces.").waitFor();
-  await page.getByText("¿Cuál te gusta más?").first().waitFor();
+  await page.getByText("Mara se mueve. Habla. A veces no te explica nada.").waitFor();
   await page.getByText("La gracia empieza cuando no partimos de cero.").waitFor();
+  await page.getByText("No te quedes solo con lo que ve cualquiera.").waitFor();
   await assertMaraImageLoaded(page, "home");
+
+  await page.getByRole("button", { name: "Café. Ahora." }).click();
+  await page.getByText("“Pesado. Ya voy.”").waitFor();
+  const momentChoices = await page.evaluate(() => window.localStorage.getItem("mara_public_moment_choices_v1"));
+  assert(momentChoices, "Home daily moment did not persist a local choice");
+  const parsedMomentChoices = JSON.parse(momentChoices);
+  assert(parsedMomentChoices.some((item) => item.momentId === "morning-coffee" && item.choiceId === "coffee"), "Morning moment choice was not stored literally");
   await assertNoHorizontalOverflow(page, "/");
 
   const meetMara = await page.goto(`${baseUrl}/meet-mara`, { waitUntil: "networkidle" });
@@ -79,8 +88,10 @@ try {
   }
 
   const premiumText = await page.locator("body").innerText();
-  assert(!premiumText.includes("US$9.99"), "Premium route exposes experimental price");
-  assert(!premiumText.toLowerCase().includes("checkout") || premiumText.includes("no hay suscripción ni checkout"), "Premium route suggests an active checkout");
+  assert(!premiumText.includes("US$9.99"), "Private access route exposes experimental price");
+  assert(!premiumText.toLowerCase().includes("checkout"), "Private access route suggests an active checkout");
+  assert(premiumText.includes("No hay cobro activo todavía."), "Private access route must disclose that charging is inactive");
+  await page.getByRole("link", { name: "Quiero quedarme cerca" }).waitFor();
 
   await page.goto(`${baseUrl}/experience`, { waitUntil: "networkidle" });
   await assertNoHorizontalOverflow(page, "/experience");
