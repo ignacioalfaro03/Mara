@@ -1,0 +1,133 @@
+name: Mara Hosted Downstream Artifact One-Shot
+
+on:
+  push:
+    branches:
+      - qa/hosted-memory-e2e-20260903
+    paths:
+      - ".github/workflows/mara-hosted-downstream-artifact-one-shot.yml"
+
+permissions:
+  contents: read
+
+env:
+  PLAYWRIGHT_VERSION: "1.62.1"
+  BASE_URL: "https://mara-vera-9kqan3njy-ignacioalfaz-6766.vercel.app"
+  PR_SHA: "4088783cc0452dec8691569cfa9f32200fe5110a"
+
+jobs:
+  hosted-downstream:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout exact PR application snapshot
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ env.PR_SHA }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: "20"
+
+      - name: Generate ephemeral QA identity and safe provisioning artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          QA_EMAIL="mara.qa.hosted.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}@example.test"
+          QA_PASSWORD="$(openssl rand -hex 24)"
+          QA_USER_ID="$(python - <<'PY'
+          import uuid
+          print(uuid.uuid4())
+          PY
+          )"
+          echo "QA_EMAIL=$QA_EMAIL" >> "$GITHUB_ENV"
+          echo "QA_PASSWORD=$QA_PASSWORD" >> "$GITHUB_ENV"
+          echo "QA_USER_ID=$QA_USER_ID" >> "$GITHUB_ENV"
+          echo "::add-mask::$QA_PASSWORD"
+          mkdir -p /tmp/mara-qa-node
+          npm install --prefix /tmp/mara-qa-node --no-save --no-package-lock --no-audit --no-fund bcryptjs >/dev/null
+          export QA_PASSWORD NODE_PATH=/tmp/mara-qa-node/node_modules
+          QA_BCRYPT="$(node - <<'NODE'
+          const bcrypt = require('/tmp/mara-qa-node/node_modules/bcryptjs');
+          process.stdout.write(bcrypt.hashSync(process.env.QA_PASSWORD, 10));
+          NODE
+          )"
+          python - <<PY
+          import json
+          json.dump({"user_id":"$QA_USER_ID","email":"$QA_EMAIL","bcrypt":"$QA_BCRYPT"}, open('/tmp/mara-qa-provision.json','w'))
+          PY
+
+      - name: Upload safe provisioning artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mara-qa-provision-${{ github.run_id }}
+          path: /tmp/mara-qa-provision.json
+          retention-days: 1
+
+      - name: Wait for isolated QA user provisioning
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in {1..120}; do
+            status=$(curl -sS -o /tmp/signin.json -c /tmp/qa-cookies -w '%{http_code}' \
+              -X POST "$BASE_URL/api/auth/signin" \
+              -H 'Content-Type: application/json' \
+              --data-binary "$(node -e 'process.stdout.write(JSON.stringify({email:process.env.QA_EMAIL,password:process.env.QA_PASSWORD}))')")
+            if [ "$status" = "200" ]; then
+              echo "MARA_QA_SETUP_STATE=READY"
+              curl -sS -o /dev/null -b /tmp/qa-cookies -X POST "$BASE_URL/api/auth/signout" || true
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Install locked app and browser runtime
+        working-directory: web
+        run: |
+          npm ci --no-audit --no-fund
+          npm install --no-save --no-package-lock --no-audit --no-fund "playwright@${PLAYWRIGHT_VERSION}"
+          npx playwright install --with-deps chromium
+
+      - name: Generate downstream hosted E2E from authoritative harness
+        working-directory: web
+        shell: python
+        run: |
+          from pathlib import Path
+          path = Path('scripts/hosted-memory-e2e.mjs')
+          source = path.read_text()
+          start_marker = '  await pageA.getByRole("link", { name: "Haz que me acuerde" }).waitFor({ timeout: 10000 });'
+          end_marker = '  await pageA.getByText("Volviste.").waitFor({ timeout: 15000 });'
+          start = source.index(start_marker)
+          end = source.index(end_marker, start)
+          replacement = '''  await pageA.getByRole("link", { name: "Haz que me acuerde" }).waitFor({ timeout: 10000 });
+          await pageA.getByRole("link", { name: "Haz que me acuerde" }).click();
+          await pageA.getByText("¿Quieres que me acuerde?").waitFor();
+          await pageA.getByRole("button", { name: "Entrar", exact: true }).click();
+          await pageA.getByLabel("Correo").fill(qaEmail);
+          await pageA.getByLabel("Contraseña").fill(qaPassword);
+          await pageA.getByRole("button", { name: "Seguir", exact: true }).click();
+          await pageA.waitForURL(/\\/experience\\?account=ready/, { timeout: 30000 });
+          console.log("MARA_BROWSER_A_SIGNIN_AFTER_ANONYMOUS PASS");
+
+          '''.replace('          ', '')
+          source = source[:start] + replacement + source[end:]
+          replacements = {
+            'assert(anonymousState?.poseChoice === "pose_b", "Anonymous pose_b choice was not kept locally");':'assert(anonymousState?.poseChoice === "pose_b", "Anonymous pose_b choice was not kept locally");\n  console.log("MARA_BROWSER_A_ANONYMOUS pose=pose_b completed=true");',
+            'assert(persisted.returnCount === 0, `Initial returnCount expected 0, got ${persisted.returnCount}`);':'assert(persisted.returnCount === 0, `Initial returnCount expected 0, got ${persisted.returnCount}`);\n  console.log(`MARA_BROWSER_A_PERSISTED ${JSON.stringify(persisted)}`);',
+            'assert(signedOut?.authenticated === false, "Browser A remained authenticated after signout");':'assert(signedOut?.authenticated === false, "Browser A remained authenticated after signout");\n  console.log("MARA_BROWSER_A_SIGNOUT status=204 authenticated=false");',
+            'assert(hydrated.poseChoice === "pose_b", `Browser B expected pose_b, got ${hydrated.poseChoice}`);':'assert(hydrated.poseChoice === "pose_b", `Browser B expected pose_b, got ${hydrated.poseChoice}`);\n  console.log(`MARA_BROWSER_B_HYDRATED ${JSON.stringify({completed:hydrated.completed,poseChoice:hydrated.poseChoice,returnCount:hydrated.returnCount})}`);',
+            'assert(afterReturn.returnCount >= 1, "Return count did not increment on Browser B");':'assert(afterReturn.returnCount >= 1, "Return count did not increment on Browser B");\n  console.log(`MARA_BROWSER_B_RETURN ${JSON.stringify(afterReturn)}`);',
+            'assert(afterStale.launchCompleted === true, "Stale write reverted launch_completed");':'assert(afterStale.launchCompleted === true, "Stale write reverted launch_completed");\n  console.log(`MARA_BROWSER_C_STALE_PROTECTED ${JSON.stringify(afterStale)}`);',
+            '  console.log(`MARA_QA_EMAIL=${qaEmail}`);\n':''
+          }
+          for old,new in replacements.items():
+            if old not in source: raise SystemExit(f'missing source marker: {old[:60]}')
+            source = source.replace(old,new)
+          Path('scripts/qa-hosted-memory-e2e.generated.mjs').write_text(source)
+
+      - name: Run real hosted Browser A B C
+        working-directory: web
+        run: node scripts/qa-hosted-memory-e2e.generated.mjs
