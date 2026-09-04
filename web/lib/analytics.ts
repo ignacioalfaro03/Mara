@@ -98,6 +98,92 @@ export type MaraEvent =
   | "external_media_learning_shown"
   | "ritual_viewed"
   | "ritual_play_intent"
+  | "ritual_completed"
+  | "ritual_completed_simulated"
+  | "ritual_skipped"
+  | "ritual_reward_preference";
+
+export type MaraEventRecord = {
+  event: MaraEvent;
+  properties: Record<string, string | number | boolean>;
+  timestamp: string;
+};
+
+type PublicEntrySource = "ig" | "tt" | "x" | "direct" | "other";
+
+const P0_DEV_LOG_KEY = "mara_p0_event_log";
+const P0_DEV_LOG_LIMIT = 250;
+const PUBLIC_ENTRY_SOURCE_KEY = "mara_public_entry_source_v1";
+const PUBLIC_ENTRY_SOURCES = new Set<PublicEntrySource>(["ig", "tt", "x", "direct", "other"]);
+
+const P0_DEV_LOG_EVENTS = new Set<MaraEvent>([
+  "first_living_experience_started",
+  "playable_onboarding_started",
+  "choice_made",
+  "onboarding_completed",
+  "mara_prediction_shown",
+  "prediction_hit",
+  "prediction_miss",
+  "reveal_confirmed",
+  "reveal_corrected",
+  "experience_recommended",
+  "experience_opened",
+  "voice_played",
+  "voice_completed",
+  "surprise_me_selected",
+  "premium_intent",
+  "open_loop_created",
+  "return_session",
+  "commercial_experiment_assigned",
+  "commercial_moment_shown",
+  "commercial_offer_dismissed",
+  "commercial_post_offer_continued",
+  "commerce_offer_viewed",
+  "commerce_checkout_started",
+  "commerce_checkout_blocked",
+  "commerce_checkout_returned",
+  "commerce_entitlement_unlocked",
+  "commerce_contribution_progress_viewed",
+  "offer_opened",
+  "mock_purchase_completed",
+  "purchase_resume",
+  "reward_delivered",
+  "continuation_opened",
+  "collection_viewed",
+  "collection_item_acquired",
+  "scarcity_offer_viewed",
+  "custom_slot_interest",
+  "voice_upgrade_interest",
+  "wtp_price_assigned",
+  "wtp_price_shown",
+  "wtp_response_yes",
+  "wtp_response_maybe",
+  | "wtp_response_no"
+  | "wtp_post_price_continued"
+  | "capricho_viewed"
+  | "contribution_intent"
+  | "contribution_amount_selected"
+  | "team_selected"
+  | "alias_visibility_selected"
+  | "amount_visibility_selected"
+  | "vote_cast"
+  | "goal_progress_viewed"
+  | "contributor_history_viewed"
+  | "world_asset_reveal_viewed"
+  | "goal_completion_simulated"
+  | "goal_share_intent"
+  | "desire_route_selected"
+  | "desire_surface_plan_viewed"
+  | "desire_route_fit"
+  | "desire_route_correction"
+  | "external_media_recommended"
+  | "external_media_watch_intent"
+  | "external_media_return_simulated"
+  | "external_media_reaction"
+  | "external_media_learning_shown"
+  | "ritual_viewed"
+  | "ritual_play_intent"
+  | "ritual_completed"
   | "ritual_completed_simulated"
   | "ritual_skipped"
   | "ritual_reward_preference";
@@ -182,14 +268,12 @@ const P0_DEV_LOG_EVENTS = new Set<MaraEvent>([
   "external_media_learning_shown",
   "ritual_viewed",
   "ritual_play_intent",
+  "ritual_completed",
   "ritual_completed_simulated",
   "ritual_skipped",
   "ritual_reward_preference",
 ]);
 
-// Only these public-alpha events may leave the browser through the first-party
-// telemetry endpoint. No conversation text, intimate answers, aliases, payment
-// data or user identifiers are accepted by this launch path.
 const PUBLIC_ALPHA_TELEMETRY_EVENTS = new Set<MaraEvent>([
   "page_view",
   "landing_view",
@@ -218,6 +302,7 @@ const PUBLIC_ALPHA_TELEMETRY_EVENTS = new Set<MaraEvent>([
   "signin_completed",
   "ritual_viewed",
   "ritual_play_intent",
+  "ritual_completed",
   "ritual_skipped",
   "commercial_offer_dismissed",
   "commercial_post_offer_continued",
@@ -261,8 +346,6 @@ function publicAlphaProperties(
 ): Record<string, string | number | boolean> {
   if (!PUBLIC_ALPHA_TELEMETRY_EVENTS.has(event)) return properties;
 
-  // Entry attribution is intentionally coarse and session-scoped. We do not
-  // forward arbitrary UTM/campaign strings, referrers, social handles or IDs.
   return {
     ...properties,
     entry_source: publicEntrySource(),
@@ -300,6 +383,16 @@ function sendPublicAlphaTelemetry(record: MaraEventRecord) {
   }
 }
 
+function emit(record: MaraEventRecord) {
+  window.dispatchEvent(new CustomEvent("mara:analytics", { detail: record }));
+  appendDevelopmentEvent(record);
+  sendPublicAlphaTelemetry(record);
+
+  if (process.env.NODE_ENV === "development") {
+    console.info("[mara:analytics]", record.event, record.properties);
+  }
+}
+
 export function readP0DevelopmentEventLog(): MaraEventRecord[] {
   if (typeof window === "undefined" || process.env.NODE_ENV !== "development") return [];
 
@@ -319,17 +412,26 @@ export function clearP0DevelopmentEventLog() {
 export function track(event: MaraEvent, properties: Record<string, string | number | boolean> = {}) {
   if (typeof window === "undefined") return;
 
+  // Legacy DM code used ritual_play_intent at exposure time. Do not let that
+  // become a false public-alpha signal. A future real intent interaction may
+  // emit this event from a different surface.
+  if (event === "ritual_play_intent" && properties.surface === "dm_experience") return;
+
+  const timestamp = new Date().toISOString();
   const detail: MaraEventRecord = {
     event,
     properties: publicAlphaProperties(event, properties),
-    timestamp: new Date().toISOString(),
+    timestamp,
   };
+  emit(detail);
 
-  window.dispatchEvent(new CustomEvent("mara:analytics", { detail }));
-  appendDevelopmentEvent(detail);
-  sendPublicAlphaTelemetry(detail);
-
-  if (process.env.NODE_ENV === "development") {
-    console.info("[mara:analytics]", event, detail.properties);
+  // Normalize the existing concrete ritual completion action into a dedicated
+  // launch metric without duplicating product logic inside the DM component.
+  if (event === "experience_completed" && properties.surface === "dm_ritual") {
+    emit({
+      event: "ritual_completed",
+      properties: publicAlphaProperties("ritual_completed", properties),
+      timestamp,
+    });
   }
 }
