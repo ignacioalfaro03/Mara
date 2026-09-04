@@ -8,7 +8,6 @@ const CORE_EVENTS = [
   "landing_view",
   "hero_cta_click",
   "launch_experience_started",
-  "launch_session_completed",
   "returning_user",
   "launch_return_continued",
   "ritual_viewed",
@@ -49,7 +48,6 @@ function safeRatio(numerator, denominator) {
 function extractTelemetryJson(line) {
   const markerIndex = line.indexOf(MARKER);
   if (markerIndex < 0) return null;
-
   const afterMarker = line.slice(markerIndex + MARKER.length).trim();
   const objectStart = afterMarker.indexOf("{");
   if (objectStart < 0) return null;
@@ -77,7 +75,6 @@ export function buildSignalReport(text) {
   const returnCountBuckets = new Map();
   const returnLatencyBuckets = new Map();
   const sourceCoreEvents = new Map();
-
   let telemetryLines = 0;
   let malformedTelemetryLines = 0;
 
@@ -92,11 +89,9 @@ export function buildSignalReport(text) {
     }
 
     increment(events, record.event);
-
     const properties = record.properties && typeof record.properties === "object"
       ? record.properties
       : {};
-
     const surface = typeof properties.surface === "string" ? properties.surface : "unspecified";
     increment(surfaceEvents, `${surface}:${record.event}`);
 
@@ -104,18 +99,9 @@ export function buildSignalReport(text) {
       ? properties.entry_source
       : "unattributed";
     increment(sources, source);
-
-    if (CORE_EVENTS.includes(record.event)) {
-      increment(sourceCoreEvents, `${source}:${record.event}`);
-    }
-
-    if (typeof properties.return_count_bucket === "string") {
-      increment(returnCountBuckets, properties.return_count_bucket);
-    }
-
-    if (typeof properties.days_since_first_bucket === "string") {
-      increment(returnLatencyBuckets, properties.days_since_first_bucket);
-    }
+    if (CORE_EVENTS.includes(record.event)) increment(sourceCoreEvents, `${source}:${record.event}`);
+    if (typeof properties.return_count_bucket === "string") increment(returnCountBuckets, properties.return_count_bucket);
+    if (typeof properties.days_since_first_bucket === "string") increment(returnLatencyBuckets, properties.days_since_first_bucket);
   }
 
   const count = (event) => events.get(event) ?? 0;
@@ -125,8 +111,6 @@ export function buildSignalReport(text) {
   const homeCtaClicks = countSurface("hero_cta_click", "home");
   const meetMaraViews = countSurface("page_view", "/meet-mara");
   const meetMaraCtaClicks = countSurface("hero_cta_click", "meet_mara");
-  const launchStarts = count("launch_experience_started");
-  const launchCompletions = count("launch_session_completed");
   const ritualViews = count("ritual_viewed");
   const ritualCompletions = count("ritual_completed");
   const ritualSkips = count("ritual_skipped");
@@ -157,7 +141,6 @@ export function buildSignalReport(text) {
     directional_event_ratios: {
       home_cta_clicks_per_landing_view: safeRatio(homeCtaClicks, landingViews),
       meet_mara_cta_clicks_per_view: safeRatio(meetMaraCtaClicks, meetMaraViews),
-      launch_completion_events_per_start_event: safeRatio(launchCompletions, launchStarts),
       ritual_completions_per_view: safeRatio(ritualCompletions, ritualViews),
       ritual_skips_per_view: safeRatio(ritualSkips, ritualViews),
       private_moment_completions_per_start: safeRatio(privateCompletions, privateStarts),
@@ -171,7 +154,7 @@ export function buildSignalReport(text) {
       entitlement_unlocks_per_checkout_start: safeRatio(entitlementUnlocks, checkoutStarts),
     },
     interpretation_warning:
-      "Event aggregates only. Surface segmentation prevents public/DM/ritual events from being misreported as other stages, but these still are not unique users, D1/D3/D7 retention, cohort retention, churn, LTV or unique conversion rates. Use the separate minimal invited-cohort roster for actual return status.",
+      "Event aggregates only. Public events must have a current product producer and founder decision. These are not unique users, D1/D3/D7 retention, cohort retention, churn, LTV or unique conversion rates. Use the separate minimal invited-cohort roster for actual return status.",
   };
 }
 
@@ -183,9 +166,7 @@ function printTable(title, object) {
     return;
   }
   const width = Math.max(...entries.map(([key]) => key.length));
-  for (const [key, value] of entries) {
-    console.log(`  ${key.padEnd(width)}  ${value}`);
-  }
+  for (const [key, value] of entries) console.log(`  ${key.padEnd(width)}  ${value}`);
 }
 
 function printHumanReport(report) {
@@ -194,19 +175,14 @@ function printHumanReport(report) {
   console.log(`Telemetry lines seen: ${report.telemetry_lines_seen}`);
   console.log(`Accepted records:    ${report.accepted_records}`);
   console.log(`Malformed records:   ${report.malformed_records}`);
-
   printTable("Events", report.events);
   printTable("Events by surface", report.events_by_surface);
   printTable("Entry sources", report.entry_sources);
   printTable("Return depth buckets", report.return_count_buckets);
   printTable("Return latency buckets", report.return_latency_buckets);
   printTable("Launch-critical events by source", report.core_events_by_source);
-
   console.log("\nDirectional event ratios (NOT unique-user conversion/retention)");
-  for (const [key, value] of Object.entries(report.directional_event_ratios)) {
-    console.log(`  ${key}: ${value ?? "n/a"}`);
-  }
-
+  for (const [key, value] of Object.entries(report.directional_event_ratios)) console.log(`  ${key}: ${value ?? "n/a"}`);
   console.log(`\nWARNING: ${report.interpretation_warning}`);
   console.log("Founder decision framework: docs/launch/alpha-signal-scorecard.md");
 }
@@ -219,7 +195,6 @@ function selfTest() {
     ["hero_cta_click", { surface: "meet_mara", placement: "top", entry_source: "direct" }],
     ["launch_experience_started", { surface: "dm_experience", entry_source: "ig" }],
     ["experience_started", { surface: "dm_experience", entry_source: "ig" }],
-    ["launch_session_completed", { surface: "dm_experience", entry_source: "ig" }],
     ["ritual_viewed", { surface: "dm_experience", entry_source: "ig" }],
     ["ritual_completed", { surface: "dm_ritual", entry_source: "ig" }],
     ["experience_completed", { surface: "dm_ritual", entry_source: "ig" }],
@@ -248,23 +223,18 @@ function selfTest() {
   const report = buildSignalReport(sample);
   const ratios = report.directional_event_ratios;
   const assertions = [
-    [report.telemetry_lines_seen === 23, "telemetry line count"],
-    [report.accepted_records === 22, "accepted record count"],
+    [report.telemetry_lines_seen === 22, "telemetry line count"],
+    [report.accepted_records === 21, "accepted record count"],
     [report.malformed_records === 1, "malformed record count"],
-    [report.events.experience_started === 2, "raw mixed experience start count"],
-    [report.events.ritual_completed === 1, "real ritual completion event"],
+    [report.events.launch_session_completed === undefined, "dead launch completion event absent"],
     [report.events.ritual_play_intent === undefined, "fake ritual exposure intent absent"],
     [report.events_by_surface["home:hero_cta_click"] === 1, "home CTA surface"],
     [report.events_by_surface["/meet-mara:page_view"] === 1, "Meet Mara page view surface"],
     [report.events_by_surface["meet_mara:hero_cta_click"] === 1, "Meet Mara CTA surface"],
-    [report.events_by_surface["private_moment:experience_started"] === 1, "surface-segmented Private Moment start"],
-    [report.events_by_surface["dm_experience:experience_started"] === 1, "DM start remains separate"],
+    [report.events_by_surface["private_moment:experience_started"] === 1, "Private Moment start"],
     [report.events_by_surface["dm_ritual:ritual_completed"] === 1, "ritual completion surface"],
-    [report.return_count_buckets["1"] === 2, "return bucket"],
-    [report.return_latency_buckets["1-2d"] === 2, "latency bucket"],
     [ratios.home_cta_clicks_per_landing_view === 1, "home CTA ratio"],
     [ratios.meet_mara_cta_clicks_per_view === 1, "Meet Mara CTA ratio"],
-    [ratios.launch_completion_events_per_start_event === 1, "launch completion ratio"],
     [ratios.ritual_completions_per_view === 1, "ritual completion ratio"],
     [ratios.ritual_skips_per_view === 0, "ritual skip ratio"],
     [ratios.private_moment_completions_per_start === 1, "Private Moment completion ratio"],
@@ -284,20 +254,15 @@ function selfTest() {
     process.exitCode = 1;
     return;
   }
-
   console.log("MARA_ALPHA_SIGNAL_REPORT SELF_TEST PASS");
 }
 
 async function readInput(args) {
   const fileArg = args.find((arg) => !arg.startsWith("--"));
   if (fileArg) return fs.readFile(fileArg, "utf8");
-
   if (process.stdin.isTTY) {
-    throw new Error(
-      "Provide a log file path or pipe runtime logs into stdin. Example: node scripts/alpha-signal-report.mjs mara-runtime.log",
-    );
+    throw new Error("Provide a log file path or pipe runtime logs into stdin. Example: node scripts/alpha-signal-report.mjs mara-runtime.log");
   }
-
   let text = "";
   process.stdin.setEncoding("utf8");
   for await (const chunk of process.stdin) text += chunk;
@@ -306,20 +271,16 @@ async function readInput(args) {
 
 async function main() {
   const args = process.argv.slice(2);
-
   if (args.includes("--self-test")) {
     selfTest();
     return;
   }
-
   const text = await readInput(args);
   const report = buildSignalReport(text);
-
   if (args.includes("--json")) {
     console.log(JSON.stringify(report, null, 2));
     return;
   }
-
   printHumanReport(report);
 }
 
