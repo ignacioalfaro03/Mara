@@ -16,11 +16,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          SESSION_ID="$(python - <<'PY'
-import uuid
-print(uuid.uuid4())
-PY
-)"
+          SESSION_ID="$(python -c 'import uuid; print(uuid.uuid4())')"
           TS="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           RESPONSE="$(curl -fsS -X POST 'https://mara-vera-proof-588e39f.vercel.app/api/telemetry' \
             -H 'Content-Type: application/json' \
