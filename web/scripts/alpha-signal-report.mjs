@@ -114,6 +114,7 @@ export function buildSignalReport(text) {
   const ritualViews = count("ritual_viewed");
   const ritualCompletions = count("ritual_completed");
   const ritualSkips = count("ritual_skipped");
+  const continuityCtaClicks = countSurface("hero_cta_click", "dm_continuity");
   const privateStarts = countSurface("experience_started", "private_moment");
   const privateCompletions = countSurface("experience_completed", "private_moment");
   const privatePreferenceSelections = countSurface("preference_selected", "private_moment");
@@ -143,6 +144,7 @@ export function buildSignalReport(text) {
       meet_mara_cta_clicks_per_view: safeRatio(meetMaraCtaClicks, meetMaraViews),
       ritual_completions_per_view: safeRatio(ritualCompletions, ritualViews),
       ritual_skips_per_view: safeRatio(ritualSkips, ritualViews),
+      continuity_cta_clicks_per_ritual_completion: safeRatio(continuityCtaClicks, ritualCompletions),
       private_moment_completions_per_start: safeRatio(privateCompletions, privateStarts),
       preference_selections_per_private_moment_start: safeRatio(privatePreferenceSelections, privateStarts),
       signup_completions_per_start: safeRatio(signupCompletions, signupStarts),
@@ -197,6 +199,7 @@ function selfTest() {
     ["experience_started", { surface: "dm_experience", entry_source: "ig" }],
     ["ritual_viewed", { surface: "dm_experience", entry_source: "ig" }],
     ["ritual_completed", { surface: "dm_ritual", entry_source: "ig" }],
+    ["hero_cta_click", { surface: "dm_continuity", target: "auth", entry_source: "ig" }],
     ["experience_completed", { surface: "dm_ritual", entry_source: "ig" }],
     ["experience_started", { surface: "private_moment", entry_source: "direct" }],
     ["experience_completed", { surface: "private_moment", entry_source: "direct" }],
@@ -223,20 +226,22 @@ function selfTest() {
   const report = buildSignalReport(sample);
   const ratios = report.directional_event_ratios;
   const assertions = [
-    [report.telemetry_lines_seen === 22, "telemetry line count"],
-    [report.accepted_records === 21, "accepted record count"],
+    [report.telemetry_lines_seen === 23, "telemetry line count"],
+    [report.accepted_records === 22, "accepted record count"],
     [report.malformed_records === 1, "malformed record count"],
     [report.events.launch_session_completed === undefined, "dead launch completion event absent"],
     [report.events.ritual_play_intent === undefined, "fake ritual exposure intent absent"],
     [report.events_by_surface["home:hero_cta_click"] === 1, "home CTA surface"],
     [report.events_by_surface["/meet-mara:page_view"] === 1, "Meet Mara page view surface"],
     [report.events_by_surface["meet_mara:hero_cta_click"] === 1, "Meet Mara CTA surface"],
+    [report.events_by_surface["dm_continuity:hero_cta_click"] === 1, "continuity CTA surface"],
     [report.events_by_surface["private_moment:experience_started"] === 1, "Private Moment start"],
     [report.events_by_surface["dm_ritual:ritual_completed"] === 1, "ritual completion surface"],
     [ratios.home_cta_clicks_per_landing_view === 1, "home CTA ratio"],
     [ratios.meet_mara_cta_clicks_per_view === 1, "Meet Mara CTA ratio"],
     [ratios.ritual_completions_per_view === 1, "ritual completion ratio"],
     [ratios.ritual_skips_per_view === 0, "ritual skip ratio"],
+    [ratios.continuity_cta_clicks_per_ritual_completion === 1, "post-value continuity CTA ratio"],
     [ratios.private_moment_completions_per_start === 1, "Private Moment completion ratio"],
     [ratios.preference_selections_per_private_moment_start === 1, "preference ratio"],
     [ratios.signup_completions_per_start === 1, "signup ratio"],
