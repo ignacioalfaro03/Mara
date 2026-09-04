@@ -119,24 +119,17 @@ jobs:
           console.log('MARA_VERCEL_PREVIEW_LINK PASS');
           NODE
 
-      - name: Build Preview candidate
-        if: steps.preflight.outputs.ready == 'true'
-        working-directory: web
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          NEXT_TELEMETRY_DISABLED: "1"
-        run: npx vercel build --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN"
-
-      - name: Deploy exact PR head to Vercel Preview
+      - name: Deploy exact PR head to Vercel Preview with remote build
         if: steps.preflight.outputs.ready == 'true'
         id: deploy
         working-directory: web
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          NEXT_TELEMETRY_DISABLED: "1"
         shell: bash
         run: |
           set -euo pipefail
-          npx vercel deploy --prebuilt --yes --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN" 2>&1 | tee /tmp/mara-preview-deploy.log
+          npx vercel deploy --yes --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN" 2>&1 | tee /tmp/mara-preview-deploy.log
           deployment_url=$(grep -Eo 'https://[^[:space:]]+\.vercel\.app' /tmp/mara-preview-deploy.log | tail -n 1)
           if [ -z "$deployment_url" ]; then
             echo "::error::Vercel CLI did not return a Preview URL"
@@ -191,4 +184,4 @@ jobs:
             echo "PRODUCTION_ALIAS_UNTOUCHED=https://mara-vera.vercel.app"
           fi
 
-# Preview only. No --prod, no production alias movement, no payment activation.
+# Preview only. Remote Vercel build; no --prod, no production alias movement, no payment activation.
