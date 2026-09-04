@@ -9,8 +9,8 @@ permissions:
 
 env:
   PLAYWRIGHT_VERSION: "1.62.1"
-  PRODUCT_SHA: "2d7ea95b29330f15d46c9adda516aa79462f29b4"
-  BASE_URL: "https://mara-vera-proof-2d7ea95.vercel.app"
+  PRODUCT_SHA: "588e39f7fbaec4aa69f33cd3302f1dfcbd032c96"
+  BASE_URL: "https://mara-vera-proof-588e39f.vercel.app"
 
 jobs:
   hosted-current-e2e:
