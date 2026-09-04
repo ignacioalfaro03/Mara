@@ -44,7 +44,7 @@
   margin-bottom: 20px;
 }
 
-.tab, .tabActive, .submit, .back {
+.tab, .tabActive, .submit, .back, .deviceAction {
   appearance: none;
   border: 0;
   border-radius: 999px;
@@ -113,6 +113,36 @@
   color: rgba(245,240,235,.82);
   line-height: 1.45;
   font-size: 14px;
+}
+
+.deviceControls {
+  display: grid;
+  gap: 8px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255,255,255,.09);
+}
+
+.deviceLabel {
+  margin: 0 0 2px;
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(245,240,235,.42);
+}
+
+.deviceAction {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.035);
+  color: rgba(245,240,235,.78);
+  text-align: center;
+}
+
+.deviceAction:disabled {
+  opacity: .45;
+  cursor: wait;
 }
 
 .privacy {

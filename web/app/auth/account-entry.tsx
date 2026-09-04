@@ -1,11 +1,13 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { flushPendingPreferenceEvents } from "@/lib/preference-client";
+import { clearMaraLocalDeviceState } from "@/lib/local-device-state";
 import { track } from "@/lib/analytics";
 import styles from "./auth.module.css";
 
 type Mode = "signup" | "signin";
+type AuthState = "checking" | "authenticated" | "anonymous";
 
 function messageFor(error?: string) {
   switch (error) {
@@ -26,7 +28,26 @@ export function AccountEntry() {
   const [password, setPassword] = useState("");
   const [adultConfirmed, setAdultConfirmed] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [controlBusy, setControlBusy] = useState(false);
+  const [authState, setAuthState] = useState<AuthState>("checking");
   const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    let active = true;
+    void fetch("/api/auth/me", { cache: "no-store", credentials: "same-origin" })
+      .then(async (response) => {
+        const payload = (await response.json().catch(() => ({}))) as { authenticated?: boolean };
+        if (!active) return;
+        setAuthState(payload.authenticated ? "authenticated" : "anonymous");
+      })
+      .catch(() => {
+        if (active) setAuthState("anonymous");
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -69,6 +90,35 @@ export function AccountEntry() {
     }
   }
 
+  function resetDevice() {
+    clearMaraLocalDeviceState();
+    track("launch_state_reset", { surface: "auth" });
+    setMessage("Borré la copia local de Mara en este dispositivo. No borré tu cuenta. Si vuelves a entrar con una cuenta, Mara puede recuperar lo que esa cuenta conserve.");
+  }
+
+  async function signOut() {
+    setControlBusy(true);
+    setMessage("");
+    try {
+      const response = await fetch("/api/auth/signout", {
+        method: "POST",
+        credentials: "same-origin",
+      });
+      if (!response.ok) {
+        setMessage("No pude cerrar la sesión. Inténtalo otra vez.");
+        return;
+      }
+
+      clearMaraLocalDeviceState();
+      setAuthState("anonymous");
+      setMessage("Sesión cerrada y copia local borrada. Tu cuenta no fue eliminada.");
+    } catch {
+      setMessage("No pude cerrar la sesión. Inténtalo otra vez.");
+    } finally {
+      setControlBusy(false);
+    }
+  }
+
   return (
     <main className={styles.shell}>
       <section className={styles.card}>
@@ -108,6 +158,18 @@ export function AccountEntry() {
         </form>
 
         {message ? <p className={styles.message} role="status">{message}</p> : null}
+
+        <section className={styles.deviceControls} aria-label="Control de cuenta y dispositivo">
+          <p className={styles.deviceLabel}>Este dispositivo</p>
+          <button type="button" className={styles.deviceAction} onClick={resetDevice} disabled={controlBusy}>
+            Borrar copia local
+          </button>
+          {authState === "authenticated" ? (
+            <button type="button" className={styles.deviceAction} onClick={() => void signOut()} disabled={controlBusy}>
+              {controlBusy ? "Cerrando…" : "Cerrar sesión"}
+            </button>
+          ) : null}
+        </section>
 
         <p className={styles.privacy}>
           Guardamos elecciones concretas para continuidad. No convertimos una pose, look o respuesta en una etiqueta sobre tu sexualidad, soledad, dependencia o estado emocional.
