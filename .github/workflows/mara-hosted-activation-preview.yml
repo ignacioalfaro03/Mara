@@ -23,6 +23,15 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
+      - name: Upload exact web source snapshot
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: mara-web-source-${{ github.event.pull_request.head.sha }}
+          path: web
+          include-hidden-files: true
+          retention-days: 1
+          compression-level: 0
+
       - name: Check Preview deploy credential
         id: preflight
         env:
