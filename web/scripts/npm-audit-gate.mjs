@@ -2,7 +2,16 @@ import { spawnSync } from "node:child_process";
 
 const ATTEMPTS = 2;
 const ATTEMPT_TIMEOUT_MS = 45_000;
-const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
+const auditCommand =
+  process.platform === "win32"
+    ? {
+        command: process.env.ComSpec || "cmd.exe",
+        args: ["/d", "/s", "/c", "npm audit --omit=dev --audit-level=high --json"],
+      }
+    : {
+        command: "npm",
+        args: ["audit", "--omit=dev", "--audit-level=high", "--json"],
+      };
 
 const SERVICE_ERROR_PATTERNS = [
   /endpoint returned an error/i,
@@ -98,8 +107,8 @@ let lastServiceFailure = "";
 for (let attempt = 1; attempt <= ATTEMPTS; attempt += 1) {
   console.log(`MARA_NPM_AUDIT attempt ${attempt}/${ATTEMPTS}`);
   const result = spawnSync(
-    npmCommand,
-    ["audit", "--omit=dev", "--audit-level=high", "--json"],
+    auditCommand.command,
+    auditCommand.args,
     {
       encoding: "utf8",
       timeout: ATTEMPT_TIMEOUT_MS,

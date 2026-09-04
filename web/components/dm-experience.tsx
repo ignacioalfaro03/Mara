@@ -140,6 +140,12 @@ function PrivateDrop({ onDismiss, onViewed }: { onDismiss: () => void; onViewed:
   async function unlock() {
     if (!payload) return;
     const offer = payload.offers.fixed;
+    track("offer_clicked", {
+      surface: "dm_private_moment",
+      offer_slug: offer.slug,
+      offer_type: offer.type,
+      provider_status: payload.payment.status,
+    });
     if (payload.payment.status !== "configured") {
       setNotice("Todavía no puedo cobrar por esto hasta tener un procesador aprobado.");
       track("commerce_checkout_blocked", {
@@ -231,6 +237,7 @@ export function DmExperience() {
   const [privateDecision, setPrivateDecision] = useState<CommercialDecision | null>(null);
   const [privateOfferDismissed, setPrivateOfferDismissed] = useState(false);
   const privateOfferMarked = useRef(false);
+  const recallEngaged = useRef(false);
   const threadEnd = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -246,6 +253,7 @@ export function DmExperience() {
       setState(next);
       persistState(next);
       track("launch_return_continued", { surface: "dm_experience" });
+      track("memory_recall_rendered", { surface: "dm_experience", memory_source: "local" });
     }
 
     void loadRitualMemory().then((remote) => {
@@ -266,6 +274,7 @@ export function DmExperience() {
           return_count_bucket: "1",
           days_since_first_bucket: "unknown",
         });
+        track("memory_recall_rendered", { surface: "dm_experience", memory_source: "server" });
         return next;
       });
     });
@@ -308,6 +317,7 @@ export function DmExperience() {
 
   function start() {
     mutate({ started: true });
+    track("first_interaction", { surface: "dm_experience", target: "enter" });
     track("mara_entered", { surface: "dm_experience" });
     window.setTimeout(() => {
       mutate({ ritualOffered: true, ritualSkipped: false });
@@ -345,6 +355,10 @@ export function DmExperience() {
     setPrivateOfferDismissed(false);
     privateOfferMarked.current = false;
     setPrivateStage(state.preferredPrivateStyle ?? "choose");
+    if (state.ritualCompletedAt && !recallEngaged.current) {
+      recallEngaged.current = true;
+      track("memory_recall_engaged", { surface: "dm_experience", target: "private_moment" });
+    }
     track("high_intent_session", { surface: "private_moment", intent: "explicit" });
     track("experience_started", { surface: "private_moment" });
   }
@@ -352,7 +366,9 @@ export function DmExperience() {
   function selectPrivateStyle(style: PrivateStyle) {
     mutate({ preferredPrivateStyle: style });
     setPrivateStage(style);
+    track("first_preference_signal", { surface: "private_moment", target: style, preference_group: "private_style_v1" });
     track("preference_selected", { surface: "private_moment", target: style });
+    track("preference_updated", { surface: "private_moment", target: style, preference_group: "private_style_v1" });
   }
 
   async function completePrivateMoment(style: PrivateStyle) {
