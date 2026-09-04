@@ -8,24 +8,19 @@ It is deliberately not a growth dashboard and must not be used to pretend event 
 
 ## Evidence boundary
 
-`MARA_TELEMETRY` is intentionally anonymous. Therefore runtime logs can answer questions such as:
+`MARA_TELEMETRY` is intentionally anonymous. Runtime logs can answer which public entry surfaces produce action, whether users progress through the ritual / Private Moment / offer sequence, whether people continue after declining an offer, and whether checkout intent appears.
 
-- which public entry surfaces produce action;
-- which acquisition sources produce activity;
-- whether users progress through the ritual / Private Moment / offer sequence;
-- whether people continue after declining an offer;
-- whether checkout intent appears.
+Runtime event aggregates **cannot** prove unique users, true D1 / D3 / D7 retention, cohort retention, churn, LTV or per-user purchase propensity.
 
-Runtime event aggregates **cannot** prove:
+Do not add user IDs, emails, conversation text, fantasies, inferred arousal, loneliness, dependency or vulnerability just to make this scorecard easier.
 
-- unique users;
-- true D1 / D3 / D7 retention;
-- cohort retention;
-- churn;
-- LTV;
-- per-user purchase propensity.
+## Telemetry purpose rule
 
-Do not add user IDs, emails, conversation text, fantasies, inferred arousal, loneliness, dependency or vulnerability to telemetry just to make this scorecard easier.
+Every public event must satisfy:
+
+> **event → active product producer → report → founder decision**
+
+If any link is missing, the event does not belong in public launch telemetry. Historical/dev-lab event names may remain available inside development without being accepted by `/api/telemetry`.
 
 ## Two evidence layers
 
@@ -37,74 +32,58 @@ Generate with:
 node web/scripts/alpha-signal-report.mjs mara-runtime.log
 ```
 
-This is the product-behaviour layer.
-
 ### B. Manual invited-cohort roster
 
-For the first 20–50 adults, the founder may keep a **separate minimal operational roster** outside `MARA_TELEMETRY` with only:
+For the first 20–50 adults, keep a separate minimal roster outside `MARA_TELEMETRY` with only:
 
-- alpha participant code (`A01`, `A02`, ...);
+- participant code (`A01`, `A02`, ...);
 - invite date;
 - activated? yes/no;
 - returned by Day 1 / Day 3 / Day 7? yes/no;
 - reached second Private Moment? yes/no;
 - saw a commercial offer? yes/no;
 - started checkout? yes/no;
-- optional one-line product feedback that is not intimate content.
+- optional one-line non-intimate product feedback.
 
-Do **not** store fantasies, sexual conversation, psychological labels or vulnerability notes in this roster.
-
-This manual roster is acceptable for a tiny alpha and is preferred over prematurely building identity-linked analytics.
+Do not store fantasies, sexual conversation, psychological labels or vulnerability notes in this roster.
 
 ---
 
 # Public surface jobs
-
-Every public route must earn its existence.
 
 ## Home
 
 **Job:** turn qualified curiosity into DM entry with a promise the DM actually fulfills.
 
 Review:
-
 - `landing_view`;
 - `hero_cta_click` with `surface=home`;
-- directional `home_cta_clicks_per_landing_view`.
+- `home_cta_clicks_per_landing_view`.
 
-Decision:
-
-- if visitors see Home but do not choose the DM, fix the entry promise/CTA before adding more product;
-- do not repair weak Home activation by adding more lore or more sections.
+If visitors see Home but do not choose the DM, fix the entry promise/CTA before adding more product or lore.
 
 ## Meet Mara
 
 **Job:** convert the visitor who wants context before entering, using only behavior Mara can actually prove.
 
 Review:
-
 - `page_view` with `surface=/meet-mara`;
 - `hero_cta_click` with `surface=meet_mara`;
-- directional `meet_mara_cta_clicks_per_view`.
+- `meet_mara_cta_clicks_per_view`.
 
-Decision:
-
-- if `/meet-mara` repeatedly receives real alpha traffic but does not contribute to DM entry, remove the route rather than expanding it;
-- unsupported current-day lore is not a substitute for a real World State.
+If `/meet-mara` gets real alpha traffic but does not contribute to DM entry, remove the route rather than expanding it.
 
 ## Premium
 
-There is no active public Premium job in the current Alpha. `/premium` is intentionally parked/404. Paid value currently appears only as a concrete contextual entitlement inside the DM. A membership surface returns only when there is a real product contract to sell.
+There is no active public Premium job in the current Alpha. `/premium` is intentionally parked/404. Paid value currently appears only as a concrete contextual entitlement inside the DM.
 
 ---
 
 # Day 1 — Does Mara produce a meaningful first experience?
 
 Review:
-
 - public-surface ratios above;
-- `launch_experience_started`;
-- `launch_session_completed`;
+- `launch_experience_started` as entry evidence only;
 - `ritual_viewed`;
 - `ritual_completed`;
 - `ritual_skipped`;
@@ -113,12 +92,11 @@ Review:
 - `preference_selected`;
 - signup events.
 
-`ritual_completed` is the meaningful ritual participation event. Do not treat ritual exposure as user intent.
+There is deliberately **no synthetic `launch_session_completed` KPI**. The current product already has concrete behavioral completions (`ritual_completed`, surface-segmented `experience_completed`), so manufacturing or preserving an obsolete aggregate would add noise.
 
 Questions:
-
 1. Are qualified visitors choosing to enter after seeing the truthful product promise?
-2. Are they completing the first meaningful interaction?
+2. Do they complete a real first interaction?
 3. Do they understand the ritual without explanation?
 4. Do explicit Private Moments start and complete?
 5. Is the preference choice understandable?
@@ -128,11 +106,11 @@ Questions:
 
 **GO** — people progress naturally through the core flow and no severe usability issue dominates.
 
-**FIX ENTRY** — people see Home/Meet Mara but do not enter; repair the public promise/CTA before changing deeper product behavior.
+**FIX ENTRY** — people see Home/Meet Mara but do not enter.
 
-**FIX CORE FLOW** — people enter but repeatedly stall at the same DM stage; repair that stage before adding product surface.
+**FIX CORE FLOW** — people enter but repeatedly stall at the same DM stage.
 
-**STOP / rethink entry** — people consistently do not understand or value the core experience after obvious usability issues are removed.
+**STOP / rethink entry** — people consistently do not understand or value the core experience after usability issues are removed.
 
 No revenue conclusion on Day 1.
 
@@ -140,39 +118,36 @@ No revenue conclusion on Day 1.
 
 # Day 3 — Does continuity create a reason to return?
 
-Use the manual invited-cohort roster for actual returns. Use anonymous telemetry only as supporting product evidence.
+Use the manual roster for actual returns and anonymous telemetry only as supporting product evidence.
 
 Review:
-
 - `returning_user`;
 - `launch_return_continued`;
 - return-count buckets;
 - return-latency buckets;
 - repeat Private Moment activity;
-- `preference_selected` relative to repeated Private Moment starts (a remembered preference should reduce redundant selection later).
+- `preference_selected` relative to repeated Private Moment starts.
 
 Questions:
-
-1. Did any activated participants return without being chased manually?
+1. Did activated participants return without being chased manually?
 2. Did Mara visibly remember something factual?
-3. Did the second interaction feel different because of memory?
+3. Did the second interaction change because of memory?
 4. Are people reaching a second Private Moment?
-5. Do users describe Mara as a continuing character rather than a one-shot demo?
+5. Do users perceive a continuing character rather than a one-shot demo?
 
 ### Day 3 decision
 
-**GO** — clear voluntary return signal plus successful continuity callbacks.
+**GO** — clear voluntary return plus successful continuity callbacks.
 
 **FIX MEMORY/PACING** — first experience is liked but continuity is weak or repetitive.
 
-**STOP adding features** — if nobody wants to return, do not respond by building World/voice/extra categories blindly. Fix the core relationship loop first.
+**STOP adding features** — if nobody wants to return, fix the relationship loop before World/voice/extra categories.
 
 ---
 
 # Day 7 — Is there a credible business loop?
 
 Review:
-
 - manual D7 return status;
 - second Private Moment reach;
 - `commerce_offer_viewed`;
@@ -181,25 +156,18 @@ Review:
 - `commerce_checkout_started`;
 - `commerce_checkout_blocked`;
 - `commerce_checkout_returned`;
-- `commerce_entitlement_unlocked` when real payments eventually exist.
+- `commerce_entitlement_unlocked` when real payments exist.
 
 Questions:
-
 1. Are some users still returning after a week?
 2. Does Mara preserve the relationship when an offer is declined?
-3. Do offers appear only after enough context rather than on every high-interest moment?
+3. Do offers appear only after enough context?
 4. Does anyone voluntarily start checkout?
-5. Is the offer itself wrong, or is the product relationship too weak to support payment?
+5. Is the offer wrong, or is relationship depth too weak to support payment?
 
 ### Day 7 decision
 
-**GO TO FIRST-REVENUE WORK** when:
-
-- there is real voluntary return from the invited cohort;
-- continuity is perceptible;
-- at least some users reach repeat/private depth;
-- commercial offers do not destroy continuation;
-- there is credible willingness-to-pay signal.
+**GO TO FIRST-REVENUE WORK** when there is real voluntary return, perceptible continuity, repeat/private depth, relationship preservation after offers, and credible willingness-to-pay signal.
 
 **FIX OFFER** when people return and deepen the relationship but consistently reject the current concrete unlock.
 
@@ -215,7 +183,6 @@ The report prints these as **event ratios only**:
 
 - Home CTA clicks / landing views;
 - Meet Mara CTA clicks / Meet Mara page views;
-- completion events / launch start events;
 - ritual completions / ritual views;
 - ritual skips / ritual views;
 - Private Moment completions / Private Moment starts;
@@ -228,13 +195,11 @@ The report prints these as **event ratios only**:
 - checkout blocks / checkout starts;
 - entitlements / checkout starts.
 
-They are useful for detecting broken stages and major directional changes. They are **not unique-user conversion rates**.
+They detect broken stages and directional change. They are **not unique-user conversion rates**.
 
 ---
 
 # Private Alpha founder readout
-
-At each checkpoint, write only:
 
 ## Cohort
 - invited:
@@ -271,6 +236,4 @@ The Private Alpha exists to answer:
 
 > **Do adults enter Mara, feel continuity, voluntarily return, deepen the relationship and eventually show willingness to pay?**
 
-Do not optimize the scorecard to make Mara look successful.
-
-Use it to find the truth quickly.
+Do not optimize the scorecard to make Mara look successful. Use it to find the truth quickly.
