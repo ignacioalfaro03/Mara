@@ -56,6 +56,10 @@ jobs:
           npm install --no-save --no-package-lock --no-audit --no-fund "playwright@${PLAYWRIGHT_VERSION}"
           npx playwright install --with-deps chromium
 
+      - name: Restore QA harness inside package scope
+        shell: bash
+        run: cp /tmp/hosted-current-e2e.mjs web/.hosted-current-e2e.mjs
+
       - name: Run hosted Browser A/B + isolation proof
         working-directory: web
         shell: bash
@@ -67,7 +71,7 @@ jobs:
           export QA_PASSWORD_B="$(openssl rand -hex 18)"
           echo "::add-mask::$QA_PASSWORD_A"
           echo "::add-mask::$QA_PASSWORD_B"
-          node /tmp/hosted-current-e2e.mjs
+          node .hosted-current-e2e.mjs
 
       - name: State proof boundary
         if: always()
