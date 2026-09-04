@@ -28,6 +28,7 @@ const ALLOWED_EVENTS = new Set([
   "signin_completed",
   "ritual_viewed",
   "ritual_play_intent",
+  "ritual_completed",
   "ritual_skipped",
   "commercial_offer_dismissed",
   "commercial_post_offer_continued",
