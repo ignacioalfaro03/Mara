@@ -77,6 +77,8 @@ try {
   if (!memoryHealthBody.configured) {
     const ritualRead = await context.request.get(`${baseUrl}/api/relationship/ritual`);
     assert(ritualRead.status() === 503, `Backendless ritual read should return 503, got ${ritualRead.status()}`);
+    const privateMomentRead = await context.request.get(`${baseUrl}/api/relationship/private-moment`);
+    assert(privateMomentRead.status() === 503, `Backendless private moment read should return 503, got ${privateMomentRead.status()}`);
   }
 
   const home = await page.goto(`${baseUrl}/?src=ig&campaign=must-not-leak`, { waitUntil: "networkidle" });
@@ -114,18 +116,43 @@ try {
   await passAgeGate(page);
   await page.getByText("Volviste.").waitFor();
   await page.getByText(/me acuerdo de la hamburguesa, las papas y el chocolate/).waitFor();
+  assert(await page.getByTestId("dm-private-drop").count() === 0, "Return callback must not auto-open commerce anymore");
+
+  // First explicit private moment: free value first, no offer.
+  await page.getByRole("button", { name: "Hoy manda tú" }).click();
+  await page.getByText(/no vas a navegar un catálogo/).waitFor();
+  await page.getByRole("button", { name: "Directo" }).click();
+  await page.getByText("Bien. Directo.").waitFor();
+  await page.getByRole("button", { name: "Ya" }).click();
+  await page.getByText("Ya. Por hoy queda ahí.").waitFor();
+  assert(await page.getByTestId("dm-private-drop").count() === 0, "First private moment must keep commerce closed");
+
+  const firstPrivateState = await page.evaluate(() => JSON.parse(window.localStorage.getItem("mara_dm_state_v1") || "{}"));
+  assert(firstPrivateState.preferredPrivateStyle === "direct", "Explicit private style was not stored locally");
+  assert(firstPrivateState.privateSessionCount === 1, `Expected first private session count=1, got ${firstPrivateState.privateSessionCount}`);
+
+  // A later visit is the second private moment: persisted preference is reused and commerce can become eligible.
+  await page.reload({ waitUntil: "networkidle" });
+  await passAgeGate(page);
+  await page.getByRole("button", { name: "Hoy manda tú" }).waitFor();
+  await page.getByRole("button", { name: "Hoy manda tú" }).click();
+  await page.getByText(/Ya sé que prefieres que vaya directo/).waitFor();
+  await page.getByRole("button", { name: "Ya" }).click();
+  await page.getByText("Esta vez sí te dejé algo aparte.").waitFor();
   await page.getByTestId("dm-private-drop").waitFor();
   await page.getByText("Nota privada de la noche").waitFor();
   await page.getByText(/\$4\.99/).waitFor();
+
+  const secondPrivateState = await page.evaluate(() => JSON.parse(window.localStorage.getItem("mara_dm_state_v1") || "{}"));
+  assert(secondPrivateState.privateSessionCount === 2, `Expected second private session count=2, got ${secondPrivateState.privateSessionCount}`);
+  assert(typeof secondPrivateState.lastPrivateOfferAt === "string", "Offer view must create a local cooldown timestamp");
+
   await page.getByRole("button", { name: "Ahora no" }).click();
-  await page.getByText("Está bien. Seguimos hablando igual.").waitFor();
-  await assertNoHorizontalOverflow(page, "/experience return");
+  await page.getByText("No pasa nada. Seguimos igual.").waitFor();
+  await assertNoHorizontalOverflow(page, "/experience private moment");
 
-  const localAfterDismiss = await page.evaluate(() => JSON.parse(window.localStorage.getItem("mara_dm_state_v1") || "{}"));
-  assert(localAfterDismiss.dropDismissed === true, "Declining the private drop must persist without freezing the conversation");
-
-  // Simulate a clean second device whose authenticated server memory already contains the ritual completion.
-  // No intimate text is transported: the contract contains only a fixed ritual key + completion timestamp.
+  // Simulate a clean second device with authenticated server-backed ritual + private preference memory.
+  // This remains contract proof, not real hosted Supabase proof.
   const remoteContext = await browser.newContext(contextOptions);
   await remoteContext.route("**/api/relationship/ritual", async (route) => {
     const request = route.request();
@@ -144,14 +171,42 @@ try {
     }
     await route.fulfill({ status: 204, body: "" });
   });
+  await remoteContext.route("**/api/relationship/private-moment", async (route) => {
+    const request = route.request();
+    if (request.method() === "GET") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          privateMoment: {
+            preferredStyle: "slow",
+            sessionCount: 2,
+            lastSessionAt: "2026-09-03T20:30:00.000Z",
+            lastOfferAt: null,
+            commercial: { decision: "offer_now", reason: "repeat_session_context" },
+          },
+        }),
+      });
+      return;
+    }
+    await route.fulfill({ status: 204, contentType: "application/json", body: "{}" });
+  });
 
   const remotePage = await remoteContext.newPage();
   await remotePage.goto(`${baseUrl}/experience`, { waitUntil: "domcontentloaded" });
   await passAgeGate(remotePage);
   await remotePage.getByText("Volviste.").waitFor();
-  await remotePage.getByText(/me acuerdo de la hamburguesa, las papas y el chocolate/).waitFor();
+  await remotePage.waitForFunction(() => {
+    const raw = window.localStorage.getItem("mara_dm_state_v1");
+    if (!raw) return false;
+    return JSON.parse(raw).preferredPrivateStyle === "slow";
+  });
+  await remotePage.getByRole("button", { name: "Hoy manda tú" }).click();
+  await remotePage.getByText(/Ya sé que prefieres ir con calma/).waitFor();
   const remoteState = await remotePage.evaluate(() => JSON.parse(window.localStorage.getItem("mara_dm_state_v1") || "{}"));
   assert(remoteState.ritualCompletedAt === "2026-09-03T20:00:00.000Z", "Remote ritual memory did not hydrate into the DM cache");
+  assert(remoteState.preferredPrivateStyle === "slow", "Remote private preference did not hydrate into the DM cache");
+  assert(remoteState.privateSessionCount === 2, "Remote private session count did not hydrate into the DM cache");
   await remoteContext.close();
 
   for (const path of labPaths) {

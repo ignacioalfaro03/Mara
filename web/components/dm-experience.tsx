@@ -3,12 +3,20 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { track } from "@/lib/analytics";
 import { formatMinorAmount, type CommerceOffer } from "@/lib/commerce/catalog";
+import {
+  completePrivateMomentMemory,
+  loadPrivateMomentMemory,
+  markPrivateOfferShown,
+  type CommercialDecision,
+  type PrivateStyle,
+} from "@/lib/private-moment-client";
 import { completeRitualMemory, LAUNCH_RITUAL_KEY, loadRitualMemory } from "@/lib/ritual-client";
 import styles from "./dm-experience.module.css";
 
 const STORAGE_KEY = "mara_dm_state_v1";
 const CHECKOUT_REQUEST_KEY = "mara_dm_checkout_request_v1";
 const PRIVATE_NOTE_ENTITLEMENT = "private_after_scene_note_v1";
+const OFFER_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 
 type DmState = {
   started?: boolean;
@@ -17,7 +25,13 @@ type DmState = {
   ritualSkipped?: boolean;
   callbackSeen?: boolean;
   dropDismissed?: boolean;
+  preferredPrivateStyle?: PrivateStyle;
+  privateSessionCount?: number;
+  lastPrivateSessionAt?: string;
+  lastPrivateOfferAt?: string;
 };
+
+type PrivateStage = "idle" | "choose" | "direct" | "slow" | "done";
 
 type EphemeralMessage = {
   id: string;
@@ -50,8 +64,15 @@ function persistState(next: DmState) {
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
   } catch {
-    // Local continuity is best effort; authenticated ritual memory remains server-backed.
+    // Local continuity is best effort; authenticated relationship memory remains server-backed.
   }
+}
+
+function localCommercialDecision(sessionCount: number, lastOfferAt?: string): CommercialDecision {
+  if (sessionCount < 2) return "closed";
+  const parsedLastOffer = lastOfferAt ? Date.parse(lastOfferAt) : Number.NaN;
+  if (Number.isFinite(parsedLastOffer) && Date.now() - parsedLastOffer < OFFER_COOLDOWN_MS) return "closed";
+  return "offer_now";
 }
 
 function checkoutRequestId() {
@@ -74,7 +95,7 @@ function Bubble({ from, children }: { from: "mara" | "user"; children: React.Rea
   );
 }
 
-function PrivateDrop({ onDismiss }: { onDismiss: () => void }) {
+function PrivateDrop({ onDismiss, onViewed }: { onDismiss: () => void; onViewed: () => void }) {
   const [payload, setPayload] = useState<CommercePayload | null>(null);
   const [unlocked, setUnlocked] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -106,13 +127,14 @@ function PrivateDrop({ onDismiss }: { onDismiss: () => void }) {
   useEffect(() => {
     if (!payload || viewed.current) return;
     viewed.current = true;
+    onViewed();
     track("commerce_offer_viewed", {
-      surface: "dm_private_drop",
+      surface: "dm_private_moment",
       offer_slug: payload.offers.fixed.slug,
       offer_type: payload.offers.fixed.type,
       provider_status: payload.payment.status,
     });
-  }, [payload]);
+  }, [onViewed, payload]);
 
   async function unlock() {
     if (!payload) return;
@@ -120,7 +142,7 @@ function PrivateDrop({ onDismiss }: { onDismiss: () => void }) {
     if (payload.payment.status !== "configured") {
       setNotice("Todavía no puedo cobrar por esto hasta tener un procesador aprobado.");
       track("commerce_checkout_blocked", {
-        surface: "dm_private_drop",
+        surface: "dm_private_moment",
         offer_slug: offer.slug,
         offer_type: offer.type,
         provider_status: payload.payment.status,
@@ -131,7 +153,7 @@ function PrivateDrop({ onDismiss }: { onDismiss: () => void }) {
     setBusy(true);
     setNotice("");
     track("commerce_checkout_started", {
-      surface: "dm_private_drop",
+      surface: "dm_private_moment",
       offer_slug: offer.slug,
       offer_type: offer.type,
       amount_bucket: "under_5",
@@ -204,6 +226,10 @@ export function DmExperience() {
   const [draft, setDraft] = useState("");
   const [ephemeral, setEphemeral] = useState<EphemeralMessage[]>([]);
   const [typing, setTyping] = useState(false);
+  const [privateStage, setPrivateStage] = useState<PrivateStage>("idle");
+  const [privateDecision, setPrivateDecision] = useState<CommercialDecision | null>(null);
+  const [privateOfferDismissed, setPrivateOfferDismissed] = useState(false);
+  const privateOfferMarked = useRef(false);
   const threadEnd = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -242,11 +268,26 @@ export function DmExperience() {
         return next;
       });
     });
+
+    void loadPrivateMomentMemory().then((remote) => {
+      if (!remote) return;
+      setState((current) => {
+        const next: DmState = {
+          ...current,
+          preferredPrivateStyle: remote.preferredStyle ?? current.preferredPrivateStyle,
+          privateSessionCount: Math.max(current.privateSessionCount ?? 0, remote.sessionCount),
+          lastPrivateSessionAt: remote.lastSessionAt ?? current.lastPrivateSessionAt,
+          lastPrivateOfferAt: remote.lastOfferAt ?? current.lastPrivateOfferAt,
+        };
+        persistState(next);
+        return next;
+      });
+    });
   }, []);
 
   useEffect(() => {
     threadEnd.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [state, ephemeral, showCallback, typing]);
+  }, [state, ephemeral, showCallback, typing, privateStage, privateDecision, privateOfferDismissed]);
 
   const phase = useMemo(() => {
     if (!state.started) return "intro";
@@ -289,9 +330,63 @@ export function DmExperience() {
     track("ritual_skipped", { surface: "dm_experience", target: LAUNCH_RITUAL_KEY });
   }
 
-  function dismissDrop() {
-    mutate({ dropDismissed: true });
-    track("commercial_offer_dismissed", { surface: "dm_private_drop" });
+  function beginPrivateMoment() {
+    setPrivateDecision(null);
+    setPrivateOfferDismissed(false);
+    privateOfferMarked.current = false;
+    setPrivateStage(state.preferredPrivateStyle ?? "choose");
+    track("high_intent_session", { surface: "private_moment", intent: "explicit" });
+  }
+
+  function selectPrivateStyle(style: PrivateStyle) {
+    mutate({ preferredPrivateStyle: style });
+    setPrivateStage(style);
+    track("preference_selected", { surface: "private_moment", target: style });
+  }
+
+  async function completePrivateMoment(style: PrivateStyle) {
+    const completedAt = new Date().toISOString();
+    const localCount = (state.privateSessionCount ?? 0) + 1;
+    mutate({
+      preferredPrivateStyle: style,
+      privateSessionCount: localCount,
+      lastPrivateSessionAt: completedAt,
+    });
+    setPrivateStage("done");
+    setPrivateDecision(null);
+    track("experience_completed", { surface: "private_moment", target: style });
+
+    const remote = await completePrivateMomentMemory(style);
+    if (remote) {
+      mutate({
+        preferredPrivateStyle: remote.preferredStyle ?? style,
+        privateSessionCount: Math.max(localCount, remote.sessionCount),
+        lastPrivateSessionAt: remote.lastSessionAt ?? completedAt,
+        lastPrivateOfferAt: remote.lastOfferAt ?? state.lastPrivateOfferAt,
+      });
+      setPrivateDecision(remote.commercial.decision);
+      return;
+    }
+
+    setPrivateDecision(localCommercialDecision(localCount, state.lastPrivateOfferAt));
+  }
+
+  function markOfferViewed() {
+    if (privateOfferMarked.current) return;
+    privateOfferMarked.current = true;
+    const shownAt = new Date().toISOString();
+    mutate({ lastPrivateOfferAt: shownAt });
+    track("commercial_moment_shown", { surface: "private_moment", decision: "offer_now" });
+    void markPrivateOfferShown().then((remote) => {
+      if (!remote) return;
+      mutate({ lastPrivateOfferAt: remote.lastOfferAt ?? shownAt });
+    });
+  }
+
+  function dismissPrivateDrop() {
+    setPrivateOfferDismissed(true);
+    track("commercial_offer_dismissed", { surface: "dm_private_moment" });
+    track("commercial_post_offer_continued", { surface: "dm_private_moment" });
   }
 
   function appendMessage(from: "user" | "mara", text: string) {
@@ -304,6 +399,24 @@ export function DmExperience() {
     if (!text) return;
     setDraft("");
     appendMessage("user", text);
+
+    if (privateStage === "choose" && /\b(directo|directa|r[aá]pido|al grano)\b/i.test(text)) {
+      selectPrivateStyle("direct");
+      return;
+    }
+    if (privateStage === "choose" && /\b(espera|lento|lenta|calma)\b/i.test(text)) {
+      selectPrivateStyle("slow");
+      return;
+    }
+    if ((privateStage === "direct" || privateStage === "slow") && /\b(ya|listo|lista|hecho)\b/i.test(text)) {
+      void completePrivateMoment(privateStage);
+      return;
+    }
+
+    if ((phase === "completed" || phase === "skipped") && /\b(manda t[uú]|momento privado|algo privado|estoy solo|estoy caliente|quiero algo)\b/i.test(text)) {
+      beginPrivateMoment();
+      return;
+    }
 
     if (phase === "ritual" && /\b(hecho|listo|ya|compr[eé]|com[ií])\b/i.test(text)) {
       completeRitual();
@@ -321,14 +434,16 @@ export function DmExperience() {
         "mara",
         phase === "ritual"
           ? "Después vuelvo a eso. Primero hazme caso con la cita de hoy."
-          : phase === "completed"
-            ? "Mmm. Eso me lo guardo para después."
+          : phase === "completed" || phase === "skipped"
+            ? "Te leí. Si quieres que mande yo, dímelo así."
             : "Te leí. Entra primero; después hablamos.",
       );
     }, 520);
   }
 
   if (!hydrated) return null;
+
+  const isRepeatPrivateMoment = (state.privateSessionCount ?? 0) > 0;
 
   return (
     <section className={styles.shell} aria-label="Chat privado con Mara">
@@ -364,9 +479,7 @@ export function DmExperience() {
           </div>
         ) : null}
 
-        {phase !== "intro" ? (
-          <Bubble from="mara">Hoy mando yo un poco.</Bubble>
-        ) : null}
+        {phase !== "intro" ? <Bubble from="mara">Hoy mando yo un poco.</Bubble> : null}
 
         {phase === "started" ? <div className={styles.typing}><i /><i /><i /></div> : null}
 
@@ -397,15 +510,61 @@ export function DmExperience() {
           </>
         ) : null}
 
-        {showCallback && phase === "completed" && !state.dropDismissed ? (
+        {(phase === "completed" || phase === "skipped") && privateStage === "idle" ? (
+          <div className={styles.inlineActions}>
+            <button type="button" onClick={beginPrivateMoment}>Hoy manda tú</button>
+          </div>
+        ) : null}
+
+        {privateStage === "choose" ? (
           <>
-            <Bubble from="mara">Y te dejé algo de esa noche. Esto sí es aparte.</Bubble>
-            <PrivateDrop onDismiss={dismissDrop} />
+            <Bubble from="mara">Ven. Si quieres un momento privado, no vas a navegar un catálogo.</Bubble>
+            <Bubble from="mara">¿Voy directo o te hago esperar un poco?</Bubble>
+            <div className={styles.inlineActions}>
+              <button type="button" onClick={() => selectPrivateStyle("direct")}>Directo</button>
+              <button type="button" className={styles.secondaryAction} onClick={() => selectPrivateStyle("slow")}>Hazme esperar</button>
+            </div>
           </>
         ) : null}
 
-        {showCallback && state.dropDismissed ? (
-          <Bubble from="mara">Está bien. Seguimos hablando igual.</Bubble>
+        {privateStage === "direct" ? (
+          <>
+            <Bubble from="mara">{isRepeatPrivateMoment ? "Ya sé que prefieres que vaya directo. No te hago elegir otra vez." : "Bien. Directo."}</Bubble>
+            <Bubble from="mara">Quédate aquí un minuto. Yo marco el ritmo y después seguimos como si nada.</Bubble>
+            <div className={styles.inlineActions}>
+              <button type="button" onClick={() => void completePrivateMoment("direct")}>Ya</button>
+            </div>
+          </>
+        ) : null}
+
+        {privateStage === "slow" ? (
+          <>
+            <Bubble from="mara">{isRepeatPrivateMoment ? "Ya sé que prefieres ir con calma. No te hago elegir otra vez." : "Entonces no te doy todo de una."}</Bubble>
+            <Bubble from="mara">Quédate un rato y deja que yo marque el ritmo.</Bubble>
+            <div className={styles.inlineActions}>
+              <button type="button" onClick={() => void completePrivateMoment("slow")}>Listo</button>
+            </div>
+          </>
+        ) : null}
+
+        {privateStage === "done" && privateDecision === null ? <div className={styles.typing}><i /><i /><i /></div> : null}
+
+        {privateStage === "done" && privateDecision === "closed" ? (
+          <>
+            <Bubble from="mara">Ya. Por hoy queda ahí.</Bubble>
+            <Bubble from="mara">No necesito convertir cada momento contigo en una venta.</Bubble>
+          </>
+        ) : null}
+
+        {privateStage === "done" && privateDecision === "offer_now" && !privateOfferDismissed ? (
+          <>
+            <Bubble from="mara">Esta vez sí te dejé algo aparte.</Bubble>
+            <PrivateDrop onDismiss={dismissPrivateDrop} onViewed={markOfferViewed} />
+          </>
+        ) : null}
+
+        {privateStage === "done" && privateOfferDismissed ? (
+          <Bubble from="mara">No pasa nada. Seguimos igual.</Bubble>
         ) : null}
 
         {ephemeral.map((message) => (
