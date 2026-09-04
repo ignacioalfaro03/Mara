@@ -1,0 +1,30 @@
+name: Mara Proof Telemetry Probe
+
+on:
+  push:
+    branches: [ops/telemetry-proof-bootstrap]
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: POST telemetry to isolated proof alias
+        shell: bash
+        run: |
+          set -euo pipefail
+          SESSION_ID="$(python - <<'PY'
+import uuid
+print(uuid.uuid4())
+PY
+)"
+          TS="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          RESPONSE="$(curl -fsS -X POST 'https://mara-vera-proof-588e39f.vercel.app/api/telemetry' \
+            -H 'Content-Type: application/json' \
+            --data "{\"event\":\"page_view\",\"properties\":{\"surface\":\"/qa-telemetry-proof\",\"entry_source\":\"direct\"},\"timestamp\":\"$TS\",\"sessionId\":\"$SESSION_ID\"}")"
+          echo "MARA_TELEMETRY_RESPONSE=$RESPONSE"
+          printf '%s' "$RESPONSE" | jq -e '.ok == true and .persisted == true' >/dev/null
+          echo "MARA_TELEMETRY_PERSISTENCE=PASS"
