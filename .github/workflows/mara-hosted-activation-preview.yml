@@ -9,6 +9,8 @@ permissions:
 
 env:
   VERCEL_CLI_VERSION: "59.11.1"
+  VERCEL_ORG_ID: "team_KAPFjrSQT78GUeQyGZCdQRdz"
+  VERCEL_PROJECT_ID: "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK"
 
 jobs:
   preview:
@@ -21,28 +23,20 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: Check Preview deploy credentials
+      - name: Check Preview deploy credential
         id: preflight
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         shell: bash
         run: |
           set -euo pipefail
-          missing=0
-          for name in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
-            if [ -z "${!name}" ]; then
-              echo "::notice::Preview deploy blocked: missing GitHub Secret $name"
-              missing=1
-            fi
-          done
-          if [ "$missing" -eq 0 ]; then
+          if [ -n "$VERCEL_TOKEN" ]; then
             echo "ready=true" >> "$GITHUB_OUTPUT"
             echo "MARA_PREVIEW_DEPLOY_READY=true"
           else
+            echo "::notice::Preview deploy blocked: missing GitHub Secret VERCEL_TOKEN"
             echo "ready=false" >> "$GITHUB_OUTPUT"
-            echo "MARA_PREVIEW_DEPLOY_BLOCKED=missing_vercel_credentials"
+            echo "MARA_PREVIEW_DEPLOY_BLOCKED=missing_vercel_token"
           fi
 
       - name: Verify exact PR head
@@ -86,8 +80,6 @@ jobs:
         working-directory: web
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         shell: bash
         run: |
           set -euo pipefail
@@ -147,7 +139,9 @@ jobs:
             echo "MARA_HOSTED_PREVIEW_SHA=${{ github.event.pull_request.head.sha }}"
             echo "PRODUCTION_ALIAS_UNTOUCHED=https://mara-vera.vercel.app"
           else
-            echo "MARA_HOSTED_PREVIEW_BLOCKED=Add VERCEL_TOKEN, VERCEL_ORG_ID and VERCEL_PROJECT_ID as GitHub Actions secrets, then rerun this job."
+            echo "MARA_HOSTED_PREVIEW_BLOCKED=Add only VERCEL_TOKEN as a GitHub Actions secret, then rerun this job."
+            echo "VERCEL_ORG_ID=$VERCEL_ORG_ID"
+            echo "VERCEL_PROJECT_ID=$VERCEL_PROJECT_ID"
             echo "PRODUCTION_ALIAS_UNTOUCHED=https://mara-vera.vercel.app"
           fi
 
