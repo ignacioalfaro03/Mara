@@ -1,0 +1,151 @@
+name: Mara Hosted Activation Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+env:
+  VERCEL_CLI_VERSION: "59.11.1"
+
+jobs:
+  preview:
+    if: github.event.pull_request.head.ref == 'codex/launch-execution-control'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: web
+
+    steps:
+      - name: Check Preview deploy credentials
+        id: preflight
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          missing=0
+          for name in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
+            if [ -z "${!name}" ]; then
+              echo "::notice::Preview deploy blocked: missing GitHub Secret $name"
+              missing=1
+            fi
+          done
+          if [ "$missing" -eq 0 ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+            echo "MARA_PREVIEW_DEPLOY_READY=true"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "MARA_PREVIEW_DEPLOY_BLOCKED=missing_vercel_credentials"
+          fi
+
+      - name: Checkout exact PR head
+        if: steps.preflight.outputs.ready == 'true'
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Verify exact PR head
+        if: steps.preflight.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha }}"
+          echo "MARA_PREVIEW_SHA=${{ github.event.pull_request.head.sha }}"
+
+      - name: Setup Node
+        if: steps.preflight.outputs.ready == 'true'
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install locked dependencies
+        if: steps.preflight.outputs.ready == 'true'
+        run: npm ci --no-audit --no-fund
+
+      - name: Audit production dependencies
+        if: steps.preflight.outputs.ready == 'true'
+        run: node scripts/npm-audit-gate.mjs
+
+      - name: Typecheck candidate
+        if: steps.preflight.outputs.ready == 'true'
+        run: npm run typecheck
+
+      - name: Install Vercel CLI
+        if: steps.preflight.outputs.ready == 'true'
+        run: npm install --no-save --no-package-lock --no-audit --no-fund "vercel@${VERCEL_CLI_VERSION}"
+
+      - name: Pull Preview environment and verify project link
+        if: steps.preflight.outputs.ready == 'true'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx vercel pull --yes --environment=preview --token "$VERCEL_TOKEN"
+          node <<'NODE'
+          const fs = require('fs');
+          const linked = JSON.parse(fs.readFileSync('.vercel/project.json', 'utf8'));
+          if (linked.projectId !== process.env.VERCEL_PROJECT_ID) {
+            throw new Error(`Vercel project mismatch: ${linked.projectId}`);
+          }
+          if (linked.orgId !== process.env.VERCEL_ORG_ID) {
+            throw new Error(`Vercel org mismatch: ${linked.orgId}`);
+          }
+          console.log('MARA_VERCEL_PREVIEW_LINK PASS');
+          NODE
+
+      - name: Build Preview candidate
+        if: steps.preflight.outputs.ready == 'true'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          NEXT_TELEMETRY_DISABLED: "1"
+        run: npx vercel build --token "$VERCEL_TOKEN"
+
+      - name: Deploy exact PR head to Vercel Preview
+        if: steps.preflight.outputs.ready == 'true'
+        id: deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx vercel deploy --prebuilt --yes --token "$VERCEL_TOKEN" 2>&1 | tee /tmp/mara-preview-deploy.log
+          deployment_url=$(grep -Eo 'https://[^[:space:]]+\.vercel\.app' /tmp/mara-preview-deploy.log | tail -n 1)
+          if [ -z "$deployment_url" ]; then
+            echo "::error::Vercel CLI did not return a Preview URL"
+            exit 1
+          fi
+          echo "deployment_url=$deployment_url" >> "$GITHUB_OUTPUT"
+          echo "MARA_PREVIEW_URL=$deployment_url"
+
+      - name: Wait for Preview READY
+        if: steps.preflight.outputs.ready == 'true'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
+        run: npx vercel inspect "$DEPLOYMENT_URL" --wait --token "$VERCEL_TOKEN"
+
+      - name: Publish Preview proof boundary
+        if: always()
+        shell: bash
+        run: |
+          if [ "${{ steps.preflight.outputs.ready }}" = "true" ]; then
+            echo "MARA_HOSTED_PREVIEW_CREATED=${{ steps.deploy.outputs.deployment_url }}"
+            echo "MARA_HOSTED_PREVIEW_SHA=${{ github.event.pull_request.head.sha }}"
+            echo "PRODUCTION_ALIAS_UNTOUCHED=https://mara-vera.vercel.app"
+          else
+            echo "MARA_HOSTED_PREVIEW_BLOCKED=Add VERCEL_TOKEN, VERCEL_ORG_ID and VERCEL_PROJECT_ID as GitHub Actions secrets, then rerun this job."
+            echo "PRODUCTION_ALIAS_UNTOUCHED=https://mara-vera.vercel.app"
+          fi
+
+# Preview only. No --prod, no production alias movement, no payment activation.
