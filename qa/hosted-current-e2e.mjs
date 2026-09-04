@@ -5,6 +5,7 @@ const emailA = process.env.QA_EMAIL_A;
 const passwordA = process.env.QA_PASSWORD_A;
 const emailB = process.env.QA_EMAIL_B;
 const passwordB = process.env.QA_PASSWORD_B;
+const preprovisioned = process.env.QA_PREPROVISIONED === "1";
 
 if (!baseUrl || !emailA || !passwordA || !emailB || !passwordB) {
   throw new Error("BASE_URL and both QA credential pairs are required");
@@ -31,7 +32,32 @@ async function api(page, path, options = {}) {
   }, { path, options });
 }
 
-async function signupAndWait(page, email, password, label) {
+async function signin(page, email, password, { assertClean = false } = {}) {
+  await page.goto(`${baseUrl}/auth`, { waitUntil: "networkidle" });
+  await passAgeGate(page);
+
+  if (assertClean) {
+    const localState = await page.evaluate(() => ({
+      local: window.localStorage.getItem("mara_dm_state_v1"),
+      session: window.sessionStorage.length,
+    }));
+    assert(localState.local === null && localState.session === 0, `browser was not clean ${JSON.stringify(localState)}`);
+  }
+
+  await page.getByRole("button", { name: "Entrar", exact: true }).click();
+  await page.getByLabel("Correo").fill(email);
+  await page.getByLabel("Contraseña").fill(password);
+  await page.getByRole("button", { name: "Seguir", exact: true }).click();
+  await page.waitForURL(/\/experience\?account=ready/, { timeout: 30000 });
+}
+
+async function authenticateForQa(page, email, password, label, options = {}) {
+  if (preprovisioned) {
+    await signin(page, email, password, options);
+    console.log(`MARA_QA_PRECONFIRMED_${label}`);
+    return;
+  }
+
   await page.goto(`${baseUrl}/auth`, { waitUntil: "networkidle" });
   await passAgeGate(page);
   await page.getByRole("button", { name: "Crear cuenta", exact: true }).click();
@@ -44,7 +70,7 @@ async function signupAndWait(page, email, password, label) {
   if (await ready) return;
 
   await page.getByText(/Revisa tu correo para confirmar la cuenta/i).waitFor({ timeout: 10000 });
-  console.log(`MARA_QA_WAITING_CONFIRMATION_${label} email=${email}`);
+  console.log(`MARA_QA_WAITING_CONFIRMATION_${label}`);
 
   const deadline = Date.now() + 7 * 60 * 1000;
   while (Date.now() < deadline) {
@@ -61,16 +87,6 @@ async function signupAndWait(page, email, password, label) {
     await page.waitForTimeout(4000);
   }
   throw new Error(`QA account ${label} was not confirmed in time`);
-}
-
-async function signin(page, email, password) {
-  await page.goto(`${baseUrl}/auth`, { waitUntil: "networkidle" });
-  await passAgeGate(page);
-  await page.getByRole("button", { name: "Entrar", exact: true }).click();
-  await page.getByLabel("Correo").fill(email);
-  await page.getByLabel("Contraseña").fill(password);
-  await page.getByRole("button", { name: "Seguir", exact: true }).click();
-  await page.waitForURL(/\/experience\?account=ready/, { timeout: 30000 });
 }
 
 const browser = await chromium.launch({ headless: true });
@@ -95,8 +111,9 @@ try {
   assert(memoryBody?.configured === true, "memory backend not configured");
   await probe.close();
   results.health = "pass";
+  results.health_memory = "pass";
 
-  // Browser A: anonymous value first, then continuity signup.
+  // Browser A: anonymous value first, then continuity auth into a preconfirmed QA fixture.
   contextA = await browser.newContext(contextOptions);
   const pageA = await contextA.newPage();
   await pageA.goto(`${baseUrl}/experience`, { waitUntil: "networkidle" });
@@ -109,25 +126,15 @@ try {
   await pageA.getByRole("button", { name: "¿Quieres que me acuerde?", exact: true }).click();
   await pageA.waitForURL(/\/auth$/, { timeout: 10000 });
 
-  await signupAndWait(pageA, emailA, passwordA, "A");
+  await authenticateForQa(pageA, emailA, passwordA, "A");
   await pageA.getByText("Volviste.").waitFor({ timeout: 15000 });
   await pageA.getByText(/me acuerdo de la hamburguesa, las papas y el chocolate/).waitFor({ timeout: 15000 });
   results.memory_callback_a = "pass";
 
   const migrated = await api(pageA, "/api/relationship/ritual");
   results.anonymous_to_auth_ritual = migrated.status === 200 && Boolean(migrated.body?.ritual) ? "pass" : "fail";
-  console.log(`MARA_ANON_TO_AUTH_RITUAL ${results.anonymous_to_auth_ritual} ${JSON.stringify(migrated)}`);
-
-  // If current product failed to migrate anonymous ritual, seed the same literal ritual only to continue independent backend proof.
-  if (results.anonymous_to_auth_ritual !== "pass") {
-    const seeded = await api(pageA, "/api/relationship/ritual", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ritualKey: "junk_food_date_v1" }),
-    });
-    assert(seeded.status === 200 && seeded.body?.ritual, `QA ritual seed failed ${JSON.stringify(seeded)}`);
-    results.qa_seed_after_migration_gap = "used";
-  }
+  console.log(`MARA_ANON_TO_AUTH_RITUAL ${results.anonymous_to_auth_ritual}`);
+  assert(results.anonymous_to_auth_ritual === "pass", `anonymous ritual did not migrate ${JSON.stringify(migrated)}`);
 
   // Authenticated Private Moment should persist an explicit preference.
   await pageA.getByRole("button", { name: "Hoy manda tú", exact: true }).click();
@@ -148,25 +155,13 @@ try {
   const newest = await api(pageA, "/api/relationship", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      returnCount: 4,
-      firstSeenAt,
-      lastSeenAt: now.toISOString(),
-      lastVisualChoice: "pose_b",
-      launchCompleted: true,
-    }),
+    body: JSON.stringify({ returnCount: 4, firstSeenAt, lastSeenAt: now.toISOString(), lastVisualChoice: "pose_b", launchCompleted: true }),
   });
   assert(newest.status === 204, `new relationship write=${newest.status}`);
   const stale = await api(pageA, "/api/relationship", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      returnCount: 1,
-      firstSeenAt,
-      lastSeenAt: firstSeenAt,
-      lastVisualChoice: "pose_a",
-      launchCompleted: false,
-    }),
+    body: JSON.stringify({ returnCount: 1, firstSeenAt, lastSeenAt: firstSeenAt, lastVisualChoice: "pose_a", launchCompleted: false }),
   });
   assert(stale.status === 204, `stale relationship write=${stale.status}`);
   const monotonic = await api(pageA, "/api/relationship");
@@ -180,10 +175,10 @@ try {
   assert(signoutA.status === 204, `signout A=${signoutA.status}`);
   await contextA.close(); contextA = null;
 
-  // Browser B: completely clean local state, same account.
+  // Browser B: completely fresh browser context, same account, no copied storage/cookies/session.
   contextB = await browser.newContext(contextOptions);
   const pageB = await contextB.newPage();
-  await signin(pageB, emailA, passwordA);
+  await signin(pageB, emailA, passwordA, { assertClean: true });
   await pageB.getByText("Volviste.").waitFor({ timeout: 15000 });
   await pageB.getByText(/me acuerdo de la hamburguesa, las papas y el chocolate/).waitFor({ timeout: 15000 });
   await pageB.waitForFunction(() => {
@@ -197,14 +192,16 @@ try {
   await pageB.getByRole("button", { name: "Hoy manda tú", exact: true }).click();
   await pageB.getByText(/Ya sé que prefieres que vaya directo/).waitFor({ timeout: 15000 });
   results.memory_changes_ux = "pass";
+  await pageB.screenshot({ path: "browser-b-memory.png", fullPage: true });
+
   const signoutB = await api(pageB, "/api/auth/signout", { method: "POST" });
   assert(signoutB.status === 204, `signout B=${signoutB.status}`);
   await contextB.close(); contextB = null;
 
-  // Second account: prove clean app-backed state, no User A hydration.
+  // User B: separate preconfirmed account in a clean browser; app state must remain empty.
   contextC = await browser.newContext(contextOptions);
   const pageC = await contextC.newPage();
-  await signupAndWait(pageC, emailB, passwordB, "B");
+  await authenticateForQa(pageC, emailB, passwordB, "B", { assertClean: true });
   const ritualB = await api(pageC, "/api/relationship/ritual");
   const privateB = await api(pageC, "/api/relationship/private-moment");
   const relationshipB = await api(pageC, "/api/relationship");
@@ -214,22 +211,18 @@ try {
   results.cross_user_app_isolation = "pass";
 
   const telemetry = await contextC.request.post(`${baseUrl}/api/telemetry`, {
-    data: {
-      event: "session_started",
-      properties: { surface: "hosted_activation_qa", entry_source: "direct" },
-      timestamp: new Date().toISOString(),
-    },
+    data: { event: "session_started", properties: { surface: "hosted_activation_qa", entry_source: "direct" }, timestamp: new Date().toISOString() },
   });
   assert(telemetry.status() === 200, `telemetry endpoint=${telemetry.status()}`);
   results.telemetry_endpoint = "pass";
 
   console.log(`MARA_HOSTED_CURRENT_E2E_SUMMARY ${JSON.stringify(results)}`);
-  if (results.anonymous_to_auth_ritual !== "pass") {
-    console.error("MARA_HOSTED_CURRENT_E2E BLOCKED anonymous_to_auth_ritual_not_migrated");
-    process.exitCode = 2;
-  } else {
-    console.log("MARA_HOSTED_CURRENT_E2E PASS");
-  }
+  console.log("MARA_HOSTED_CURRENT_E2E PASS");
+} catch (error) {
+  const message = error instanceof Error ? error.message : String(error);
+  const infra = /rate limit|429|ECONN|ENOTFOUND|ERR_NAME|ERR_CONNECTION|browserType\.launch|Executable doesn't exist|health=|health-memory=/i.test(message);
+  console.error(`${infra ? "MARA_QA_INFRA_FAILURE" : "MARA_QA_PRODUCT_FAILURE"} ${message}`);
+  throw error;
 } finally {
   if (contextA) await contextA.close().catch(() => {});
   if (contextB) await contextB.close().catch(() => {});
