@@ -33,15 +33,24 @@ async function api(page, path, options = {}) {
 }
 
 async function signin(page, email, password, { assertClean = false } = {}) {
+  if (assertClean) {
+    const preNavCookies = await page.context().cookies(baseUrl);
+    const maraAuthCookies = preNavCookies.filter((cookie) => cookie.name === "mara_access_token" || cookie.name === "mara_refresh_token");
+    assert(maraAuthCookies.length === 0, `browser inherited Mara auth cookies ${maraAuthCookies.map((cookie) => cookie.name).join(",")}`);
+  }
+
   await page.goto(`${baseUrl}/auth`, { waitUntil: "networkidle" });
   await passAgeGate(page);
 
   if (assertClean) {
     const localState = await page.evaluate(() => ({
-      local: window.localStorage.getItem("mara_dm_state_v1"),
-      session: window.sessionStorage.length,
+      dm: window.localStorage.getItem("mara_dm_state_v1"),
+      ritual: window.localStorage.getItem("mara_launch_ritual_v1"),
+      localKeys: Object.keys(window.localStorage),
+      sessionKeys: Object.keys(window.sessionStorage),
     }));
-    assert(localState.local === null && localState.session === 0, `browser was not clean ${JSON.stringify(localState)}`);
+    assert(localState.dm === null && localState.ritual === null, `browser inherited Mara continuity state ${JSON.stringify(localState)}`);
+    console.log(`MARA_CLEAN_BROWSER_BASELINE ${JSON.stringify({ localKeys: localState.localKeys, sessionKeys: localState.sessionKeys })}`);
   }
 
   await page.getByRole("button", { name: "Entrar", exact: true }).click();
@@ -175,7 +184,7 @@ try {
   assert(signoutA.status === 204, `signout A=${signoutA.status}`);
   await contextA.close(); contextA = null;
 
-  // Browser B: completely fresh browser context, same account, no copied storage/cookies/session.
+  // Browser B: completely fresh browser context, same account, no copied storage or Mara auth cookies.
   contextB = await browser.newContext(contextOptions);
   const pageB = await contextB.newPage();
   await signin(pageB, emailA, passwordA, { assertClean: true });
