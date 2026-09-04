@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 
 const baseUrl = normalizeBaseUrl(process.env.BASE_URL || "http://127.0.0.1:3000");
+const protectionBypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET?.trim();
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -16,7 +17,15 @@ function normalizeBaseUrl(value) {
 
 const response = await fetch(`${baseUrl}/api/telemetry`, {
   method: "POST",
-  headers: { "Content-Type": "application/json" },
+  headers: {
+    "Content-Type": "application/json",
+    ...(protectionBypass
+      ? {
+          "x-vercel-protection-bypass": protectionBypass,
+          "x-vercel-set-bypass-cookie": "true",
+        }
+      : {}),
+  },
   body: JSON.stringify({
     event: "page_view",
     properties: {

@@ -145,6 +145,7 @@ jobs:
         working-directory: web
         env:
           BASE_URL: ${{ steps.deploy.outputs.deployment_url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
         run: node scripts/hosted-telemetry-persistence-smoke.mjs
 
       - name: Install hosted browser proof runtime
@@ -159,6 +160,7 @@ jobs:
         working-directory: web
         env:
           BASE_URL: ${{ steps.deploy.outputs.deployment_url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
         run: node scripts/world-sofi-smoke.mjs
 
       - name: Publish Preview proof boundary

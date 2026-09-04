@@ -1,6 +1,7 @@
 import { chromium } from "playwright";
 
 const baseUrl = process.env.BASE_URL || "http://127.0.0.1:3000";
+const protectionBypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET?.trim();
 const publicPaths = ["/", "/meet-mara", "/legal"];
 const parkedPaths = ["/premium"];
 const labPaths = [
@@ -53,6 +54,12 @@ const contextOptions = {
   isMobile: true,
   hasTouch: true,
   locale: "es-CL",
+  extraHTTPHeaders: protectionBypass
+    ? {
+        "x-vercel-protection-bypass": protectionBypass,
+        "x-vercel-set-bypass-cookie": "true",
+      }
+    : undefined,
 };
 const context = await browser.newContext(contextOptions);
 const page = await context.newPage();
