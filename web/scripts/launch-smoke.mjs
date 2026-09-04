@@ -1,7 +1,8 @@
 import { chromium } from "playwright";
 
 const baseUrl = process.env.BASE_URL || "http://127.0.0.1:3000";
-const publicPaths = ["/", "/meet-mara", "/legal", "/premium"];
+const publicPaths = ["/", "/meet-mara", "/legal"];
+const parkedPaths = ["/premium"];
 const labPaths = [
   "/experience/caprichos-lab",
   "/experience/commerce-lab",
@@ -97,6 +98,11 @@ try {
     const response = await page.goto(`${baseUrl}${path}`, { waitUntil: "networkidle" });
     assert(response?.status() === 200, `${path} returned ${response?.status()}`);
     await assertNoHorizontalOverflow(page, path);
+  }
+
+  for (const path of parkedPaths) {
+    const response = await context.request.get(`${baseUrl}${path}`);
+    assert(response.status() === 404, `${path} is parked and should return 404, got ${response.status()}`);
   }
 
   await page.goto(`${baseUrl}/experience`, { waitUntil: "networkidle" });
