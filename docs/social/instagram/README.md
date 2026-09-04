@@ -21,6 +21,7 @@ Instagram is a persistent-world production system, not a folder of prompts.
 Planning / operations:
 
 - [`FIRST_20_POSTS.md`](./FIRST_20_POSTS.md) — launch arc.
+- [`FIRST_20_AUDIT.md`](./FIRST_20_AUDIT.md) — grid, recurrence, continuity-debt and anti-AI audit.
 - [`POST_REGISTER.md`](./POST_REGISTER.md) — post lifecycle/KPIs.
 - [`ASSET_REGISTER.md`](./ASSET_REGISTER.md) — frame/version/rejection log.
 - [`CAPTION_SYSTEM.md`](./CAPTION_SYSTEM.md) — caption and CTA rules.
