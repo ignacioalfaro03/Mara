@@ -98,6 +98,7 @@ export type MaraEvent =
   | "external_media_learning_shown"
   | "ritual_viewed"
   | "ritual_play_intent"
+  | "ritual_completed"
   | "ritual_completed_simulated"
   | "ritual_skipped"
   | "ritual_reward_preference";
@@ -182,6 +183,7 @@ const P0_DEV_LOG_EVENTS = new Set<MaraEvent>([
   "external_media_learning_shown",
   "ritual_viewed",
   "ritual_play_intent",
+  "ritual_completed",
   "ritual_completed_simulated",
   "ritual_skipped",
   "ritual_reward_preference",
@@ -218,6 +220,7 @@ const PUBLIC_ALPHA_TELEMETRY_EVENTS = new Set<MaraEvent>([
   "signin_completed",
   "ritual_viewed",
   "ritual_play_intent",
+  "ritual_completed",
   "ritual_skipped",
   "commercial_offer_dismissed",
   "commercial_post_offer_continued",
@@ -300,6 +303,16 @@ function sendPublicAlphaTelemetry(record: MaraEventRecord) {
   }
 }
 
+function emit(record: MaraEventRecord) {
+  window.dispatchEvent(new CustomEvent("mara:analytics", { detail: record }));
+  appendDevelopmentEvent(record);
+  sendPublicAlphaTelemetry(record);
+
+  if (process.env.NODE_ENV === "development") {
+    console.info("[mara:analytics]", record.event, record.properties);
+  }
+}
+
 export function readP0DevelopmentEventLog(): MaraEventRecord[] {
   if (typeof window === "undefined" || process.env.NODE_ENV !== "development") return [];
 
@@ -319,17 +332,28 @@ export function clearP0DevelopmentEventLog() {
 export function track(event: MaraEvent, properties: Record<string, string | number | boolean> = {}) {
   if (typeof window === "undefined") return;
 
+  // Current DM code historically emits ritual_play_intent at exposure time.
+  // Suppress that known false signal from the launch stream. A future genuine
+  // intent interaction can still use ritual_play_intent from another surface.
+  if (event === "ritual_play_intent" && properties.surface === "dm_experience") return;
+
+  const timestamp = new Date().toISOString();
   const detail: MaraEventRecord = {
     event,
     properties: publicAlphaProperties(event, properties),
-    timestamp: new Date().toISOString(),
+    timestamp,
   };
 
-  window.dispatchEvent(new CustomEvent("mara:analytics", { detail }));
-  appendDevelopmentEvent(detail);
-  sendPublicAlphaTelemetry(detail);
+  emit(detail);
 
-  if (process.env.NODE_ENV === "development") {
-    console.info("[mara:analytics]", event, detail.properties);
+  // The concrete ritual completion already exists in product logic as
+  // experience_completed on dm_ritual. Normalize it into a dedicated event so
+  // launch reporting measures a real user action without duplicating DM state.
+  if (event === "experience_completed" && properties.surface === "dm_ritual") {
+    emit({
+      event: "ritual_completed",
+      properties: publicAlphaProperties("ritual_completed", properties),
+      timestamp,
+    });
   }
 }
