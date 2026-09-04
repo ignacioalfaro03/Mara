@@ -99,3 +99,4 @@ jobs:
           curl --fail --silent http://127.0.0.1:3000/ > /dev/null
           node scripts/launch-smoke.mjs
           node scripts/account-operability-smoke.mjs
+          node scripts/ritual-telemetry-smoke.mjs
