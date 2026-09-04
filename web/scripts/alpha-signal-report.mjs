@@ -4,6 +4,9 @@ import process from "node:process";
 const MARKER = "MARA_TELEMETRY";
 const VALID_SOURCES = ["ig", "tt", "x", "direct", "other"];
 const CORE_EVENTS = [
+  "page_view",
+  "landing_view",
+  "hero_cta_click",
   "launch_experience_started",
   "launch_session_completed",
   "returning_user",
@@ -118,6 +121,10 @@ export function buildSignalReport(text) {
   const count = (event) => events.get(event) ?? 0;
   const countSurface = (event, surface) => surfaceEvents.get(`${surface}:${event}`) ?? 0;
 
+  const landingViews = count("landing_view");
+  const homeCtaClicks = countSurface("hero_cta_click", "home");
+  const meetMaraViews = countSurface("page_view", "/meet-mara");
+  const meetMaraCtaClicks = countSurface("hero_cta_click", "meet_mara");
   const launchStarts = count("launch_experience_started");
   const launchCompletions = count("launch_session_completed");
   const ritualViews = count("ritual_viewed");
@@ -148,6 +155,8 @@ export function buildSignalReport(text) {
     return_latency_buckets: sortedObject(returnLatencyBuckets),
     core_events_by_source: sortedObject(sourceCoreEvents),
     directional_event_ratios: {
+      home_cta_clicks_per_landing_view: safeRatio(homeCtaClicks, landingViews),
+      meet_mara_cta_clicks_per_view: safeRatio(meetMaraCtaClicks, meetMaraViews),
       launch_completion_events_per_start_event: safeRatio(launchCompletions, launchStarts),
       ritual_completions_per_view: safeRatio(ritualCompletions, ritualViews),
       ritual_skips_per_view: safeRatio(ritualSkips, ritualViews),
@@ -162,7 +171,7 @@ export function buildSignalReport(text) {
       entitlement_unlocks_per_checkout_start: safeRatio(entitlementUnlocks, checkoutStarts),
     },
     interpretation_warning:
-      "Event aggregates only. Surface segmentation prevents DM/ritual events from being misreported as Private Moments, but these still are not unique users, D1/D3/D7 retention, cohort retention, churn, LTV or unique conversion rates. Use the separate minimal invited-cohort roster for actual return status.",
+      "Event aggregates only. Surface segmentation prevents public/DM/ritual events from being misreported as other stages, but these still are not unique users, D1/D3/D7 retention, cohort retention, churn, LTV or unique conversion rates. Use the separate minimal invited-cohort roster for actual return status.",
   };
 }
 
@@ -204,6 +213,10 @@ function printHumanReport(report) {
 
 function selfTest() {
   const sampleRecords = [
+    ["landing_view", { surface: "/", entry_source: "ig" }],
+    ["hero_cta_click", { surface: "home", placement: "primary", entry_source: "ig" }],
+    ["page_view", { surface: "/meet-mara", entry_source: "direct" }],
+    ["hero_cta_click", { surface: "meet_mara", placement: "top", entry_source: "direct" }],
     ["launch_experience_started", { surface: "dm_experience", entry_source: "ig" }],
     ["experience_started", { surface: "dm_experience", entry_source: "ig" }],
     ["launch_session_completed", { surface: "dm_experience", entry_source: "ig" }],
@@ -235,17 +248,22 @@ function selfTest() {
   const report = buildSignalReport(sample);
   const ratios = report.directional_event_ratios;
   const assertions = [
-    [report.telemetry_lines_seen === 19, "telemetry line count"],
-    [report.accepted_records === 18, "accepted record count"],
+    [report.telemetry_lines_seen === 23, "telemetry line count"],
+    [report.accepted_records === 22, "accepted record count"],
     [report.malformed_records === 1, "malformed record count"],
     [report.events.experience_started === 2, "raw mixed experience start count"],
     [report.events.ritual_completed === 1, "real ritual completion event"],
     [report.events.ritual_play_intent === undefined, "fake ritual exposure intent absent"],
+    [report.events_by_surface["home:hero_cta_click"] === 1, "home CTA surface"],
+    [report.events_by_surface["/meet-mara:page_view"] === 1, "Meet Mara page view surface"],
+    [report.events_by_surface["meet_mara:hero_cta_click"] === 1, "Meet Mara CTA surface"],
     [report.events_by_surface["private_moment:experience_started"] === 1, "surface-segmented Private Moment start"],
     [report.events_by_surface["dm_experience:experience_started"] === 1, "DM start remains separate"],
     [report.events_by_surface["dm_ritual:ritual_completed"] === 1, "ritual completion surface"],
     [report.return_count_buckets["1"] === 2, "return bucket"],
     [report.return_latency_buckets["1-2d"] === 2, "latency bucket"],
+    [ratios.home_cta_clicks_per_landing_view === 1, "home CTA ratio"],
+    [ratios.meet_mara_cta_clicks_per_view === 1, "Meet Mara CTA ratio"],
     [ratios.launch_completion_events_per_start_event === 1, "launch completion ratio"],
     [ratios.ritual_completions_per_view === 1, "ritual completion ratio"],
     [ratios.ritual_skips_per_view === 0, "ritual skip ratio"],
