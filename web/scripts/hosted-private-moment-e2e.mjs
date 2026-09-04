@@ -215,8 +215,12 @@ try {
   const privateB = await waitForApi(
     pageB,
     "/api/relationship/private-moment",
-    (body) => body?.privateMoment?.preferredStyle === "direct" && body?.privateMoment?.sessionCount >= 2,
-    "second-device private moment persistence",
+    (body) =>
+      body?.privateMoment?.preferredStyle === "direct" &&
+      body?.privateMoment?.sessionCount >= 2 &&
+      Boolean(body?.privateMoment?.lastOfferAt) &&
+      body?.privateMoment?.commercial?.decision === "closed",
+    "second-device private moment plus offer cooldown persistence",
   );
   assert(privateB.privateMoment.commercial?.decision === "closed", "Offer view should immediately place the real account into cooldown");
   assert(Boolean(privateB.privateMoment.lastOfferAt), "Real offer view was not persisted into cooldown state");
