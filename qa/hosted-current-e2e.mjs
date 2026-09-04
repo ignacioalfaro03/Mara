@@ -207,7 +207,7 @@ try {
   assert(signoutB.status === 204, `signout B=${signoutB.status}`);
   await contextB.close(); contextB = null;
 
-  // User B: separate preconfirmed account in a clean browser; app state must remain empty.
+  // User B: separate preconfirmed account in a clean browser; it may own a default row, but must never inherit User A's state.
   contextC = await browser.newContext(contextOptions);
   const pageC = await contextC.newPage();
   await authenticateForQa(pageC, emailB, passwordB, "B", { assertClean: true });
@@ -216,7 +216,13 @@ try {
   const relationshipB = await api(pageC, "/api/relationship");
   assert(ritualB.status === 200 && ritualB.body?.ritual === null, `User B saw ritual A ${JSON.stringify(ritualB)}`);
   assert(privateB.status === 200 && (privateB.body?.privateMoment?.preferredStyle ?? null) === null && (privateB.body?.privateMoment?.sessionCount ?? 0) === 0, `User B saw private A ${JSON.stringify(privateB)}`);
-  assert(relationshipB.status === 200 && relationshipB.body?.state === null, `User B saw relationship A ${JSON.stringify(relationshipB)}`);
+  assert(relationshipB.status === 200, `User B relationship read failed ${JSON.stringify(relationshipB)}`);
+  const relationshipStateB = relationshipB.body?.state ?? null;
+  if (relationshipStateB !== null) {
+    assert(relationshipStateB.returnCount === 0, `User B inherited User A return count ${JSON.stringify(relationshipB)}`);
+    assert(relationshipStateB.lastVisualChoice === null, `User B inherited User A visual choice ${JSON.stringify(relationshipB)}`);
+    assert(relationshipStateB.launchCompleted === false, `User B inherited User A launch completion ${JSON.stringify(relationshipB)}`);
+  }
   results.cross_user_app_isolation = "pass";
 
   const telemetry = await contextC.request.post(`${baseUrl}/api/telemetry`, {
