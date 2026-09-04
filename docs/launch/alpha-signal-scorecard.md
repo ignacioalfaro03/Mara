@@ -65,12 +65,14 @@ Review:
 - `launch_experience_started`
 - `launch_session_completed`
 - `ritual_viewed`
-- `ritual_play_intent`
+- `ritual_completed`
 - `ritual_skipped`
-- `experience_started`
-- `experience_completed`
+- `experience_started` segmented by surface;
+- `experience_completed` segmented by surface;
 - `preference_selected`
-- signup events
+- signup events.
+
+`ritual_completed` is the meaningful ritual participation event. Do not treat ritual exposure as user intent.
 
 Questions:
 
@@ -169,7 +171,7 @@ Do not solve weak retention by increasing offer frequency.
 The report prints these as **event ratios only**:
 
 - completion events / launch start events;
-- ritual play intents / ritual views;
+- ritual completions / ritual views;
 - ritual skips / ritual views;
 - Private Moment completions / Private Moment starts;
 - explicit preference selections / Private Moment starts;
