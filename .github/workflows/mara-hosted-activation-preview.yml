@@ -158,7 +158,7 @@ jobs:
           session_id="$(node -e "console.log(require('node:crypto').randomUUID())")"
           timestamp="$(node -e "console.log(new Date().toISOString())")"
           payload="$(jq -cn --arg sid "$session_id" --arg ts "$timestamp" '{event:"page_view",properties:{surface:"/qa-telemetry-preview",entry_source:"direct"},timestamp:$ts,sessionId:$sid}')"
-          npx vercel --token "$VERCEL_TOKEN" --scope "$VERCEL_SCOPE" curl /api/telemetry \
+          npx vercel curl /api/telemetry \
             --deployment "$DEPLOYMENT_URL" \
             -- --silent --show-error --request POST --header "Content-Type: application/json" --data "$payload" \
             > /tmp/mara-telemetry-response.json
