@@ -1,0 +1,81 @@
+name: Mara Hosted Current QA
+
+on:
+  push:
+    branches: [qa/hosted-proof-2d7ea95]
+
+permissions:
+  contents: read
+
+env:
+  PLAYWRIGHT_VERSION: "1.62.1"
+  PRODUCT_SHA: "2d7ea95b29330f15d46c9adda516aa79462f29b4"
+  BASE_URL: "https://mara-vera-proof-2d7ea95.vercel.app"
+
+jobs:
+  hosted-current-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout QA harness
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: qa/hosted-proof-2d7ea95
+
+      - name: Preserve QA harness outside worktree
+        shell: bash
+        run: cp qa/hosted-current-e2e.mjs /tmp/hosted-current-e2e.mjs
+
+      - name: Checkout exact product SHA
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ env.PRODUCT_SHA }}
+          clean: true
+
+      - name: Verify exact product SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$PRODUCT_SHA"
+          echo "MARA_HOSTED_QA_PRODUCT_SHA=$PRODUCT_SHA"
+
+      - name: Setup Node
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install locked dependencies
+        working-directory: web
+        run: npm ci --no-audit --no-fund
+
+      - name: Install Chromium runtime
+        working-directory: web
+        run: |
+          npm install --no-save --no-package-lock --no-audit --no-fund "playwright@${PLAYWRIGHT_VERSION}"
+          npx playwright install --with-deps chromium
+
+      - name: Run hosted Browser A/B + isolation proof
+        working-directory: web
+        shell: bash
+        run: |
+          set -euo pipefail
+          export QA_EMAIL_A="mara.qa.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}.a@gmail.com"
+          export QA_EMAIL_B="mara.qa.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}.b@gmail.com"
+          export QA_PASSWORD_A="$(openssl rand -hex 18)"
+          export QA_PASSWORD_B="$(openssl rand -hex 18)"
+          echo "::add-mask::$QA_PASSWORD_A"
+          echo "::add-mask::$QA_PASSWORD_B"
+          node /tmp/hosted-current-e2e.mjs
+
+      - name: State proof boundary
+        if: always()
+        shell: bash
+        run: |
+          echo "MARA_HOSTED_QA_BASE=$BASE_URL"
+          echo "MARA_HOSTED_QA_PRODUCT_SHA=$PRODUCT_SHA"
+          echo "CANONICAL_PRODUCTION_UNTOUCHED=https://mara-vera.vercel.app"
+
+# QA branch only. Runs exact product SHA against isolated Vercel host.
+# No merge, no canonical production alias mutation, no payment activation.
