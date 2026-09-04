@@ -9,7 +9,7 @@ const CORE_EVENTS = [
   "returning_user",
   "launch_return_continued",
   "ritual_viewed",
-  "ritual_play_intent",
+  "ritual_completed",
   "ritual_skipped",
   "experience_started",
   "experience_completed",
@@ -121,9 +121,8 @@ export function buildSignalReport(text) {
   const launchStarts = count("launch_experience_started");
   const launchCompletions = count("launch_session_completed");
   const ritualViews = count("ritual_viewed");
-  const ritualPlayIntents = count("ritual_play_intent");
+  const ritualCompletions = count("ritual_completed");
   const ritualSkips = count("ritual_skipped");
-  const ritualCompletions = countSurface("experience_completed", "dm_ritual");
   const privateStarts = countSurface("experience_started", "private_moment");
   const privateCompletions = countSurface("experience_completed", "private_moment");
   const privatePreferenceSelections = countSurface("preference_selected", "private_moment");
@@ -150,7 +149,6 @@ export function buildSignalReport(text) {
     core_events_by_source: sortedObject(sourceCoreEvents),
     directional_event_ratios: {
       launch_completion_events_per_start_event: safeRatio(launchCompletions, launchStarts),
-      ritual_play_intents_per_view: safeRatio(ritualPlayIntents, ritualViews),
       ritual_completions_per_view: safeRatio(ritualCompletions, ritualViews),
       ritual_skips_per_view: safeRatio(ritualSkips, ritualViews),
       private_moment_completions_per_start: safeRatio(privateCompletions, privateStarts),
@@ -210,7 +208,7 @@ function selfTest() {
     ["experience_started", { surface: "dm_experience", entry_source: "ig" }],
     ["launch_session_completed", { surface: "dm_experience", entry_source: "ig" }],
     ["ritual_viewed", { surface: "dm_experience", entry_source: "ig" }],
-    ["ritual_play_intent", { surface: "dm_experience", entry_source: "ig" }],
+    ["ritual_completed", { surface: "dm_ritual", entry_source: "ig" }],
     ["experience_completed", { surface: "dm_ritual", entry_source: "ig" }],
     ["experience_started", { surface: "private_moment", entry_source: "direct" }],
     ["experience_completed", { surface: "private_moment", entry_source: "direct" }],
@@ -241,13 +239,14 @@ function selfTest() {
     [report.accepted_records === 18, "accepted record count"],
     [report.malformed_records === 1, "malformed record count"],
     [report.events.experience_started === 2, "raw mixed experience start count"],
+    [report.events.ritual_completed === 1, "real ritual completion event"],
+    [report.events.ritual_play_intent === undefined, "fake ritual exposure intent absent"],
     [report.events_by_surface["private_moment:experience_started"] === 1, "surface-segmented Private Moment start"],
     [report.events_by_surface["dm_experience:experience_started"] === 1, "DM start remains separate"],
-    [report.events_by_surface["dm_ritual:experience_completed"] === 1, "ritual completion surface"],
+    [report.events_by_surface["dm_ritual:ritual_completed"] === 1, "ritual completion surface"],
     [report.return_count_buckets["1"] === 2, "return bucket"],
     [report.return_latency_buckets["1-2d"] === 2, "latency bucket"],
     [ratios.launch_completion_events_per_start_event === 1, "launch completion ratio"],
-    [ratios.ritual_play_intents_per_view === 1, "ritual play-intent ratio"],
     [ratios.ritual_completions_per_view === 1, "ritual completion ratio"],
     [ratios.ritual_skips_per_view === 0, "ritual skip ratio"],
     [ratios.private_moment_completions_per_start === 1, "Private Moment completion ratio"],
