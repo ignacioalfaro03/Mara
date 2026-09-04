@@ -15,7 +15,8 @@ Instagram is a persistent-world production system, not a folder of prompts.
 7. [`MARA_SOCIAL_GRAPH.md`](./MARA_SOCIAL_GRAPH.md) — recurring people/POVs.
 8. [`CURRENT_ACTIVE_SCENE.md`](./CURRENT_ACTIVE_SCENE.md) — what scene is currently being produced.
 9. Active scene packet based on [`SCENE_PACKET_TEMPLATE.md`](./SCENE_PACKET_TEMPLATE.md).
-10. [`INSTAGRAM_QA.md`](./INSTAGRAM_QA.md) before approving anything.
+10. [`GENERATION_PROMPT_STACK.md`](./GENERATION_PROMPT_STACK.md) — versioned prompt inheritance layers.
+11. [`INSTAGRAM_QA.md`](./INSTAGRAM_QA.md) before approving anything.
 
 Planning / operations:
 
@@ -36,6 +37,8 @@ WORLD CHECK
 SCENE PACKET
   ↓
 SCENE LOCK
+  ↓
+PROMPT STACK ASSEMBLY
   ↓
 FRAME 1
   ↓
@@ -82,6 +85,7 @@ A new production agent should be able to answer from this folder, without chat h
 - How far has the food/drink/time state progressed?
 - Which assets were rejected and why?
 - Which facts are global canon vs scene-local?
+- Which prompt-stack versions should generate the next frame?
 
 If these cannot be answered, do not generate the next frame yet.
 
