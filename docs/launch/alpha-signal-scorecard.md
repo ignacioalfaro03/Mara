@@ -10,7 +10,7 @@ It is deliberately not a growth dashboard and must not be used to pretend event 
 
 `MARA_TELEMETRY` is intentionally anonymous. Therefore runtime logs can answer questions such as:
 
-- which events are happening;
+- which public entry surfaces produce action;
 - which acquisition sources produce activity;
 - whether users progress through the ritual / Private Moment / offer sequence;
 - whether people continue after declining an offer;
@@ -58,25 +58,66 @@ This manual roster is acceptable for a tiny alpha and is preferred over prematur
 
 ---
 
+# Public surface jobs
+
+Every public route must earn its existence.
+
+## Home
+
+**Job:** turn qualified curiosity into DM entry with a promise the DM actually fulfills.
+
+Review:
+
+- `landing_view`;
+- `hero_cta_click` with `surface=home`;
+- directional `home_cta_clicks_per_landing_view`.
+
+Decision:
+
+- if visitors see Home but do not choose the DM, fix the entry promise/CTA before adding more product;
+- do not repair weak Home activation by adding more lore or more sections.
+
+## Meet Mara
+
+**Job:** convert the visitor who wants context before entering, using only behavior Mara can actually prove.
+
+Review:
+
+- `page_view` with `surface=/meet-mara`;
+- `hero_cta_click` with `surface=meet_mara`;
+- directional `meet_mara_cta_clicks_per_view`.
+
+Decision:
+
+- if `/meet-mara` repeatedly receives real alpha traffic but does not contribute to DM entry, remove the route rather than expanding it;
+- unsupported current-day lore is not a substitute for a real World State.
+
+## Premium
+
+There is no active public Premium job in the current Alpha. `/premium` is intentionally parked/404. Paid value currently appears only as a concrete contextual entitlement inside the DM. A membership surface returns only when there is a real product contract to sell.
+
+---
+
 # Day 1 — Does Mara produce a meaningful first experience?
 
 Review:
 
-- `launch_experience_started`
-- `launch_session_completed`
-- `ritual_viewed`
-- `ritual_completed`
-- `ritual_skipped`
+- public-surface ratios above;
+- `launch_experience_started`;
+- `launch_session_completed`;
+- `ritual_viewed`;
+- `ritual_completed`;
+- `ritual_skipped`;
 - `experience_started` segmented by surface;
 - `experience_completed` segmented by surface;
-- `preference_selected`
+- `preference_selected`;
 - signup events.
 
 `ritual_completed` is the meaningful ritual participation event. Do not treat ritual exposure as user intent.
 
 Questions:
 
-1. Are qualified visitors entering the experience?
+1. Are qualified visitors choosing to enter after seeing the truthful product promise?
 2. Are they completing the first meaningful interaction?
 3. Do they understand the ritual without explanation?
 4. Do explicit Private Moments start and complete?
@@ -87,7 +128,9 @@ Questions:
 
 **GO** — people progress naturally through the core flow and no severe usability issue dominates.
 
-**FIX** — people enter but repeatedly stall at the same point; repair that point before adding product surface.
+**FIX ENTRY** — people see Home/Meet Mara but do not enter; repair the public promise/CTA before changing deeper product behavior.
+
+**FIX CORE FLOW** — people enter but repeatedly stall at the same DM stage; repair that stage before adding product surface.
 
 **STOP / rethink entry** — people consistently do not understand or value the core experience after obvious usability issues are removed.
 
@@ -101,8 +144,8 @@ Use the manual invited-cohort roster for actual returns. Use anonymous telemetry
 
 Review:
 
-- `returning_user`
-- `launch_return_continued`
+- `returning_user`;
+- `launch_return_continued`;
 - return-count buckets;
 - return-latency buckets;
 - repeat Private Moment activity;
@@ -170,6 +213,8 @@ Do not solve weak retention by increasing offer frequency.
 
 The report prints these as **event ratios only**:
 
+- Home CTA clicks / landing views;
+- Meet Mara CTA clicks / Meet Mara page views;
 - completion events / launch start events;
 - ritual completions / ritual views;
 - ritual skips / ritual views;
@@ -200,6 +245,11 @@ At each checkpoint, write only:
 - second Private Moment reached:
 - offer seen:
 - checkout started:
+
+## Public entry
+- Home CTA directional ratio:
+- Meet Mara CTA directional ratio:
+- keep / fix / remove Meet Mara:
 
 ## Strongest signal
 One sentence.
