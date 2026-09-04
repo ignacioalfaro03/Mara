@@ -8,7 +8,7 @@ It is deliberately not a growth dashboard and must not be used to pretend event 
 
 ## Evidence boundary
 
-`MARA_TELEMETRY` is intentionally anonymous. Runtime logs can answer which public entry surfaces produce action, whether users progress through the ritual / Private Moment / offer sequence, whether people continue after declining an offer, and whether checkout intent appears.
+`MARA_TELEMETRY` is intentionally anonymous. Runtime logs can answer which public entry surfaces produce action, whether users progress through the ritual / continuity / Private Moment / offer sequence, whether people continue after declining an offer, and whether checkout intent appears.
 
 Runtime event aggregates **cannot** prove unique users, true D1 / D3 / D7 retention, cohort retention, churn, LTV or per-user purchase propensity.
 
@@ -39,6 +39,7 @@ For the first 20–50 adults, keep a separate minimal roster outside `MARA_TELEM
 - participant code (`A01`, `A02`, ...);
 - invite date;
 - activated? yes/no;
+- account created after first value? yes/no;
 - returned by Day 1 / Day 3 / Day 7? yes/no;
 - reached second Private Moment? yes/no;
 - saw a commercial offer? yes/no;
@@ -87,6 +88,8 @@ Review:
 - `ritual_viewed`;
 - `ritual_completed`;
 - `ritual_skipped`;
+- `hero_cta_click` with `surface=dm_continuity`;
+- `continuity_cta_clicks_per_ritual_completion`;
 - `experience_started` segmented by surface;
 - `experience_completed` segmented by surface;
 - `preference_selected`;
@@ -94,19 +97,24 @@ Review:
 
 There is deliberately **no synthetic `launch_session_completed` KPI**. The current product already has concrete behavioral completions (`ritual_completed`, surface-segmented `experience_completed`), so manufacturing or preserving an obsolete aggregate would add noise.
 
+The continuity CTA is deliberately post-value. A user must be able to receive Mara's first meaningful interaction without creating an account. After explicit ritual completion, Mara may ask whether the user wants that history preserved across devices. Ignoring or declining must not block anything.
+
 Questions:
 1. Are qualified visitors choosing to enter after seeing the truthful product promise?
 2. Do they complete a real first interaction?
-3. Do they understand the ritual without explanation?
-4. Do explicit Private Moments start and complete?
-5. Is the preference choice understandable?
-6. Are obvious UX/error-state failures appearing?
+3. After receiving value, do some voluntarily choose account-backed continuity?
+4. Do they understand the ritual without explanation?
+5. Do explicit Private Moments start and complete?
+6. Is the preference choice understandable?
+7. Are obvious UX/error-state failures appearing?
 
 ### Day 1 decision
 
-**GO** — people progress naturally through the core flow and no severe usability issue dominates.
+**GO** — people progress naturally through the core flow and at least some users voluntarily choose continuity after value.
 
 **FIX ENTRY** — people see Home/Meet Mara but do not enter.
+
+**FIX CONTINUITY CTA** — people complete the ritual but the post-value account invitation is consistently ignored or misunderstood. Revise or remove the prompt; do not move registration earlier.
 
 **FIX CORE FLOW** — people enter but repeatedly stall at the same DM stage.
 
@@ -121,6 +129,7 @@ No revenue conclusion on Day 1.
 Use the manual roster for actual returns and anonymous telemetry only as supporting product evidence.
 
 Review:
+- account-created-after-value status in the invited roster;
 - `returning_user`;
 - `launch_return_continued`;
 - return-count buckets;
@@ -130,10 +139,11 @@ Review:
 
 Questions:
 1. Did activated participants return without being chased manually?
-2. Did Mara visibly remember something factual?
-3. Did the second interaction change because of memory?
-4. Are people reaching a second Private Moment?
-5. Do users perceive a continuing character rather than a one-shot demo?
+2. Did account-backed users visibly recover factual continuity on another device/session?
+3. Did Mara visibly remember something factual?
+4. Did the second interaction change because of memory?
+5. Are people reaching a second Private Moment?
+6. Do users perceive a continuing character rather than a one-shot demo?
 
 ### Day 3 decision
 
@@ -185,6 +195,7 @@ The report prints these as **event ratios only**:
 - Meet Mara CTA clicks / Meet Mara page views;
 - ritual completions / ritual views;
 - ritual skips / ritual views;
+- continuity CTA clicks / ritual completions;
 - Private Moment completions / Private Moment starts;
 - explicit preference selections / Private Moment starts;
 - signup completions / signup starts;
@@ -204,6 +215,7 @@ They detect broken stages and directional change. They are **not unique-user con
 ## Cohort
 - invited:
 - activated:
+- account created after first value:
 - D1 returned:
 - D3 returned:
 - D7 returned:
@@ -215,6 +227,11 @@ They detect broken stages and directional change. They are **not unique-user con
 - Home CTA directional ratio:
 - Meet Mara CTA directional ratio:
 - keep / fix / remove Meet Mara:
+
+## Continuity activation
+- continuity CTA clicks / ritual completions:
+- account creation understood or confusing:
+- keep / revise / remove continuity prompt:
 
 ## Strongest signal
 One sentence.
@@ -234,6 +251,6 @@ One product change only.
 
 The Private Alpha exists to answer:
 
-> **Do adults enter Mara, feel continuity, voluntarily return, deepen the relationship and eventually show willingness to pay?**
+> **Do adults enter Mara, receive value before registration, choose continuity voluntarily, return, deepen the relationship and eventually show willingness to pay?**
 
 Do not optimize the scorecard to make Mara look successful. Use it to find the truth quickly.
