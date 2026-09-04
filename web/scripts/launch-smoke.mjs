@@ -129,7 +129,6 @@ try {
   await page.getByText(/me acuerdo de la hamburguesa, las papas y el chocolate/).waitFor();
   assert(await page.getByTestId("dm-private-drop").count() === 0, "Return callback must not auto-open commerce anymore");
 
-  // First explicit private moment: free value first, no offer.
   await page.getByRole("button", { name: "Hoy manda tú" }).click();
   await page.getByText(/no vas a navegar un catálogo/).waitFor();
   await page.getByRole("button", { name: "Directo" }).click();
@@ -142,7 +141,6 @@ try {
   assert(firstPrivateState.preferredPrivateStyle === "direct", "Explicit private style was not stored locally");
   assert(firstPrivateState.privateSessionCount === 1, `Expected first private session count=1, got ${firstPrivateState.privateSessionCount}`);
 
-  // A later visit is the second private moment: persisted preference is reused and commerce can become eligible.
   await page.reload({ waitUntil: "networkidle" });
   await passAgeGate(page);
   await page.getByRole("button", { name: "Hoy manda tú" }).waitFor();
@@ -162,8 +160,6 @@ try {
   await page.getByText("No pasa nada. Seguimos igual.").waitFor();
   await assertNoHorizontalOverflow(page, "/experience private moment");
 
-  // Simulate a clean second device with authenticated server-backed ritual + private preference memory.
-  // This remains contract proof, not real hosted Supabase proof.
   const remoteContext = await browser.newContext(contextOptions);
   await remoteContext.route("**/api/relationship/ritual", async (route) => {
     const request = route.request();
@@ -171,12 +167,7 @@ try {
       await route.fulfill({
         status: 200,
         contentType: "application/json",
-        body: JSON.stringify({
-          ritual: {
-            ritualKey: "junk_food_date_v1",
-            completedAt: "2026-09-03T20:00:00.000Z",
-          },
-        }),
+        body: JSON.stringify({ ritual: { ritualKey: "junk_food_date_v1", completedAt: "2026-09-03T20:00:00.000Z" } }),
       });
       return;
     }
@@ -244,7 +235,6 @@ try {
 
   for (const event of [
     "ritual_viewed",
-    "ritual_play_intent",
     "ritual_skipped",
     "commercial_offer_dismissed",
     "commercial_post_offer_continued",

@@ -10,24 +10,18 @@ const ALLOWED_EVENTS = new Set([
   "age_gate_pass",
   "age_gate_accepted",
   "age_gate_fail",
-  "meet_mara_view",
   "returning_user",
   "launch_experience_started",
   "experience_started",
-  "launch_session_completed",
   "experience_completed",
   "launch_return_continued",
   "launch_state_reset",
-  "visual_choice_completed",
   "preference_selected",
-  "prediction_hit",
-  "prediction_miss",
   "signup_started",
   "signup_completed",
   "signin_started",
   "signin_completed",
   "ritual_viewed",
-  "ritual_play_intent",
   "ritual_completed",
   "ritual_skipped",
   "commercial_offer_dismissed",
@@ -142,10 +136,10 @@ export async function POST(request: Request) {
     ? payload.timestamp.slice(0, 40)
     : new Date().toISOString();
 
-  // Intentionally anonymous launch telemetry. Do not add user IDs, IP-derived
-  // identity, conversation content, fantasies, sexual history or commercial
-  // vulnerability data here. String properties must be fixed token-like values;
-  // free-form text, campaigns, referrers and handles are dropped.
+  // Intentionally anonymous launch telemetry. Public events must have a current
+  // producer and founder decision; parked/dev-only events are rejected here.
+  // Do not add user IDs, IP-derived identity, conversation content, fantasies,
+  // sexual history or commercial vulnerability data.
   console.info("MARA_TELEMETRY", JSON.stringify({
     event: payload.event,
     properties: sanitizeProperties(payload.properties),

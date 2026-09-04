@@ -189,9 +189,9 @@ const P0_DEV_LOG_EVENTS = new Set<MaraEvent>([
   "ritual_reward_preference",
 ]);
 
-// Only these public-alpha events may leave the browser through the first-party
-// telemetry endpoint. No conversation text, intimate answers, aliases, payment
-// data or user identifiers are accepted by this launch path.
+// Only launch events with an active producer and a current founder decision may
+// leave the browser through the first-party telemetry endpoint. Parked/dev-lab
+// event names stay typed for experiments but are not part of the public contract.
 const PUBLIC_ALPHA_TELEMETRY_EVENTS = new Set<MaraEvent>([
   "page_view",
   "landing_view",
@@ -202,24 +202,18 @@ const PUBLIC_ALPHA_TELEMETRY_EVENTS = new Set<MaraEvent>([
   "age_gate_pass",
   "age_gate_accepted",
   "age_gate_fail",
-  "meet_mara_view",
   "returning_user",
   "launch_experience_started",
   "experience_started",
-  "launch_session_completed",
   "experience_completed",
   "launch_return_continued",
   "launch_state_reset",
-  "visual_choice_completed",
   "preference_selected",
-  "prediction_hit",
-  "prediction_miss",
   "signup_started",
   "signup_completed",
   "signin_started",
   "signin_completed",
   "ritual_viewed",
-  "ritual_play_intent",
   "ritual_completed",
   "ritual_skipped",
   "commercial_offer_dismissed",
@@ -332,9 +326,8 @@ export function clearP0DevelopmentEventLog() {
 export function track(event: MaraEvent, properties: Record<string, string | number | boolean> = {}) {
   if (typeof window === "undefined") return;
 
-  // Current DM code historically emits ritual_play_intent at exposure time.
-  // Suppress that known false signal from the launch stream. A future genuine
-  // intent interaction can still use ritual_play_intent from another surface.
+  // The current DM historically emits ritual_play_intent at exposure time.
+  // Suppress that false signal entirely until a genuine intent interaction exists.
   if (event === "ritual_play_intent" && properties.surface === "dm_experience") return;
 
   const timestamp = new Date().toISOString();
