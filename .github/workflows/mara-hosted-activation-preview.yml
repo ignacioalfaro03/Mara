@@ -15,11 +15,12 @@ jobs:
     if: github.event.pull_request.head.ref == 'codex/launch-execution-control'
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    defaults:
-      run:
-        working-directory: web
-
     steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
       - name: Check Preview deploy credentials
         id: preflight
         env:
@@ -44,12 +45,6 @@ jobs:
             echo "MARA_PREVIEW_DEPLOY_BLOCKED=missing_vercel_credentials"
           fi
 
-      - name: Checkout exact PR head
-        if: steps.preflight.outputs.ready == 'true'
-        uses: actions/checkout@v7.0.1
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-
       - name: Verify exact PR head
         if: steps.preflight.outputs.ready == 'true'
         shell: bash
@@ -68,22 +63,27 @@ jobs:
 
       - name: Install locked dependencies
         if: steps.preflight.outputs.ready == 'true'
+        working-directory: web
         run: npm ci --no-audit --no-fund
 
       - name: Audit production dependencies
         if: steps.preflight.outputs.ready == 'true'
+        working-directory: web
         run: node scripts/npm-audit-gate.mjs
 
       - name: Typecheck candidate
         if: steps.preflight.outputs.ready == 'true'
+        working-directory: web
         run: npm run typecheck
 
       - name: Install Vercel CLI
         if: steps.preflight.outputs.ready == 'true'
+        working-directory: web
         run: npm install --no-save --no-package-lock --no-audit --no-fund "vercel@${VERCEL_CLI_VERSION}"
 
       - name: Pull Preview environment and verify project link
         if: steps.preflight.outputs.ready == 'true'
+        working-directory: web
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -106,6 +106,7 @@ jobs:
 
       - name: Build Preview candidate
         if: steps.preflight.outputs.ready == 'true'
+        working-directory: web
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           NEXT_TELEMETRY_DISABLED: "1"
@@ -114,6 +115,7 @@ jobs:
       - name: Deploy exact PR head to Vercel Preview
         if: steps.preflight.outputs.ready == 'true'
         id: deploy
+        working-directory: web
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         shell: bash
@@ -130,6 +132,7 @@ jobs:
 
       - name: Wait for Preview READY
         if: steps.preflight.outputs.ready == 'true'
+        working-directory: web
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
