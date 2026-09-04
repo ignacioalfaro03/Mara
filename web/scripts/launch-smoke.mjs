@@ -34,10 +34,15 @@ async function assertMaraImageLoaded(page, contextLabel) {
 }
 
 async function passAgeGate(page) {
-  const dialog = page.getByRole("dialog");
-  if (await dialog.isVisible().catch(() => false)) {
-    await dialog.locator("button").first().click();
-  }
+  const alreadyPassed = await page
+    .evaluate(() => window.localStorage.getItem("mara_age_gate_passed") === "true")
+    .catch(() => false);
+  if (alreadyPassed) return;
+
+  const confirm = page.getByRole("button", { name: "Sí, tengo 18+" });
+  await confirm.waitFor({ state: "visible", timeout: 5000 });
+  await confirm.click();
+  await page.getByRole("dialog").waitFor({ state: "detached", timeout: 5000 }).catch(() => undefined);
 }
 
 const browser = await chromium.launch({ headless: true });
