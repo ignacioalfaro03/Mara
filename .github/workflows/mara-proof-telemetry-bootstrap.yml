@@ -1,0 +1,200 @@
+name: Mara Proof Telemetry Bootstrap
+
+on:
+  push:
+    branches: [ops/telemetry-proof-bootstrap]
+    paths: [.github/workflows/mara-proof-telemetry-bootstrap.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PRODUCT_SHA: "588e39f7fbaec4aa69f33cd3302f1dfcbd032c96"
+  VERCEL_CLI_VERSION: "59.11.1"
+  VERCEL_ORG_ID: "team_KAPFjrSQT78GUeQyGZCdQRdz"
+  VERCEL_PROJECT_ID: "prj_AFQlC5fN2qKwrfZ8q7VzF9PnzAHc"
+  SUPABASE_PROJECT_REF: "hctykprkwenhatbjxkpb"
+  PROOF_ALIAS: "https://mara-vera-proof-588e39f.vercel.app"
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Resolve existing server-only credentials
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          DIRECT_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          DIRECT_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "::error::MARA_BOOTSTRAP_BLOCKED=missing_vercel_token"
+            exit 1
+          fi
+
+          server_key="${DIRECT_SERVICE_ROLE:-}"
+          if [ -z "$server_key" ] && [[ "${DIRECT_SECRET_KEY:-}" == eyJ* ]]; then
+            server_key="$DIRECT_SECRET_KEY"
+          fi
+
+          if [ -z "$server_key" ] && [ -n "${SUPABASE_ACCESS_TOKEN:-}" ]; then
+            curl -fsS \
+              "https://api.supabase.com/v1/projects/${SUPABASE_PROJECT_REF}/api-keys?reveal=true" \
+              -H "Authorization: Bearer ${SUPABASE_ACCESS_TOKEN}" \
+              -o /tmp/mara-supabase-keys.json
+
+            server_key="$(jq -r '
+              .. | objects
+              | select((.type? == "service_role") or (.name? == "service_role") or (.role? == "service_role"))
+              | (.api_key? // .key? // .value? // .secret? // empty)
+            ' /tmp/mara-supabase-keys.json | grep '^eyJ' | head -n 1 || true)"
+            rm -f /tmp/mara-supabase-keys.json
+          fi
+
+          if [ -z "$server_key" ]; then
+            echo "::error::MARA_BOOTSTRAP_BLOCKED=no_compatible_server_key_or_supabase_access_token"
+            echo "::error::The exact proven SHA expects the legacy JWT service_role shape; no secret value was printed."
+            exit 1
+          fi
+
+          echo "::add-mask::$server_key"
+          umask 077
+          printf '%s' "$server_key" > /tmp/mara-supabase-service-role
+          echo "MARA_SERVER_CREDENTIAL_RESOLVED=true"
+
+      - name: Inject credential into isolated proof project only
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          server_key="$(cat /tmp/mara-supabase-service-role)"
+          echo "::add-mask::$server_key"
+          jq -n --arg value "$server_key" '{
+            key: "SUPABASE_SERVICE_ROLE_KEY",
+            value: $value,
+            type: "sensitive",
+            target: ["production"],
+            comment: "Mara isolated proof telemetry only; never canonical mara-vera"
+          }' > /tmp/vercel-env.json
+
+          code="$(curl -sS -o /tmp/vercel-env-response.json -w '%{http_code}' \
+            -X POST \
+            "https://api.vercel.com/v10/projects/${VERCEL_PROJECT_ID}/env?upsert=true&teamId=${VERCEL_ORG_ID}" \
+            -H "Authorization: Bearer ${VERCEL_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --data-binary @/tmp/vercel-env.json)"
+          rm -f /tmp/vercel-env.json
+          if [ "$code" != "200" ] && [ "$code" != "201" ]; then
+            echo "::error::Vercel env upsert failed with HTTP $code"
+            jq -c '{error: (.error.code // .error.message // "unknown")}' /tmp/vercel-env-response.json 2>/dev/null || true
+            exit 1
+          fi
+          rm -f /tmp/vercel-env-response.json
+          echo "MARA_PROOF_SERVER_ENV_UPSERT PASS"
+
+      - name: Checkout exact proven product SHA
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ env.PRODUCT_SHA }}
+          clean: true
+
+      - name: Verify exact product SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$PRODUCT_SHA"
+          echo "MARA_PRODUCT_SHA=$PRODUCT_SHA"
+
+      - name: Setup Node
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install locked app and Vercel CLI
+        working-directory: web
+        run: |
+          npm ci --no-audit --no-fund
+          npm install --no-save --no-package-lock --no-audit --no-fund "vercel@${VERCEL_CLI_VERSION}"
+
+      - name: Pull isolated proof environment
+        working-directory: web
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx vercel pull --yes --environment=production --token "$VERCEL_TOKEN"
+          node <<'NODE'
+          const fs = require('fs');
+          const linked = JSON.parse(fs.readFileSync('.vercel/project.json', 'utf8'));
+          if (linked.projectId !== process.env.VERCEL_PROJECT_ID) throw new Error(`Wrong Vercel project: ${linked.projectId}`);
+          if (linked.orgId !== process.env.VERCEL_ORG_ID) throw new Error(`Wrong Vercel org: ${linked.orgId}`);
+          console.log('MARA_ISOLATED_PROOF_LINK PASS');
+          NODE
+
+      - name: Build exact SHA with proof environment
+        working-directory: web
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          NEXT_TELEMETRY_DISABLED: "1"
+        run: npx vercel build --prod --token "$VERCEL_TOKEN"
+
+      - name: Redeploy exact SHA to isolated proof project
+        id: deploy
+        working-directory: web
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx vercel deploy --prebuilt --prod --yes --token "$VERCEL_TOKEN" 2>&1 | tee /tmp/mara-proof-deploy.log
+          deployment_url="$(grep -Eo 'https://[^[:space:]]+\.vercel\.app' /tmp/mara-proof-deploy.log | tail -n 1)"
+          test -n "$deployment_url"
+          case "$deployment_url" in
+            *mara-vera-proof-588e39f*) ;;
+            *) echo "::error::Unexpected deployment target: $deployment_url"; exit 1;;
+          esac
+          echo "deployment_url=$deployment_url" >> "$GITHUB_OUTPUT"
+          echo "MARA_PROOF_DEPLOYMENT_URL=$deployment_url"
+
+      - name: Wait for isolated proof deployment
+        working-directory: web
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
+        run: npx vercel inspect "$DEPLOYMENT_URL" --wait --token "$VERCEL_TOKEN"
+
+      - name: Prove telemetry persistence hosted
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          session_id="$(cat /proc/sys/kernel/random/uuid)"
+          payload="$(jq -cn --arg sid "$session_id" '{event:"page_view",sessionId:$sid,properties:{surface:"/ops-telemetry-proof"}}')"
+          curl -fsS -X POST "$DEPLOYMENT_URL/api/telemetry" \
+            -H "Content-Type: application/json" \
+            --data "$payload" > /tmp/mara-telemetry-response.json
+          jq -e '.ok == true and .persisted == true' /tmp/mara-telemetry-response.json >/dev/null
+          echo "MARA_HOSTED_TELEMETRY_PERSISTENCE PASS"
+          echo "MARA_TELEMETRY_PROBE_SESSION=$session_id"
+
+      - name: State safety boundary
+        if: always()
+        shell: bash
+        run: |
+          rm -f /tmp/mara-supabase-service-role /tmp/mara-supabase-keys.json /tmp/vercel-env.json /tmp/vercel-env-response.json
+          echo "MARA_PRODUCT_SHA=$PRODUCT_SHA"
+          echo "MARA_PROOF_ALIAS=$PROOF_ALIAS"
+          echo "CANONICAL_PRODUCTION_UNTOUCHED=https://mara-vera.vercel.app"
+          echo "NO_MERGE_PERFORMED=true"
+
+# Operational bootstrap only. This workflow never targets canonical mara-vera.
+# It preserves PR #42 at its exact proven SHA and only redeploys the isolated proof project.
