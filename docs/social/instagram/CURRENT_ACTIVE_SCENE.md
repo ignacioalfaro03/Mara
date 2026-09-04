@@ -8,52 +8,41 @@ This file exists so a future production agent can continue the current Instagram
 
 ## Active state
 
-- `active_scene:` NONE
-- `post_id:` NONE
-- `scene_id:` NONE
-- `scene_packet_path:` NONE
+- `active_scene:` P01-LATE-LUNCH
+- `post_id:` P01
+- `scene_id:` IG-2026-09-04-LATE-LUNCH-001
+- `scene_packet_path:` docs/social/instagram/scenes/IG-2026-09-04-LATE-LUNCH-001.md
 - `last_accepted_frame:` NONE
-- `next_planned_frame:` NONE
+- `next_planned_frame:` F01 — cover / hero across-table late-lunch portrait
 - `last_updated:` 2026-09-04
 
-No Instagram production scene is currently locked in this branch.
+## Highest-risk continuity facts
 
-The launch arc recommends beginning with `P01 — Late Lunch`, but recommendation is **not** an active scene and does not create canon.
+- same canonical Mara identity and body
+- WRD-TOP-001 fitted black sleeveless top
+- WRD-JEANS-001 blue jeans
+- OBJ-NECKLACE-001 delicate gold necklace
+- OBJ-BAG-001 compact black shoulder bag
+- OBJ-PHONE-001 dark smartphone with warm-cream case
+- medium warm oak table
+- off-white shallow ceramic bowl
+- tagliatelle-style creamy mushroom/parmesan pasta
+- clear sparkling-water tumbler
+- muted sage-green wall + street-facing window
+- late-afternoon soft window light from Mara's left
 
----
+## Current production rule
 
-## When production starts
+Frame 1 is being generated now. It is not canon until explicitly accepted.
 
-Replace `NONE` with:
+After acceptance:
 
-- post ID;
-- Scene ID;
-- exact Scene Packet path;
-- last accepted asset ID;
-- next frame number/job;
-- highest-risk continuity facts;
-- unresolved decisions;
-- last updated timestamp/date.
-
-Example shape:
-
-```text
-active_scene: P01-LATE-LUNCH
-post_id: P01
-scene_id: IG-2026-09-XX-LATE-LUNCH-001
-scene_packet_path: docs/social/instagram/scenes/IG-...md
-last_accepted_frame: IG-P01-F01-V2
-next_planned_frame: F02 — exact meal close-up
-highest_risk_continuity_facts:
-  - exact pasta/plate
-  - wood table
-  - water glass
-  - black top
-  - OBJ-NECKLACE-001
-  - OBJ-PHONE-001 case visual
-unresolved:
-  - none
-```
+1. inspect the accepted image;
+2. write exact visible facts into the Scene Packet Accepted-frame state log;
+3. assign an asset ID in ASSET_REGISTER.md;
+4. update `last_accepted_frame` here;
+5. point `next_planned_frame` to F02 — exact meal close-up;
+6. preserve every visible frame-1 fact when generating F02.
 
 ---
 
@@ -74,5 +63,3 @@ then:
 4. generate only the next planned beat;
 5. preserve all locked facts;
 6. update Scene Packet and this pointer after acceptance.
-
-If `active_scene: NONE`, do **not** hallucinate which prior scene the user meant. Recover an explicitly identified approved scene or ask only if repository state truly cannot resolve it.
