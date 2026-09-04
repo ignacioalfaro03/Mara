@@ -27,7 +27,7 @@ returns table (
 )
 language plpgsql
 security invoker
-set search_path = public
+set search_path = ''
 as $$
 declare
   v_user_id uuid := auth.uid();
@@ -75,7 +75,7 @@ returns table (
 )
 language plpgsql
 security invoker
-set search_path = public
+set search_path = ''
 as $$
 declare
   v_user_id uuid := auth.uid();
@@ -97,5 +97,13 @@ begin
 end;
 $$;
 
+revoke all on function public.record_private_moment(text) from public, anon;
+revoke all on function public.mark_private_offer_shown() from public, anon;
 grant execute on function public.record_private_moment(text) to authenticated;
 grant execute on function public.mark_private_offer_shown() to authenticated;
+
+comment on function public.record_private_moment(text) is
+  'Records only an explicit Private Moment style choice and session count for auth.uid(). No free text, intimate content, vulnerability score or inferred sexuality is stored.';
+
+comment on function public.mark_private_offer_shown() is
+  'Records only that the authenticated user was shown the Private Moment offer, for cooldown and fatigue control.';

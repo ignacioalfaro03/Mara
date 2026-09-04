@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { flushPendingPreferenceEvents } from "@/lib/preference-client";
+import { flushPendingRitualMemory } from "@/lib/ritual-client";
 import { clearMaraLocalDeviceState } from "@/lib/local-device-state";
 import { track } from "@/lib/analytics";
 import styles from "./auth.module.css";
@@ -80,6 +81,7 @@ export function AccountEntry() {
       }
 
       await flushPendingPreferenceEvents();
+      await flushPendingRitualMemory();
       track(mode === "signup" ? "signup_completed" : "signin_completed", { surface: "auth" });
       if (mode === "signup") track("signup_complete", { surface: "auth" });
       window.location.assign("/experience?account=ready");

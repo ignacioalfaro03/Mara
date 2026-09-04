@@ -84,6 +84,8 @@ There is no active public Premium job in the current Alpha. `/premium` is intent
 
 Review:
 - public-surface ratios above;
+- `session_started`;
+- `first_interaction`;
 - `launch_experience_started` as entry evidence only;
 - `ritual_viewed`;
 - `ritual_completed`;
@@ -93,6 +95,8 @@ Review:
 - `experience_started` segmented by surface;
 - `experience_completed` segmented by surface;
 - `preference_selected`;
+- `first_preference_signal`;
+- `preference_updated`;
 - signup events.
 
 There is deliberately **no synthetic `launch_session_completed` KPI**. The current product already has concrete behavioral completions (`ritual_completed`, surface-segmented `experience_completed`), so manufacturing or preserving an obsolete aggregate would add noise.
@@ -131,6 +135,8 @@ Use the manual roster for actual returns and anonymous telemetry only as support
 Review:
 - account-created-after-value status in the invited roster;
 - `returning_user`;
+- `memory_recall_rendered`;
+- `memory_recall_engaged`;
 - `launch_return_continued`;
 - return-count buckets;
 - return-latency buckets;
@@ -161,6 +167,9 @@ Review:
 - manual D7 return status;
 - second Private Moment reach;
 - `commerce_offer_viewed`;
+- `offer_viewed`;
+- `paywall_impression`;
+- `offer_clicked`;
 - `commercial_offer_dismissed`;
 - `commercial_post_offer_continued`;
 - `commerce_checkout_started`;
@@ -205,6 +214,9 @@ The report prints these as **event ratios only**:
 - checkout starts / offer views;
 - checkout blocks / checkout starts;
 - entitlements / checkout starts.
+- first interactions / session starts;
+- memory engagements / memory recalls rendered;
+- offer clicks / offer views.
 
 They detect broken stages and directional change. They are **not unique-user conversion rates**.
 

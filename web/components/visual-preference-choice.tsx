@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { track } from "@/lib/analytics";
 import { recordVisualPreference } from "@/lib/preference-client";
 import styles from "./visual-preference-choice.module.css";
 
@@ -13,6 +14,8 @@ export type PoseChoice = "pose_a" | "pose_b";
 export function VisualPreferenceChoice({ onChoose }: { onChoose: (choice: PoseChoice) => void }) {
   function choose(choice: PoseChoice) {
     void recordVisualPreference(choice);
+    track("first_preference_signal", { surface: "visual_preference", target: choice, preference_group: "pose_pair_launch_v1" });
+    track("preference_updated", { surface: "visual_preference", target: choice, preference_group: "pose_pair_launch_v1" });
     onChoose(choice);
   }
 

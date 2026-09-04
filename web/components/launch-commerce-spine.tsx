@@ -192,6 +192,12 @@ export function LaunchCommerceSpine() {
   async function startCheckout(offer: CommerceOffer, amountMinor: number | null) {
     setNotice("");
     setNeedsAccount(false);
+    track("offer_clicked", {
+      surface: "launch_open_loop",
+      offer_slug: offer.slug,
+      offer_type: offer.type,
+      provider_status: payload?.payment.status ?? "not_configured",
+    });
 
     if (!payload || !canCheckout(payload)) {
       setNotice("Checkout no activo en este Preview. Mara puede mostrar el producto, pero no puede cobrar sin un procesador aprobado.");

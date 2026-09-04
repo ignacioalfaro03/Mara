@@ -197,3 +197,5 @@ The MVP dispatches provider-agnostic browser events through `lib/analytics.ts`. 
 P0 analytics record only interaction/commercial metadata such as choice step, prediction hit/miss, recommendation mode, experience ID, voice interaction, return/open-loop behavior, experiment variant, premium intent, offer dismissal, post-offer continuation, offer type, availability type, DEV mock purchase/resume and reward style.
 
 Do not attach raw intimate answers, fantasy values, raw conversation content, payment data or identity documents to the generic analytics event layer.
+
+When `SUPABASE_SERVICE_ROLE_KEY` is present, accepted public launch events are also written to `public.launch_events` with session-scoped anonymous IDs and coarse allowlisted properties. Operator aggregates are available at `/api/internal/launch` only when the server-only `MARA_OPERATOR_TOKEN` is configured.

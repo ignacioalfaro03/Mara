@@ -156,7 +156,7 @@ try {
   assert(secondPrivateState.privateSessionCount === 2, `Expected second private session count=2, got ${secondPrivateState.privateSessionCount}`);
   assert(typeof secondPrivateState.lastPrivateOfferAt === "string", "Offer view must create a local cooldown timestamp");
 
-  await page.getByRole("button", { name: "Ahora no" }).click();
+  await page.getByTestId("dm-private-drop").getByRole("button", { name: "Ahora no" }).click();
   await page.getByText("No pasa nada. Seguimos igual.").waitFor();
   await assertNoHorizontalOverflow(page, "/experience private moment");
 
@@ -234,6 +234,16 @@ try {
   assert(allowedTelemetry.status() === 200, `Allowed telemetry returned ${allowedTelemetry.status()}`);
 
   for (const event of [
+    "session_started",
+    "cta_clicked",
+    "first_interaction",
+    "memory_recall_rendered",
+    "memory_recall_engaged",
+    "first_preference_signal",
+    "preference_updated",
+    "offer_viewed",
+    "offer_clicked",
+    "paywall_impression",
     "ritual_viewed",
     "ritual_skipped",
     "commercial_offer_dismissed",
@@ -252,6 +262,9 @@ try {
     });
     assert(response.status() === 200, `${event} telemetry returned ${response.status()}`);
   }
+
+  const internalLaunch = await context.request.get(`${baseUrl}/api/internal/launch`);
+  assert([401, 404].includes(internalLaunch.status()), `Internal launch summary must be protected, got ${internalLaunch.status()}`);
 
   const rejectedTelemetry = await context.request.post(`${baseUrl}/api/telemetry`, {
     data: { event: "raw_intimate_text", properties: { text: "must-not-log" } },

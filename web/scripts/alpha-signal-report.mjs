@@ -1,14 +1,20 @@
 import fs from "node:fs/promises";
 import process from "node:process";
+import { pathToFileURL } from "node:url";
 
 const MARKER = "MARA_TELEMETRY";
 const VALID_SOURCES = ["ig", "tt", "x", "direct", "other"];
 const CORE_EVENTS = [
   "page_view",
   "landing_view",
+  "session_started",
   "hero_cta_click",
+  "cta_clicked",
+  "first_interaction",
   "launch_experience_started",
   "returning_user",
+  "memory_recall_rendered",
+  "memory_recall_engaged",
   "launch_return_continued",
   "ritual_viewed",
   "ritual_completed",
@@ -16,8 +22,13 @@ const CORE_EVENTS = [
   "experience_started",
   "experience_completed",
   "preference_selected",
+  "first_preference_signal",
+  "preference_updated",
   "signup_started",
   "signup_completed",
+  "paywall_impression",
+  "offer_viewed",
+  "offer_clicked",
   "commerce_offer_viewed",
   "commercial_offer_dismissed",
   "commercial_post_offer_continued",
@@ -25,6 +36,7 @@ const CORE_EVENTS = [
   "commerce_checkout_blocked",
   "commerce_checkout_returned",
   "commerce_entitlement_unlocked",
+  "purchase_completed",
 ];
 
 function increment(map, key) {
@@ -108,6 +120,8 @@ export function buildSignalReport(text) {
   const countSurface = (event, surface) => surfaceEvents.get(`${surface}:${event}`) ?? 0;
 
   const landingViews = count("landing_view");
+  const sessionStarts = count("session_started");
+  const firstInteractions = count("first_interaction");
   const homeCtaClicks = countSurface("hero_cta_click", "home");
   const meetMaraViews = countSurface("page_view", "/meet-mara");
   const meetMaraCtaClicks = countSurface("hero_cta_click", "meet_mara");
@@ -121,8 +135,12 @@ export function buildSignalReport(text) {
   const signupStarts = count("signup_started");
   const signupCompletions = count("signup_completed");
   const returns = count("returning_user");
+  const memoryRecallRendered = count("memory_recall_rendered");
+  const memoryRecallEngaged = count("memory_recall_engaged");
   const returnContinuations = count("launch_return_continued");
   const offerViews = countSurface("commerce_offer_viewed", "dm_private_moment");
+  const canonicalOfferViews = count("offer_viewed");
+  const offerClicks = count("offer_clicked");
   const offerDismissals = countSurface("commercial_offer_dismissed", "dm_private_moment");
   const postOfferContinuations = countSurface("commercial_post_offer_continued", "dm_private_moment");
   const checkoutStarts = countSurface("commerce_checkout_started", "dm_private_moment");
@@ -141,6 +159,7 @@ export function buildSignalReport(text) {
     core_events_by_source: sortedObject(sourceCoreEvents),
     directional_event_ratios: {
       home_cta_clicks_per_landing_view: safeRatio(homeCtaClicks, landingViews),
+      first_interactions_per_session_start: safeRatio(firstInteractions, sessionStarts),
       meet_mara_cta_clicks_per_view: safeRatio(meetMaraCtaClicks, meetMaraViews),
       ritual_completions_per_view: safeRatio(ritualCompletions, ritualViews),
       ritual_skips_per_view: safeRatio(ritualSkips, ritualViews),
@@ -148,9 +167,11 @@ export function buildSignalReport(text) {
       private_moment_completions_per_start: safeRatio(privateCompletions, privateStarts),
       preference_selections_per_private_moment_start: safeRatio(privatePreferenceSelections, privateStarts),
       signup_completions_per_start: safeRatio(signupCompletions, signupStarts),
+      memory_engagements_per_recall_rendered: safeRatio(memoryRecallEngaged, memoryRecallRendered),
       return_continuations_per_return_event: safeRatio(returnContinuations, returns),
       offer_dismissals_per_offer_view: safeRatio(offerDismissals, offerViews),
       post_offer_continuations_per_dismissal: safeRatio(postOfferContinuations, offerDismissals),
+      offer_clicks_per_offer_view: safeRatio(offerClicks, canonicalOfferViews),
       checkout_starts_per_offer_view: safeRatio(checkoutStarts, offerViews),
       checkout_blocks_per_checkout_start: safeRatio(checkoutBlocks, checkoutStarts),
       entitlement_unlocks_per_checkout_start: safeRatio(entitlementUnlocks, checkoutStarts),
@@ -192,7 +213,9 @@ function printHumanReport(report) {
 function selfTest() {
   const sampleRecords = [
     ["landing_view", { surface: "/", entry_source: "ig" }],
+    ["session_started", { surface: "/", entry_source: "ig" }],
     ["hero_cta_click", { surface: "home", placement: "primary", entry_source: "ig" }],
+    ["first_interaction", { surface: "dm_experience", entry_source: "ig" }],
     ["page_view", { surface: "/meet-mara", entry_source: "direct" }],
     ["hero_cta_click", { surface: "meet_mara", placement: "top", entry_source: "direct" }],
     ["launch_experience_started", { surface: "dm_experience", entry_source: "ig" }],
@@ -207,8 +230,12 @@ function selfTest() {
     ["signup_started", { surface: "auth", entry_source: "direct" }],
     ["signup_completed", { surface: "auth", entry_source: "direct" }],
     ["returning_user", { surface: "dm_experience", entry_source: "x", return_count_bucket: "1", days_since_first_bucket: "1-2d" }],
+    ["memory_recall_rendered", { surface: "dm_experience", memory_source: "server", entry_source: "x" }],
+    ["memory_recall_engaged", { surface: "dm_experience", target: "private_moment", entry_source: "x" }],
     ["launch_return_continued", { surface: "dm_experience", entry_source: "x", return_count_bucket: "1", days_since_first_bucket: "1-2d" }],
+    ["offer_viewed", { surface: "dm_private_moment", entry_source: "direct" }],
     ["commerce_offer_viewed", { surface: "dm_private_moment", entry_source: "direct" }],
+    ["offer_clicked", { surface: "dm_private_moment", entry_source: "direct" }],
     ["commercial_offer_dismissed", { surface: "dm_private_moment", entry_source: "direct" }],
     ["commercial_post_offer_continued", { surface: "dm_private_moment", entry_source: "direct" }],
     ["commerce_checkout_started", { surface: "dm_private_moment", entry_source: "direct" }],
@@ -226,18 +253,20 @@ function selfTest() {
   const report = buildSignalReport(sample);
   const ratios = report.directional_event_ratios;
   const assertions = [
-    [report.telemetry_lines_seen === 23, "telemetry line count"],
-    [report.accepted_records === 22, "accepted record count"],
+    [report.telemetry_lines_seen === 29, "telemetry line count"],
+    [report.accepted_records === 28, "accepted record count"],
     [report.malformed_records === 1, "malformed record count"],
     [report.events.launch_session_completed === undefined, "dead launch completion event absent"],
     [report.events.ritual_play_intent === undefined, "fake ritual exposure intent absent"],
     [report.events_by_surface["home:hero_cta_click"] === 1, "home CTA surface"],
+    [report.events_by_surface["dm_experience:first_interaction"] === 1, "first interaction surface"],
     [report.events_by_surface["/meet-mara:page_view"] === 1, "Meet Mara page view surface"],
     [report.events_by_surface["meet_mara:hero_cta_click"] === 1, "Meet Mara CTA surface"],
     [report.events_by_surface["dm_continuity:hero_cta_click"] === 1, "continuity CTA surface"],
     [report.events_by_surface["private_moment:experience_started"] === 1, "Private Moment start"],
     [report.events_by_surface["dm_ritual:ritual_completed"] === 1, "ritual completion surface"],
     [ratios.home_cta_clicks_per_landing_view === 1, "home CTA ratio"],
+    [ratios.first_interactions_per_session_start === 1, "first interaction/session ratio"],
     [ratios.meet_mara_cta_clicks_per_view === 1, "Meet Mara CTA ratio"],
     [ratios.ritual_completions_per_view === 1, "ritual completion ratio"],
     [ratios.ritual_skips_per_view === 0, "ritual skip ratio"],
@@ -245,9 +274,11 @@ function selfTest() {
     [ratios.private_moment_completions_per_start === 1, "Private Moment completion ratio"],
     [ratios.preference_selections_per_private_moment_start === 1, "preference ratio"],
     [ratios.signup_completions_per_start === 1, "signup ratio"],
+    [ratios.memory_engagements_per_recall_rendered === 1, "memory recall engagement ratio"],
     [ratios.return_continuations_per_return_event === 1, "return continuation ratio"],
     [ratios.offer_dismissals_per_offer_view === 1, "offer dismissal ratio"],
     [ratios.post_offer_continuations_per_dismissal === 1, "relationship preservation ratio"],
+    [ratios.offer_clicks_per_offer_view === 1, "offer click ratio"],
     [ratios.checkout_starts_per_offer_view === 1, "checkout intent ratio"],
     [ratios.checkout_blocks_per_checkout_start === 1, "checkout blocked ratio"],
     [ratios.entitlement_unlocks_per_checkout_start === 0, "entitlement ratio"],
@@ -289,7 +320,7 @@ async function main() {
   printHumanReport(report);
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   main().catch((error) => {
     console.error(error instanceof Error ? error.message : String(error));
     process.exitCode = 1;
