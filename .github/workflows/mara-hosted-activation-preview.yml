@@ -150,9 +150,29 @@ jobs:
         if: steps.preflight.outputs.ready == 'true'
         working-directory: web
         env:
-          BASE_URL: ${{ steps.deploy.outputs.deployment_url }}
-          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-        run: node scripts/hosted-telemetry-persistence-smoke.mjs
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          session_id="$(node -e "console.log(require('node:crypto').randomUUID())")"
+          timestamp="$(node -e "console.log(new Date().toISOString())")"
+          payload="$(jq -cn --arg sid "$session_id" --arg ts "$timestamp" '{event:"page_view",properties:{surface:"/qa-telemetry-preview",entry_source:"direct"},timestamp:$ts,sessionId:$sid}')"
+          npx vercel curl /api/telemetry \
+            --deployment "$DEPLOYMENT_URL" \
+            --scope "$VERCEL_SCOPE" \
+            --token "$VERCEL_TOKEN" \
+            -- --silent --show-error --request POST --header "Content-Type: application/json" --data "$payload" \
+            > /tmp/mara-telemetry-response.json
+          node <<'NODE'
+          const fs = require('fs');
+          const raw = fs.readFileSync('/tmp/mara-telemetry-response.json', 'utf8').trim();
+          const body = JSON.parse(raw);
+          if (body?.ok !== true || body?.persisted !== true) {
+            throw new Error(`Hosted telemetry did not persist: ${JSON.stringify(body)}`);
+          }
+          console.log('MARA_TELEMETRY_PERSISTENCE_SMOKE PASS');
+          NODE
 
       - name: Install hosted browser proof runtime
         if: steps.preflight.outputs.ready == 'true' && (github.event.pull_request.head.ref == 'feature/world-sofi-first-slice' || github.event.pull_request.head.ref == 'release/public-alpha-rc')
