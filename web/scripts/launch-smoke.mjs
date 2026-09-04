@@ -236,6 +236,27 @@ try {
   });
   assert(allowedTelemetry.status() === 200, `Allowed telemetry returned ${allowedTelemetry.status()}`);
 
+  for (const event of [
+    "ritual_viewed",
+    "ritual_play_intent",
+    "ritual_skipped",
+    "commercial_offer_dismissed",
+    "commercial_post_offer_continued",
+  ]) {
+    const response = await context.request.post(`${baseUrl}/api/telemetry`, {
+      data: {
+        event,
+        properties: {
+          surface: "launch_smoke",
+          target: "junk_food_date_v1",
+          entry_source: "direct",
+        },
+        timestamp: new Date().toISOString(),
+      },
+    });
+    assert(response.status() === 200, `${event} telemetry returned ${response.status()}`);
+  }
+
   const rejectedTelemetry = await context.request.post(`${baseUrl}/api/telemetry`, {
     data: { event: "raw_intimate_text", properties: { text: "must-not-log" } },
   });

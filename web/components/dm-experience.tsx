@@ -336,6 +336,7 @@ export function DmExperience() {
     privateOfferMarked.current = false;
     setPrivateStage(state.preferredPrivateStyle ?? "choose");
     track("high_intent_session", { surface: "private_moment", intent: "explicit" });
+    track("experience_started", { surface: "private_moment" });
   }
 
   function selectPrivateStyle(style: PrivateStyle) {
