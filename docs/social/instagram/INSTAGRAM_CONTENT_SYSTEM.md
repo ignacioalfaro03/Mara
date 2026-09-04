@@ -1,485 +1,705 @@
-# MARA VERA — INSTAGRAM CONTENT SYSTEM V1
+# MARA VERA — INSTAGRAM CONTENT SYSTEM V3
 
 Status: **CANONICAL SOCIAL OPERATING SYSTEM — 2026-09-04**
 
-Parent identity source of truth: [`MARA_CHARACTER_CANON.md`](../../../MARA_CHARACTER_CANON.md)
+Parent sources of truth:
+
+1. [`MARA_CHARACTER_CANON.md`](../../../MARA_CHARACTER_CANON.md) — Mara identity.
+2. [`web/MARA_WORLD_CANON_MANDATE.md`](../../../web/MARA_WORLD_CANON_MANDATE.md) — global world, time, people, places, objects and cross-surface causality.
+3. [`web/MARA_CHARACTER_PORTFOLIO_MANDATE.md`](../../../web/MARA_CHARACTER_PORTFOLIO_MANDATE.md) — secondary-character and found-footage boundaries.
+4. This document — Instagram execution grammar.
 
 > **MARA HAS A LIFE, NOT A GALLERY OF AI RENDERS.**
 >
-> Instagram must feel like a coherent stream of lived moments. The unit of production is not an isolated image. The unit is an **episode** with a beginning, middle and end.
+> **INSTAGRAM IS NOT A CONTENT CALENDAR. IT IS A PUBLIC WINDOW INTO A PERSISTENT WORLD.**
 
 ---
 
-## 1. Purpose
+## 1. Mission critical
 
-This document defines how Mara Vera appears on Instagram.
+Instagram is a critical acquisition and character-building surface for Mara Vera.
 
-The objective is to create a feed that is:
+Its job is to compound:
 
-- immediately recognizable as Mara;
-- social-native rather than synthetic-catalog-like;
-- aspirational but believable;
-- visually coherent across frames;
-- varied enough to feel like a real person's account;
-- commercially useful for discovery, profile visits, follows and conversion;
-- reproducible across ChatGPT, image models, designers and future production tooling.
+**discovery → recognition → curiosity → follow → return → profile depth → web → interaction → revenue**
 
-Instagram content must preserve Mara's canonical adult identity and public AI disclosure requirements. **Photographic realism does not mean pretending Mara is a biological human.**
+The account must be valuable before a commercial ask appears. Public content should make a viewer want to know what Mara uploads next.
+
+The operating target is not “make beautiful posts.” It is:
+
+> **After 20, 50 and 100 posts, the same life is still visible.**
+
+A successful follower should begin recognizing Mara's face, body, room, objects, clothes, places, friends, routines and camera grammar without explanatory copy.
+
+Photographic realism must never become deceptive identity positioning. Mara remains a fictional AI-generated adult character and account/product disclosure must remain truthful.
 
 ---
 
-## 2. The operating principle
+## 2. Hierarchy of truth
 
-### Bad production model
+When instructions conflict, use this order:
 
-`Prompt → pretty image → publish → new prompt → unrelated pretty image`
+1. Character canon.
+2. Global World Canon.
+3. Approved `MARA_WORLD_LEDGER.md` facts.
+4. Approved `MARA_TIMELINE.md` events.
+5. Approved wardrobe/social/object ledgers.
+6. Active Scene Packet.
+7. Previously accepted frames in that scene.
+8. Current post brief.
+9. Current single-image prompt.
 
-This produces visual drift, broken props, impossible food changes, different rooms, changing clothes and a feed that feels generated.
+A lower layer may add detail. It may not silently rewrite a higher layer.
 
-### Required production model
+### Accepted-frame authority
 
-`Episode concept → Scene Packet → frame plan → generate frame 1 → update state → frame 2 → update state → ... → QA → publish carousel`
+When a generated image is explicitly approved and introduces a visual fact not already locked, that fact becomes authoritative for the active scene and must be written back to the Scene Packet before the next frame.
 
-Every carousel is treated like a tiny continuity-controlled film scene.
+Do not trust chat memory as the only source of continuity.
+
+---
+
+## 3. Required production model
+
+### Forbidden model
+
+`prompt → pretty image → publish → new prompt → unrelated pretty image`
+
+### Required model
+
+`post objective → world check → scene lock → full shot list → frame 1 → QA → state update → frame 2 → QA → state update → ... → sequence QA → profile QA → publish → measure → learn`
+
+The production unit is an **episode**, not an isolated render.
 
 Permanent rule:
 
 > **NO SECOND FRAME WITHOUT THE FIRST FRAME'S WORLD STATE.**
 
-If the user asks “give me the second photo”, the second photo is not a new creative brief. It is the **next camera angle inside the already-open scene** unless the user explicitly requests a scene change.
+If the user says “dame la segunda”, “la tercera”, “otra del mismo post” or equivalent, the default meaning is:
+
+> Continue the current Scene Packet. Preserve every locked fact. Evolve only what can change causally with time.
+
+Do not ask the user to restate facts that the repository already contains.
 
 ---
 
-## 3. Benchmark patterns — what high-reach human accounts get right
+## 4. Core failure modes
 
-The system takes inspiration from recurring social-native patterns seen in major creator/celebrity Instagram accounts, including Dua Lipa, Hailey Bieber and Kylie Jenner. These are **pattern references only**. Mara must never imitate a real person's face, identity or exact creative property.
+### 4.1 WORLD DRIFT
 
-Useful patterns:
+World Drift is any accidental mutation of a fact that should persist.
 
-1. **The carousel tells a small story.** It is not ten hero photos.
-2. **The cover earns the swipe.** Usually Mara or a strong human-scale moment.
-3. **Not every slide contains the person.** Food, room, street, bag, shoes, landscape, table, mirror and small details create life around the subject.
-4. **Editorial and ordinary coexist.** A polished outfit shot beside a phone photo, snack, convenience store, blurry candid or imperfect angle feels more human.
-5. **The location has a role.** A trip, dinner, afternoon, morning or night-out gives the dump a reason to exist.
-6. **People are not photographed only front-on.** Looking away, walking, sitting, laughing, being captured from across a table or seen in a mirror creates observational realism.
-7. **The sequence has rhythm.** Face → environment → object → candid → full body → detail → closer is stronger than six nearly identical portraits.
-8. **Captions are usually lighter than the imagery.** The images carry the story; the caption does not need to explain every frame.
+Automatic reject examples:
 
-Mara should adopt this grammar while preserving her own character signature: playful, close, self-confident, subtly challenging, quietly dominant and visually believable.
+- face or body drift;
+- phone/case changes;
+- jewelry changes without reason;
+- bag changes;
+- nail color changes during one event;
+- clothing mutates;
+- table material changes;
+- plate/bowl/glass changes;
+- food changes identity;
+- room geometry changes;
+- hotel room changes;
+- daylight/night reverses;
+- companion changes identity;
+- a consumed item becomes full again;
+- props teleport between impossible positions;
+- background architecture changes while the camera is supposedly in the same place.
 
----
+**A prettier image with World Drift is a worse asset.**
 
-## 4. Default unit: the Mara Episode
+### 4.2 AI PORTFOLIO SYNDROME
 
-A Mara Instagram episode is one coherent moment or mini-story.
+Symptoms:
 
-Examples:
+- Mara appears in almost every frame;
+- every frame is a hero shot;
+- new outfit every post;
+- luxury location every post;
+- constant perfect skin / perfect pose / perfect lighting;
+- no food, objects, weather, waiting, clutter or routine;
+- no repeated locations;
+- no repeated clothes;
+- no friends;
+- no ordinary moments;
+- no imperfect camera behavior;
+- every image looks commissioned rather than captured.
 
-- late lunch in a small restaurant;
-- coffee and errands in the city;
-- getting ready before going out;
-- Sunday morning at home;
-- gym → smoothie → walk home;
-- beach afternoon;
-- hotel morning during a trip;
-- bookstore / record store / market afternoon;
-- dinner with a friend;
-- rainy-day car ride and coffee;
-- sunset walk;
-- casual night out.
+If the 20-post grid resembles an AI image portfolio, **FAIL**.
 
-An episode can span multiple physical sub-locations only when the progression is narratively obvious, for example:
+### 4.3 LORE INFLATION
 
-`apartment mirror → elevator → street → restaurant`
+Do not manufacture biography to make the feed feel deep.
 
-The transition must be intentional, not accidental generation drift.
+A post should usually introduce only a few new durable facts. Reuse old facts more often than inventing major new ones.
 
----
-
-## 5. Default carousel structure
-
-Default target: **6–9 frames** per carousel.
-
-This is not a rigid formula. Vary the order to avoid looking templated, but most strong Mara carousels should mix these shot classes:
-
-| Shot class | Function | Typical example |
-| --- | --- | --- |
-| Hero / cover | stop scroll | Mara at table, mirror, street, car, beach |
-| Establishing | establish world | restaurant interior, street, hotel view |
-| Object / food | prove lived context | same pasta, coffee, bag, book, flowers |
-| Candid Mara | humanize | looking away, fixing hair, laughing, walking |
-| Full look | body/outfit context | full-body frame with natural perspective |
-| POV / social | imply another person or observer | shot from across table, hand entering frame |
-| Imperfect capture | break synthetic polish | slight motion blur, cropped edge, flash, reflection |
-| Detail | memory cue | necklace, nails, shoes, phone, menu, table texture |
-| Closer | end the moment | street at night, empty table, elevator mirror, sunset |
-
-### Recommended rhythm example
-
-1. Mara hero at the restaurant table.
-2. Close-up of **the exact same meal** visible in frame 1.
-3. Mara candid from across the same table.
-4. Table detail: same drink, same napkin, same cutlery, same bag.
-5. Full outfit in a nearby mirror or on the way out.
-6. Exterior/night street or final small detail.
-
-The important part is not this exact order. The important part is that all frames clearly belong to the **same episode**.
+Do not introduce a new apartment, car, best friend, hobby, travel destination and style identity in one episode.
 
 ---
 
-## 6. World State Lock — continuity is non-negotiable
+## 5. Benchmark evidence and extracted grammar
 
-Every active carousel must have a Scene Packet before frame 2 is generated.
+This system uses real high-reach accounts only as structural references. Do not imitate a real person's face, exact post, wording or personal identity.
 
-The following state is locked unless the story explicitly advances it:
+Observed 2026 patterns include:
 
-### Identity lock
+- Dua Lipa travel carousels mix the subject with companions, animals/scenery, meals/art and side activities inside one trip rather than presenting only hero portraits.
+- Hailey Bieber carousels often mix self-images with travel, family, convenience-store/grocery moments, details and other people; a carousel can start with a strong personal image and immediately cut to a small contextual detail.
+- Kylie Jenner event carousels may use multiple angles of a stronger fashion moment, but those sit inside a broader account where behind-the-scenes, people and event context recur.
+- The broader “photo dump” grammar is intentionally less polished than a campaign: selfies, food, friends, behind-the-scenes material and visually minor camera-roll moments are valid slides.
 
-Inherited directly from `MARA_CHARACTER_CANON.md`:
+Reference reading captured 2026-09-04:
 
-- same canonical face;
-- same adult 24-year-old read;
-- same hair family and length;
-- same eye color;
-- same body canon;
-- same recurring gold-necklace anchor when present;
-- same personality energy.
+- Buffer, “What is a Photo Dump?”
+- Vogue, Dua Lipa South Africa / Cape Town Instagram carousel coverage, 2026.
+- ELLE, Hailey Bieber Seoul and recent-life carousel coverage, 2026.
+- ELLE/Vogue, Kylie Jenner event and behind-the-scenes Instagram coverage, 2026.
 
-### Scene lock
+The conclusion is not “copy celebrities.” The conclusion is:
 
-- city / neighborhood if relevant;
-- exact venue type;
-- interior/exterior zone;
-- table or seating position;
-- time of day;
+> **High-reach social accounts allow ordinary evidence to sit beside aspirational imagery. That contrast makes the account feel inhabited.**
+
+---
+
+## 6. The 24 Instagram commandments
+
+1. **ONE MARA.** Identity consistency beats one prettier image.
+2. **ONE WORLD.** Every approved visual fact persists until a causal change occurs.
+3. **ONE TIMELINE.** Posts occur before or after other posts.
+4. **SCENE BEFORE IMAGE.** No frame without a locked event state.
+5. **CONTINUITY > BEAUTY.** Coherent 8/10 beats incoherent 10/10.
+6. **CAROUSEL = MICRO-STORY.** Slides are beats of one event, not pose variants.
+7. **NOT EVERY FRAME IS MARA.** Environment and objects must carry narrative weight.
+8. **OBJECT PERMANENCE.** Phones, bags, jewelry, cups, books and home objects can recur.
+9. **REWEAR IS REALISM.** Wardrobe repeats are required.
+10. **PLACES RECUR.** Home, café, gym and neighborhood should become recognizable.
+11. **SOCIAL GRAPH EXISTS.** Mara has a deliberately small adult fictional circle.
+12. **IMPERFECTION IS CONTROLLED.** Blur/crop/flash can be human; AI defects cannot.
+13. **MARA IS NOT ALWAYS PERFORMING.** Eating, waiting, walking and looking away matter.
+14. **EVERY CAMERA HAS AN ORIGIN.** Selfie, mirror, friend, POV or plausible support.
+15. **PHYSICAL TIME PASSES.** Food, drinks, light and object positions evolve forward.
+16. **CAPTION IS NOT AD COPY.** The image carries most of the story.
+17. **FEED IS NOT A SALES PAGE.** Public value exists without checkout pressure.
+18. **VARIATION WITHIN IDENTITY.** Change shot grammar, not Mara.
+19. **STORIES ARE TIME.** Stories connect before/during/after event states.
+20. **REELS ARE MOVEMENT.** Video needs causal action, not only animated stills.
+21. **EVERY POST HAS A JOB.** One primary strategic objective, maximum two.
+22. **APPROVED FACTS ENTER MEMORY.** GitHub, not chat recollection, holds canon.
+23. **NOTHING CHANGES WITHOUT CAUSALITY.** A change must be explainable in-world.
+24. **BELIEVABILITY COMPOUNDS.** The system is judged at 20/50/100-post depth.
+
+---
+
+## 7. Global state vs scene state
+
+### Global state
+
+May persist for weeks/months:
+
+- Mara identity;
+- recurring jewelry;
+- phone/case;
+- recurring bags;
+- home spaces;
+- recurring locations;
+- wardrobe inventory;
+- social characters;
+- stable voice tendencies;
+- established preferences;
+- meaningful events.
+
+Tracked in ledgers.
+
+### Scene state
+
+Persists through one episode:
+
+- exact outfit;
+- hairstyle state;
+- makeup/nails;
+- exact seat/table;
+- meal/drink;
+- lighting;
 - weather;
-- light direction and color temperature;
-- visual background anchors;
-- general crowd density.
+- companion positions;
+- object positions;
+- photographer POV;
+- temporal progression.
 
-### Wardrobe lock
+Tracked in the Scene Packet.
 
-- top;
-- bottom;
+Do not use global-state flexibility to excuse a scene continuity error.
+
+---
+
+## 8. Scene Lock requirements
+
+Before frame 1, the episode must know:
+
+- Scene ID;
+- post ID;
+- objective;
+- date/daypart;
+- city/area if canonically appropriate;
+- micro-location;
+- weather;
+- light;
+- outfit IDs or exact temporary descriptions;
 - shoes;
-- jacket/outerwear;
 - bag;
 - jewelry;
-- sunglasses;
-- hairstyle;
-- makeup;
-- nail color if visible.
+- phone/case;
+- hair;
+- makeup/nails;
+- food/drink if present;
+- companions;
+- who takes each image;
+- what happened immediately before;
+- what happens during;
+- intended ending;
+- complete 5–9 frame plan.
 
-A wardrobe change is allowed only after an explicit time/location transition.
+Once frame 1 is approved, the Scene Packet becomes **LOCKED**.
 
-### Prop lock
+Changes after lock are allowed only as explicit transitions or natural state progression.
 
-- phone model/case appearance;
+---
+
+## 9. Causal continuity examples
+
+### Valid
+
+`full pasta → 30% eaten → 70% eaten → almost empty`
+
+`jacket worn → jacket on chair → jacket worn outside`
+
+`hair tucked behind ear → loose strands later`
+
+`daylight → golden hour → blue hour`
+
+`bag on chair → bag on shoulder when leaving`
+
+### Invalid
+
+`pasta → sushi → pasta`
+
+`cream phone case → black phone case`
+
+`wood table → white marble table` with no venue transition
+
+`black dress → beige dress` inside the same night
+
+`half-empty drink → full drink` with no refill event
+
+`window on left → entirely different architecture`
+
+---
+
+## 10. Camera-origin rule
+
+Every frame must be physically explainable.
+
+Allowed origins:
+
+- front-camera selfie;
+- mirror shot;
+- phone supported on a plausible surface/timer;
+- Sofi/friend POV;
+- another visible/implied person across a table;
+- video-frame extraction;
+- casual third-party photo;
+- Mara POV where Mara is not visible.
+
+Reject floating-cinema-camera angles that have no plausible photographer in a social-native episode.
+
+Across one carousel, vary camera awareness:
+
+- camera-aware;
+- semi-aware;
+- candid/unaware.
+
+Mara should not look like she is posing for every second of her life.
+
+---
+
+## 11. Reality density
+
+A good Scene Packet knows more than the final image necessarily shows.
+
+Example café state:
+
+- late afternoon;
+- cloudy daylight;
+- wood table;
+- one recurring bag;
+- phone/case;
+- coffee partly consumed;
+- water glass;
+- receipt;
+- jacket on chair;
+- street through window;
+- moderate crowd;
+- one photographer position.
+
+Do not cram all details into every frame. The value is that every angle can draw from the same coherent state.
+
+---
+
+## 12. Selective beauty and “boring” content
+
+Target across a carousel/rolling grid:
+
+- **Hero:** ~20–30%
+- **Strong social-native:** ~30%
+- **Normal contextual:** ~30%
+- **Deliberately imperfect but usable:** ~10–20%
+
+“Boring” slides are strategic:
+
+- sky;
+- elevator;
+- table after eating;
+- shoes;
+- rain;
+- receipt;
+- store shelf;
+- hallway;
+- hotel key/card detail;
+- coffee cup;
+- street texture.
+
+These assets are not filler when they prove the world.
+
+AI errors are never “controlled imperfection.” Bad anatomy, duplicated objects, unreadable key text, impossible reflections and mutated geometry remain reject conditions.
+
+---
+
+## 13. Carousel grammar
+
+Default: **5–8 frames**, occasionally 9 when the event truly supports it.
+
+Possible roles:
+
+| Role | Job |
+| --- | --- |
+| Cover / hook | earn stop + swipe |
+| Establishing | prove place/time |
+| Object / food | create physical continuity |
+| Candid Mara | humanize |
+| Full look | show body/outfit naturally |
+| Social POV | prove observer/relationship |
+| Imperfect capture | break campaign polish |
+| Detail | create memory cue |
+| Closer | end event emotionally/temporally |
+
+Never apply a fixed order mechanically. The feed must not develop a detectable template.
+
+A sequence must answer:
+
+- where are we?
+- what is happening?
+- what changed?
+- what small thing do we remember?
+- how did the moment end?
+
+---
+
+## 14. Cross-post continuity
+
+Instagram is not reset after each carousel.
+
+Required launch design across the first 20 posts:
+
+- minimum **5 recurring objects**;
+- minimum **4 wardrobe pieces visibly reworn**;
+- minimum **3 recurring places**;
+- minimum **2 recurring adult fictional people/POV identities** where world canon permits;
+- minimum **2 multi-post arcs**;
+- at least one location recognized before it is named again;
+- at least one object gaining familiarity through repetition.
+
+Do not lock an unapproved invented detail as final canon merely to hit a quota. Use `PROPOSED` until first accepted appearance.
+
+---
+
+## 15. Stories and Reels are not separate universes
+
+A strong episode can generate:
+
+`Story before → carousel → Story during/after → Reel/clip → later callback`
+
+Stories provide temporal connective tissue. Reels provide movement and third-person/found-footage texture.
+
+Cross-surface facts must remain the same:
+
+- outfit;
+- location;
+- companion;
+- time;
+- object state;
+- event outcome.
+
+If the World/DM layer references the event later, it must reference the same world truth.
+
+---
+
+## 16. Caption policy
+
+Detailed rules live in `CAPTION_SYSTEM.md`.
+
+Default behavior:
+
+- short;
+- contemporary;
+- context-aware;
+- lightly playful/dry;
+- not explanatory;
+- not corporate;
+- not a permanent thirst line;
+- not a CTA by default.
+
+Do not use the caption to patch a continuity failure in the images.
+
+---
+
+## 17. Commercial governance
+
+Instagram primarily builds:
+
+**attention + recognition + affinity + return + profile depth**
+
+Most posts should carry **no hard monetization CTA**.
+
+Allowed progression:
+
+1. content stands alone;
+2. occasional interaction cue;
+3. occasional bio/web curiosity cue;
+4. explicit commercial post only when strategically justified and platform-compliant.
+
+Never turn world events into fake commercial claims or invented partnerships.
+
+---
+
+## 18. Generation stack
+
+Do not write isolated prompts from scratch.
+
+Future generation should conceptually stack:
+
+1. `MARA_IDENTITY_LOCK` — from character canon.
+2. `GLOBAL_WORLD_STATE` — ledgers.
+3. `SCENE_STATE` — active Scene Packet.
+4. `FRAME_REQUIREMENT` — this frame's job.
+5. `CONTINUITY_CONSTRAINTS` — what cannot change.
+6. `CAMERA_ORIGIN` — who/how captured it.
+7. `SOCIAL_REALISM_LAYER` — phone-camera plausibility.
+8. `REJECT_CONSTRAINTS` — common drift/AI failure modes.
+
+If any layer conflicts with character canon, character canon wins.
+
+---
+
+## 19. Sequential production requirement
+
+For continuity-sensitive carousels, do not generate all final frames blindly in one batch.
+
+Preferred loop:
+
+`F1 generate → QA → accept/reject → write facts → F2 generate → QA → write facts → F3...`
+
+This is slower than random batch generation and materially cheaper than discovering at F7 that the world has drifted.
+
+---
+
+## 20. QA levels
+
+### Level A — Asset QA
+
+Is this single frame publishable?
+
+### Level B — Sequence QA
+
+Does this frame belong to the same event and improve the carousel?
+
+### Level C — Profile QA
+
+Does the completed carousel improve the rolling grid and avoid AI Portfolio Syndrome?
+
+A frame can pass Asset QA and still fail Sequence QA.
+
+A carousel can pass Sequence QA and still fail Profile QA due to feed repetition.
+
+Detailed gate: `INSTAGRAM_QA.md`.
+
+---
+
+## 21. Active scene pointer
+
+`CURRENT_ACTIVE_SCENE.md` is the operational pointer for continuation requests.
+
+It must contain:
+
+- current post ID;
+- Scene ID;
+- Scene Packet path;
+- last accepted frame;
+- next frame;
+- highest-risk continuity facts;
+- unresolved decisions.
+
+If there is no active scene, it must explicitly say `NONE` rather than allowing a model to infer one.
+
+---
+
+## 22. Registers and audit trail
+
+Use:
+
+- `POST_REGISTER.md` — lifecycle and KPI state by post.
+- `ASSET_REGISTER.md` — frame/version/approval state.
+- Scene Packet reject logs — exact production failure.
+
+Rejected generations are useful data. Track recurring failure categories:
+
+- face drift;
+- body drift;
+- wardrobe drift;
+- food drift;
+- prop drift;
+- location drift;
+- companion drift;
+- impossible camera;
+- excessive AI polish;
+- repeated pose.
+
+Do not keep rejected media as canonical evidence.
+
+---
+
+## 23. Measurement and learning
+
+For published posts capture, when available:
+
+- reach;
+- impressions;
+- profile visits;
+- follows;
+- likes;
+- comments;
+- saves;
+- shares;
+- carousel completion/swipe depth when available;
+- Story completion;
+- web clicks;
+- attributable downstream conversion.
+
+Do not convert one successful post into permanent creative canon.
+
+Separate:
+
+**underlying signal** from **surface execution**.
+
+Example: a candid may outperform because it feels observed, not because Mara happened to wear a black top.
+
+---
+
+## 24. Launch quality gate
+
+Before publishing Post 01, the system should have:
+
+- first 20 posts designed at episode level;
+- dependencies known;
+- proposed recurring wardrobe/objects/places clearly marked;
+- first 6–9 posts production-ready enough to avoid day-three improvisation;
+- Scene Packet template hardened;
+- registers created;
+- active-scene behavior defined;
+- captions direction defined;
+- grid audited for repetition.
+
+The plan can evolve from performance data, but it cannot begin as improvisation.
+
+---
+
+## 25. Automatic fail conditions
+
+Do not declare this system ready if any are true:
+
+- 20 posts look like 20 photo shoots;
+- Mara has a new outfit in nearly every episode;
+- no repeated places;
+- no repeated objects;
+- no timeline;
+- no social graph;
+- no active Scene Packet state;
+- frames can be generated without knowing previous frames;
+- food/objects reset between slides;
+- Mara appears in nearly every slide;
+- the system relies on chat history to know what happened;
+- nobody can answer “which bag was she using?”, “who took F3?”, or “what had already been eaten?” from repository state.
+
+---
+
+## 26. Success test
+
+The operational test is:
+
+> “Dame la cuarta foto del post del restaurante.”
+
+Without requiring the user to restate the world, the system should be able to recover:
+
+- which restaurant scene;
+- where Mara is seated;
+- outfit;
+- jewelry;
+- phone/case;
 - bag;
-- glasses;
-- menu;
-- glass/cup;
-- plate/bowl;
-- cutlery;
-- napkin;
-- flowers/table objects;
-- room furniture anchors.
+- food/drink state;
+- photographer POV;
+- time/light;
+- accepted F1–F3 facts;
+- intended purpose of F4;
+- what may evolve and what may not.
 
-### Food-state lock
-
-Food must evolve physically through time.
-
-Correct:
-
-`untouched pasta → partly eaten pasta → empty/near-empty plate → dessert`
-
-Wrong:
-
-`pasta → sushi → full pasta again` with no narrative explanation.
-
-If the first frame establishes a white ceramic bowl, silver fork and sparkling water glass, later close-ups must preserve those properties.
-
-### Temporal lock
-
-The scene must move forward plausibly.
-
-- sun position may progress;
-- food may be consumed;
-- jacket may be added when leaving;
-- makeup/hair may become slightly less perfect over time;
-- lights may become warmer/darker later at night.
-
-Do not reset the scene to frame-one conditions after the story has progressed.
+If it cannot, the system is not strict enough.
 
 ---
 
-## 7. Continuity failure conditions — automatic reject
-
-Reject/regenerate a frame if any of these occur without an explicit story reason:
-
-- plate or food changes identity;
-- table material/color changes;
-- glassware changes;
-- outfit changes;
-- bag changes;
-- jewelry disappears/reappears inconsistently when clearly visible;
-- phone/case changes;
-- hair materially changes length/color/style;
-- room architecture changes;
-- daylight becomes night and then daylight again;
-- background moves to a different venue;
-- Mara's body or face drifts;
-- a supposedly later food frame resets to untouched;
-- the same companion changes physical identity;
-- the same object appears in impossible positions;
-- every photo looks like a professional campaign instead of one person's camera roll.
-
-A beautiful frame that breaks continuity is **not publishable**.
-
----
-
-## 8. Social realism: controlled imperfection
-
-Mara should be attractive and intentional, but her Instagram must not look sterile.
-
-Use controlled imperfection across the carousel:
-
-- one slightly off-center crop;
-- one frame with plausible motion blur;
-- one candid with imperfect posture;
-- ordinary clutter in a credible amount;
-- natural skin texture;
-- minor flyaway hair;
-- reflections;
-- phone flash in appropriate night scenes;
-- partially blocked foreground objects;
-- food already touched in later frames;
-- fabric creasing and seat compression;
-- natural lower-abdomen softness where anatomically visible, per character canon.
-
-Do **not** manufacture defects randomly. Imperfection must make the moment more plausible, not lower the asset quality.
-
----
-
-## 9. Mara's feed mix
-
-The feed must not become “Mara posing in a different outfit every day.”
-
-Target mix across a rolling 20-post window:
-
-- **30–35% Mara-led lifestyle / hero episodes**;
-- **15–20% candid / found-footage-feeling episodes**;
-- **10–15% food / coffee / table / object-rich episodes**;
-- **10–15% city / travel / environment episodes**;
-- **10–15% outfit / getting-ready / mirror episodes**;
-- **5–10% home / ordinary-life texture**;
-- **5–10% social-world / friend POV / companion context**.
-
-These are portfolio-level proportions, not quotas for each carousel.
-
-The account should make viewers feel that Mara has:
-
-- places she likes;
-- routines;
-- taste;
-- habits;
-- a social world;
-- quiet moments;
-- nights out;
-- recurring objects;
-- a recognizable personal aesthetic.
-
----
-
-## 10. Recurrent anchors — make the world memorable
-
-Repeated environmental and personal anchors increase recognition.
-
-Examples to deliberately reuse over time:
-
-- delicate gold necklace;
-- one recognizable phone case family;
-- recurring neutral/gold jewelry language;
-- recurring apartment corners;
-- same bedroom mirror;
-- one or two recurring coffee-shop aesthetics;
-- a recognizable tote or shoulder bag;
-- recurring sunglasses;
-- favorite coffee order / glass type / breakfast cues;
-- recurring friend-camera POV style;
-- warm Chilean/Latina urban visual cues without turning the world into stereotypes.
-
-Repetition creates a world. Randomness creates AI slop.
-
----
-
-## 11. Camera grammar
-
-Default photographic language:
-
-- premium smartphone realism;
-- mostly 26–50 mm-equivalent visual feel;
-- occasional 0.5x/wide camera only when contextually believable;
-- handheld framing;
-- natural or warm practical light;
-- occasional direct flash at night;
-- natural depth of field, not fake cinematic blur in every frame;
-- consistent camera characteristics inside one episode unless a second camera/person is intentionally introduced.
-
-### Human POV rule
-
-Some frames should imply that another person took them.
-
-Examples:
-
-- shot from across the table;
-- Mara walking two meters ahead;
-- candid while she is talking;
-- frame captured as she reaches for something;
-- photo through a mirror;
-- half-second-late laugh.
-
-This is more believable than every shot being a perfectly centered tripod portrait.
-
----
-
-## 12. Caption system
-
-Captions should be concise, contemporary and consistent with Mara's personality.
-
-Preferred modes:
-
-- tiny observation;
-- dry/playful line;
-- one detail from the moment;
-- subtle challenge;
-- short emotional cue;
-- occasional emoji, not emoji walls.
-
-Avoid:
-
-- explaining the whole carousel;
-- constant sales copy;
-- captions that sound like an AI assistant;
-- fake claims of being a biological human;
-- repeating the same flirt line every post.
-
-The content should carry most of the narrative.
-
----
-
-## 13. Public-content commercial rule
-
-Instagram is primarily an **attention + identity + curiosity surface**.
-
-Do not turn every post into a monetization CTA.
-
-Recommended behavior:
-
-- most posts: no hard sell;
-- some posts: profile/bio curiosity cue;
-- selected posts/stories: soft route to owned web or monetization surface;
-- explicit commercial content only when it fits the episode and platform rules.
-
-The public account should be worth following even for someone who never pays.
-
----
-
-## 14. Default generation workflow
-
-Whenever a new Instagram carousel is requested:
-
-1. Read `MARA_CHARACTER_CANON.md`.
-2. Decide the episode in one sentence.
-3. Create/update a Scene Packet using `SCENE_PACKET_TEMPLATE.md`.
-4. Define 6–9 frame roles before generating the first frame.
-5. Generate frame 1 with identity + scene locks.
-6. Record visible facts introduced by the generated frame.
-7. Before frame 2, inherit those facts verbatim.
-8. Generate each following frame as a **continuation**, not a new scene.
-9. Update food/temporal/object progression after every accepted frame.
-10. Run identity QA + continuity QA before publication.
-11. Save the accepted episode state so Stories/Reels generated from the same event can reuse it.
-
-### If the user asks only for “the second photo”
-
-Do **not** invent a new concept.
-
-Recover the active Scene Packet and generate the next planned frame using the same world state. If an actual accepted frame introduced a detail not present in the original packet, the accepted image becomes authoritative for that episode and the packet must be updated.
-
----
-
-## 15. Default response contract for future social-production requests
-
-Unless the user explicitly asks for only one isolated asset, any request such as:
-
-- “make a post for Mara”;
-- “give me a photo for Instagram”;
-- “what should she post today?”;
-- “make the next image”;
-
-should be interpreted as part of the Instagram Content System.
-
-Default planning output should include:
-
-- episode concept;
-- carousel frame plan;
-- active visual mode (`NATURAL`, `COQUETA`, `FIT`, `POWER` or a controlled blend);
-- continuity locks;
-- proposed short caption;
-- generation of frames one at a time while preserving the packet.
-
-Do not over-explain this machinery to the audience. It is production infrastructure, not public-facing copy.
-
----
-
-## 16. First-principles QA
-
-Before accepting a carousel, answer YES to all:
-
-### Identity
-
-1. Is every visible Mara unequivocally the same Mara?
-2. Does she remain unequivocally adult and canonical?
-3. Are body, face, hair and eyes inside canon?
-
-### World continuity
-
-4. Could all frames physically belong to the same episode?
-5. Are outfit and accessories consistent?
-6. Are food and drink states plausible through time?
-7. Do props, architecture and light remain coherent?
-8. Are transitions deliberate rather than accidental?
-
-### Social realism
-
-9. Does the carousel contain more than posed portraits?
-10. Does it feel like a camera roll from a lived moment?
-11. Is there at least one context/detail image that would still make sense without Mara visible?
-12. Is there enough imperfection to feel social-native without looking low quality?
-
-### Brand
-
-13. Is Mara's playful/confident/quietly dominant energy present somewhere?
-14. Is the feed building a world rather than only displaying a body?
-15. Would a viewer plausibly want to swipe before seeing a CTA?
-
-Any critical NO means revise or regenerate.
-
----
-
-## 17. Permanent Instagram principles
-
-> **MARA HAS A LIFE, NOT A GALLERY OF AI RENDERS.**
-
-> **THE CAROUSEL IS ONE EPISODE, NOT MANY UNRELATED IMAGES.**
-
-> **NO SECOND FRAME WITHOUT THE FIRST FRAME'S WORLD STATE.**
-
-> **A BEAUTIFUL IMAGE THAT BREAKS CONTINUITY IS A BAD IMAGE.**
-
-> **FACE + WORLD + PERSONALITY CREATE RETURN; BODY ALONE CREATES ONLY A GLANCE.**
-
-> **REALISM COMES FROM CAUSAL CONTINUITY, NOT ONLY FROM SKIN TEXTURE.**
-
-> **REPETITION OF ANCHORS BUILDS A WORLD. RANDOMNESS BUILDS AI SLOP.**
+## 27. Permanent principles
+
+> **ONE MARA.**
+>
+> **ONE WORLD.**
+>
+> **ONE TIMELINE.**
+>
+> **EVERY FRAME HAS A PAST.**
+>
+> **EVERY APPROVED POST CREATES FUTURE CONSTRAINTS.**
+>
+> **NOTHING CHANGES WITHOUT CAUSALITY.**
+>
+> **REPEAT CLOTHES. REPEAT PLACES. REPEAT OBJECTS. REPEAT PEOPLE.**
+>
+> **DO NOT REPEAT THE SAME PHOTO.**
+>
+> **IMPERFECTION CREATES BELIEVABILITY.**
+>
+> **CONTINUITY CREATES MEMORY.**
+>
+> **MEMORY CREATES CHARACTER.**
+>
+> **CHARACTER CREATES RETURN.**
+>
+> **RETURN CREATES DISTRIBUTION POWER.**
+>
+> **DO NOT BUILD AN AI FEED. BUILD MARA'S LIFE IN PUBLIC.**
+
+Final audit question:
+
+> **If another production agent receives only this repository tomorrow, can it continue Mara's Instagram world without reading our chats?**
+
+If the answer is not clearly yes, the operating system is incomplete.
