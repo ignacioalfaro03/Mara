@@ -26,6 +26,11 @@ const ALLOWED_EVENTS = new Set([
   "signup_completed",
   "signin_started",
   "signin_completed",
+  "ritual_viewed",
+  "ritual_play_intent",
+  "ritual_skipped",
+  "commercial_offer_dismissed",
+  "commercial_post_offer_continued",
   "capricho_viewed",
   "commerce_offer_viewed",
   "commerce_checkout_started",
@@ -51,11 +56,23 @@ const ALLOWED_PROPERTY_KEYS = new Set([
   "provider_status",
 ]);
 
+const TOKEN_PROPERTY_KEYS = new Set([
+  "surface",
+  "target",
+  "placement",
+  "preference_group",
+  "offer_slug",
+  "offer_type",
+  "capricho_slug",
+  "currency",
+]);
+
 const ENTRY_SOURCES = new Set(["ig", "tt", "x", "direct", "other"]);
 const RETURN_COUNT_BUCKETS = new Set(["1", "2", "3-4", "5+"]);
 const DAYS_SINCE_FIRST_BUCKETS = new Set(["same_day", "1-2d", "3-7d", "8+d", "unknown"]);
 const AMOUNT_BUCKETS = new Set(["under_5", "5_9", "10_24", "25_99", "100_plus"]);
 const PROVIDER_STATUSES = new Set(["configured", "not_configured"]);
+const SAFE_TOKEN = /^[A-Za-z0-9][A-Za-z0-9_:/.-]{0,79}$/;
 
 type TelemetryPayload = {
   event?: unknown;
@@ -95,13 +112,13 @@ function sanitizeProperties(value: unknown): Record<string, string | number | bo
       continue;
     }
 
-    if (typeof raw === "boolean" || typeof raw === "number") {
-      safe[key] = raw;
+    if (TOKEN_PROPERTY_KEYS.has(key)) {
+      if (typeof raw === "string" && SAFE_TOKEN.test(raw)) safe[key] = raw;
       continue;
     }
 
-    if (typeof raw === "string") {
-      safe[key] = raw.slice(0, 80);
+    if (typeof raw === "boolean" || typeof raw === "number") {
+      safe[key] = raw;
     }
   }
   return safe;
@@ -126,8 +143,8 @@ export async function POST(request: Request) {
 
   // Intentionally anonymous launch telemetry. Do not add user IDs, IP-derived
   // identity, conversation content, fantasies, sexual history or commercial
-  // vulnerability data here. Entry attribution is a coarse allowlisted source
-  // only; arbitrary campaigns, referrers and handles are not accepted.
+  // vulnerability data here. String properties must be fixed token-like values;
+  // free-form text, campaigns, referrers and handles are dropped.
   console.info("MARA_TELEMETRY", JSON.stringify({
     event: payload.event,
     properties: sanitizeProperties(payload.properties),
