@@ -24,3 +24,5 @@ jobs:
           echo "MARA_TELEMETRY_RESPONSE=$RESPONSE"
           printf '%s' "$RESPONSE" | jq -e '.ok == true and .persisted == true' >/dev/null
           echo "MARA_TELEMETRY_PERSISTENCE=PASS"
+
+# rerun after service-role correction 2026-09-04
