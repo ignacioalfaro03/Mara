@@ -15,7 +15,7 @@ env:
 
 jobs:
   preview:
-    if: github.event.pull_request.head.ref == 'codex/launch-execution-control' || github.event.pull_request.head.ref == 'feature/world-sofi-first-slice'
+    if: github.event.pull_request.head.ref == 'codex/launch-execution-control' || github.event.pull_request.head.ref == 'feature/world-sofi-first-slice' || github.event.pull_request.head.ref == 'release/public-alpha-rc'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -140,15 +140,22 @@ jobs:
           DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
         run: npx vercel inspect "$DEPLOYMENT_URL" --wait --token "$VERCEL_TOKEN"
 
+      - name: Prove hosted telemetry persistence
+        if: steps.preflight.outputs.ready == 'true'
+        working-directory: web
+        env:
+          BASE_URL: ${{ steps.deploy.outputs.deployment_url }}
+        run: node scripts/hosted-telemetry-persistence-smoke.mjs
+
       - name: Install hosted browser proof runtime
-        if: steps.preflight.outputs.ready == 'true' && github.event.pull_request.head.ref == 'feature/world-sofi-first-slice'
+        if: steps.preflight.outputs.ready == 'true' && (github.event.pull_request.head.ref == 'feature/world-sofi-first-slice' || github.event.pull_request.head.ref == 'release/public-alpha-rc')
         working-directory: web
         run: |
           npm install --no-save --no-package-lock --no-audit --no-fund "playwright@${PLAYWRIGHT_VERSION}"
           npx playwright install --with-deps chromium
 
       - name: Prove World P0 on hosted Preview
-        if: steps.preflight.outputs.ready == 'true' && github.event.pull_request.head.ref == 'feature/world-sofi-first-slice'
+        if: steps.preflight.outputs.ready == 'true' && (github.event.pull_request.head.ref == 'feature/world-sofi-first-slice' || github.event.pull_request.head.ref == 'release/public-alpha-rc')
         working-directory: web
         env:
           BASE_URL: ${{ steps.deploy.outputs.deployment_url }}
