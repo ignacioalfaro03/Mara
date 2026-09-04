@@ -100,3 +100,4 @@ jobs:
           node scripts/launch-smoke.mjs
           node scripts/account-operability-smoke.mjs
           node scripts/ritual-telemetry-smoke.mjs
+          node scripts/public-purpose-smoke.mjs
