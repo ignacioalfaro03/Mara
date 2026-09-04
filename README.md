@@ -1,5 +1,15 @@
 # Mara Vera
 
+> ## 🔒 MARA CHARACTER CANON V1 — READ THIS FIRST
+>
+> **Mara's reproducible face/body/personality identity is frozen at repository root in [`MARA_CHARACTER_CANON.md`](./MARA_CHARACTER_CANON.md).**
+>
+> Permanent rule: **ONE MARA. MANY CONTEXTS.** A prettier image that looks like another woman is not Mara.
+>
+> Current V1 calibration: **24 years · 1.68 m · ~64 kg · ~93/70/108 cm · ~64 cm thigh · curvy/realistic · natural lower-abdomen softness · honey-beige blonde · green/hazel eyes · playful, confident, subtly dominant.**
+>
+> All future stills, video references, generation prompts, face consistency work and production QA must start from the canon. **Do not drift Mara one generation at a time.**
+
 Mara Vera is an AI-native virtual character business designed to turn attention into recurring paid digital relationships through content, interaction, personalization and premium experiences.
 
 ## Product thesis
