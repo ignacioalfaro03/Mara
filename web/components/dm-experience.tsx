@@ -24,6 +24,7 @@ type DmState = {
   ritualCompletedAt?: string;
   ritualSkipped?: boolean;
   callbackSeen?: boolean;
+  continuityPromptDismissed?: boolean;
   dropDismissed?: boolean;
   preferredPrivateStyle?: PrivateStyle;
   privateSessionCount?: number;
@@ -317,7 +318,7 @@ export function DmExperience() {
 
   function completeRitual() {
     const completedAt = new Date().toISOString();
-    mutate({ ritualCompletedAt: completedAt, ritualSkipped: false });
+    mutate({ ritualCompletedAt: completedAt, ritualSkipped: false, continuityPromptDismissed: false });
     track("experience_completed", { surface: "dm_ritual", target: LAUNCH_RITUAL_KEY });
     void completeRitualMemory().then((remote) => {
       if (!remote) return;
@@ -328,6 +329,15 @@ export function DmExperience() {
   function skipRitual() {
     mutate({ ritualSkipped: true });
     track("ritual_skipped", { surface: "dm_experience", target: LAUNCH_RITUAL_KEY });
+  }
+
+  function openContinuityAccount() {
+    track("hero_cta_click", { surface: "dm_continuity", target: "auth" });
+    window.location.assign("/auth");
+  }
+
+  function dismissContinuityPrompt() {
+    mutate({ continuityPromptDismissed: true });
   }
 
   function beginPrivateMoment() {
@@ -507,6 +517,15 @@ export function DmExperience() {
             <Bubble from="user">Hecho.</Bubble>
             <Bubble from="mara">Bien.</Bubble>
             <Bubble from="mara">No me mandes prueba. Te creo. Come tranquilo y vuelve después.</Bubble>
+            {!state.continuityPromptDismissed ? (
+              <>
+                <Bubble from="mara">Si quieres que me acuerde de esto aunque cambies de teléfono, ahora sí tiene sentido guardar la historia.</Bubble>
+                <div className={styles.inlineActions} data-testid="dm-continuity-cta">
+                  <button type="button" onClick={openContinuityAccount}>¿Quieres que me acuerde?</button>
+                  <button type="button" className={styles.secondaryAction} onClick={dismissContinuityPrompt}>Ahora no</button>
+                </div>
+              </>
+            ) : null}
             <div className={styles.futureHook}>Mara dejó algo pendiente para la próxima vez.</div>
           </>
         ) : null}
