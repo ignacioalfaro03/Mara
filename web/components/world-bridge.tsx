@@ -31,12 +31,22 @@ export function WorldBridge() {
   const [callbackVisible, setCallbackVisible] = useState(false);
 
   useEffect(() => {
+    let eligibilityPoll: number | null = null;
+
     function refreshEligibility() {
-      setEligible(isEligibleForWorldDoor());
+      const next = isEligibleForWorldDoor();
+      setEligible(next);
+      if (next && eligibilityPoll !== null) {
+        window.clearInterval(eligibilityPoll);
+        eligibilityPoll = null;
+      }
     }
 
     refreshEligibility();
     window.addEventListener("mara:analytics", refreshEligibility);
+    if (!isEligibleForWorldDoor()) {
+      eligibilityPoll = window.setInterval(refreshEligibility, 250);
+    }
 
     void loadSofiWorldKnowledge().then((knowledge) => {
       setDiscovered(knowledge.discovered);
@@ -58,7 +68,10 @@ export function WorldBridge() {
       }
     });
 
-    return () => window.removeEventListener("mara:analytics", refreshEligibility);
+    return () => {
+      window.removeEventListener("mara:analytics", refreshEligibility);
+      if (eligibilityPoll !== null) window.clearInterval(eligibilityPoll);
+    };
   }, []);
 
   function dismissCallback() {
