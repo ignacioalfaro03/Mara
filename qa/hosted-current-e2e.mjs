@@ -110,7 +110,9 @@ try {
   await pageA.waitForURL(/\/auth$/, { timeout: 10000 });
 
   await signupAndWait(pageA, emailA, passwordA, "A");
-  await pageA.getByText("Volviste.").waitFor({ timeout: 15000 }).catch(() => undefined);
+  await pageA.getByText("Volviste.").waitFor({ timeout: 15000 });
+  await pageA.getByText(/me acuerdo de la hamburguesa, las papas y el chocolate/).waitFor({ timeout: 15000 });
+  results.memory_callback_a = "pass";
 
   const migrated = await api(pageA, "/api/relationship/ritual");
   results.anonymous_to_auth_ritual = migrated.status === 200 && Boolean(migrated.body?.ritual) ? "pass" : "fail";
@@ -126,12 +128,6 @@ try {
     assert(seeded.status === 200 && seeded.body?.ritual, `QA ritual seed failed ${JSON.stringify(seeded)}`);
     results.qa_seed_after_migration_gap = "used";
   }
-
-  await pageA.reload({ waitUntil: "networkidle" });
-  await passAgeGate(pageA);
-  await pageA.getByText("Volviste.").waitFor({ timeout: 15000 });
-  await pageA.getByText(/me acuerdo de la hamburguesa, las papas y el chocolate/).waitFor({ timeout: 15000 });
-  results.memory_callback_a = "pass";
 
   // Authenticated Private Moment should persist an explicit preference.
   await pageA.getByRole("button", { name: "Hoy manda tú", exact: true }).click();
