@@ -31,7 +31,13 @@ export function WorldBridge() {
   const [callbackVisible, setCallbackVisible] = useState(false);
 
   useEffect(() => {
-    setEligible(isEligibleForWorldDoor());
+    function refreshEligibility() {
+      setEligible(isEligibleForWorldDoor());
+    }
+
+    refreshEligibility();
+    window.addEventListener("mara:analytics", refreshEligibility);
+
     void loadSofiWorldKnowledge().then((knowledge) => {
       setDiscovered(knowledge.discovered);
       if (!knowledge.discovered) return;
@@ -51,6 +57,8 @@ export function WorldBridge() {
         });
       }
     });
+
+    return () => window.removeEventListener("mara:analytics", refreshEligibility);
   }, []);
 
   function dismissCallback() {
