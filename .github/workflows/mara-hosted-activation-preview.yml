@@ -12,6 +12,7 @@ env:
   PLAYWRIGHT_VERSION: "1.62.1"
   VERCEL_ORG_ID: "team_KAPFjrSQT78GUeQyGZCdQRdz"
   VERCEL_PROJECT_ID: "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK"
+  VERCEL_SCOPE: "ignacioalfaz-6766"
 
 jobs:
   preview:
@@ -105,7 +106,7 @@ jobs:
             }),
           );
           NODE
-          npx vercel pull --yes --environment=preview --token "$VERCEL_TOKEN"
+          npx vercel pull --yes --environment=preview --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN"
           node <<'NODE'
           const fs = require('fs');
           const linked = JSON.parse(fs.readFileSync('.vercel/project.json', 'utf8'));
@@ -124,7 +125,7 @@ jobs:
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           NEXT_TELEMETRY_DISABLED: "1"
-        run: npx vercel build --token "$VERCEL_TOKEN"
+        run: npx vercel build --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN"
 
       - name: Deploy exact PR head to Vercel Preview
         if: steps.preflight.outputs.ready == 'true'
@@ -135,7 +136,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          npx vercel deploy --prebuilt --yes --token "$VERCEL_TOKEN" 2>&1 | tee /tmp/mara-preview-deploy.log
+          npx vercel deploy --prebuilt --yes --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN" 2>&1 | tee /tmp/mara-preview-deploy.log
           deployment_url=$(grep -Eo 'https://[^[:space:]]+\.vercel\.app' /tmp/mara-preview-deploy.log | tail -n 1)
           if [ -z "$deployment_url" ]; then
             echo "::error::Vercel CLI did not return a Preview URL"
@@ -150,7 +151,7 @@ jobs:
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
-        run: npx vercel inspect "$DEPLOYMENT_URL" --wait --token "$VERCEL_TOKEN"
+        run: npx vercel inspect "$DEPLOYMENT_URL" --wait --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN"
 
       - name: Prove hosted telemetry persistence
         if: steps.preflight.outputs.ready == 'true'
