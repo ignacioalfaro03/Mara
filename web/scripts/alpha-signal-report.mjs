@@ -69,6 +69,7 @@ function extractTelemetryJson(line) {
 
 export function buildSignalReport(text) {
   const events = new Map();
+  const surfaceEvents = new Map();
   const sources = new Map();
   const returnCountBuckets = new Map();
   const returnLatencyBuckets = new Map();
@@ -93,6 +94,9 @@ export function buildSignalReport(text) {
       ? record.properties
       : {};
 
+    const surface = typeof properties.surface === "string" ? properties.surface : "unspecified";
+    increment(surfaceEvents, `${surface}:${record.event}`);
+
     const source = typeof properties.entry_source === "string" && VALID_SOURCES.includes(properties.entry_source)
       ? properties.entry_source
       : "unattributed";
@@ -112,23 +116,26 @@ export function buildSignalReport(text) {
   }
 
   const count = (event) => events.get(event) ?? 0;
+  const countSurface = (event, surface) => surfaceEvents.get(`${surface}:${event}`) ?? 0;
+
   const launchStarts = count("launch_experience_started");
   const launchCompletions = count("launch_session_completed");
   const ritualViews = count("ritual_viewed");
   const ritualPlayIntents = count("ritual_play_intent");
   const ritualSkips = count("ritual_skipped");
-  const privateStarts = count("experience_started");
-  const privateCompletions = count("experience_completed");
-  const preferenceSelections = count("preference_selected");
+  const ritualCompletions = countSurface("experience_completed", "dm_ritual");
+  const privateStarts = countSurface("experience_started", "private_moment");
+  const privateCompletions = countSurface("experience_completed", "private_moment");
+  const privatePreferenceSelections = countSurface("preference_selected", "private_moment");
   const signupStarts = count("signup_started");
   const signupCompletions = count("signup_completed");
   const returns = count("returning_user");
   const returnContinuations = count("launch_return_continued");
-  const offerViews = count("commerce_offer_viewed");
-  const offerDismissals = count("commercial_offer_dismissed");
-  const postOfferContinuations = count("commercial_post_offer_continued");
-  const checkoutStarts = count("commerce_checkout_started");
-  const checkoutBlocks = count("commerce_checkout_blocked");
+  const offerViews = countSurface("commerce_offer_viewed", "dm_private_moment");
+  const offerDismissals = countSurface("commercial_offer_dismissed", "dm_private_moment");
+  const postOfferContinuations = countSurface("commercial_post_offer_continued", "dm_private_moment");
+  const checkoutStarts = countSurface("commerce_checkout_started", "dm_private_moment");
+  const checkoutBlocks = countSurface("commerce_checkout_blocked", "dm_private_moment");
   const entitlementUnlocks = count("commerce_entitlement_unlocked");
 
   return {
@@ -136,6 +143,7 @@ export function buildSignalReport(text) {
     accepted_records: telemetryLines - malformedTelemetryLines,
     malformed_records: malformedTelemetryLines,
     events: sortedObject(events),
+    events_by_surface: sortedObject(surfaceEvents),
     entry_sources: sortedObject(sources),
     return_count_buckets: sortedObject(returnCountBuckets),
     return_latency_buckets: sortedObject(returnLatencyBuckets),
@@ -143,9 +151,10 @@ export function buildSignalReport(text) {
     directional_event_ratios: {
       launch_completion_events_per_start_event: safeRatio(launchCompletions, launchStarts),
       ritual_play_intents_per_view: safeRatio(ritualPlayIntents, ritualViews),
+      ritual_completions_per_view: safeRatio(ritualCompletions, ritualViews),
       ritual_skips_per_view: safeRatio(ritualSkips, ritualViews),
       private_moment_completions_per_start: safeRatio(privateCompletions, privateStarts),
-      preference_selections_per_private_moment_start: safeRatio(preferenceSelections, privateStarts),
+      preference_selections_per_private_moment_start: safeRatio(privatePreferenceSelections, privateStarts),
       signup_completions_per_start: safeRatio(signupCompletions, signupStarts),
       return_continuations_per_return_event: safeRatio(returnContinuations, returns),
       offer_dismissals_per_offer_view: safeRatio(offerDismissals, offerViews),
@@ -155,7 +164,7 @@ export function buildSignalReport(text) {
       entitlement_unlocks_per_checkout_start: safeRatio(entitlementUnlocks, checkoutStarts),
     },
     interpretation_warning:
-      "Event aggregates only. Do not report these as unique users, D1/D3/D7 retention, cohort retention, churn, LTV or unique conversion rates. Use the separate minimal invited-cohort roster for actual return status.",
+      "Event aggregates only. Surface segmentation prevents DM/ritual events from being misreported as Private Moments, but these still are not unique users, D1/D3/D7 retention, cohort retention, churn, LTV or unique conversion rates. Use the separate minimal invited-cohort roster for actual return status.",
   };
 }
 
@@ -180,6 +189,7 @@ function printHumanReport(report) {
   console.log(`Malformed records:   ${report.malformed_records}`);
 
   printTable("Events", report.events);
+  printTable("Events by surface", report.events_by_surface);
   printTable("Entry sources", report.entry_sources);
   printTable("Return depth buckets", report.return_count_buckets);
   printTable("Return latency buckets", report.return_latency_buckets);
@@ -196,22 +206,24 @@ function printHumanReport(report) {
 
 function selfTest() {
   const sampleRecords = [
-    ["launch_experience_started", { entry_source: "ig" }],
-    ["launch_session_completed", { entry_source: "ig" }],
-    ["ritual_viewed", { entry_source: "ig" }],
-    ["ritual_play_intent", { entry_source: "ig" }],
-    ["experience_started", { entry_source: "direct" }],
-    ["experience_completed", { entry_source: "direct" }],
-    ["preference_selected", { entry_source: "direct" }],
-    ["signup_started", { entry_source: "direct" }],
-    ["signup_completed", { entry_source: "direct" }],
-    ["returning_user", { entry_source: "x", return_count_bucket: "1", days_since_first_bucket: "1-2d" }],
-    ["launch_return_continued", { entry_source: "x", return_count_bucket: "1", days_since_first_bucket: "1-2d" }],
-    ["commerce_offer_viewed", { entry_source: "direct" }],
-    ["commercial_offer_dismissed", { entry_source: "direct" }],
-    ["commercial_post_offer_continued", { entry_source: "direct" }],
-    ["commerce_checkout_started", { entry_source: "direct" }],
-    ["commerce_checkout_blocked", { entry_source: "direct" }],
+    ["launch_experience_started", { surface: "dm_experience", entry_source: "ig" }],
+    ["experience_started", { surface: "dm_experience", entry_source: "ig" }],
+    ["launch_session_completed", { surface: "dm_experience", entry_source: "ig" }],
+    ["ritual_viewed", { surface: "dm_experience", entry_source: "ig" }],
+    ["ritual_play_intent", { surface: "dm_experience", entry_source: "ig" }],
+    ["experience_completed", { surface: "dm_ritual", entry_source: "ig" }],
+    ["experience_started", { surface: "private_moment", entry_source: "direct" }],
+    ["experience_completed", { surface: "private_moment", entry_source: "direct" }],
+    ["preference_selected", { surface: "private_moment", entry_source: "direct" }],
+    ["signup_started", { surface: "auth", entry_source: "direct" }],
+    ["signup_completed", { surface: "auth", entry_source: "direct" }],
+    ["returning_user", { surface: "dm_experience", entry_source: "x", return_count_bucket: "1", days_since_first_bucket: "1-2d" }],
+    ["launch_return_continued", { surface: "dm_experience", entry_source: "x", return_count_bucket: "1", days_since_first_bucket: "1-2d" }],
+    ["commerce_offer_viewed", { surface: "dm_private_moment", entry_source: "direct" }],
+    ["commercial_offer_dismissed", { surface: "dm_private_moment", entry_source: "direct" }],
+    ["commercial_post_offer_continued", { surface: "dm_private_moment", entry_source: "direct" }],
+    ["commerce_checkout_started", { surface: "dm_private_moment", entry_source: "direct" }],
+    ["commerce_checkout_blocked", { surface: "dm_private_moment", entry_source: "direct" }],
   ];
 
   const sample = [
@@ -225,15 +237,18 @@ function selfTest() {
   const report = buildSignalReport(sample);
   const ratios = report.directional_event_ratios;
   const assertions = [
-    [report.telemetry_lines_seen === 17, "telemetry line count"],
-    [report.accepted_records === 16, "accepted record count"],
+    [report.telemetry_lines_seen === 19, "telemetry line count"],
+    [report.accepted_records === 18, "accepted record count"],
     [report.malformed_records === 1, "malformed record count"],
-    [report.events.experience_started === 1, "Private Moment start"],
-    [report.events.commercial_post_offer_continued === 1, "post-offer continuation"],
+    [report.events.experience_started === 2, "raw mixed experience start count"],
+    [report.events_by_surface["private_moment:experience_started"] === 1, "surface-segmented Private Moment start"],
+    [report.events_by_surface["dm_experience:experience_started"] === 1, "DM start remains separate"],
+    [report.events_by_surface["dm_ritual:experience_completed"] === 1, "ritual completion surface"],
     [report.return_count_buckets["1"] === 2, "return bucket"],
     [report.return_latency_buckets["1-2d"] === 2, "latency bucket"],
     [ratios.launch_completion_events_per_start_event === 1, "launch completion ratio"],
-    [ratios.ritual_play_intents_per_view === 1, "ritual participation ratio"],
+    [ratios.ritual_play_intents_per_view === 1, "ritual play-intent ratio"],
+    [ratios.ritual_completions_per_view === 1, "ritual completion ratio"],
     [ratios.ritual_skips_per_view === 0, "ritual skip ratio"],
     [ratios.private_moment_completions_per_start === 1, "Private Moment completion ratio"],
     [ratios.preference_selections_per_private_moment_start === 1, "preference ratio"],
