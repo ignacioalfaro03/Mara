@@ -94,6 +94,19 @@ No provider is approved.
 
 Do not add SDKs or submit applications from this branch.
 
+## 2026-09-03 launch revenue loop update
+
+The product commerce layer now has a Supabase-backed checkout-intent and fulfillment contract, but real payment remains inactive until provider approval.
+
+Implementation may use the non-production `signed_test` runtime to verify HMAC webhook handling, idempotent purchase creation, entitlement grants and Capricho contribution progress. `signed_test` is blocked in production by code and must not be represented as real revenue.
+
+Current provider posture after live policy recheck:
+
+- Stripe remains excluded for Mara's intended adult/sensual AI scope.
+- PayPal remains excluded for sexually oriented digital goods/content.
+- Segpay remains the priority due-diligence candidate for adult/high-risk and adult AI approval.
+- CCBill remains an adult-capable candidate, with region/entity/card-network constraints to verify before committing.
+
 ## Pre-charge acceptance criteria
 
 Before first real payment:

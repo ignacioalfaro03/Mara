@@ -48,8 +48,11 @@ jobs:
       - name: Install locked dependencies
         run: npm ci --no-audit --no-fund
 
+      - name: Verify production audit gate classifier
+        run: node scripts/npm-audit-gate.mjs --self-test
+
       - name: Audit production dependencies
-        run: npm audit --omit=dev --audit-level=high
+        run: node scripts/npm-audit-gate.mjs
 
       - name: Verify Alpha signal report parser
         run: npm run alpha:report:selftest
@@ -95,3 +98,8 @@ jobs:
           done
           curl --fail --silent http://127.0.0.1:3000/ > /dev/null
           node scripts/launch-smoke.mjs
+          node scripts/account-operability-smoke.mjs
+          node scripts/ritual-telemetry-smoke.mjs
+          node scripts/public-purpose-smoke.mjs
+          node scripts/continuity-cta-smoke.mjs
+          node scripts/world-sofi-smoke.mjs

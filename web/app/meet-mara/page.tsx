@@ -1,4 +1,15 @@
+"use client";
+
 import Link from "next/link";
+import { track } from "@/lib/analytics";
+
+function enterFromMeetMara(placement: "top" | "bottom") {
+  track("hero_cta_click", {
+    surface: "meet_mara",
+    placement,
+    target: "launch_experience",
+  });
+}
 
 export default function MeetMaraPage() {
   return (
@@ -7,29 +18,29 @@ export default function MeetMaraPage() {
         <p className="eyebrow">MARA</p>
         <h1>No me vas a conocer leyendo una ficha.</h1>
         <p className="lede">
-          Hoy llegué tarde, todavía tengo café frío al lado y ya cambié de opinión dos veces. Eso te cuenta bastante más de mí que una lista de atributos.
+          No te voy a hacer llenar un perfil. Te propongo algo concreto, puedes decirme que no y, si vuelves después de que pase algo real entre nosotros, no parto de cero.
         </p>
         <div className="ctaRow">
-          <Link href="/experience" className="primaryCta">Ven. A ver qué saco de ti.</Link>
+          <Link href="/experience" className="primaryCta" onClick={() => enterFromMeetMara("top")}>Ven. A ver.</Link>
           <Link href="/legal" className="textCta">Lo que sí conviene saber</Link>
         </div>
       </section>
 
       <section className="profileGrid">
-        <article><span>Hoy</span><strong>Se me alargó el trabajo más de lo que quería.</strong></article>
-        <article><span>Una manía</span><strong>Me carga cuando alguien se esfuerza demasiado por caer bien.</strong></article>
-        <article><span>Probablemente</span><strong>Diga que no voy al gym y termine yendo igual.</strong></article>
-        <article><span>Contigo</span><strong>Prefiero sacar mis conclusiones antes que hacerte llenar un perfil.</strong></article>
+        <article><span>Primero</span><strong>Prefiero acciones concretas a cuestionarios.</strong></article>
+        <article><span>Un no</span><strong>Lo acepto. No convierte la relación en castigo ni discusión.</strong></article>
+        <article><span>Si vuelves</span><strong>Puedo retomar hechos que realmente ocurrieron, no inventarte una personalidad.</strong></article>
+        <article><span>Privado</span><strong>Tu texto libre no se usa para construir un perfil psicológico en este Alpha.</strong></article>
       </section>
 
       <section className="quotePanel">
-        <p>“Puedes tener curiosidad. No significa que te lo vaya a dejar fácil.”</p>
+        <p>“Si quieres cacharme, entra. Lo que haga después tiene que venir de algo que sí pasó.”</p>
       </section>
 
       <section className="closingPanel">
         <p className="eyebrow">YA LEÍSTE SUFICIENTE</p>
-        <h2>Si quieres conocerme, entra. Mirarme desde lejos tiene un límite.</h2>
-        <Link href="/experience" className="primaryCta">A ver.</Link>
+        <h2>Ahora sí: entra y deja que Mara haga algo concreto.</h2>
+        <Link href="/experience" className="primaryCta" onClick={() => enterFromMeetMara("bottom")}>A ver.</Link>
       </section>
     </main>
   );

@@ -1,0 +1,309 @@
+name: Mara Hosted Activation Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+env:
+  VERCEL_CLI_VERSION: "59.11.1"
+  PLAYWRIGHT_VERSION: "1.62.1"
+  VERCEL_ORG_ID: "team_KAPFjrSQT78GUeQyGZCdQRdz"
+  VERCEL_SCOPE: "ignacioalfaz-6766"
+  MARA_MAIN_VERCEL_PROJECT_ID: "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK"
+  MARA_PROOF_VERCEL_PROJECT_ID: "prj_AFQlC5fN2qKwrfZ8q7VzF9PnzAHc"
+  NEXT_PUBLIC_SUPABASE_URL: "https://hctykprkwenhatbjxkpb.supabase.co"
+  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_VQ-2Db0Di57kA3DEkeml9A_vZMYHDwi"
+
+jobs:
+  preview:
+    if: github.event.pull_request.head.ref == 'codex/launch-execution-control' || github.event.pull_request.head.ref == 'feature/world-sofi-first-slice' || github.event.pull_request.head.ref == 'release/public-alpha-rc'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Upload exact web source snapshot
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: mara-web-source-${{ github.event.pull_request.head.sha }}
+          path: web
+          include-hidden-files: true
+          retention-days: 1
+          compression-level: 0
+
+      - name: Check hosted deploy credential
+        id: preflight
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -n "$VERCEL_TOKEN" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+            echo "MARA_HOSTED_DEPLOY_READY=true"
+          else
+            echo "::notice::Hosted deploy blocked: missing GitHub Secret VERCEL_TOKEN"
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "MARA_HOSTED_DEPLOY_BLOCKED=missing_vercel_token"
+          fi
+
+      - name: Resolve isolated RC proof target
+        if: steps.preflight.outputs.ready == 'true'
+        id: target
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event.pull_request.head.ref }}" = "release/public-alpha-rc" ]; then
+            echo "project_id=$MARA_PROOF_VERCEL_PROJECT_ID" >> "$GITHUB_OUTPUT"
+            echo "environment=production" >> "$GITHUB_OUTPUT"
+            echo "host_kind=isolated-proof" >> "$GITHUB_OUTPUT"
+            echo "MARA_HOSTED_TARGET=isolated-proof"
+          else
+            echo "project_id=$MARA_MAIN_VERCEL_PROJECT_ID" >> "$GITHUB_OUTPUT"
+            echo "environment=preview" >> "$GITHUB_OUTPUT"
+            echo "host_kind=canonical-preview" >> "$GITHUB_OUTPUT"
+            echo "MARA_HOSTED_TARGET=canonical-preview"
+          fi
+
+      - name: Verify exact PR head
+        if: steps.preflight.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha }}"
+          echo "MARA_HOSTED_SHA=${{ github.event.pull_request.head.sha }}"
+
+      - name: Setup Node
+        if: steps.preflight.outputs.ready == 'true'
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install locked dependencies
+        if: steps.preflight.outputs.ready == 'true'
+        working-directory: web
+        run: npm ci --no-audit --no-fund
+
+      - name: Audit production dependencies
+        if: steps.preflight.outputs.ready == 'true'
+        working-directory: web
+        run: node scripts/npm-audit-gate.mjs
+
+      - name: Typecheck candidate
+        if: steps.preflight.outputs.ready == 'true'
+        working-directory: web
+        run: npm run typecheck
+
+      - name: Install Vercel CLI
+        if: steps.preflight.outputs.ready == 'true'
+        working-directory: web
+        run: npm install --no-save --no-package-lock --no-audit --no-fund "vercel@${VERCEL_CLI_VERSION}"
+
+      - name: Pull hosted environment and verify project link
+        if: steps.preflight.outputs.ready == 'true'
+        working-directory: web
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ steps.target.outputs.project_id }}
+          TARGET_PROJECT_ID: ${{ steps.target.outputs.project_id }}
+          TARGET_ENVIRONMENT: ${{ steps.target.outputs.environment }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .vercel
+          mkdir -p .vercel
+          node <<'NODE'
+          const fs = require('fs');
+          fs.writeFileSync(
+            '.vercel/project.json',
+            JSON.stringify({
+              orgId: process.env.VERCEL_ORG_ID,
+              projectId: process.env.TARGET_PROJECT_ID,
+            }),
+          );
+          NODE
+          npx vercel pull --yes --environment="$TARGET_ENVIRONMENT" --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN"
+          node <<'NODE'
+          const fs = require('fs');
+          const linked = JSON.parse(fs.readFileSync('.vercel/project.json', 'utf8'));
+          if (linked.projectId !== process.env.TARGET_PROJECT_ID) {
+            throw new Error(`Vercel project mismatch: ${linked.projectId}`);
+          }
+          if (linked.orgId !== process.env.VERCEL_ORG_ID) {
+            throw new Error(`Vercel org mismatch: ${linked.orgId}`);
+          }
+          console.log('MARA_VERCEL_HOST_LINK PASS');
+          NODE
+
+      - name: Verify Mara backend env shape without exposing values
+        if: steps.preflight.outputs.ready == 'true' && github.event.pull_request.head.ref == 'release/public-alpha-rc'
+        working-directory: web
+        env:
+          TARGET_ENVIRONMENT: ${{ steps.target.outputs.environment }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('fs');
+          const file = `.vercel/.env.${process.env.TARGET_ENVIRONMENT}.local`;
+          const text = fs.readFileSync(file, 'utf8');
+          const hasLegacySlot = text.split(/\r?\n/).some((line) => line.startsWith('SUPABASE_SERVICE_ROLE_KEY='));
+          const hasModernSlot = text.split(/\r?\n/).some((line) => line.startsWith('SUPABASE_SECRET_KEY='));
+          console.log(`MARA_PROOF_PUBLIC_URL_SOURCE=${process.env.NEXT_PUBLIC_SUPABASE_URL ? 'workflow' : 'missing'}`);
+          console.log(`MARA_PROOF_PUBLISHABLE_SOURCE=${process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ? 'workflow' : 'missing'}`);
+          console.log(`MARA_PROOF_SERVER_KEY_SLOT=${hasLegacySlot ? 'service_role' : hasModernSlot ? 'secret_key' : 'missing'}`);
+          if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || (!hasLegacySlot && !hasModernSlot)) {
+            throw new Error('Isolated proof host is missing required Mara backend configuration');
+          }
+          NODE
+
+      - name: Deploy exact PR head to hosted target with remote build
+        if: steps.preflight.outputs.ready == 'true'
+        id: deploy
+        working-directory: web
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ steps.target.outputs.project_id }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+          NEXT_TELEMETRY_DISABLED: "1"
+          TARGET_ENVIRONMENT: ${{ steps.target.outputs.environment }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$TARGET_ENVIRONMENT" = "production" ]; then
+            test -n "$VERCEL_AUTOMATION_BYPASS_SECRET"
+            npx vercel deploy --prod --yes --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN" \
+              --build-env NEXT_PUBLIC_SUPABASE_URL="$NEXT_PUBLIC_SUPABASE_URL" \
+              --build-env NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" \
+              --env NEXT_PUBLIC_SUPABASE_URL="$NEXT_PUBLIC_SUPABASE_URL" \
+              --env NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" \
+              --env MARA_QA_PROOF_TOKEN="$VERCEL_AUTOMATION_BYPASS_SECRET" \
+              2>&1 | tee /tmp/mara-hosted-deploy.log
+          else
+            npx vercel deploy --yes --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN" 2>&1 | tee /tmp/mara-hosted-deploy.log
+          fi
+          deployment_url=$(grep -Eo 'https://[^[:space:]]+\.vercel\.app' /tmp/mara-hosted-deploy.log | tail -n 1)
+          if [ -z "$deployment_url" ]; then
+            echo "::error::Vercel CLI did not return a hosted URL"
+            exit 1
+          fi
+          echo "deployment_url=$deployment_url" >> "$GITHUB_OUTPUT"
+          echo "MARA_HOSTED_URL=$deployment_url"
+
+      - name: Wait for hosted deployment READY
+        if: steps.preflight.outputs.ready == 'true'
+        working-directory: web
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ steps.target.outputs.project_id }}
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
+        run: npx vercel inspect "$DEPLOYMENT_URL" --wait --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN"
+
+      - name: Prove hosted Mara backend configuration
+        if: steps.preflight.outputs.ready == 'true' && github.event.pull_request.head.ref == 'release/public-alpha-rc'
+        working-directory: web
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ steps.target.outputs.project_id }}
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx vercel curl /api/health-memory \
+            --deployment "$DEPLOYMENT_URL" \
+            -- --silent --show-error \
+            > /tmp/mara-memory-health.json
+          node <<'NODE'
+          const fs = require('fs');
+          const body = JSON.parse(fs.readFileSync('/tmp/mara-memory-health.json', 'utf8'));
+          if (body?.service !== 'mara-identity-memory' || body?.configured !== true) {
+            throw new Error(`Hosted Mara backend is not configured: ${JSON.stringify(body)}`);
+          }
+          console.log('MARA_HOSTED_BACKEND_CONFIG PASS');
+          NODE
+
+      - name: Prove hosted telemetry persistence
+        if: steps.preflight.outputs.ready == 'true'
+        working-directory: web
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ steps.target.outputs.project_id }}
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          session_id="$(node -e "console.log(require('node:crypto').randomUUID())")"
+          timestamp="$(node -e "console.log(new Date().toISOString())")"
+          payload="$(jq -cn --arg sid "$session_id" --arg ts "$timestamp" '{event:"page_view",properties:{surface:"/qa-telemetry-preview",entry_source:"direct"},timestamp:$ts,sessionId:$sid}')"
+          npx vercel curl /api/telemetry \
+            --deployment "$DEPLOYMENT_URL" \
+            -- --silent --show-error --request POST --header "Content-Type: application/json" --data "$payload" \
+            > /tmp/mara-telemetry-response.json
+          node <<'NODE'
+          const fs = require('fs');
+          const raw = fs.readFileSync('/tmp/mara-telemetry-response.json', 'utf8').trim();
+          const body = JSON.parse(raw);
+          if (body?.ok !== true || body?.persisted !== true) {
+            throw new Error(`Hosted telemetry did not persist: ${JSON.stringify(body)}`);
+          }
+          console.log('MARA_TELEMETRY_PERSISTENCE_SMOKE PASS');
+          NODE
+
+      - name: Install hosted browser proof runtime
+        if: steps.preflight.outputs.ready == 'true' && (github.event.pull_request.head.ref == 'feature/world-sofi-first-slice' || github.event.pull_request.head.ref == 'release/public-alpha-rc')
+        working-directory: web
+        run: |
+          npm install --no-save --no-package-lock --no-audit --no-fund "playwright@${PLAYWRIGHT_VERSION}"
+          npx playwright install --with-deps chromium
+
+      - name: Prove identity and cross-device memory on hosted target
+        if: steps.preflight.outputs.ready == 'true' && github.event.pull_request.head.ref == 'release/public-alpha-rc'
+        working-directory: web
+        env:
+          BASE_URL: ${{ steps.deploy.outputs.deployment_url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+          QA_BOOTSTRAP_TOKEN: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          export QA_EMAIL="mara.qa.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}@example.com"
+          export QA_PASSWORD="$(openssl rand -hex 18)"
+          node scripts/hosted-memory-e2e.mjs
+
+      - name: Prove World P0 on hosted target
+        if: steps.preflight.outputs.ready == 'true' && (github.event.pull_request.head.ref == 'feature/world-sofi-first-slice' || github.event.pull_request.head.ref == 'release/public-alpha-rc')
+        working-directory: web
+        env:
+          BASE_URL: ${{ steps.deploy.outputs.deployment_url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: node scripts/world-sofi-smoke.mjs
+
+      - name: Publish hosted proof boundary
+        if: always()
+        shell: bash
+        run: |
+          if [ "${{ steps.preflight.outputs.ready }}" = "true" ]; then
+            echo "MARA_HOSTED_PROOF_CREATED=${{ steps.deploy.outputs.deployment_url }}"
+            echo "MARA_HOSTED_PROOF_SHA=${{ github.event.pull_request.head.sha }}"
+            echo "MARA_HOSTED_PROOF_KIND=${{ steps.target.outputs.host_kind }}"
+            echo "CANONICAL_PRODUCTION_ALIAS_UNTOUCHED=https://mara-vera.vercel.app"
+          else
+            echo "MARA_HOSTED_PROOF_BLOCKED=Add only VERCEL_TOKEN as a GitHub Actions secret, then rerun this job."
+            echo "CANONICAL_PRODUCTION_ALIAS_UNTOUCHED=https://mara-vera.vercel.app"
+          fi
+
+# For release/public-alpha-rc only, the workflow deploys --prod to the isolated
+# mara-vera-proof-588e39f project. Public Supabase client config comes from the
+# versioned E2E config while the server credential remains a Vercel Sensitive
+# variable and is never pulled, copied or printed. The QA bootstrap route is
+# activated only on that isolated proof deployment and uses an ephemeral user
+# that the E2E deletes after the test. The canonical mara-vera production alias
+# is never moved. Other allowed branches still use canonical Preview.

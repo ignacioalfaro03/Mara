@@ -1,9 +1,11 @@
-import { LaunchExperience } from "@/components/launch-experience";
+import { DmExperience } from "@/components/dm-experience";
+import { WorldBridge } from "@/components/world-bridge";
 
 export default function ExperiencePage() {
   return (
-    <main className="livingShell">
-      <LaunchExperience />
+    <main>
+      <DmExperience />
+      <WorldBridge />
     </main>
   );
 }

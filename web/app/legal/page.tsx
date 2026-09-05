@@ -22,11 +22,11 @@ export default function LegalPage() {
         </article>
         <article>
           <h2>Privacidad</h2>
-          <p>La Alpha guarda un pequeño estado en tu navegador para poder continuar cuando vuelves. La telemetría pública no debe recibir conversaciones íntimas, fantasías ni texto libre sensible.</p>
+          <p>La Alpha guarda un pequeño estado en tu navegador y, si creas cuenta, elecciones concretas para continuidad. La telemetría pública no debe recibir conversaciones íntimas, fantasías ni texto libre sensible.</p>
         </article>
         <article>
           <h2>Pagos</h2>
-          <p>Esta Alpha es gratuita. No hay suscripciones, checkout ni cobros activos.</p>
+          <p>Este Preview puede mostrar productos o Caprichos. No hay suscripciones, checkout ni cobros reales activos sin proveedor aprobado y confirmación server-side.</p>
         </article>
         <article>
           <h2>Borrar y reportar</h2>

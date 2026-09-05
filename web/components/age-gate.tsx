@@ -21,6 +21,7 @@ export function AgeGate() {
   function confirmAdult() {
     window.localStorage.setItem(STORAGE_KEY, "true");
     track("age_gate_pass");
+    track("age_gate_accepted");
     setVisible(false);
   }
 

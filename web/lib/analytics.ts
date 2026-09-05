@@ -1,24 +1,42 @@
 export type MaraEvent =
   | "page_view"
+  | "landing_view"
+  | "session_started"
   | "hero_cta_click"
+  | "cta_clicked"
+  | "mara_entered"
+  | "first_interaction"
   | "social_to_web"
   | "age_gate_view"
   | "age_gate_pass"
+  | "age_gate_accepted"
   | "age_gate_fail"
   | "meet_mara_view"
   | "premium_view"
   | "premium_cta_click"
   | "external_checkout_click"
   | "signup_start"
+  | "signup_started"
   | "signup_complete"
+  | "signup_completed"
+  | "signin_started"
+  | "signin_completed"
   | "first_paid_action"
   | "repeat_paid_action"
   | "returning_user"
+  | "memory_recall_rendered"
+  | "memory_recall_engaged"
   | "high_intent_session"
   | "launch_experience_started"
+  | "experience_started"
   | "launch_session_completed"
+  | "experience_completed"
   | "launch_return_continued"
   | "launch_state_reset"
+  | "visual_choice_completed"
+  | "preference_selected"
+  | "first_preference_signal"
+  | "preference_updated"
   | "first_living_experience_started"
   | "playable_onboarding_started"
   | "choice_made"
@@ -41,6 +59,16 @@ export type MaraEvent =
   | "commercial_moment_shown"
   | "commercial_offer_dismissed"
   | "commercial_post_offer_continued"
+  | "paywall_impression"
+  | "offer_viewed"
+  | "offer_clicked"
+  | "commerce_offer_viewed"
+  | "commerce_checkout_started"
+  | "commerce_checkout_blocked"
+  | "commerce_checkout_returned"
+  | "commerce_entitlement_unlocked"
+  | "purchase_completed"
+  | "commerce_contribution_progress_viewed"
   | "offer_opened"
   | "mock_purchase_completed"
   | "purchase_resume"
@@ -81,6 +109,7 @@ export type MaraEvent =
   | "external_media_learning_shown"
   | "ritual_viewed"
   | "ritual_play_intent"
+  | "ritual_completed"
   | "ritual_completed_simulated"
   | "ritual_skipped"
   | "ritual_reward_preference";
@@ -89,6 +118,7 @@ export type MaraEventRecord = {
   event: MaraEvent;
   properties: Record<string, string | number | boolean>;
   timestamp: string;
+  sessionId?: string;
 };
 
 type PublicEntrySource = "ig" | "tt" | "x" | "direct" | "other";
@@ -96,9 +126,21 @@ type PublicEntrySource = "ig" | "tt" | "x" | "direct" | "other";
 const P0_DEV_LOG_KEY = "mara_p0_event_log";
 const P0_DEV_LOG_LIMIT = 250;
 const PUBLIC_ENTRY_SOURCE_KEY = "mara_public_entry_source_v1";
+const PUBLIC_SESSION_ID_KEY = "mara_public_session_id_v1";
+const PUBLIC_SESSION_STARTED_KEY = "mara_public_session_started_v1";
 const PUBLIC_ENTRY_SOURCES = new Set<PublicEntrySource>(["ig", "tt", "x", "direct", "other"]);
 
 const P0_DEV_LOG_EVENTS = new Set<MaraEvent>([
+  "session_started",
+  "first_interaction",
+  "memory_recall_rendered",
+  "memory_recall_engaged",
+  "first_preference_signal",
+  "preference_updated",
+  "paywall_impression",
+  "offer_viewed",
+  "offer_clicked",
+  "purchase_completed",
   "first_living_experience_started",
   "playable_onboarding_started",
   "choice_made",
@@ -120,6 +162,12 @@ const P0_DEV_LOG_EVENTS = new Set<MaraEvent>([
   "commercial_moment_shown",
   "commercial_offer_dismissed",
   "commercial_post_offer_continued",
+  "commerce_offer_viewed",
+  "commerce_checkout_started",
+  "commerce_checkout_blocked",
+  "commerce_checkout_returned",
+  "commerce_entitlement_unlocked",
+  "commerce_contribution_progress_viewed",
   "offer_opened",
   "mock_purchase_completed",
   "purchase_resume",
@@ -159,29 +207,59 @@ const P0_DEV_LOG_EVENTS = new Set<MaraEvent>([
   "external_media_learning_shown",
   "ritual_viewed",
   "ritual_play_intent",
+  "ritual_completed",
   "ritual_completed_simulated",
   "ritual_skipped",
   "ritual_reward_preference",
 ]);
 
-// Only these public-alpha events may leave the browser through the first-party
-// telemetry endpoint. No conversation text, intimate answers, aliases, payment
-// data or user identifiers are accepted by this launch path.
+// Only launch events with an active producer and a current founder decision may
+// leave the browser through the first-party telemetry endpoint. Parked/dev-lab
+// event names stay typed for experiments but are not part of the public contract.
 const PUBLIC_ALPHA_TELEMETRY_EVENTS = new Set<MaraEvent>([
   "page_view",
+  "landing_view",
+  "session_started",
   "hero_cta_click",
+  "cta_clicked",
+  "mara_entered",
+  "first_interaction",
   "social_to_web",
   "age_gate_view",
   "age_gate_pass",
+  "age_gate_accepted",
   "age_gate_fail",
-  "meet_mara_view",
   "returning_user",
+  "memory_recall_rendered",
+  "memory_recall_engaged",
   "launch_experience_started",
-  "launch_session_completed",
+  "experience_started",
+  "experience_completed",
   "launch_return_continued",
   "launch_state_reset",
-  "prediction_hit",
-  "prediction_miss",
+  "preference_selected",
+  "first_preference_signal",
+  "preference_updated",
+  "signup_started",
+  "signup_completed",
+  "signin_started",
+  "signin_completed",
+  "ritual_viewed",
+  "ritual_completed",
+  "ritual_skipped",
+  "commercial_offer_dismissed",
+  "commercial_post_offer_continued",
+  "paywall_impression",
+  "offer_viewed",
+  "offer_clicked",
+  "capricho_viewed",
+  "commerce_offer_viewed",
+  "commerce_checkout_started",
+  "commerce_checkout_blocked",
+  "commerce_checkout_returned",
+  "commerce_entitlement_unlocked",
+  "purchase_completed",
+  "commerce_contribution_progress_viewed",
 ]);
 
 function publicEntrySource(): PublicEntrySource {
@@ -223,6 +301,20 @@ function publicAlphaProperties(
   };
 }
 
+function publicSessionId() {
+  if (typeof window === "undefined") return undefined;
+
+  try {
+    const existing = window.sessionStorage.getItem(PUBLIC_SESSION_ID_KEY);
+    if (existing) return existing;
+    const next = crypto.randomUUID();
+    window.sessionStorage.setItem(PUBLIC_SESSION_ID_KEY, next);
+    return next;
+  } catch {
+    return undefined;
+  }
+}
+
 function appendDevelopmentEvent(record: MaraEventRecord) {
   if (process.env.NODE_ENV !== "development") return;
   if (!P0_DEV_LOG_EVENTS.has(record.event)) return;
@@ -245,12 +337,22 @@ function sendPublicAlphaTelemetry(record: MaraEventRecord) {
     void fetch("/api/telemetry", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify(record),
+      body: JSON.stringify({ ...record, sessionId: record.sessionId ?? publicSessionId() }),
       keepalive: true,
       credentials: "same-origin",
     }).catch(() => undefined);
   } catch {
     // Telemetry must never interrupt Mara.
+  }
+}
+
+function emit(record: MaraEventRecord) {
+  window.dispatchEvent(new CustomEvent("mara:analytics", { detail: record }));
+  appendDevelopmentEvent(record);
+  sendPublicAlphaTelemetry(record);
+
+  if (process.env.NODE_ENV === "development") {
+    console.info("[mara:analytics]", record.event, record.properties);
   }
 }
 
@@ -270,20 +372,78 @@ export function clearP0DevelopmentEventLog() {
   window.sessionStorage.removeItem(P0_DEV_LOG_KEY);
 }
 
+export function trackPublicSessionStarted(surface: string) {
+  if (typeof window === "undefined") return;
+
+  try {
+    if (window.sessionStorage.getItem(PUBLIC_SESSION_STARTED_KEY) === "true") return;
+    window.sessionStorage.setItem(PUBLIC_SESSION_STARTED_KEY, "true");
+  } catch {
+    // A missing sessionStorage should not stop ordinary page telemetry.
+  }
+
+  track("session_started", { surface });
+}
+
 export function track(event: MaraEvent, properties: Record<string, string | number | boolean> = {}) {
   if (typeof window === "undefined") return;
 
+  // The current DM historically emits ritual_play_intent at exposure time.
+  // Suppress that false signal entirely until a genuine intent interaction exists.
+  if (event === "ritual_play_intent" && properties.surface === "dm_experience") return;
+
+  const timestamp = new Date().toISOString();
   const detail: MaraEventRecord = {
     event,
     properties: publicAlphaProperties(event, properties),
-    timestamp: new Date().toISOString(),
+    timestamp,
+    sessionId: publicSessionId(),
   };
 
-  window.dispatchEvent(new CustomEvent("mara:analytics", { detail }));
-  appendDevelopmentEvent(detail);
-  sendPublicAlphaTelemetry(detail);
+  emit(detail);
 
-  if (process.env.NODE_ENV === "development") {
-    console.info("[mara:analytics]", event, detail.properties);
+  if (event === "hero_cta_click") {
+    emit({
+      event: "cta_clicked",
+      properties: publicAlphaProperties("cta_clicked", properties),
+      timestamp,
+      sessionId: detail.sessionId,
+    });
+  }
+
+  // The concrete ritual completion already exists in product logic as
+  // experience_completed on dm_ritual. Normalize it into a dedicated event so
+  // launch reporting measures a real user action without duplicating DM state.
+  if (event === "experience_completed" && properties.surface === "dm_ritual") {
+    emit({
+      event: "ritual_completed",
+      properties: publicAlphaProperties("ritual_completed", properties),
+      timestamp,
+      sessionId: detail.sessionId,
+    });
+  }
+
+  if (event === "commerce_offer_viewed") {
+    emit({
+      event: "offer_viewed",
+      properties: publicAlphaProperties("offer_viewed", properties),
+      timestamp,
+      sessionId: detail.sessionId,
+    });
+    emit({
+      event: "paywall_impression",
+      properties: publicAlphaProperties("paywall_impression", properties),
+      timestamp,
+      sessionId: detail.sessionId,
+    });
+  }
+
+  if (event === "commerce_entitlement_unlocked") {
+    emit({
+      event: "purchase_completed",
+      properties: publicAlphaProperties("purchase_completed", properties),
+      timestamp,
+      sessionId: detail.sessionId,
+    });
   }
 }
