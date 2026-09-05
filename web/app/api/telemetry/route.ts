@@ -173,7 +173,9 @@ function token(properties: Record<string, string | number | boolean>, key: strin
   return typeof value === "string" ? value : null;
 }
 
-function getSupabaseWriteHeaders(config: NonNullable<ReturnType<typeof getServerBackendConfig>>) {
+function getSupabaseWriteHeaders(
+  config: NonNullable<ReturnType<typeof getServerBackendConfig>>,
+): Record<string, string> {
   if (config.serviceRoleKey.startsWith("sb_secret_")) {
     return {
       apikey: config.serviceRoleKey,
