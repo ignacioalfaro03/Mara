@@ -1,4 +1,4 @@
-name: Mara Alpha Supabase Credential Inspection
+name: Mara Alpha Canonical Public Env Setup
 
 on:
   push:
@@ -10,22 +10,62 @@ on:
 permissions:
   contents: read
 
+env:
+  VERCEL_CLI_VERSION: "59.11.1"
+  VERCEL_ORG_ID: "team_KAPFjrSQT78GUeQyGZCdQRdz"
+  VERCEL_PROJECT_ID: "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK"
+  NEXT_PUBLIC_SUPABASE_URL: "https://hctykprkwenhatbjxkpb.supabase.co"
+  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_VQ-2Db0Di57kA3DEkeml9A_vZMYHDwi"
+
 jobs:
-  inspect:
-    if: contains(github.event.head_commit.message, '[supabase-token-alpha]')
+  configure:
+    if: contains(github.event.head_commit.message, '[config-public-alpha]')
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 8
+    defaults:
+      run:
+        working-directory: web
     steps:
-      - name: Inspect Supabase management credential presence only
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: "20"
+      - name: Install pinned Vercel CLI
+        run: npm install --no-save --no-package-lock --no-audit --no-fund "vercel@${VERCEL_CLI_VERSION}"
+      - name: Link canonical project
         env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-          SUPABASE_TOKEN: ${{ secrets.SUPABASE_TOKEN }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          test -n "$VERCEL_TOKEN"
+          npx vercel pull --yes --environment=production --token "$VERCEL_TOKEN"
+      - name: Install public Supabase configuration
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         shell: bash
         run: |
-          if [ -n "$SUPABASE_ACCESS_TOKEN" ]; then
-            echo "MARA_SUPABASE_MANAGEMENT_SOURCE=SUPABASE_ACCESS_TOKEN"
-          elif [ -n "$SUPABASE_TOKEN" ]; then
-            echo "MARA_SUPABASE_MANAGEMENT_SOURCE=SUPABASE_TOKEN"
-          else
-            echo "MARA_SUPABASE_MANAGEMENT_SOURCE=missing"
+          set -euo pipefail
+          printf '%s' "$NEXT_PUBLIC_SUPABASE_URL" > /tmp/mara-supabase-url
+          printf '%s' "$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" > /tmp/mara-supabase-publishable
+          npx vercel env add NEXT_PUBLIC_SUPABASE_URL production --force --no-sensitive --token "$VERCEL_TOKEN" < /tmp/mara-supabase-url
+          npx vercel env add NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY production --force --no-sensitive --token "$VERCEL_TOKEN" < /tmp/mara-supabase-publishable
+          rm -f /tmp/mara-supabase-url /tmp/mara-supabase-publishable
+      - name: Ensure proof-only QA token is absent
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx vercel pull --yes --environment=production --token "$VERCEL_TOKEN"
+          if grep -q '^MARA_QA_PROOF_TOKEN=' .vercel/.env.production.local; then
+            npx vercel env rm MARA_QA_PROOF_TOKEN production --yes --token "$VERCEL_TOKEN"
+            npx vercel pull --yes --environment=production --token "$VERCEL_TOKEN"
           fi
+          node <<'NODE'
+          const fs=require('fs');
+          const text=fs.readFileSync('.vercel/.env.production.local','utf8');
+          const names=new Set(text.split(/\r?\n/).map(l=>l.split('=')[0]).filter(Boolean));
+          if(!names.has('NEXT_PUBLIC_SUPABASE_URL')||!names.has('NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY')) throw new Error('Public Supabase config not present');
+          if(names.has('MARA_QA_PROOF_TOKEN')) throw new Error('Proof-only QA token still present in canonical Production');
+          console.log('MARA_CANONICAL_PUBLIC_SUPABASE_CONFIG PASS');
+          console.log('MARA_QA_PROOF_TOKEN ABSENT');
+          NODE
