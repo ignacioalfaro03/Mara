@@ -10,7 +10,7 @@ permissions:
 
 env:
   PLAYWRIGHT_VERSION: "1.62.1"
-  PRODUCT_SHA: "588e39f7fbaec4aa69f33cd3302f1dfcbd032c96"
+  PRODUCT_SHA: "d17cb69c28e327ed03b60d61c2bfea668c90d79c"
   BASE_URL: "https://mara-vera-proof-588e39f.vercel.app"
   QA_PREPROVISIONED: "1"
   QA_PROVISION_URL: "https://hctykprkwenhatbjxkpb.supabase.co/functions/v1/mara-qa-provision"
