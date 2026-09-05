@@ -110,6 +110,7 @@ jobs:
         working-directory: web
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ steps.target.outputs.project_id }}
           TARGET_PROJECT_ID: ${{ steps.target.outputs.project_id }}
           TARGET_ENVIRONMENT: ${{ steps.target.outputs.environment }}
         shell: bash
@@ -184,6 +185,7 @@ jobs:
         working-directory: web
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ steps.target.outputs.project_id }}
           NEXT_TELEMETRY_DISABLED: "1"
           TARGET_ENVIRONMENT: ${{ steps.target.outputs.environment }}
         shell: bash
@@ -207,6 +209,7 @@ jobs:
         working-directory: web
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ steps.target.outputs.project_id }}
           DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
         run: npx vercel inspect "$DEPLOYMENT_URL" --wait --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN"
 
@@ -215,6 +218,7 @@ jobs:
         working-directory: web
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ steps.target.outputs.project_id }}
           DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
         shell: bash
         run: |
@@ -237,6 +241,7 @@ jobs:
         working-directory: web
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ steps.target.outputs.project_id }}
           DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
         shell: bash
         run: |
