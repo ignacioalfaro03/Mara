@@ -43,33 +43,19 @@ async function manageQaUser(body) {
 }
 
 async function acceptAgeGate(page) {
-  const dialog = page.getByRole("dialog");
+  const alreadyPassed = await page
+    .evaluate(() => window.localStorage.getItem("mara_age_gate_passed") === "true")
+    .catch(() => false);
+  if (alreadyPassed) return;
+
+  const confirm = page.getByRole("button", { name: "Sí, tengo 18+" });
   try {
-    await dialog.waitFor({ state: "visible", timeout: 6000 });
-    await dialog.locator("button").first().click();
-    await dialog.waitFor({ state: "hidden", timeout: 6000 }).catch(() => {});
+    await confirm.waitFor({ state: "visible", timeout: 6000 });
+    await confirm.click();
+    await page.getByRole("dialog").waitFor({ state: "detached", timeout: 6000 }).catch(() => undefined);
   } catch {
-    // The gate may already be accepted in this browser context.
+    // Some authenticated navigations can arrive after the gate was accepted in the same context.
   }
-}
-
-async function getRelationship(page) {
-  return page.evaluate(async () => {
-    const response = await fetch("/api/relationship", { cache: "no-store" });
-    const body = await response.json().catch(() => ({}));
-    return { status: response.status, body };
-  });
-}
-
-async function waitForRelationship(page, predicate, label, timeoutMs = 30000) {
-  const started = Date.now();
-  let last = null;
-  while (Date.now() - started < timeoutMs) {
-    last = await getRelationship(page);
-    if (last.status === 200 && predicate(last.body?.state)) return last.body.state;
-    await page.waitForTimeout(500);
-  }
-  throw new Error(`${label} timed out; last=${JSON.stringify(last)}`);
 }
 
 async function signIn(page) {
@@ -80,6 +66,44 @@ async function signIn(page) {
   await page.getByLabel("Contraseña").fill(qaPassword);
   await page.getByRole("button", { name: "Seguir", exact: true }).click();
   await page.waitForURL(/\/experience\?account=ready/, { timeout: 30000 });
+}
+
+async function signOut(page) {
+  const status = await page.evaluate(async () => {
+    const response = await fetch("/api/auth/signout", { method: "POST" });
+    return response.status;
+  });
+  assert(status === 204, `Signout expected 204, got ${status}`);
+}
+
+async function readJson(page, path) {
+  return page.evaluate(async (url) => {
+    const response = await fetch(url, { cache: "no-store" });
+    const body = await response.json().catch(() => ({}));
+    return { status: response.status, body };
+  }, path);
+}
+
+async function waitForApi(page, path, predicate, label, timeoutMs = 30000) {
+  const started = Date.now();
+  let last = null;
+  while (Date.now() - started < timeoutMs) {
+    last = await readJson(page, path);
+    if (last.status === 200 && predicate(last.body)) return last.body;
+    await page.waitForTimeout(400);
+  }
+  throw new Error(`${label} timed out; last=${JSON.stringify(last)}`);
+}
+
+async function writeRelationship(page, state) {
+  return page.evaluate(async (payload) => {
+    const response = await fetch("/api/relationship", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    return response.status;
+  }, state);
 }
 
 const browser = await chromium.launch({ headless: true });
@@ -99,160 +123,157 @@ let qaUserId = null;
 let primaryError = null;
 
 try {
-  if (qaBootstrapToken) {
-    const created = await manageQaUser({ action: "create", email: qaEmail, password: qaPassword });
-    qaUserId = created.userId;
-    assert(typeof qaUserId === "string", "QA bootstrap did not return a user id");
-    console.log("MARA_QA_BOOTSTRAP PASS");
-  }
+  const created = await manageQaUser({ action: "create", email: qaEmail, password: qaPassword });
+  qaUserId = created.userId;
+  assert(typeof qaUserId === "string", "QA bootstrap did not return a user id");
+  console.log("MARA_QA_BOOTSTRAP PASS");
 
   const probeContext = await browser.newContext(contextOptions);
   const memoryHealth = await probeContext.request.get(`${baseUrl}/api/health-memory`);
   assert(memoryHealth.status() === 200, `/api/health-memory returned ${memoryHealth.status()}`);
   const memoryBody = await memoryHealth.json();
-  assert(memoryBody?.configured === true, "Hosted preview memory backend is not configured");
+  assert(memoryBody?.configured === true, "Hosted proof memory backend is not configured");
   await probeContext.close();
 
-  // Browser A: play anonymously, then attach the local state to a real account.
+  // Browser A: complete the current launch ritual anonymously. This is the
+  // local signal AccountEntry must flush to the server after sign-in.
   contextA = await browser.newContext(contextOptions);
   const pageA = await contextA.newPage();
   await pageA.goto(`${baseUrl}/experience`, { waitUntil: "networkidle" });
   await acceptAgeGate(pageA);
-  await pageA.getByText("Llegaste justo.").waitFor();
-  await pageA.getByRole("button", { name: "Métete." }).click();
-  await pageA.getByText("Negro o crema.").waitFor();
-  await pageA.getByRole("button", { name: "Negro." }).click();
-  await pageA.getByText("Obvio.").waitFor();
-  await pageA.getByRole("button", { name: "Espera." }).click();
-  await pageA.getByText("¿Cuál te gusta más?").waitFor();
-  await pageA.getByRole("button", { name: "Elegir la segunda foto de Mara" }).click();
-  await pageA.getByText("La segunda. Mmm.").waitFor();
-  await pageA.getByRole("button", { name: "Ahora sí." }).click();
-  await pageA.getByText("Te pillé mirando.").waitFor();
-  await pageA.getByRole("button", { name: "Voy hacia ti." }).click();
-  await pageA.getByText("Eso fue rápido.").waitFor();
-  await pageA.getByRole("button", { name: "Ajá." }).click();
-  await pageA.getByText("Tu teléfono vibra dos veces.").waitFor();
-  await pageA.getByRole("button", { name: "Voy." }).click();
-  await pageA.getByText("Sabía.").waitFor();
-  await pageA.getByRole("button", { name: "Ya." }).click();
-  await pageA.getByText("No. Ahora espera tú.").waitFor();
-  await pageA.getByRole("button", { name: "Déjalo ahí." }).click();
+  await pageA.getByText("No quiero que esto se sienta como una app. Háblame aquí.").waitFor();
+  await pageA.getByRole("button", { name: "Entrar" }).click();
+  await pageA.getByText("Hoy mando yo un poco.").waitFor();
+  await pageA.getByText(/Esta noche: hamburguesa, papas, bebida y una barra de chocolate/).waitFor();
+  await pageA.getByRole("button", { name: "Hecho" }).click();
+  await pageA.getByText(/No me mandes prueba. Te creo/).waitFor();
 
-  const anonymousState = JSON.parse(
-    await pageA.evaluate(() => window.localStorage.getItem("mara_launch_state_v1")),
-  );
-  assert(anonymousState?.completed === true, "Anonymous session did not complete");
-  assert(anonymousState?.poseChoice === "pose_b", "Anonymous pose_b choice was not kept locally");
+  const anonymousDm = await pageA.evaluate(() => JSON.parse(window.localStorage.getItem("mara_dm_state_v1") || "{}"));
+  assert(anonymousDm.started === true, "Anonymous DM did not persist started=true");
+  assert(anonymousDm.ritualOffered === true, "Anonymous DM did not persist ritual offer");
+  assert(typeof anonymousDm.ritualCompletedAt === "string", "Anonymous ritual completion was not kept locally");
 
-  await pageA.getByRole("link", { name: "Haz que me acuerde" }).waitFor({ timeout: 10000 });
-  await pageA.getByRole("link", { name: "Haz que me acuerde" }).click();
-  await pageA.getByText("¿Quieres que me acuerde?").waitFor();
-
-  let accountReady = false;
-  if (qaBootstrapToken) {
-    await pageA.getByRole("button", { name: "Entrar", exact: true }).click();
-    await pageA.getByLabel("Correo").fill(qaEmail);
-    await pageA.getByLabel("Contraseña").fill(qaPassword);
-    await pageA.getByRole("button", { name: "Seguir", exact: true }).click();
-    await pageA.waitForURL(/\/experience\?account=ready/, { timeout: 30000 });
-    accountReady = true;
-  } else {
-    await pageA.getByLabel("Correo").fill(qaEmail);
-    await pageA.getByLabel("Contraseña").fill(qaPassword);
-    await pageA.getByLabel("Confirmo que tengo 18 años o más.").check();
-    await pageA.getByRole("button", { name: "Que te acuerdes" }).click();
-
-    try {
-      await pageA.waitForURL(/\/experience\?account=ready/, { timeout: 10000 });
-      accountReady = true;
-    } catch {
-      const confirmation = pageA.getByText(/Revisa tu correo para confirmar la cuenta/i);
-      await confirmation.waitFor({ timeout: 5000 });
-      console.log("MARA_QA_CONFIRMATION_BYPASS_FOR_E2E_REQUIRED");
-      throw new Error("Hosted E2E needs QA_BOOTSTRAP_TOKEN when email confirmations are enabled");
-    }
-  }
-
-  assert(accountReady, "QA account did not become ready");
-  await pageA.getByText("Volviste.").waitFor({ timeout: 15000 });
-
-  const persisted = await waitForRelationship(
+  // Sign-in on the same device must flush the anonymous ritual into account memory.
+  await signIn(pageA);
+  const ritualA = await waitForApi(
     pageA,
-    (state) => state?.launchCompleted === true && state?.lastVisualChoice === "pose_b",
-    "initial hosted relationship persistence",
+    "/api/relationship/ritual",
+    (body) => body?.ritual?.ritualKey === "junk_food_date_v1" && typeof body?.ritual?.completedAt === "string",
+    "ritual flush after sign-in",
   );
-  assert(persisted.returnCount === 0, `Initial returnCount expected 0, got ${persisted.returnCount}`);
+  const ritualCompletedAt = ritualA.ritual.completedAt;
+  console.log("MARA_RITUAL_ACCOUNT_FLUSH PASS");
 
-  const signout = await pageA.evaluate(async () => {
-    const response = await fetch("/api/auth/signout", { method: "POST" });
-    return response.status;
+  // On the current product, private-style memory is a first-class continuity signal.
+  await pageA.getByRole("button", { name: "Hoy manda tú" }).waitFor({ timeout: 15000 });
+  await pageA.getByRole("button", { name: "Hoy manda tú" }).click();
+  await pageA.getByText(/no vas a navegar un catálogo/).waitFor();
+  await pageA.getByRole("button", { name: "Directo" }).click();
+  await pageA.getByText("Bien. Directo.").waitFor();
+  await pageA.getByRole("button", { name: "Ya" }).click();
+  await pageA.getByText("Ya. Por hoy queda ahí.").waitFor();
+
+  const privateA = await waitForApi(
+    pageA,
+    "/api/relationship/private-moment",
+    (body) => body?.privateMoment?.preferredStyle === "direct" && body?.privateMoment?.sessionCount >= 1,
+    "private style persistence on Browser A",
+  );
+  assert(privateA.privateMoment.sessionCount === 1, `Expected first private session count=1, got ${privateA.privateMoment.sessionCount}`);
+  console.log("MARA_PRIVATE_MEMORY_A PASS");
+
+  // Seed the generic relationship merge with newer server truth so Browser C
+  // can prove a stale snapshot cannot roll it back.
+  const firstSeenAt = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+  const latestSeenAt = new Date().toISOString();
+  const seedStatus = await writeRelationship(pageA, {
+    returnCount: 2,
+    firstSeenAt,
+    lastSeenAt: latestSeenAt,
+    lastVisualChoice: "pose_b",
+    launchCompleted: true,
   });
-  assert(signout === 204, `Signout expected 204, got ${signout}`);
-  const signedOut = await pageA.evaluate(async () => {
-    const response = await fetch("/api/auth/me", { cache: "no-store" });
-    return response.json();
-  });
-  assert(signedOut?.authenticated === false, "Browser A remained authenticated after signout");
+  assert(seedStatus === 204, `Relationship seed returned ${seedStatus}`);
+  const seeded = await waitForApi(
+    pageA,
+    "/api/relationship",
+    (body) => body?.state?.returnCount >= 2 && body?.state?.lastVisualChoice === "pose_b" && body?.state?.launchCompleted === true,
+    "newer relationship seed",
+  );
+
+  await signOut(pageA);
   await contextA.close();
   contextA = null;
 
-  // Browser B: no Mara localStorage. The callback must therefore come from server memory.
+  // Browser B: fresh device, no Mara localStorage. Both ritual + explicit
+  // private preference must hydrate from server account memory.
   contextB = await browser.newContext(contextOptions);
   const pageB = await contextB.newPage();
   await signIn(pageB);
   await pageB.getByText("Volviste.").waitFor({ timeout: 15000 });
-  await pageB.getByText("La última vez te quedaste con la segunda. Sí, me fijé.").waitFor({ timeout: 15000 });
-  await pageB.getByText(/Solo me acuerdo/).waitFor();
+  await pageB.getByText(/me acuerdo de la hamburguesa, las papas y el chocolate/).waitFor({ timeout: 15000 });
+  await pageB.waitForFunction(() => {
+    const raw = window.localStorage.getItem("mara_dm_state_v1");
+    if (!raw) return false;
+    const state = JSON.parse(raw);
+    return typeof state.ritualCompletedAt === "string" && state.preferredPrivateStyle === "direct" && state.privateSessionCount >= 1;
+  });
 
-  const hydratedRaw = await pageB.evaluate(() => window.localStorage.getItem("mara_launch_state_v1"));
-  assert(hydratedRaw, "Browser B did not hydrate remote memory into its local cache");
-  const hydrated = JSON.parse(hydratedRaw);
-  assert(hydrated.completed === true, "Browser B did not hydrate launch completion");
-  assert(hydrated.poseChoice === "pose_b", `Browser B expected pose_b, got ${hydrated.poseChoice}`);
+  const hydrated = await pageB.evaluate(() => JSON.parse(window.localStorage.getItem("mara_dm_state_v1") || "{}"));
+  assert(hydrated.ritualCompletedAt === ritualCompletedAt, "Browser B did not hydrate the account ritual timestamp");
+  assert(hydrated.preferredPrivateStyle === "direct", "Browser B did not hydrate preferred private style");
+  assert(hydrated.privateSessionCount >= 1, "Browser B did not hydrate private session count");
+  console.log("MARA_CROSS_DEVICE_HYDRATION PASS");
 
-  await pageB.getByRole("button", { name: "Métete." }).click();
-  const afterReturn = await waitForRelationship(
+  // A second device action must continue from the remembered style and advance
+  // server history rather than starting a disconnected local branch.
+  await pageB.getByRole("button", { name: "Hoy manda tú" }).click();
+  await pageB.getByText(/Ya sé que prefieres que vaya directo/).waitFor();
+  await pageB.getByRole("button", { name: "Ya" }).click();
+  const privateB = await waitForApi(
     pageB,
-    (state) => state?.returnCount >= 1 && state?.lastVisualChoice === "pose_b" && state?.launchCompleted === true,
-    "hosted return increment",
+    "/api/relationship/private-moment",
+    (body) => body?.privateMoment?.preferredStyle === "direct" && body?.privateMoment?.sessionCount >= 2,
+    "cross-device private history increment",
   );
-  assert(afterReturn.returnCount >= 1, "Return count did not increment on Browser B");
+  assert(privateB.privateMoment.sessionCount >= 2, "Browser B did not advance server-backed private session history");
+  console.log("MARA_CROSS_DEVICE_CONTINUITY PASS");
+  await signOut(pageB);
   await contextB.close();
   contextB = null;
 
-  // Browser C: authenticated stale snapshot must not degrade newer server truth.
+  // Browser C: authenticated stale generic snapshot must not degrade the newer
+  // server truth seeded on Browser A.
   contextC = await browser.newContext(contextOptions);
   const pageC = await contextC.newPage();
   await signIn(pageC);
-  await pageC.getByText("Volviste.").waitFor({ timeout: 15000 });
-  const beforeStale = await waitForRelationship(pageC, (state) => state?.returnCount >= 1, "state before stale write");
-  const staleFirstSeenAt = beforeStale.firstSeenAt ?? new Date(Date.now() - 60 * 60 * 1000).toISOString();
-
-  const staleWrite = await pageC.evaluate(async ({ firstSeenAt }) => {
-    const response = await fetch("/api/relationship", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        returnCount: 0,
-        firstSeenAt,
-        lastSeenAt: firstSeenAt,
-        lastVisualChoice: "pose_a",
-        launchCompleted: false,
-      }),
-    });
-    return response.status;
-  }, { firstSeenAt: staleFirstSeenAt });
-  assert(staleWrite === 204, `Stale relationship write returned ${staleWrite}`);
-
-  const afterStale = await waitForRelationship(
+  const beforeStale = await waitForApi(
     pageC,
-    (state) => state?.returnCount >= 1 && state?.lastVisualChoice === "pose_b" && state?.launchCompleted === true,
-    "monotonic hosted relationship merge",
+    "/api/relationship",
+    (body) => body?.state?.returnCount >= 2 && body?.state?.lastVisualChoice === "pose_b" && body?.state?.launchCompleted === true,
+    "relationship state before stale write",
   );
-  assert(afterStale.returnCount >= beforeStale.returnCount, "Stale write reduced return_count");
-  assert(afterStale.lastVisualChoice === "pose_b", "Stale write replaced the server visual preference");
-  assert(afterStale.launchCompleted === true, "Stale write reverted launch_completed");
+
+  const staleStatus = await writeRelationship(pageC, {
+    returnCount: 0,
+    firstSeenAt,
+    lastSeenAt: firstSeenAt,
+    lastVisualChoice: "pose_a",
+    launchCompleted: false,
+  });
+  assert(staleStatus === 204, `Stale relationship write returned ${staleStatus}`);
+
+  const afterStale = await waitForApi(
+    pageC,
+    "/api/relationship",
+    (body) => body?.state?.returnCount >= 2 && body?.state?.lastVisualChoice === "pose_b" && body?.state?.launchCompleted === true,
+    "monotonic relationship merge",
+  );
+  assert(afterStale.state.returnCount >= beforeStale.state.returnCount, "Stale write reduced return_count");
+  assert(afterStale.state.lastVisualChoice === "pose_b", "Stale write replaced newer visual choice");
+  assert(afterStale.state.launchCompleted === true, "Stale write reverted launch_completed");
+  assert(Date.parse(afterStale.state.lastSeenAt) >= Date.parse(seeded.state.lastSeenAt), "Stale write moved last_seen_at backwards");
+  console.log("MARA_STALE_STATE_PROTECTION PASS");
 
   console.log("MARA_HOSTED_MEMORY_E2E PASS");
 } catch (error) {
@@ -263,7 +284,7 @@ try {
   if (contextC) await contextC.close().catch(() => {});
   await browser.close();
 
-  if (qaUserId && qaBootstrapToken) {
+  if (qaUserId) {
     try {
       await manageQaUser({ action: "delete", userId: qaUserId });
       console.log("MARA_QA_CLEANUP PASS");
