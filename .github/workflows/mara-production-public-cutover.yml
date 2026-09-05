@@ -1,0 +1,174 @@
+name: Mara Production Public Cutover
+
+on:
+  push:
+    branches:
+      - ops/public-alpha-final-cutover-20260905
+    paths:
+      - ".github/workflows/mara-production-public-cutover.yml"
+
+permissions:
+  contents: read
+
+env:
+  VERCEL_CLI_VERSION: "59.11.1"
+  PLAYWRIGHT_VERSION: "1.62.1"
+  VERCEL_ORG_ID: "team_KAPFjrSQT78GUeQyGZCdQRdz"
+  VERCEL_SCOPE: "ignacioalfaz-6766"
+  VERCEL_PROJECT_ID: "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK"
+  MARA_MAIN_SHA: "27f10dea80298cc6524d880f0b3465f7a88a13bd"
+
+jobs:
+  cutover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - name: Checkout exact merged main snapshot
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ env.MARA_MAIN_SHA }}
+
+      - name: Prove exact source SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$MARA_MAIN_SHA"
+          echo "MARA_PRODUCTION_SOURCE_SHA=$MARA_MAIN_SHA"
+
+      - name: Setup Node
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install locked app dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Audit production dependencies
+        run: node scripts/npm-audit-gate.mjs
+
+      - name: Typecheck exact production snapshot
+        run: npm run typecheck
+
+      - name: Install pinned Vercel CLI
+        run: npm install --no-save --no-package-lock --no-audit --no-fund "vercel@${VERCEL_CLI_VERSION}"
+
+      - name: Link canonical project and verify safe Production env shape
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .vercel
+          mkdir -p .vercel
+          node <<'NODE'
+          const fs=require('fs');
+          fs.writeFileSync('.vercel/project.json', JSON.stringify({orgId:process.env.VERCEL_ORG_ID,projectId:process.env.VERCEL_PROJECT_ID}));
+          NODE
+          npx vercel pull --yes --environment=production --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN"
+          node <<'NODE'
+          const fs=require('fs');
+          const linked=JSON.parse(fs.readFileSync('.vercel/project.json','utf8'));
+          if (linked.projectId !== process.env.VERCEL_PROJECT_ID || linked.orgId !== process.env.VERCEL_ORG_ID) throw new Error('canonical Vercel link mismatch');
+          const text=fs.readFileSync('.vercel/.env.production.local','utf8');
+          const names=new Set(text.split(/\r?\n/).map(l=>l.split('=')[0]).filter(Boolean));
+          if (!names.has('NEXT_PUBLIC_SUPABASE_URL') || !names.has('NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY')) throw new Error('canonical public Supabase env incomplete');
+          if (names.has('MARA_QA_PROOF_TOKEN')) throw new Error('QA proof token must not exist in canonical Production');
+          const server=names.has('SUPABASE_SECRET_KEY') || names.has('SUPABASE_SERVICE_ROLE_KEY');
+          console.log(`MARA_CANONICAL_PUBLIC_ENV PASS server_slot=${server?'present':'missing'}`);
+          NODE
+
+      - name: Deploy exact merged main snapshot to canonical production
+        id: deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          NEXT_TELEMETRY_DISABLED: "1"
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$MARA_MAIN_SHA"
+          npx vercel deploy --prod --yes --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN" 2>&1 | tee /tmp/mara-prod-deploy.log
+          deployment_url=$(grep -Eo 'https://[^[:space:]]+\.vercel\.app' /tmp/mara-prod-deploy.log | tail -n 1)
+          test -n "$deployment_url"
+          echo "deployment_url=$deployment_url" >> "$GITHUB_OUTPUT"
+          echo "MARA_PRODUCTION_DEPLOYMENT=$deployment_url"
+
+      - name: Wait for production deployment READY
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
+        run: npx vercel inspect "$DEPLOYMENT_URL" --wait --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN"
+
+      - name: Prove health and identity-memory configuration
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsS "$DEPLOYMENT_URL/api/health" > /tmp/mara-health.json
+          curl -fsS "$DEPLOYMENT_URL/api/health-memory" > /tmp/mara-memory.json
+          node <<'NODE'
+          const fs=require('fs');
+          const health=JSON.parse(fs.readFileSync('/tmp/mara-health.json','utf8'));
+          const memory=JSON.parse(fs.readFileSync('/tmp/mara-memory.json','utf8'));
+          if (health?.status !== 'ok' || health?.service !== 'mara-vera-web' || health?.release !== 'public-alpha') throw new Error('public alpha health failed');
+          if (memory?.service !== 'mara-identity-memory' || memory?.configured !== true) throw new Error(`memory config failed: ${JSON.stringify(memory)}`);
+          console.log('MARA_PRODUCTION_HEALTH PASS');
+          console.log('MARA_PRODUCTION_MEMORY_CONFIG PASS');
+          NODE
+
+      - name: Record telemetry persistence state without weakening security
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          session_id=$(node -e "console.log(require('node:crypto').randomUUID())")
+          timestamp=$(node -e "console.log(new Date().toISOString())")
+          payload=$(jq -cn --arg sid "$session_id" --arg ts "$timestamp" '{event:"page_view",properties:{surface:"/qa-production-cutover",entry_source:"direct"},timestamp:$ts,sessionId:$sid}')
+          curl -fsS -X POST "$DEPLOYMENT_URL/api/telemetry" -H 'Content-Type: application/json' --data "$payload" > /tmp/mara-telemetry.json
+          node <<'NODE'
+          const fs=require('fs');
+          const body=JSON.parse(fs.readFileSync('/tmp/mara-telemetry.json','utf8'));
+          if (body?.ok !== true) throw new Error(`telemetry endpoint unhealthy: ${JSON.stringify(body)}`);
+          console.log(`MARA_PRODUCTION_TELEMETRY_STATE persisted=${body?.persisted===true?'true':'false'}`);
+          NODE
+
+      - name: Install production smoke browser
+        run: |
+          npm install --no-save --no-package-lock --no-audit --no-fund "playwright@${PLAYWRIGHT_VERSION}"
+          npx playwright install --with-deps chromium
+
+      - name: Run canonical production mobile smoke
+        env:
+          BASE_URL: ${{ steps.deploy.outputs.deployment_url }}
+        run: node scripts/launch-smoke.mjs
+
+      - name: Run production World/Sofi smoke
+        env:
+          BASE_URL: ${{ steps.deploy.outputs.deployment_url }}
+        run: node scripts/world-sofi-smoke.mjs
+
+      - name: Prove QA bootstrap is inert
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          code=$(curl -sS -o /dev/null -w '%{http_code}' "$DEPLOYMENT_URL/api/internal/qa-user")
+          test "$code" = "404"
+          echo "MARA_PRODUCTION_QA_ROUTE_INERT PASS"
+
+      - name: Publish bounded cutover evidence
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
+        shell: bash
+        run: |
+          echo "MARA_PRODUCTION_PUBLIC_CUTOVER PASS"
+          echo "VERIFIED_MAIN_SHA=$MARA_MAIN_SHA"
+          echo "VERIFIED_DEPLOYMENT=$DEPLOYMENT_URL"
+          echo "CANONICAL_ALIAS=https://mara-vera.vercel.app"
