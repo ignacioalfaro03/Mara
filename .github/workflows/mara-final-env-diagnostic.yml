@@ -1,0 +1,80 @@
+name: Mara Final Env Diagnostic
+
+on:
+  push:
+    branches:
+      - ops/public-alpha-final-cutover-20260905
+    paths:
+      - ".github/workflows/mara-final-env-diagnostic.yml"
+
+permissions:
+  contents: read
+
+env:
+  VERCEL_TEAM_ID: "team_KAPFjrSQT78GUeQyGZCdQRdz"
+  CANONICAL_PROJECT_ID: "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK"
+  CANONICAL_URL: "https://mara-vera.vercel.app"
+
+jobs:
+  diagnostic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Classify canonical Production server env without revealing value
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$VERCEL_TOKEN"
+          curl -fsS \
+            -H "Authorization: Bearer $VERCEL_TOKEN" \
+            "https://api.vercel.com/v10/projects/$CANONICAL_PROJECT_ID/env?teamId=$VERCEL_TEAM_ID&decrypt=true" \
+            > /tmp/canonical-env.json
+          node <<'NODE'
+          const fs=require('fs');
+          const body=JSON.parse(fs.readFileSync('/tmp/canonical-env.json','utf8'));
+          const envs=Array.isArray(body?.envs)?body.envs:[];
+          const prod=envs.filter(e=>Array.isArray(e?.target)&&e.target.includes('production'));
+          const candidates=prod.filter(e=>['SUPABASE_SECRET_KEY','SUPABASE_SERVICE_ROLE_KEY'].includes(e?.key));
+          if (!candidates.length) {
+            console.log('MARA_CANONICAL_SERVER_ENV classification=missing');
+            process.exit(0);
+          }
+          for (const e of candidates) {
+            const value=typeof e?.value==='string'?e.value:'';
+            let classification='other';
+            if (!value) classification='empty_or_unavailable';
+            else if (value==='[SENSITIVE]') classification='sensitive_unavailable';
+            else if (value.startsWith('sb_secret_')) classification='modern_secret_shape';
+            else if (value.startsWith('eyJ')) classification='legacy_jwt_shape';
+            console.log(`MARA_CANONICAL_SERVER_ENV key=${e.key} type=${e.type??'unknown'} classification=${classification} createdAt=${e.createdAt??'unknown'} updatedAt=${e.updatedAt??'unknown'}`);
+          }
+          NODE
+          rm -f /tmp/canonical-env.json
+
+      - name: Verify QA bootstrap route inert with correct HTTP method
+        shell: bash
+        run: |
+          set -euo pipefail
+          code=$(curl -sS -o /tmp/qa-body -w '%{http_code}' -X POST "$CANONICAL_URL/api/internal/qa-user" -H 'Content-Type: application/json' --data '{"action":"create","email":"mara.qa.inert@example.com","password":"not-used"}')
+          test "$code" = "404"
+          echo "MARA_PRODUCTION_QA_ROUTE_INERT PASS"
+          rm -f /tmp/qa-body
+
+      - name: Recheck telemetry state
+        shell: bash
+        run: |
+          set -euo pipefail
+          sid=$(node -e "console.log(require('node:crypto').randomUUID())")
+          ts=$(node -e "console.log(new Date().toISOString())")
+          payload=$(jq -cn --arg sid "$sid" --arg ts "$ts" '{event:"page_view",properties:{surface:"/qa-production-final-diagnostic",entry_source:"direct"},timestamp:$ts,sessionId:$sid}')
+          code=$(curl -sS -o /tmp/telemetry.json -w '%{http_code}' -X POST "$CANONICAL_URL/api/telemetry" -H 'Content-Type: application/json' --data "$payload")
+          test "$code" = "200"
+          node <<'NODE'
+          const fs=require('fs');
+          const body=JSON.parse(fs.readFileSync('/tmp/telemetry.json','utf8'));
+          if (body?.ok !== true) throw new Error(`telemetry endpoint unhealthy: ${JSON.stringify(body)}`);
+          console.log(`MARA_CANONICAL_TELEMETRY persisted=${body?.persisted===true?'true':'false'}`);
+          NODE
+          rm -f /tmp/telemetry.json
