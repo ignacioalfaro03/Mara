@@ -1,4 +1,4 @@
-name: Mara Alpha Shared Env Inspection
+name: Mara Alpha Supabase Credential Inspection
 
 on:
   push:
@@ -10,34 +10,22 @@ on:
 permissions:
   contents: read
 
-env:
-  VERCEL_ORG_ID: "team_KAPFjrSQT78GUeQyGZCdQRdz"
-  PROOF_PROJECT_ID: "prj_AFQlC5fN2qKwrfZ8q7VzF9PnzAHc"
-  CANONICAL_PROJECT_ID: "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK"
-
 jobs:
   inspect:
-    if: contains(github.event.head_commit.message, '[shared-env-alpha]')
+    if: contains(github.event.head_commit.message, '[supabase-token-alpha]')
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 3
     steps:
-      - name: Inspect shared env metadata without values
+      - name: Inspect Supabase management credential presence only
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_TOKEN: ${{ secrets.SUPABASE_TOKEN }}
         shell: bash
         run: |
-          set -euo pipefail
-          test -n "$VERCEL_TOKEN"
-          curl -fsS "https://api.vercel.com/v1/env?teamId=${VERCEL_ORG_ID}" \
-            -H "Authorization: Bearer ${VERCEL_TOKEN}" \
-            -H "Content-Type: application/json" > /tmp/shared.json
-          jq -r --arg proof "$PROOF_PROJECT_ID" --arg canonical "$CANONICAL_PROJECT_ID" '
-            [.data[] | select(.key | test("SUPABASE")) | {
-              key, type,
-              proofLinked: ((.projectId // []) | index($proof) != null),
-              canonicalLinked: ((.projectId // []) | index($canonical) != null),
-              target
-            }] as $rows |
-            "MARA_SHARED_SUPABASE_COUNT=\($rows|length)",
-            ($rows[] | "MARA_SHARED_ENV key=\(.key) type=\(.type) proof=\(.proofLinked) canonical=\(.canonicalLinked) targets=\(.target|join(","))")
-          ' /tmp/shared.json
+          if [ -n "$SUPABASE_ACCESS_TOKEN" ]; then
+            echo "MARA_SUPABASE_MANAGEMENT_SOURCE=SUPABASE_ACCESS_TOKEN"
+          elif [ -n "$SUPABASE_TOKEN" ]; then
+            echo "MARA_SUPABASE_MANAGEMENT_SOURCE=SUPABASE_TOKEN"
+          else
+            echo "MARA_SUPABASE_MANAGEMENT_SOURCE=missing"
+          fi
