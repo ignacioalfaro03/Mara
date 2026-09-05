@@ -1,0 +1,107 @@
+name: Mara Real Supabase Identity E2E
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PLAYWRIGHT_VERSION: "1.62.1"
+  NEXT_PUBLIC_SUPABASE_URL: "https://hctykprkwenhatbjxkpb.supabase.co"
+  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_VQ-2Db0Di57kA3DEkeml9A_vZMYHDwi"
+
+jobs:
+  real-supabase-memory-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: web
+
+    steps:
+      - name: Checkout exact PR snapshot
+        uses: actions/checkout@v7.0.1
+
+      - name: Setup Node
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Typecheck real-backend candidate
+        run: npm run typecheck
+
+      - name: Build production app with Mara Supabase public config
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+        run: npm run build
+
+      - name: Install browser runtime
+        run: |
+          npm install --no-save --no-package-lock --no-audit --no-fund "playwright@${PLAYWRIGHT_VERSION}"
+          npx playwright install --with-deps chromium
+
+      - name: Probe real Supabase Auth posture
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -sS "$NEXT_PUBLIC_SUPABASE_URL/auth/v1/settings" \
+            -H "apikey: $NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" > /tmp/mara-auth-settings.json
+          node - <<'NODE'
+          const fs = require('fs');
+          const settings = JSON.parse(fs.readFileSync('/tmp/mara-auth-settings.json','utf8'));
+          console.log('MARA_AUTH_POSTURE', JSON.stringify({
+            disable_signup: settings.disable_signup,
+            mailer_autoconfirm: settings.mailer_autoconfirm,
+            email_enabled: settings.external?.email,
+          }));
+          if (settings.disable_signup === true || settings.external?.email === false) {
+            throw new Error('Email/password signup is disabled in Supabase Auth');
+          }
+          NODE
+
+      - name: Run production app plus real Supabase browser E2E
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+          BASE_URL: "http://127.0.0.1:3000"
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm start > /tmp/mara-real-supabase.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in {1..30}; do
+            if curl --fail --silent "$BASE_URL/api/health-memory" > /tmp/memory-health.json; then
+              break
+            fi
+            sleep 1
+          done
+          node - <<'NODE'
+          const fs = require('fs');
+          const body = JSON.parse(fs.readFileSync('/tmp/memory-health.json','utf8'));
+          if (body.service !== 'mara-identity-memory' || body.configured !== true) {
+            throw new Error(`Real Supabase backend not configured: ${JSON.stringify(body)}`);
+          }
+          console.log('MARA_REAL_SUPABASE_CONFIG PASS');
+          NODE
+          export QA_EMAIL="mara.qa.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}@gmail.com"
+          export QA_PASSWORD="$(openssl rand -hex 18)"
+          node scripts/hosted-memory-e2e.mjs
+
+      - name: State external Vercel blocker
+        if: always()
+        shell: bash
+        run: |
+          echo "MARA_VERCEL_PREVIEW_BLOCKED=GitHub repository has no VERCEL_TOKEN/VERCEL_ORG_ID/VERCEL_PROJECT_ID secrets"
+          echo "PRODUCTION_ALIAS_UNTOUCHED=https://mara-vera.vercel.app"
+
+# Manual-only because Supabase built-in confirmation email delivery is rate-limited.
+# No Vercel deployment and no production mutation.

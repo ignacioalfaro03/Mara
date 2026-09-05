@@ -1,0 +1,137 @@
+.shell {
+  min-height: 100dvh;
+  background: #0b0b0d;
+  color: #f7f2ed;
+  padding: 18px 16px 40px;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.back {
+  color: inherit;
+  text-decoration: none;
+  font-size: 30px;
+  line-height: 1;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #e8d9ce;
+  color: #211714;
+  font-weight: 800;
+}
+
+.identity strong,
+.identity span {
+  display: block;
+}
+
+.identity span {
+  margin-top: 2px;
+  color: #aaa3a0;
+  font-size: 12px;
+}
+
+.bubble {
+  width: fit-content;
+  max-width: 88%;
+  background: #202024;
+  border-radius: 18px 18px 18px 5px;
+  padding: 12px 14px;
+  margin: 9px 0;
+  line-height: 1.4;
+}
+
+.phone {
+  margin: 18px 0;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid #36363b;
+  background: #151518;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.35);
+}
+
+.phoneTop {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 12px;
+  font-size: 11px;
+  color: #bdb6b1;
+  letter-spacing: 0.02em;
+}
+
+.frame {
+  position: relative;
+  aspect-ratio: 9 / 13;
+  overflow: hidden;
+  background: #111;
+}
+
+.frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.06) rotate(-0.8deg);
+  filter: saturate(0.86) contrast(0.96) brightness(0.91);
+}
+
+.cameraBadge {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  background: rgba(0, 0, 0, 0.62);
+  border-radius: 999px;
+  padding: 7px 10px;
+  font-size: 11px;
+}
+
+.caption {
+  padding: 12px 14px 14px;
+  color: #d7cfca;
+  font-size: 13px;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.actions button,
+.actions a {
+  border: 0;
+  border-radius: 999px;
+  padding: 11px 16px;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.actions button {
+  background: #f4e7de;
+  color: #1b1512;
+}
+
+.actions a {
+  background: #242428;
+  color: #f7f2ed;
+}
+
+.notice {
+  margin-top: 16px;
+  color: #cfc3bb;
+  font-size: 13px;
+}

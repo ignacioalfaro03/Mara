@@ -1,0 +1,68 @@
+name: Mara Preview Env Shape
+
+on:
+  push:
+    branches:
+      - release/public-alpha-rc
+
+permissions:
+  contents: read
+
+env:
+  VERCEL_CLI_VERSION: "59.11.1"
+  VERCEL_SCOPE: "ignacioalfaz-6766"
+  VERCEL_ORG_ID: "team_KAPFjrSQT78GUeQyGZCdQRdz"
+  VERCEL_PROJECT_ID: "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK"
+
+jobs:
+  preview-env-shape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Pull Preview environment
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .vercel
+          node <<'NODE'
+          const fs = require('fs');
+          fs.writeFileSync('.vercel/project.json', JSON.stringify({
+            orgId: process.env.VERCEL_ORG_ID,
+            projectId: process.env.VERCEL_PROJECT_ID,
+          }));
+          NODE
+          npx --yes "vercel@${VERCEL_CLI_VERSION}" pull --yes --environment=preview --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN" >/dev/null
+
+      - name: Report backend credential shape only
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('fs');
+          const text = fs.readFileSync('.vercel/.env.preview.local', 'utf8');
+          const read = (name) => {
+            const line = text.split(/\r?\n/).find((l) => l.startsWith(`${name}=`));
+            if (!line) return '';
+            let value = line.slice(name.length + 1).trim();
+            if (value.startsWith('"') && value.endsWith('"')) {
+              try { value = JSON.parse(value); } catch { value = value.slice(1, -1); }
+            } else if (value.startsWith("'") && value.endsWith("'")) {
+              value = value.slice(1, -1);
+            }
+            return value;
+          };
+          const legacy = read('SUPABASE_SERVICE_ROLE_KEY');
+          const modern = read('SUPABASE_SECRET_KEY');
+          const url = read('NEXT_PUBLIC_SUPABASE_URL');
+          const publishable = read('NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY');
+          let kind = 'missing';
+          if (legacy) kind = legacy.startsWith('eyJ') ? 'legacy_jwt' : legacy.startsWith('sb_secret_') ? 'sb_secret_in_service_role_slot' : 'other_service_role_value';
+          else if (modern) kind = modern.startsWith('sb_secret_') ? 'modern_sb_secret' : modern.startsWith('eyJ') ? 'legacy_jwt_in_secret_slot' : 'other_secret_value';
+          console.log(`MARA_PREVIEW_SERVER_KEY_KIND=${kind}`);
+          console.log(`MARA_PREVIEW_SUPABASE_URL=${url ? 'present' : 'missing'}`);
+          console.log(`MARA_PREVIEW_PUBLISHABLE_KEY=${publishable ? 'present' : 'missing'}`);
+          NODE
+
+# Diagnostics only: logs presence/type, never secret values.

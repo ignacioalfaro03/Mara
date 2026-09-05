@@ -1,0 +1,105 @@
+name: Web Launch CI
+
+on:
+  pull_request:
+    paths:
+      - "web/**"
+      - ".github/workflows/web-launch-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CANONICAL_MARA_WEB_BLOB: "1c4c4d3615eac915cf42efd9416ed20479eb8126"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: web
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Verify canonical Mara web asset
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s public/mara/mara-v1-reference.jpg
+          actual_blob=$(git hash-object public/mara/mara-v1-reference.jpg)
+          echo "Canonical Mara web blob: $actual_blob"
+          if [ "$actual_blob" != "$CANONICAL_MARA_WEB_BLOB" ]; then
+            echo "::error::Canonical Mara web asset changed. Expected $CANONICAL_MARA_WEB_BLOB, got $actual_blob"
+            exit 1
+          fi
+          echo "MARA_CANONICAL_ASSET PASS"
+
+      - name: Setup Node
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Verify production audit gate classifier
+        run: node scripts/npm-audit-gate.mjs --self-test
+
+      - name: Audit production dependencies
+        run: node scripts/npm-audit-gate.mjs
+
+      - name: Verify Alpha signal report parser
+        run: npm run alpha:report:selftest
+
+      - name: Verify DEV labs are blocked in production
+        shell: bash
+        run: |
+          failed=0
+          while IFS= read -r file; do
+            if ! grep -q 'process.env.NODE_ENV !== "development"' "$file" || ! grep -q 'notFound' "$file"; then
+              echo "Unsafe production lab route: $file"
+              failed=1
+            fi
+          done < <(find app/experience -type f -path '*-lab/page.tsx' | sort)
+          test "$failed" -eq 0
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+        run: npm run build
+
+      - name: Install Chromium smoke runtime
+        run: |
+          npm install --no-save --no-package-lock --no-audit --no-fund playwright@1.62.1
+          npx playwright install --with-deps chromium
+
+      - name: Production mobile smoke
+        shell: bash
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+        run: |
+          npm start > /tmp/mara-next.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:3000/ > /dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:3000/ > /dev/null
+          node scripts/launch-smoke.mjs
+          node scripts/account-operability-smoke.mjs
+          node scripts/ritual-telemetry-smoke.mjs
+          node scripts/public-purpose-smoke.mjs
+          node scripts/continuity-cta-smoke.mjs
+          node scripts/world-sofi-smoke.mjs
