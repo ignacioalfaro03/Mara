@@ -172,17 +172,20 @@ jobs:
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_PROJECT_ID: ${{ steps.target.outputs.project_id }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
           NEXT_TELEMETRY_DISABLED: "1"
           TARGET_ENVIRONMENT: ${{ steps.target.outputs.environment }}
         shell: bash
         run: |
           set -euo pipefail
           if [ "$TARGET_ENVIRONMENT" = "production" ]; then
+            test -n "$VERCEL_AUTOMATION_BYPASS_SECRET"
             npx vercel deploy --prod --yes --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN" \
               --build-env NEXT_PUBLIC_SUPABASE_URL="$NEXT_PUBLIC_SUPABASE_URL" \
               --build-env NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" \
               --env NEXT_PUBLIC_SUPABASE_URL="$NEXT_PUBLIC_SUPABASE_URL" \
               --env NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" \
+              --env MARA_QA_PROOF_TOKEN="$VERCEL_AUTOMATION_BYPASS_SECRET" \
               2>&1 | tee /tmp/mara-hosted-deploy.log
           else
             npx vercel deploy --yes --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN" 2>&1 | tee /tmp/mara-hosted-deploy.log
@@ -261,6 +264,20 @@ jobs:
           npm install --no-save --no-package-lock --no-audit --no-fund "playwright@${PLAYWRIGHT_VERSION}"
           npx playwright install --with-deps chromium
 
+      - name: Prove identity and cross-device memory on hosted target
+        if: steps.preflight.outputs.ready == 'true' && github.event.pull_request.head.ref == 'release/public-alpha-rc'
+        working-directory: web
+        env:
+          BASE_URL: ${{ steps.deploy.outputs.deployment_url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+          QA_BOOTSTRAP_TOKEN: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          export QA_EMAIL="mara.qa.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}@example.com"
+          export QA_PASSWORD="$(openssl rand -hex 18)"
+          node scripts/hosted-memory-e2e.mjs
+
       - name: Prove World P0 on hosted target
         if: steps.preflight.outputs.ready == 'true' && (github.event.pull_request.head.ref == 'feature/world-sofi-first-slice' || github.event.pull_request.head.ref == 'release/public-alpha-rc')
         working-directory: web
@@ -286,5 +303,7 @@ jobs:
 # For release/public-alpha-rc only, the workflow deploys --prod to the isolated
 # mara-vera-proof-588e39f project. Public Supabase client config comes from the
 # versioned E2E config while the server credential remains a Vercel Sensitive
-# variable and is never pulled, copied or printed. The canonical mara-vera
-# production alias is never moved. Other allowed branches still use canonical Preview.
+# variable and is never pulled, copied or printed. The QA bootstrap route is
+# activated only on that isolated proof deployment and uses an ephemeral user
+# that the E2E deletes after the test. The canonical mara-vera production alias
+# is never moved. Other allowed branches still use canonical Preview.
