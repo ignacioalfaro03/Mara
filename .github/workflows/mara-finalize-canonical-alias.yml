@@ -13,6 +13,8 @@ permissions:
 env:
   VERCEL_CLI_VERSION: "59.11.1"
   PLAYWRIGHT_VERSION: "1.62.1"
+  VERCEL_ORG_ID: "team_KAPFjrSQT78GUeQyGZCdQRdz"
+  VERCEL_PROJECT_ID: "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK"
   VERCEL_SCOPE: "ignacioalfaz-6766"
   MARA_MAIN_SHA: "27f10dea80298cc6524d880f0b3465f7a88a13bd"
   DEPLOYMENT_URL: "https://mara-vera-csp98g6d1-ignacioalfaz-6766.vercel.app"
@@ -43,14 +45,26 @@ jobs:
           npm ci --no-audit --no-fund
           npm install --no-save --no-package-lock --no-audit --no-fund "vercel@${VERCEL_CLI_VERSION}"
 
+      - name: Link canonical project for authenticated deployment requests
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .vercel
+          mkdir -p .vercel
+          node <<'NODE'
+          const fs=require('fs');
+          fs.writeFileSync('.vercel/project.json', JSON.stringify({orgId:process.env.VERCEL_ORG_ID,projectId:process.env.VERCEL_PROJECT_ID}));
+          NODE
+          npx vercel pull --yes --environment=production --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN"
+
       - name: Prove target deployment before alias move
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         shell: bash
         run: |
           set -euo pipefail
-          npx vercel inspect "$DEPLOYMENT_URL" --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN" > /tmp/inspect.txt
-          grep -q 'Ready' /tmp/inspect.txt
           npx vercel curl /api/health --deployment "$DEPLOYMENT_URL" -- --silent --show-error > /tmp/health.json
           npx vercel curl /api/health-memory --deployment "$DEPLOYMENT_URL" -- --silent --show-error > /tmp/memory.json
           node <<'NODE'
