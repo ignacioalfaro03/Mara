@@ -1,4 +1,4 @@
-name: Mara Alpha One-Shot Deploy
+name: Mara Alpha Production Rollback
 
 on:
   push:
@@ -12,174 +12,50 @@ permissions:
 
 env:
   VERCEL_CLI_VERSION: "59.11.1"
-  PLAYWRIGHT_VERSION: "1.62.1"
-  CANONICAL_MARA_WEB_BLOB: "1c4c4d3615eac915cf42efd9416ed20479eb8126"
+  VERCEL_ORG_ID: "team_KAPFjrSQT78GUeQyGZCdQRdz"
+  VERCEL_PROJECT_ID: "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK"
+  ROLLBACK_URL: "https://mara-vera-oigt38glv-ignacioalfaz-6766.vercel.app"
 
 jobs:
-  deploy:
-    if: contains(github.event.head_commit.message, '[deploy-alpha]')
+  rollback:
+    if: contains(github.event.head_commit.message, '[rollback-alpha]')
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 10
     defaults:
       run:
         working-directory: web
-
     steps:
-      - name: Checkout exact requested snapshot
+      - name: Checkout release branch
         uses: actions/checkout@v7.0.1
-        with:
-          ref: ${{ github.sha }}
 
-      - name: Record release SHA
-        shell: bash
-        run: |
-          echo "MARA_RELEASE_SHA=${GITHUB_SHA}"
-          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
-
-      - name: Verify canonical Mara web asset
-        shell: bash
-        run: |
-          set -euo pipefail
-          test -s public/mara/mara-v1-reference.jpg
-          actual_blob=$(git hash-object public/mara/mara-v1-reference.jpg)
-          echo "Canonical Mara web blob: $actual_blob"
-          if [ "$actual_blob" != "$CANONICAL_MARA_WEB_BLOB" ]; then
-            echo "::error::Canonical Mara web asset changed. Expected $CANONICAL_MARA_WEB_BLOB, got $actual_blob"
-            exit 1
-          fi
-          echo "MARA_CANONICAL_ASSET PASS"
-
-      - name: Verify existing Vercel credentials
+      - name: Verify Vercel token
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: "team_KAPFjrSQT78GUeQyGZCdQRdz"
-          VERCEL_PROJECT_ID: "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK"
-        shell: bash
-        run: |
-          missing=0
-          for name in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
-            if [ -z "${!name}" ]; then
-              echo "::error::Missing required Vercel deployment value: $name"
-              missing=1
-            fi
-          done
-          test "$missing" -eq 0
+        run: test -n "$VERCEL_TOKEN"
 
       - name: Setup Node
         uses: actions/setup-node@v7.0.0
         with:
           node-version: "20"
-          cache: npm
-          cache-dependency-path: web/package-lock.json
 
-      - name: Install locked app dependencies
-        run: npm ci --no-audit --no-fund
+      - name: Install pinned Vercel CLI
+        run: npm install --no-save --no-package-lock --no-audit --no-fund "vercel@${VERCEL_CLI_VERSION}"
 
-      - name: Audit production dependencies
-        run: npm audit --omit=dev --audit-level=high
-
-      - name: Verify DEV labs are blocked in production
-        shell: bash
-        run: |
-          failed=0
-          while IFS= read -r file; do
-            if ! grep -q 'process.env.NODE_ENV !== "development"' "$file" || ! grep -q 'notFound' "$file"; then
-              echo "Unsafe production lab route: $file"
-              failed=1
-            fi
-          done < <(find app/experience -type f -path '*-lab/page.tsx' | sort)
-          test "$failed" -eq 0
-
-      - name: Typecheck release candidate
-        run: npm run typecheck
-
-      - name: Build release candidate
-        env:
-          NEXT_TELEMETRY_DISABLED: "1"
-        run: npm run build
-
-      - name: Install deploy and smoke tooling
-        run: |
-          npm install --no-save --no-package-lock --no-audit --no-fund \
-            "vercel@${VERCEL_CLI_VERSION}" \
-            "playwright@${PLAYWRIGHT_VERSION}"
-          npx playwright install --with-deps chromium
-
-      - name: Link exact intended Vercel project
+      - name: Link canonical Vercel project
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: "team_KAPFjrSQT78GUeQyGZCdQRdz"
-          VERCEL_PROJECT_ID: "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK"
-        shell: bash
-        run: |
-          npx vercel pull --yes --environment=production --token "$VERCEL_TOKEN"
-          node <<'NODE'
-          const fs = require('fs');
-          const linked = JSON.parse(fs.readFileSync('.vercel/project.json', 'utf8'));
-          const expectedProject = process.env.VERCEL_PROJECT_ID;
-          const expectedOrg = process.env.VERCEL_ORG_ID;
-          if (linked.projectId !== expectedProject) {
-            throw new Error(`Linked Vercel project mismatch: ${linked.projectId}`);
-          }
-          if (linked.orgId !== expectedOrg) {
-            throw new Error(`Linked Vercel org mismatch: ${linked.orgId}`);
-          }
-          console.log('VERCEL_PROJECT_LINK PASS');
-          NODE
+        run: npx vercel pull --yes --environment=production --token "$VERCEL_TOKEN"
 
-      - name: Deploy exact branch snapshot to Vercel production
-        id: deploy
+      - name: Roll back canonical production
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: "team_KAPFjrSQT78GUeQyGZCdQRdz"
-          VERCEL_PROJECT_ID: "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK"
+        run: npx vercel rollback "$ROLLBACK_URL" --yes --token "$VERCEL_TOKEN"
+
+      - name: Verify canonical health after rollback
         shell: bash
         run: |
           set -euo pipefail
-          npx vercel deploy --prod --yes --token "$VERCEL_TOKEN" 2>&1 | tee /tmp/vercel-deploy.log
-          deployment_url=$(grep -Eo 'https://[^[:space:]]+\.vercel\.app' /tmp/vercel-deploy.log | tail -n 1)
-          if [ -z "$deployment_url" ]; then
-            echo "::error::Vercel CLI did not expose a deployment URL."
-            exit 1
-          fi
-          echo "deployment_url=$deployment_url" >> "$GITHUB_OUTPUT"
-          echo "MARA_DEPLOY_URL=$deployment_url"
-
-      - name: Wait for terminal Vercel state
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
-        run: npx vercel inspect "$DEPLOYMENT_URL" --wait --token "$VERCEL_TOKEN"
-
-      - name: Verify health endpoint first
-        env:
-          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          health_code=$(curl -L -sS -o /tmp/mara-health.json -w '%{http_code}' "$DEPLOYMENT_URL/api/health")
-          echo "/api/health -> $health_code"
-          test "$health_code" = "200"
-          node -e '
-            const fs=require("fs");
-            const health=JSON.parse(fs.readFileSync("/tmp/mara-health.json","utf8"));
-            if (health.status!=="ok" || health.service!=="mara-vera-web" || health.release!=="public-alpha") process.exit(1);
-          '
-
-      - name: Run full production mobile smoke against deployed host
-        env:
-          BASE_URL: ${{ steps.deploy.outputs.deployment_url }}
-        run: node scripts/launch-smoke.mjs
-
-      - name: Publish verified deployment evidence
-        env:
-          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
-        shell: bash
-        run: |
-          echo "MARA_PUBLIC_ALPHA_DEPLOY PASS"
-          echo "VERIFIED_SHA=$GITHUB_SHA"
-          echo "VERIFIED_URL=$DEPLOYMENT_URL"
-
-# deploy trigger: situational-first-contact-2026-09-03
-# production cutover trigger: main 27f10dea80298cc6524d880f0b3465f7a88a13bd · web tree identical to main
-# canonical IDs are non-secret release metadata; VERCEL_TOKEN remains secret
+          code=$(curl -L -sS -o /tmp/health.json -w '%{http_code}' https://mara-vera.vercel.app/api/health)
+          test "$code" = "200"
+          node -e 'const h=require("/tmp/health.json"); if(h.status!=="ok"||h.service!=="mara-vera-web") process.exit(1)'
+          echo "MARA_PRODUCTION_ROLLBACK PASS"
