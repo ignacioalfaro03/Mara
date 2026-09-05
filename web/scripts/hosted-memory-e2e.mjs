@@ -3,13 +3,40 @@ import { chromium } from "playwright";
 const baseUrl = process.env.BASE_URL;
 const qaEmail = process.env.QA_EMAIL;
 const qaPassword = process.env.QA_PASSWORD;
+const qaBootstrapToken = process.env.QA_BOOTSTRAP_TOKEN?.trim();
+const protectionBypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET?.trim();
 
 if (!baseUrl || !qaEmail || !qaPassword) {
   throw new Error("BASE_URL, QA_EMAIL and QA_PASSWORD are required");
 }
 
+const protectionHeaders = protectionBypass
+  ? {
+      "x-vercel-protection-bypass": protectionBypass,
+      "x-vercel-set-bypass-cookie": "true",
+    }
+  : {};
+
 function assert(condition, message) {
   if (!condition) throw new Error(message);
+}
+
+async function manageQaUser(body) {
+  assert(qaBootstrapToken, "QA_BOOTSTRAP_TOKEN is required for QA user management");
+  const response = await fetch(`${baseUrl}/api/internal/qa-user`, {
+    method: "POST",
+    headers: {
+      ...protectionHeaders,
+      "Content-Type": "application/json",
+      "x-mara-qa-token": qaBootstrapToken,
+    },
+    body: JSON.stringify(body),
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok || payload?.ok !== true) {
+    throw new Error(`QA user management failed: status=${response.status} error=${payload?.error ?? "unknown"}`);
+  }
+  return payload;
 }
 
 async function acceptAgeGate(page) {
@@ -59,13 +86,23 @@ const contextOptions = {
   isMobile: true,
   hasTouch: true,
   locale: "es-CL",
+  extraHTTPHeaders: Object.keys(protectionHeaders).length ? protectionHeaders : undefined,
 };
 
 let contextA;
 let contextB;
 let contextC;
+let qaUserId = null;
+let primaryError = null;
 
 try {
+  if (qaBootstrapToken) {
+    const created = await manageQaUser({ action: "create", email: qaEmail, password: qaPassword });
+    qaUserId = created.userId;
+    assert(typeof qaUserId === "string", "QA bootstrap did not return a user id");
+    console.log("MARA_QA_BOOTSTRAP PASS");
+  }
+
   const probeContext = await browser.newContext(contextOptions);
   const memoryHealth = await probeContext.request.get(`${baseUrl}/api/health-memory`);
   assert(memoryHealth.status() === 200, `/api/health-memory returned ${memoryHealth.status()}`);
@@ -73,7 +110,7 @@ try {
   assert(memoryBody?.configured === true, "Hosted preview memory backend is not configured");
   await probeContext.close();
 
-  // Browser A: play before registration and create a literal private preference.
+  // Browser A: play anonymously, then attach the local state to a real account.
   contextA = await browser.newContext(contextOptions);
   const pageA = await contextA.newPage();
   await pageA.goto(`${baseUrl}/experience`, { waitUntil: "networkidle" });
@@ -108,41 +145,33 @@ try {
   await pageA.getByRole("link", { name: "Haz que me acuerde" }).waitFor({ timeout: 10000 });
   await pageA.getByRole("link", { name: "Haz que me acuerde" }).click();
   await pageA.getByText("¿Quieres que me acuerde?").waitFor();
-  await pageA.getByLabel("Correo").fill(qaEmail);
-  await pageA.getByLabel("Contraseña").fill(qaPassword);
-  await pageA.getByLabel("Confirmo que tengo 18 años o más.").check();
-  await pageA.getByRole("button", { name: "Que te acuerdes" }).click();
 
   let accountReady = false;
-  try {
-    await pageA.waitForURL(/\/experience\?account=ready/, { timeout: 10000 });
-    accountReady = true;
-  } catch {
-    const confirmation = pageA.getByText(/Revisa tu correo para confirmar la cuenta/i);
-    await confirmation.waitFor({ timeout: 5000 });
-    console.log(`MARA_QA_WAITING_CONFIRMATION email=${qaEmail}`);
-    console.log("MARA_QA_CONFIRMATION_BYPASS_FOR_E2E_REQUIRED");
-
+  if (qaBootstrapToken) {
     await pageA.getByRole("button", { name: "Entrar", exact: true }).click();
     await pageA.getByLabel("Correo").fill(qaEmail);
     await pageA.getByLabel("Contraseña").fill(qaPassword);
+    await pageA.getByRole("button", { name: "Seguir", exact: true }).click();
+    await pageA.waitForURL(/\/experience\?account=ready/, { timeout: 30000 });
+    accountReady = true;
+  } else {
+    await pageA.getByLabel("Correo").fill(qaEmail);
+    await pageA.getByLabel("Contraseña").fill(qaPassword);
+    await pageA.getByLabel("Confirmo que tengo 18 años o más.").check();
+    await pageA.getByRole("button", { name: "Que te acuerdes" }).click();
 
-    const deadline = Date.now() + 8 * 60 * 1000;
-    while (Date.now() < deadline) {
-      const button = pageA.getByRole("button", { name: "Seguir", exact: true });
-      await button.waitFor({ state: "visible" });
-      await button.click();
-      try {
-        await pageA.waitForURL(/\/experience\?account=ready/, { timeout: 5000 });
-        accountReady = true;
-        break;
-      } catch {
-        await pageA.waitForTimeout(5000);
-      }
+    try {
+      await pageA.waitForURL(/\/experience\?account=ready/, { timeout: 10000 });
+      accountReady = true;
+    } catch {
+      const confirmation = pageA.getByText(/Revisa tu correo para confirmar la cuenta/i);
+      await confirmation.waitFor({ timeout: 5000 });
+      console.log("MARA_QA_CONFIRMATION_BYPASS_FOR_E2E_REQUIRED");
+      throw new Error("Hosted E2E needs QA_BOOTSTRAP_TOKEN when email confirmations are enabled");
     }
   }
 
-  assert(accountReady, "QA account was not confirmed within the E2E wait window");
+  assert(accountReady, "QA account did not become ready");
   await pageA.getByText("Volviste.").waitFor({ timeout: 15000 });
 
   const persisted = await waitForRelationship(
@@ -223,10 +252,23 @@ try {
   assert(afterStale.launchCompleted === true, "Stale write reverted launch_completed");
 
   console.log("MARA_HOSTED_MEMORY_E2E PASS");
-  console.log(`MARA_QA_EMAIL=${qaEmail}`);
+} catch (error) {
+  primaryError = error;
 } finally {
   if (contextA) await contextA.close().catch(() => {});
   if (contextB) await contextB.close().catch(() => {});
   if (contextC) await contextC.close().catch(() => {});
   await browser.close();
+
+  if (qaUserId && qaBootstrapToken) {
+    try {
+      await manageQaUser({ action: "delete", userId: qaUserId });
+      console.log("MARA_QA_CLEANUP PASS");
+    } catch (cleanupError) {
+      if (!primaryError) primaryError = cleanupError;
+      else console.error("MARA_QA_CLEANUP_FAILED", cleanupError instanceof Error ? cleanupError.message : String(cleanupError));
+    }
+  }
 }
+
+if (primaryError) throw primaryError;
