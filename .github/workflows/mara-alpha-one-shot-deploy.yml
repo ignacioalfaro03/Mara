@@ -1,4 +1,4 @@
-name: Mara Alpha Production Rollback
+name: Mara Alpha Production Env Preflight
 
 on:
   push:
@@ -14,48 +14,44 @@ env:
   VERCEL_CLI_VERSION: "59.11.1"
   VERCEL_ORG_ID: "team_KAPFjrSQT78GUeQyGZCdQRdz"
   VERCEL_PROJECT_ID: "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK"
-  ROLLBACK_URL: "https://mara-vera-oigt38glv-ignacioalfaz-6766.vercel.app"
+  NEXT_PUBLIC_SUPABASE_URL: "https://hctykprkwenhatbjxkpb.supabase.co"
+  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_VQ-2Db0Di57kA3DEkeml9A_vZMYHDwi"
 
 jobs:
-  rollback:
-    if: contains(github.event.head_commit.message, '[rollback-alpha]')
+  preflight:
+    if: contains(github.event.head_commit.message, '[config-alpha]')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     defaults:
       run:
         working-directory: web
     steps:
-      - name: Checkout release branch
-        uses: actions/checkout@v7.0.1
-
-      - name: Verify Vercel token
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-        run: test -n "$VERCEL_TOKEN"
-
-      - name: Setup Node
-        uses: actions/setup-node@v7.0.0
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.0.0
         with:
           node-version: "20"
-
       - name: Install pinned Vercel CLI
         run: npm install --no-save --no-package-lock --no-audit --no-fund "vercel@${VERCEL_CLI_VERSION}"
-
-      - name: Link canonical Vercel project
+      - name: Link canonical project
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-        run: npx vercel pull --yes --environment=production --token "$VERCEL_TOKEN"
-
-      - name: Roll back canonical production
+        run: |
+          test -n "$VERCEL_TOKEN"
+          npx vercel pull --yes --environment=production --token "$VERCEL_TOKEN"
+      - name: Audit canonical Production env shape without values
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-        run: npx vercel rollback "$ROLLBACK_URL" --yes --token "$VERCEL_TOKEN"
-
-      - name: Verify canonical health after rollback
+          GH_SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          GH_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         shell: bash
         run: |
           set -euo pipefail
-          code=$(curl -L -sS -o /tmp/health.json -w '%{http_code}' https://mara-vera.vercel.app/api/health)
-          test "$code" = "200"
-          node -e 'const h=require("/tmp/health.json"); if(h.status!=="ok"||h.service!=="mara-vera-web") process.exit(1)'
-          echo "MARA_PRODUCTION_ROLLBACK PASS"
+          node <<'NODE'
+          const fs=require('fs');
+          const p='.vercel/.env.production.local';
+          const text=fs.existsSync(p)?fs.readFileSync(p,'utf8'):'';
+          const names=new Set(text.split(/\r?\n/).map(l=>l.split('=')[0]).filter(Boolean));
+          console.log(`MARA_CANONICAL_PUBLIC_URL=${names.has('NEXT_PUBLIC_SUPABASE_URL')?'present':'missing'}`);
+          console.log(`MARA_CANONICAL_PUBLISHABLE=${names.has('NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY')?'present':'missing'}`);
+          console.log(`MARA_CANONICAL_SERVER_SLOT=${names.has('SUPABASE_SECRET_KEY')?'secret_key':names.has('SUPABASE_SERVICE_ROLE_KEY')?'service_role':'missing'}`);
+          console.log(`MARA_GITHUB_SERVER_SOURCE=${process.env.GH_SUPABASE_SECRET_KEY?'secret_key':process.env.GH_SUPABASE_SERVICE_ROLE_KEY?'service_role':'missing'}`);
+          NODE
