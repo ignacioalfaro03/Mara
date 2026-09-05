@@ -1,0 +1,122 @@
+name: Mara Finalize Canonical Alias
+
+on:
+  push:
+    branches:
+      - ops/public-alpha-final-cutover-20260905
+    paths:
+      - ".github/workflows/mara-finalize-canonical-alias.yml"
+
+permissions:
+  contents: read
+
+env:
+  VERCEL_CLI_VERSION: "59.11.1"
+  PLAYWRIGHT_VERSION: "1.62.1"
+  VERCEL_SCOPE: "ignacioalfaz-6766"
+  MARA_MAIN_SHA: "27f10dea80298cc6524d880f0b3465f7a88a13bd"
+  DEPLOYMENT_URL: "https://mara-vera-csp98g6d1-ignacioalfaz-6766.vercel.app"
+  CANONICAL_URL: "https://mara-vera.vercel.app"
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - name: Checkout exact merged main snapshot
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ env.MARA_MAIN_SHA }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install locked dependencies and Vercel CLI
+        run: |
+          npm ci --no-audit --no-fund
+          npm install --no-save --no-package-lock --no-audit --no-fund "vercel@${VERCEL_CLI_VERSION}"
+
+      - name: Prove target deployment before alias move
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx vercel inspect "$DEPLOYMENT_URL" --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN" > /tmp/inspect.txt
+          grep -q 'Ready' /tmp/inspect.txt
+          npx vercel curl /api/health --deployment "$DEPLOYMENT_URL" -- --silent --show-error > /tmp/health.json
+          npx vercel curl /api/health-memory --deployment "$DEPLOYMENT_URL" -- --silent --show-error > /tmp/memory.json
+          node <<'NODE'
+          const fs=require('fs');
+          const health=JSON.parse(fs.readFileSync('/tmp/health.json','utf8'));
+          const memory=JSON.parse(fs.readFileSync('/tmp/memory.json','utf8'));
+          if (health?.status !== 'ok' || health?.service !== 'mara-vera-web' || health?.release !== 'public-alpha') throw new Error(`health failed: ${JSON.stringify(health)}`);
+          if (memory?.service !== 'mara-identity-memory' || memory?.configured !== true) throw new Error(`memory config failed: ${JSON.stringify(memory)}`);
+          console.log('MARA_TARGET_HEALTH PASS');
+          console.log('MARA_TARGET_MEMORY_CONFIG PASS');
+          NODE
+
+      - name: Move canonical alias to verified deployment
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx vercel alias set "$DEPLOYMENT_URL" mara-vera.vercel.app --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN"
+          echo "MARA_CANONICAL_ALIAS_MOVED PASS"
+
+      - name: Verify canonical health and telemetry state
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL "$CANONICAL_URL/api/health" > /tmp/canonical-health.json
+          curl -fsSL "$CANONICAL_URL/api/health-memory" > /tmp/canonical-memory.json
+          session_id=$(node -e "console.log(require('node:crypto').randomUUID())")
+          timestamp=$(node -e "console.log(new Date().toISOString())")
+          payload=$(jq -cn --arg sid "$session_id" --arg ts "$timestamp" '{event:"page_view",properties:{surface:"/qa-production-cutover",entry_source:"direct"},timestamp:$ts,sessionId:$sid}')
+          curl -fsSL -X POST "$CANONICAL_URL/api/telemetry" -H 'Content-Type: application/json' --data "$payload" > /tmp/canonical-telemetry.json
+          node <<'NODE'
+          const fs=require('fs');
+          const health=JSON.parse(fs.readFileSync('/tmp/canonical-health.json','utf8'));
+          const memory=JSON.parse(fs.readFileSync('/tmp/canonical-memory.json','utf8'));
+          const telemetry=JSON.parse(fs.readFileSync('/tmp/canonical-telemetry.json','utf8'));
+          if (health?.status !== 'ok' || health?.release !== 'public-alpha') throw new Error('canonical health failed');
+          if (memory?.configured !== true) throw new Error(`canonical memory config failed: ${JSON.stringify(memory)}`);
+          if (telemetry?.ok !== true) throw new Error(`telemetry endpoint unhealthy: ${JSON.stringify(telemetry)}`);
+          console.log('MARA_CANONICAL_HEALTH PASS');
+          console.log('MARA_CANONICAL_MEMORY_CONFIG PASS');
+          console.log(`MARA_CANONICAL_TELEMETRY persisted=${telemetry?.persisted===true?'true':'false'}`);
+          NODE
+
+      - name: Install Chromium
+        run: |
+          npm install --no-save --no-package-lock --no-audit --no-fund "playwright@${PLAYWRIGHT_VERSION}"
+          npx playwright install --with-deps chromium
+
+      - name: Run production mobile smoke on canonical alias
+        env:
+          BASE_URL: ${{ env.CANONICAL_URL }}
+        run: node scripts/launch-smoke.mjs
+
+      - name: Run World/Sofi smoke on canonical alias
+        env:
+          BASE_URL: ${{ env.CANONICAL_URL }}
+        run: node scripts/world-sofi-smoke.mjs
+
+      - name: Prove QA route inert and publish evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          code=$(curl -sSL -o /dev/null -w '%{http_code}' "$CANONICAL_URL/api/internal/qa-user")
+          test "$code" = "404"
+          echo "MARA_PRODUCTION_QA_ROUTE_INERT PASS"
+          echo "VERIFIED_MAIN_SHA=$MARA_MAIN_SHA"
+          echo "VERIFIED_DEPLOYMENT=$DEPLOYMENT_URL"
+          echo "CANONICAL_ALIAS=$CANONICAL_URL"
