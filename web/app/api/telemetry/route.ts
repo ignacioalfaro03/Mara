@@ -173,6 +173,23 @@ function token(properties: Record<string, string | number | boolean>, key: strin
   return typeof value === "string" ? value : null;
 }
 
+function getSupabaseWriteHeaders(config: NonNullable<ReturnType<typeof getServerBackendConfig>>) {
+  if (config.serviceRoleKey.startsWith("sb_secret_")) {
+    return {
+      apikey: config.serviceRoleKey,
+      "Content-Type": "application/json",
+      Prefer: "return=minimal",
+    };
+  }
+
+  return {
+    apikey: config.publishableKey,
+    Authorization: `Bearer ${config.serviceRoleKey}`,
+    "Content-Type": "application/json",
+    Prefer: "return=minimal",
+  };
+}
+
 async function persistTelemetry(
   event: string,
   properties: Record<string, string | number | boolean>,
@@ -185,12 +202,7 @@ async function persistTelemetry(
   try {
     const response = await fetch(`${config.url}/rest/v1/launch_events`, {
       method: "POST",
-      headers: {
-        apikey: config.publishableKey,
-        Authorization: `Bearer ${config.serviceRoleKey}`,
-        "Content-Type": "application/json",
-        Prefer: "return=minimal",
-      },
+      headers: getSupabaseWriteHeaders(config),
       body: JSON.stringify({
         event,
         session_id: sessionId,
