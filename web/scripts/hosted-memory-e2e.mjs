@@ -10,7 +10,10 @@ if (!baseUrl || !qaEmail || !qaPassword) {
   throw new Error("BASE_URL, QA_EMAIL and QA_PASSWORD are required");
 }
 
-const protectionHeaders = protectionBypass
+const apiProtectionHeaders = protectionBypass
+  ? { "x-vercel-protection-bypass": protectionBypass }
+  : {};
+const browserProtectionHeaders = protectionBypass
   ? {
       "x-vercel-protection-bypass": protectionBypass,
       "x-vercel-set-bypass-cookie": "true",
@@ -26,7 +29,7 @@ async function manageQaUser(body) {
   const response = await fetch(`${baseUrl}/api/internal/qa-user`, {
     method: "POST",
     headers: {
-      ...protectionHeaders,
+      ...apiProtectionHeaders,
       "Content-Type": "application/json",
       "x-mara-qa-token": qaBootstrapToken,
     },
@@ -86,7 +89,7 @@ const contextOptions = {
   isMobile: true,
   hasTouch: true,
   locale: "es-CL",
-  extraHTTPHeaders: Object.keys(protectionHeaders).length ? protectionHeaders : undefined,
+  extraHTTPHeaders: Object.keys(browserProtectionHeaders).length ? browserProtectionHeaders : undefined,
 };
 
 let contextA;
