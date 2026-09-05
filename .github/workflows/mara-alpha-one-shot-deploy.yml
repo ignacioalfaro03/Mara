@@ -52,14 +52,14 @@ jobs:
       - name: Verify existing Vercel credentials
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: "team_KAPFjrSQT78GUeQyGZCdQRdz"
+          VERCEL_PROJECT_ID: "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK"
         shell: bash
         run: |
           missing=0
           for name in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
             if [ -z "${!name}" ]; then
-              echo "::error::Missing required existing GitHub Secret: $name"
+              echo "::error::Missing required Vercel deployment value: $name"
               missing=1
             fi
           done
@@ -108,8 +108,8 @@ jobs:
       - name: Link exact intended Vercel project
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: "team_KAPFjrSQT78GUeQyGZCdQRdz"
+          VERCEL_PROJECT_ID: "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK"
         shell: bash
         run: |
           npx vercel pull --yes --environment=production --token "$VERCEL_TOKEN"
@@ -131,8 +131,8 @@ jobs:
         id: deploy
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: "team_KAPFjrSQT78GUeQyGZCdQRdz"
+          VERCEL_PROJECT_ID: "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK"
         shell: bash
         run: |
           set -euo pipefail
@@ -182,3 +182,4 @@ jobs:
 
 # deploy trigger: situational-first-contact-2026-09-03
 # production cutover trigger: main 27f10dea80298cc6524d880f0b3465f7a88a13bd · web tree identical to main
+# canonical IDs are non-secret release metadata; VERCEL_TOKEN remains secret
