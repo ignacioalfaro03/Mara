@@ -1,0 +1,95 @@
+name: Mara Copy Proof Server Env
+
+on:
+  push:
+    branches:
+      - ops/public-alpha-final-cutover-20260905
+    paths:
+      - ".github/workflows/mara-copy-proof-server-env.yml"
+
+permissions:
+  contents: read
+
+env:
+  VERCEL_TEAM_ID: "team_KAPFjrSQT78GUeQyGZCdQRdz"
+  PROOF_PROJECT_ID: "prj_AFQlC5fN2qKwrfZ8q7VzF9PnzAHc"
+  CANONICAL_PROJECT_ID: "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK"
+
+jobs:
+  copy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Copy existing Supabase server credential proof to canonical
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$VERCEL_TOKEN"
+          curl -fsS \
+            -H "Authorization: Bearer $VERCEL_TOKEN" \
+            "https://api.vercel.com/v10/projects/$PROOF_PROJECT_ID/env?teamId=$VERCEL_TEAM_ID&decrypt=true" \
+            > /tmp/proof-env.json
+          node <<'NODE'
+          const fs = require('fs');
+          const body = JSON.parse(fs.readFileSync('/tmp/proof-env.json', 'utf8'));
+          const envs = Array.isArray(body?.envs) ? body.envs : [];
+          const item = envs.find((e) =>
+            ['SUPABASE_SECRET_KEY','SUPABASE_SERVICE_ROLE_KEY'].includes(e?.key) &&
+            Array.isArray(e?.target) && e.target.includes('production')
+          );
+          if (!item || typeof item.value !== 'string' || !item.value || item.value === '[SENSITIVE]') {
+            throw new Error('Proof server credential is not decryptable through the Vercel API');
+          }
+          fs.writeFileSync('/tmp/mara-server-key-name', item.key, { mode: 0o600 });
+          fs.writeFileSync('/tmp/mara-server-key-value', item.value, { mode: 0o600 });
+          console.log(`MARA_PROOF_SERVER_ENV_READ PASS slot=${item.key}`);
+          NODE
+          node <<'NODE' > /tmp/mara-server-payload.json
+          const fs = require('fs');
+          const key = fs.readFileSync('/tmp/mara-server-key-name','utf8');
+          const value = fs.readFileSync('/tmp/mara-server-key-value','utf8');
+          process.stdout.write(JSON.stringify({
+            key,
+            value,
+            type:'sensitive',
+            target:['production'],
+            comment:'Mara Public Alpha canonical server credential'
+          }));
+          NODE
+          code=$(curl -sS -o /tmp/mara-server-upsert-response.json -w '%{http_code}' \
+            -X POST \
+            -H "Authorization: Bearer $VERCEL_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data-binary @/tmp/mara-server-payload.json \
+            "https://api.vercel.com/v10/projects/$CANONICAL_PROJECT_ID/env?teamId=$VERCEL_TEAM_ID&upsert=true")
+          test "$code" = "200" -o "$code" = "201"
+          node <<'NODE'
+          const fs = require('fs');
+          const body = JSON.parse(fs.readFileSync('/tmp/mara-server-upsert-response.json','utf8'));
+          if (Array.isArray(body?.failed) && body.failed.length) throw new Error('Canonical server env upsert failed');
+          console.log('MARA_CANONICAL_SERVER_ENV_COPY PASS');
+          NODE
+          rm -f /tmp/proof-env.json /tmp/mara-server-key-name /tmp/mara-server-key-value /tmp/mara-server-payload.json /tmp/mara-server-upsert-response.json
+
+      - name: Verify canonical Production env names only
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsS \
+            -H "Authorization: Bearer $VERCEL_TOKEN" \
+            "https://api.vercel.com/v10/projects/$CANONICAL_PROJECT_ID/env?teamId=$VERCEL_TEAM_ID" \
+            > /tmp/canonical-env.json
+          node <<'NODE'
+          const fs = require('fs');
+          const body = JSON.parse(fs.readFileSync('/tmp/canonical-env.json','utf8'));
+          const names = new Set((body?.envs ?? []).filter(e => Array.isArray(e?.target) && e.target.includes('production')).map(e => e.key));
+          if (!names.has('NEXT_PUBLIC_SUPABASE_URL') || !names.has('NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY')) throw new Error('Canonical public Supabase env missing');
+          if (!names.has('SUPABASE_SECRET_KEY') && !names.has('SUPABASE_SERVICE_ROLE_KEY')) throw new Error('Canonical server Supabase env missing');
+          if (names.has('MARA_QA_PROOF_TOKEN')) throw new Error('Proof-only QA token must not exist in canonical Production');
+          console.log('MARA_CANONICAL_ENV_SHAPE PASS');
+          NODE
+          rm -f /tmp/canonical-env.json
