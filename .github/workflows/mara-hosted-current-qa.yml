@@ -6,14 +6,12 @@ on:
 
 permissions:
   contents: read
-  id-token: write
 
 env:
   PLAYWRIGHT_VERSION: "1.62.1"
   PRODUCT_SHA: "d17cb69c28e327ed03b60d61c2bfea668c90d79c"
   BASE_URL: "https://mara-vera-proof-588e39f.vercel.app"
-  QA_PREPROVISIONED: "1"
-  QA_PROVISION_URL: "https://hctykprkwenhatbjxkpb.supabase.co/functions/v1/mara-qa-provision"
+  QA_PREPROVISIONED: "0"
 
 jobs:
   hosted-current-e2e:
@@ -29,49 +27,21 @@ jobs:
         shell: bash
         run: cp qa/hosted-current-e2e.mjs /tmp/hosted-current-e2e.mjs
 
-      - name: Provision preconfirmed QA identities via GitHub OIDC
+      - name: Generate ephemeral QA credentials
         shell: bash
         run: |
           set -euo pipefail
-          QA_EMAIL_A="mara.qa.oidc.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}.a@example.com"
-          QA_EMAIL_B="mara.qa.oidc.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}.b@example.com"
+          QA_EMAIL_A="mara.qa.signup.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}.a@example.com"
+          QA_EMAIL_B="mara.qa.signup.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}.b@example.com"
           QA_PASSWORD_A="$(openssl rand -hex 24)"
           QA_PASSWORD_B="$(openssl rand -hex 24)"
           echo "::add-mask::$QA_PASSWORD_A"
           echo "::add-mask::$QA_PASSWORD_B"
-
-          OIDC_TOKEN="$(curl -fsSL \
-            -H "Authorization: Bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
-            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=mara-qa-provision" | jq -r '.value')"
-          test -n "$OIDC_TOKEN"
-          test "$OIDC_TOKEN" != "null"
-
-          create_user() {
-            local email="$1"
-            local password="$2"
-            curl -fsSL -X POST "$QA_PROVISION_URL" \
-              -H "Authorization: Bearer $OIDC_TOKEN" \
-              -H "Content-Type: application/json" \
-              --data "$(jq -cn --arg email "$email" --arg password "$password" '{action:"create",email:$email,password:$password}')"
-          }
-
-          RESPONSE_A="$(create_user "$QA_EMAIL_A" "$QA_PASSWORD_A")"
-          QA_USER_ID_A="$(printf '%s' "$RESPONSE_A" | jq -r '.id')"
-          test -n "$QA_USER_ID_A"
-          test "$QA_USER_ID_A" != "null"
-          echo "QA_USER_ID_A=$QA_USER_ID_A" >> "$GITHUB_ENV"
-
-          RESPONSE_B="$(create_user "$QA_EMAIL_B" "$QA_PASSWORD_B")"
-          QA_USER_ID_B="$(printf '%s' "$RESPONSE_B" | jq -r '.id')"
-          test -n "$QA_USER_ID_B"
-          test "$QA_USER_ID_B" != "null"
-          echo "QA_USER_ID_B=$QA_USER_ID_B" >> "$GITHUB_ENV"
-
           echo "QA_EMAIL_A=$QA_EMAIL_A" >> "$GITHUB_ENV"
           echo "QA_EMAIL_B=$QA_EMAIL_B" >> "$GITHUB_ENV"
           echo "QA_PASSWORD_A=$QA_PASSWORD_A" >> "$GITHUB_ENV"
           echo "QA_PASSWORD_B=$QA_PASSWORD_B" >> "$GITHUB_ENV"
-          echo "MARA_QA_OIDC_PROVISION PASS"
+          echo "MARA_QA_CREDENTIALS_READY"
 
       - name: Checkout exact product SHA
         uses: actions/checkout@v7.0.1
@@ -123,37 +93,16 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-      - name: Delete ephemeral QA identities
-        if: always()
-        shell: bash
-        run: |
-          set +e
-          OIDC_TOKEN="$(curl -fsSL \
-            -H "Authorization: Bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
-            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=mara-qa-provision" | jq -r '.value')"
-
-          delete_user() {
-            local id="$1"
-            test -n "$id" || return 0
-            curl -fsSL -X POST "$QA_PROVISION_URL" \
-              -H "Authorization: Bearer $OIDC_TOKEN" \
-              -H "Content-Type: application/json" \
-              --data "$(jq -cn --arg userId "$id" '{action:"delete",userId:$userId}')" >/dev/null
-          }
-
-          delete_user "${QA_USER_ID_A:-}"
-          delete_user "${QA_USER_ID_B:-}"
-          echo "MARA_QA_OIDC_CLEANUP complete"
-
       - name: State proof boundary
         if: always()
         shell: bash
         run: |
           echo "MARA_HOSTED_QA_BASE=$BASE_URL"
           echo "MARA_HOSTED_QA_PRODUCT_SHA=$PRODUCT_SHA"
+          echo "MARA_QA_FIXTURES_PREFIX=mara.qa.signup.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}."
           echo "CANONICAL_PRODUCTION_UNTOUCHED=https://mara-vera.vercel.app"
 
-# QA branch only. Runs exact product SHA against isolated Vercel host.
-# QA identities are created/deleted through a GitHub-OIDC-bound Supabase Edge Function.
-# No service-role key leaves Supabase. No email confirmation is sent.
-# No merge, no canonical production alias mutation, no payment activation.
+# QA branch only. Runs the exact product SHA against the isolated Vercel host.
+# The browser creates ordinary Auth signups with example.com QA identities.
+# Confirmation and cleanup are operator-scoped to this exact GitHub run prefix.
+# No service-role key leaves Supabase. No merge, canonical production mutation, or payment activation.
