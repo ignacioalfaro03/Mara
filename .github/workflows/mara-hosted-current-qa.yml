@@ -11,7 +11,9 @@ env:
   PLAYWRIGHT_VERSION: "1.62.1"
   PRODUCT_SHA: "d17cb69c28e327ed03b60d61c2bfea668c90d79c"
   BASE_URL: "https://mara-vera-proof-588e39f.vercel.app"
-  QA_PREPROVISIONED: "0"
+  QA_PREPROVISIONED: "1"
+  QA_EMAIL_A: "mara.qa.33889776712.1.a@gmail.com"
+  QA_EMAIL_B: "mara.qa.33888676417.1.a@gmail.com"
 
 jobs:
   hosted-current-e2e:
@@ -26,22 +28,6 @@ jobs:
       - name: Preserve QA harness outside worktree
         shell: bash
         run: cp qa/hosted-current-e2e.mjs /tmp/hosted-current-e2e.mjs
-
-      - name: Generate ephemeral QA credentials
-        shell: bash
-        run: |
-          set -euo pipefail
-          QA_EMAIL_A="mara.qa.signup.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}.a@example.com"
-          QA_EMAIL_B="mara.qa.signup.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}.b@example.com"
-          QA_PASSWORD_A="$(openssl rand -hex 24)"
-          QA_PASSWORD_B="$(openssl rand -hex 24)"
-          echo "::add-mask::$QA_PASSWORD_A"
-          echo "::add-mask::$QA_PASSWORD_B"
-          echo "QA_EMAIL_A=$QA_EMAIL_A" >> "$GITHUB_ENV"
-          echo "QA_EMAIL_B=$QA_EMAIL_B" >> "$GITHUB_ENV"
-          echo "QA_PASSWORD_A=$QA_PASSWORD_A" >> "$GITHUB_ENV"
-          echo "QA_PASSWORD_B=$QA_PASSWORD_B" >> "$GITHUB_ENV"
-          echo "MARA_QA_CREDENTIALS_READY"
 
       - name: Checkout exact product SHA
         uses: actions/checkout@v7.0.1
@@ -66,6 +52,49 @@ jobs:
       - name: Install locked dependencies
         working-directory: web
         run: npm ci --no-audit --no-fund
+
+      - name: Generate one-run QA password hashes
+        working-directory: web
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --no-save --no-package-lock --no-audit --no-fund bcryptjs@2.4.3
+          node <<'NODE'
+          const crypto = require('node:crypto');
+          const fs = require('node:fs');
+          const bcrypt = require('bcryptjs');
+          for (const suffix of ['A', 'B']) {
+            const password = crypto.randomBytes(24).toString('hex');
+            const hash = bcrypt.hashSync(password, 10);
+            console.log(`::add-mask::${password}`);
+            fs.appendFileSync(process.env.GITHUB_ENV, `QA_PASSWORD_${suffix}=${password}\n`);
+            console.log(`MARA_QA_HASH_${suffix}=${hash}`);
+          }
+          NODE
+
+      - name: Wait for operator-scoped QA hash activation
+        shell: bash
+        run: |
+          set -euo pipefail
+          login_status() {
+            local email="$1"
+            local password="$2"
+            curl --silent --output /dev/null --write-out '%{http_code}' \
+              --request POST "$BASE_URL/api/auth/signin" \
+              --header 'Content-Type: application/json' \
+              --data "$(jq -cn --arg email "$email" --arg password "$password" '{email:$email,password:$password}')"
+          }
+          for attempt in $(seq 1 60); do
+            status_a="$(login_status "$QA_EMAIL_A" "$QA_PASSWORD_A")"
+            status_b="$(login_status "$QA_EMAIL_B" "$QA_PASSWORD_B")"
+            if [ "$status_a" = "200" ] && [ "$status_b" = "200" ]; then
+              echo "MARA_QA_AUTH_FIXTURES_READY"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::QA password hashes were not activated for both isolated fixtures"
+          exit 1
 
       - name: Install Chromium runtime
         working-directory: web
@@ -99,10 +128,11 @@ jobs:
         run: |
           echo "MARA_HOSTED_QA_BASE=$BASE_URL"
           echo "MARA_HOSTED_QA_PRODUCT_SHA=$PRODUCT_SHA"
-          echo "MARA_QA_FIXTURES_PREFIX=mara.qa.signup.${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}."
+          echo "MARA_QA_FIXTURES=recycled-isolated-accounts"
           echo "CANONICAL_PRODUCTION_UNTOUCHED=https://mara-vera.vercel.app"
 
-# QA branch only. Runs the exact product SHA against the isolated Vercel host.
-# The browser creates ordinary Auth signups with example.com QA identities.
-# Confirmation and cleanup are operator-scoped to this exact GitHub run prefix.
+# QA branch only. Runs exact product SHA against the isolated Vercel host.
+# Two old QA-only Auth identities are recycled with fresh one-run bcrypt passwords.
+# Only password hashes are surfaced to the operator; plaintext remains masked in Actions.
+# The operator cleans private QA state before the run and removes fixtures afterward.
 # No service-role key leaves Supabase. No merge, canonical production mutation, or payment activation.
