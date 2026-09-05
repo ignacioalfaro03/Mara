@@ -1,0 +1,42 @@
+name: Mara Debug Env Sync
+
+on:
+  push:
+    branches:
+      - ops/public-alpha-final-cutover-20260905
+    paths:
+      - ".github/workflows/mara-debug-env-sync.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Invoke env sync and print status-only response
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$VERCEL_TOKEN"
+          code=$(curl -sS -o /tmp/response.json -w '%{http_code}' \
+            -X POST "https://hctykprkwenhatbjxkpb.supabase.co/functions/v1/mara-release-env-sync" \
+            -H "Authorization: Bearer $VERCEL_TOKEN" \
+            -H "Content-Type: application/json")
+          echo "MARA_ENV_SYNC_HTTP_STATUS=$code"
+          node <<'NODE'
+          const fs=require('fs');
+          const raw=fs.readFileSync('/tmp/response.json','utf8');
+          let body;
+          try { body=JSON.parse(raw); } catch { body={error:'non_json_response'}; }
+          const safe={
+            ok: body?.ok ?? null,
+            error: body?.error ?? null,
+            message: body?.message ?? null,
+            results: Array.isArray(body?.results) ? body.results.map(r=>({key:r?.key,status:r?.status,code:r?.code,ok:r?.ok})) : undefined
+          };
+          console.log(`MARA_ENV_SYNC_RESPONSE=${JSON.stringify(safe)}`);
+          NODE
