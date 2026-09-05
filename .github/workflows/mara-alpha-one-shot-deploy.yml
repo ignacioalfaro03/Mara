@@ -181,3 +181,4 @@ jobs:
           echo "VERIFIED_URL=$DEPLOYMENT_URL"
 
 # deploy trigger: situational-first-contact-2026-09-03
+# production cutover trigger: main 27f10dea80298cc6524d880f0b3465f7a88a13bd · web tree identical to main
