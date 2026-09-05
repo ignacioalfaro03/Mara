@@ -14,6 +14,8 @@ env:
   VERCEL_SCOPE: "ignacioalfaz-6766"
   MARA_MAIN_VERCEL_PROJECT_ID: "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK"
   MARA_PROOF_VERCEL_PROJECT_ID: "prj_AFQlC5fN2qKwrfZ8q7VzF9PnzAHc"
+  NEXT_PUBLIC_SUPABASE_URL: "https://hctykprkwenhatbjxkpb.supabase.co"
+  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_VQ-2Db0Di57kA3DEkeml9A_vZMYHDwi"
 
 jobs:
   preview:
@@ -153,29 +155,13 @@ jobs:
           const fs = require('fs');
           const file = `.vercel/.env.${process.env.TARGET_ENVIRONMENT}.local`;
           const text = fs.readFileSync(file, 'utf8');
-          const read = (name) => {
-            const line = text.split(/\r?\n/).find((entry) => entry.startsWith(`${name}=`));
-            if (!line) return '';
-            let value = line.slice(name.length + 1).trim();
-            if (value.startsWith('"') && value.endsWith('"')) {
-              try { value = JSON.parse(value); } catch { value = value.slice(1, -1); }
-            } else if (value.startsWith("'") && value.endsWith("'")) {
-              value = value.slice(1, -1);
-            }
-            return value;
-          };
-          const url = read('NEXT_PUBLIC_SUPABASE_URL');
-          const publishable = read('NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY');
-          const legacy = read('SUPABASE_SERVICE_ROLE_KEY');
-          const modern = read('SUPABASE_SECRET_KEY');
-          let serverKind = 'missing';
-          if (legacy) serverKind = legacy.startsWith('eyJ') ? 'legacy_jwt' : legacy.startsWith('sb_secret_') ? 'sb_secret_in_service_role_slot' : 'other';
-          else if (modern) serverKind = modern.startsWith('sb_secret_') ? 'modern_sb_secret' : modern.startsWith('eyJ') ? 'legacy_jwt_in_secret_slot' : 'other';
-          console.log(`MARA_PROOF_SUPABASE_URL=${url ? 'present' : 'missing'}`);
-          console.log(`MARA_PROOF_PUBLISHABLE_KEY=${publishable ? 'present' : 'missing'}`);
-          console.log(`MARA_PROOF_SERVER_KEY_KIND=${serverKind}`);
-          if (!url || !publishable || (!legacy && !modern)) {
-            throw new Error('Isolated proof host is missing required Mara Supabase configuration');
+          const hasLegacySlot = text.split(/\r?\n/).some((line) => line.startsWith('SUPABASE_SERVICE_ROLE_KEY='));
+          const hasModernSlot = text.split(/\r?\n/).some((line) => line.startsWith('SUPABASE_SECRET_KEY='));
+          console.log(`MARA_PROOF_PUBLIC_URL_SOURCE=${process.env.NEXT_PUBLIC_SUPABASE_URL ? 'workflow' : 'missing'}`);
+          console.log(`MARA_PROOF_PUBLISHABLE_SOURCE=${process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ? 'workflow' : 'missing'}`);
+          console.log(`MARA_PROOF_SERVER_KEY_SLOT=${hasLegacySlot ? 'service_role' : hasModernSlot ? 'secret_key' : 'missing'}`);
+          if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || (!hasLegacySlot && !hasModernSlot)) {
+            throw new Error('Isolated proof host is missing required Mara backend configuration');
           }
           NODE
 
@@ -192,7 +178,12 @@ jobs:
         run: |
           set -euo pipefail
           if [ "$TARGET_ENVIRONMENT" = "production" ]; then
-            npx vercel deploy --prod --yes --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN" 2>&1 | tee /tmp/mara-hosted-deploy.log
+            npx vercel deploy --prod --yes --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN" \
+              --build-env NEXT_PUBLIC_SUPABASE_URL="$NEXT_PUBLIC_SUPABASE_URL" \
+              --build-env NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" \
+              --env NEXT_PUBLIC_SUPABASE_URL="$NEXT_PUBLIC_SUPABASE_URL" \
+              --env NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" \
+              2>&1 | tee /tmp/mara-hosted-deploy.log
           else
             npx vercel deploy --yes --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN" 2>&1 | tee /tmp/mara-hosted-deploy.log
           fi
@@ -293,6 +284,7 @@ jobs:
           fi
 
 # For release/public-alpha-rc only, the workflow deploys --prod to the isolated
-# mara-vera-proof-588e39f project so its already-scoped Mara backend environment
-# can prove the exact RC SHA. The canonical mara-vera production alias is never moved.
-# Other allowed branches continue to use the canonical project's Preview target.
+# mara-vera-proof-588e39f project. Public Supabase client config comes from the
+# versioned E2E config while the server credential remains a Vercel Sensitive
+# variable and is never pulled, copied or printed. The canonical mara-vera
+# production alias is never moved. Other allowed branches still use canonical Preview.
