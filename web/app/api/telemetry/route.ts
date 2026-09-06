@@ -3,6 +3,9 @@ import { getServerBackendConfig } from "@/lib/backend-config";
 
 export const runtime = "nodejs";
 
+const CANONICAL_VERCEL_PROJECT_ID = "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK";
+const QA_TELEMETRY_SURFACES = new Set(["/qa-telemetry-preview", "/qa-telemetry-proof"]);
+
 const ALLOWED_EVENTS = new Set([
   "page_view",
   "landing_view",
@@ -173,6 +176,17 @@ function token(properties: Record<string, string | number | boolean>, key: strin
   return typeof value === "string" ? value : null;
 }
 
+function isCanonicalProductionRuntime() {
+  return process.env.VERCEL_ENV === "production"
+    && process.env.VERCEL_PROJECT_ID === CANONICAL_VERCEL_PROJECT_ID;
+}
+
+function isQaPersistenceProbe(event: string, properties: Record<string, string | number | boolean>) {
+  return event === "page_view"
+    && typeof properties.surface === "string"
+    && QA_TELEMETRY_SURFACES.has(properties.surface);
+}
+
 function getSupabaseWriteHeaders(
   config: NonNullable<ReturnType<typeof getServerBackendConfig>>,
 ): Record<string, string> {
@@ -250,18 +264,48 @@ export async function POST(request: Request) {
   const properties = sanitizeProperties(payload.properties);
   const timestamp = safeTimestamp(payload.timestamp);
   const sessionId = safeSessionId(payload.sessionId);
+  const decisionEligible = isCanonicalProductionRuntime();
+  const qaPersistenceProbe = isQaPersistenceProbe(event, properties);
+
+  // Hosted Preview and isolated proof deployments exercise the real UI and can
+  // emit the same browser events as customers. They must never become the
+  // customer's behavior in launch reporting. Keep one fixed technical probe so
+  // CI can still prove that the telemetry write path is healthy end-to-end.
+  if (!decisionEligible && !qaPersistenceProbe) {
+    console.info("MARA_QA_TELEMETRY", JSON.stringify({
+      event,
+      properties,
+      timestamp,
+      persisted: false,
+      suppressed: true,
+    }));
+    return NextResponse.json({
+      ok: true,
+      persisted: false,
+      decisionEligible: false,
+      suppressed: true,
+    });
+  }
+
   const persisted = await persistTelemetry(event, properties, timestamp, sessionId);
+  const marker = decisionEligible ? "MARA_TELEMETRY" : "MARA_QA_TELEMETRY";
 
   // Intentionally anonymous launch telemetry. Public events must have a current
   // producer and founder decision; parked/dev-only events are rejected here.
   // Do not add user IDs, IP-derived identity, conversation content, fantasies,
   // sexual history or commercial vulnerability data.
-  console.info("MARA_TELEMETRY", JSON.stringify({
+  console.info(marker, JSON.stringify({
     event,
     properties,
     timestamp,
     persisted,
+    suppressed: false,
   }));
 
-  return NextResponse.json({ ok: true, persisted });
+  return NextResponse.json({
+    ok: true,
+    persisted,
+    decisionEligible,
+    suppressed: false,
+  });
 }
