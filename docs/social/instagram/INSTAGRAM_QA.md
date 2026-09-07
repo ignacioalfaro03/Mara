@@ -3,6 +3,8 @@
 Status: **MANDATORY PRE-PUBLISH QUALITY GATE**
 
 > **A BEAUTIFUL FRAME THAT BREAKS CONTINUITY IS A FAILED FRAME.**
+>
+> **A BEAUTIFUL FRAME THAT FEELS LIKE AN AD INSTEAD OF MARA IS ALSO A FAILED FRAME.**
 
 QA runs at three levels:
 
@@ -11,6 +13,10 @@ QA runs at three levels:
 3. Profile/Grid QA.
 
 All critical checks must pass.
+
+Mandatory companion source:
+
+- [`MARA_VISUAL_POST_LOCK.md`](./MARA_VISUAL_POST_LOCK.md)
 
 ---
 
@@ -77,6 +83,49 @@ Any unjustified mismatch = **WORLD DRIFT → REJECT**.
 - [ ] It belongs to this event.
 - [ ] It is good enough for its role even if it is intentionally imperfect.
 
+## A6. Mara-native / anti-advertising test
+
+- [ ] If all overlay text vanished, the image would still feel like a believable Mara post.
+- [ ] The frame feels like Mara living/posting, not a brand presenting Mara.
+- [ ] Photo remains primary; graphic treatment is secondary.
+- [ ] No unnecessary banner boxes, buttons, badges or campaign-like layout.
+- [ ] No feature-copy/product-explanation language unless this is explicitly a commercial post.
+- [ ] Any interaction cue sounds like Mara asking/reacting, not a growth-team survey.
+- [ ] `Post X/5` is not treated as mandatory public artwork.
+
+If the frame reads first as a paid-social creative, landing-page hero or campaign poster = **`AD_FEEL` → REJECT**.
+
+## A7. Typography lock — when overlay text exists
+
+- [ ] Large Spanish headline uses the canonical heavy clean sans-serif family: Montserrat ExtraBold/Black visual grammar or approved equivalent.
+- [ ] Headline is uppercase where intended.
+- [ ] White is the dominant headline color; pink accent highlights one meaningful word/letter/choice when useful.
+- [ ] English translation is smaller, clean sans-serif, usually white.
+- [ ] No random handwritten/bubble/scrapbook/sticker/kawaii/cursive/serif typography without explicit one-off approval.
+- [ ] No font-family drift between slides.
+- [ ] Text is legible at phone-feed size.
+- [ ] Typography does not overpower Mara or the lived scene.
+
+Unexpected font-family/style drift = **`TYPOGRAPHY_DRIFT` → REJECT**.
+
+## A8. Pose grammar
+
+Record and compare the planned tuple:
+
+- [ ] `HEAD_YAW` differs meaningfully where required.
+- [ ] `HEAD_TILT` is not mechanically reused.
+- [ ] `CHIN` position is not mechanically reused.
+- [ ] `GAZE_TARGET` differs meaningfully from previous Mara frame.
+- [ ] `EXPRESSION` is not the same restrained smirk by default.
+- [ ] `BODY_ACTION` creates a genuinely different moment, not only a different hand placement.
+- [ ] Camera awareness varies where the sequence plan requires it.
+
+Recurring failure pattern to reject when repeated:
+
+> head angled toward Mara's right + sideways glance toward Mara's right + chin slightly down + restrained smirk
+
+A new outfit/background with the same face/head/gaze tuple still counts as **duplicate pose grammar**.
+
 ---
 
 # B. SEQUENCE QA
@@ -104,7 +153,30 @@ Review all frames in order, not one at a time.
 - [ ] Sequence does not contain several near-identical poses.
 - [ ] Final slide feels like a closer/after-state rather than random leftover.
 
-## B3. Realism
+## B3. Pose-direction balance
+
+For carousels with 3+ Mara-visible frames:
+
+- [ ] At least one frame uses a clearly different head direction from the cover.
+- [ ] Direct/front, left-looking, right-looking, down/object-focused and candid/partial-profile options have been considered.
+- [ ] Adjacent Mara frames do not repeat the same head direction + gaze target.
+- [ ] The recurring Mara-right sideways-glance/chin-down smirk pose appears at most once.
+- [ ] At least one Mara frame is action-led or candid rather than pose-led.
+- [ ] Changing clothes/location has not been used to disguise repeated facial grammar.
+
+If the carousel looks like five wardrobe changes performed by the same face pose = **`POSE_GRAMMAR_REPEAT` → REJECT**.
+
+## B4. Text-density / visual hierarchy
+
+Default 5-slide social-native target:
+
+- [ ] 1–2 slides maximum carry strong overlay text unless the post is explicitly graphic/editorial.
+- [ ] At least 2 slides are normally allowed to breathe as clean photography.
+- [ ] A/B markers are minimal when used.
+- [ ] Headline/subheadline/footer structure is not mechanically repeated on every slide.
+- [ ] The carousel still feels like Mara's camera roll/life, not a designed ad sequence.
+
+## B5. Realism
 
 - [ ] At least one frame could plausibly be described as “camera-roll” rather than “campaign.”
 - [ ] Imperfection varies naturally; it is not one repeated fake filter.
@@ -112,7 +184,7 @@ Review all frames in order, not one at a time.
 - [ ] Ordinary context is visible.
 - [ ] Another person's presence/POV is plausible where intended.
 
-## B4. Narrative economy
+## B6. Narrative economy
 
 - [ ] The post introduces only a manageable amount of new world information.
 - [ ] No unnecessary new car/home/friend/hobby/luxury setting invented.
@@ -142,6 +214,13 @@ Fail if the grid shows too much of any pattern:
 - no repeated places;
 - no ordinary life.
 
+Additional 2026-09-06 detector:
+
+- repeated Mara-right head angle / sideways gaze / chin-down smirk across covers;
+- typography that changes personality every post;
+- every cover designed like a promo poster;
+- every carousel using the same headline/subheadline/footer template.
+
 ## C2. World-memory audit
 
 By P20, subject to approved production facts:
@@ -164,6 +243,9 @@ Across the rolling 20-post inventory:
 - [ ] Body-led posts are not consecutive enough to flatten personality.
 - [ ] Social-world evidence exists.
 - [ ] No more than two consecutive covers use materially similar pose/crop grammar.
+- [ ] No single face direction becomes Mara's default across the rolling grid.
+- [ ] Overlay typography, when used, remains recognizably one system.
+- [ ] Graphic-heavy posts do not dominate enough to make the profile feel commercial.
 
 Treat thresholds as guardrails, not a mechanical visual algorithm.
 
@@ -198,6 +280,9 @@ Use these codes in `ASSET_REGISTER.md` / Scene Packet reject log:
 - `AI_REFLECTION`
 - `EXCESSIVE_POLISH`
 - `DUPLICATE_POSE`
+- `POSE_GRAMMAR_REPEAT`
+- `TYPOGRAPHY_DRIFT`
+- `AD_FEEL`
 - `NARRATIVE_REDUNDANCY`
 - `GRID_REPETITION`
 - `LORE_INFLATION`
@@ -214,7 +299,15 @@ Then ask:
 
 > **Does it still look unmistakably like Mara rather than a generic creator?**
 
-Both answers must be YES.
+Then ask:
+
+> **Does it feel like Mara posted this, or like a marketing team made an ad using Mara?**
+
+Then ask:
+
+> **If I hide the clothes and background, have I actually changed Mara's face/head/gaze grammar from the last frame?**
+
+All answers must support approval.
 
 And finally:
 
