@@ -116,7 +116,7 @@ try {
   await passAgeGate(page);
   await assertNoHorizontalOverflow(page, "/experience");
   await assertMaraImageLoaded(page, "dm experience");
-  await page.getByText("No quiero que esto se sienta como una app. Háblame aquí.").waitFor();
+  await page.getByText("Tengo una idea. Tú acomódate; yo pongo la historia.").waitFor();
   await page.getByRole("button", { name: "Entrar" }).click();
   await page.getByText("Hoy mando yo un poco.").waitFor();
   await page.getByText(/Esta noche: hamburguesa, papas, bebida y una barra de chocolate/).waitFor();
@@ -137,7 +137,7 @@ try {
   assert(await page.getByTestId("dm-private-drop").count() === 0, "Return callback must not auto-open commerce anymore");
 
   await page.getByRole("button", { name: "Hoy manda tú" }).click();
-  await page.getByText(/no vas a navegar un catálogo/).waitFor();
+  await page.getByText(/Te cuento mi parte de la noche del chocolate/).waitFor();
   await page.getByRole("button", { name: "Directo" }).click();
   await page.getByText("Bien. Directo.").waitFor();
   await page.getByRole("button", { name: "Ya" }).click();
@@ -154,7 +154,7 @@ try {
   await page.getByRole("button", { name: "Hoy manda tú" }).click();
   await page.getByText(/Ya sé que prefieres que vaya directo/).waitFor();
   await page.getByRole("button", { name: "Ya" }).click();
-  await page.getByText("Esta vez sí te dejé algo aparte.").waitFor();
+  await page.getByText("Estoy preparando una nota aparte. Mira en qué va.").waitFor();
   await page.getByTestId("dm-private-drop").waitFor();
   await page.getByText("Nota privada de la noche").waitFor();
   await page.getByText(/\$4\.99/).waitFor();

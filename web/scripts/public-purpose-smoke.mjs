@@ -34,7 +34,7 @@ try {
   await page.getByText(/Si no te tinca, me dices que no/).waitFor();
   await page.getByRole("link", { name: "A ver." }).click();
   await page.waitForURL(/\/experience/);
-  await page.getByText("No quiero que esto se sienta como una app. Háblame aquí.").waitFor();
+  await page.getByText("Tengo una idea. Tú acomódate; yo pongo la historia.").waitFor();
   await page.getByRole("button", { name: "Entrar" }).click();
   await page.getByText("Hoy mando yo un poco.").waitFor();
   await page.getByText(/Esta noche: hamburguesa, papas, bebida y una barra de chocolate/).waitFor();
@@ -55,7 +55,7 @@ try {
   assert(await meetPage.getByText(/gym/i).count() === 0, "Meet Mara must not invent current-day gym lore");
   await meetPage.getByRole("link", { name: "Ven. A ver." }).click();
   await meetPage.waitForURL(/\/experience/);
-  await meetPage.getByText("No quiero que esto se sienta como una app. Háblame aquí.").waitFor();
+  await meetPage.getByText("Tengo una idea. Tú acomódate; yo pongo la historia.").waitFor();
   await meetContext.close();
 
   const telemetry = await context.request.post(`${baseUrl}/api/telemetry`, {

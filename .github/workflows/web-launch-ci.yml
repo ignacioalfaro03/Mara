@@ -14,6 +14,16 @@ env:
   CANONICAL_MARA_WEB_BLOB: "1c4c4d3615eac915cf42efd9416ed20479eb8126"
 
 jobs:
+  canonical-integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: "20"
+      - name: Reject truncated canonical image
+        run: node web/scripts/canonical-asset-integrity.mjs
+
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -104,3 +114,4 @@ jobs:
           node scripts/public-purpose-smoke.mjs
           node scripts/continuity-cta-smoke.mjs
           node scripts/world-sofi-smoke.mjs
+          node scripts/launch-loop-smoke.mjs
