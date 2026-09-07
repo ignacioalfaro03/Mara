@@ -1,10 +1,14 @@
-# MARA VERA — INSTAGRAM GENERATION PROMPT STACK V1
+# MARA VERA — INSTAGRAM GENERATION PROMPT STACK V1.1
 
 Status: **PRODUCTION PROMPT ARCHITECTURE**
 
 Purpose: prevent ad-hoc prompt writing from becoming a second source of truth.
 
 > **PROMPTS CONSUME CANON. PROMPTS DO NOT CREATE CANON BY THEMSELVES.**
+
+Mandatory visual execution source:
+
+- [`MARA_VISUAL_POST_LOCK.md`](./MARA_VISUAL_POST_LOCK.md) — Mara-native social feel, typography and pose-variation rules.
 
 ---
 
@@ -17,9 +21,12 @@ Every continuity-sensitive Instagram generation should conceptually assemble the
 3. `SCENE_STATE_V1`
 4. `FRAME_REQUIREMENT_V1`
 5. `CONTINUITY_CONSTRAINTS_V1`
-6. `CAMERA_ORIGIN_V1`
-7. `SOCIAL_REALISM_V1`
-8. `REJECT_CONSTRAINTS_V1`
+6. `POSE_VARIATION_LOCK_V1`
+7. `CAMERA_ORIGIN_V1`
+8. `SOCIAL_REALISM_V1`
+9. `MARA_NATIVE_POST_V1`
+10. `TYPOGRAPHY_LOCK_V1` — only when overlay text is used
+11. `REJECT_CONSTRAINTS_V1`
 
 A later layer cannot contradict an earlier layer.
 
@@ -136,7 +143,40 @@ This layer should become more specific as the scene progresses.
 
 ---
 
-## 7. `CAMERA_ORIGIN_V1`
+## 7. `POSE_VARIATION_LOCK_V1`
+
+Source: `MARA_VISUAL_POST_LOCK.md`.
+
+Identity continuity must be preserved while the **face/head/gaze/body grammar changes**.
+
+For every Mara-visible frame define:
+
+```text
+POSE VARIATION LOCK:
+HEAD_YAW: left | center | right | profile
+HEAD_TILT: left | neutral | right
+CHIN: up | neutral | down
+GAZE_TARGET: lens | mirror | person | object | phone | off-frame-left | off-frame-right | down
+EXPRESSION: neutral | warm-smile | laugh | smirk | serious | curious | surprised | concentrated
+BODY_ACTION: walking | sitting | leaning | fixing-hair | eating | reading | dressing | holding-phone | turning | reaching | resting
+CAMERA_AWARENESS: aware | semi-aware | candid
+```
+
+The tuple must differ meaningfully from the previous Mara frame.
+
+Hard reject pattern if repeated within the same carousel:
+
+```text
+head angled toward Mara's right + sideways glance toward Mara's right + chin slightly down + restrained smirk
+```
+
+Changing the outfit, room or hands does **not** count as pose variation when the face/head/gaze tuple is materially the same.
+
+If the user asks `que mire al otro lado`, the new head/gaze direction must visibly invert at thumbnail size.
+
+---
+
+## 8. `CAMERA_ORIGIN_V1`
 
 Specify who/what physically captures the frame.
 
@@ -160,7 +200,7 @@ Do not use impossible floating-camera perspectives in ordinary social scenes.
 
 ---
 
-## 8. `SOCIAL_REALISM_V1`
+## 9. `SOCIAL_REALISM_V1`
 
 Default social photography layer:
 
@@ -182,7 +222,50 @@ Never request anatomical/rendering defects as realism.
 
 ---
 
-## 9. `REJECT_CONSTRAINTS_V1`
+## 10. `MARA_NATIVE_POST_V1`
+
+Source: `MARA_VISUAL_POST_LOCK.md`.
+
+Use this on every Instagram still/carousel:
+
+```text
+MARA NATIVE POST:
+The result must feel like Mara's own social post, not advertising about Mara. The photograph is primary. The moment must remain believable if all overlay text disappears. Preserve Mara's playful self-awareness, intimacy, restrained flirtation, quiet authority and lived-in world. Avoid campaign-poster composition, landing-page hero treatment, banner boxes, buttons, feature explanations and repeated CTA structure. Mara is a character living a moment, not a model presenting marketing copy.
+```
+
+For interaction posts, the mechanic must feel conversational:
+
+- Mara asks;
+- Mara reacts;
+- Mara remembers;
+- Mara follows through later.
+
+Do not make the frame look like a growth-team survey.
+
+---
+
+## 11. `TYPOGRAPHY_LOCK_V1`
+
+Use only when overlay text is actually necessary.
+
+```text
+TYPOGRAPHY LOCK:
+Use the canonical Mara social overlay family: Montserrat ExtraBold/Black visual grammar for the large Spanish headline, uppercase, clean heavy sans-serif. Use white as the main headline color with one meaningful word/letter/choice in Mara pink (#F58BB5 approximate; scene-adaptive within the same family). English translation is smaller, clean white sans-serif, regular/medium weight. Keep hierarchy simple and legible.
+
+Do not use handwritten, bubble, scrapbook, sticker, kawaii/childlike, serif editorial or cursive/script fonts unless an explicit one-off creative exception has been approved.
+```
+
+Text-density default:
+
+- 1–2 strong-text frames maximum in a normal 5-slide carousel;
+- 1 minimal interaction marker if needed;
+- 2–3 frames should normally remain clean photography.
+
+`Post X/5` is not mandatory public artwork.
+
+---
+
+## 12. `REJECT_CONSTRAINTS_V1`
 
 Default reject layer:
 
@@ -197,14 +280,18 @@ REJECT IF:
 - companion identity changes;
 - camera angle is physically implausible;
 - hands, reflections, text or anatomy contain obvious AI artifacts;
-- image becomes a glossy standalone influencer campaign instead of a social-native continuation.
+- image becomes a glossy standalone influencer campaign instead of a social-native continuation;
+- the asset feels like an advertisement rather than Mara's post;
+- typography drifts away from the canonical heavy clean sans-serif pink/white system without explicit exception;
+- head direction + gaze + chin + expression repeat the previous Mara frame;
+- the recurring Mara-right sideways-glance/chin-down smirk pose is reused in the same carousel.
 ```
 
 Add scene-specific reject constraints when a failure repeats.
 
 ---
 
-## 10. Prompt assembly template
+## 13. Prompt assembly template
 
 ```text
 [MARA_IDENTITY_LOCK_V1]
@@ -217,9 +304,15 @@ Add scene-specific reject constraints when a failure repeats.
 
 [CONTINUITY_CONSTRAINTS_V1 — inherited accepted facts]
 
+[POSE_VARIATION_LOCK_V1]
+
 [CAMERA_ORIGIN_V1]
 
 [SOCIAL_REALISM_V1]
+
+[MARA_NATIVE_POST_V1]
+
+[TYPOGRAPHY_LOCK_V1 — only if text is needed]
 
 [REJECT_CONSTRAINTS_V1]
 ```
@@ -228,7 +321,7 @@ Do not replace this stack with a single improvised sentence for F2+.
 
 ---
 
-## 11. Versioning rules
+## 14. Versioning rules
 
 Create a new version only when production evidence shows a repeatable improvement.
 
@@ -249,7 +342,7 @@ Do not version purely for wording changes that do not alter behavior.
 
 ---
 
-## 12. Reference-image rule
+## 15. Reference-image rule
 
 When an approved prior frame can be supplied to the generation system, use it as continuity evidence when technically appropriate.
 
@@ -262,9 +355,11 @@ Reference priority:
 
 Do not use rejected generations as references.
 
+A reference image is evidence for identity/world continuity, **not permission to copy its facial pose**. Pose variation rules still apply.
+
 ---
 
-## 13. Drift-correction rule
+## 16. Drift-correction rule
 
 When a generation fails:
 
@@ -280,11 +375,15 @@ Repeated plate mutation → strengthen `CONTINUITY_CONSTRAINTS`, not `MARA_IDENT
 
 Repeated plastic skin → strengthen `SOCIAL_REALISM`, not Scene State.
 
+Repeated right-side facial pose → strengthen `POSE_VARIATION_LOCK`, not wardrobe/background prompts.
+
+Repeated ad/poster feeling → strengthen `MARA_NATIVE_POST`, reduce text density and remove graphic UI.
+
 This keeps prompts understandable and debuggable.
 
 ---
 
-## 14. Minimal continuation contract
+## 17. Minimal continuation contract
 
 When the user asks only “dame la segunda”:
 
@@ -294,9 +393,12 @@ The production agent must recover:
 - F1 accepted asset facts;
 - F2 planned role;
 - continuity matrix;
+- previous Mara face/head/gaze tuple;
+- next frame's deliberately different pose tuple;
 - camera origin;
-- relevant prompt layers.
+- relevant prompt layers;
+- whether overlay text is actually necessary.
 
 Then generate F2 as a **continuation**.
 
-The user should not need to manually restate the table, meal, clothes, bag, phone, light or room merely because the generation system lacks memory.
+The user should not need to manually restate the table, meal, clothes, bag, phone, light, room, typography or pose-diversity rule merely because the generation system lacks memory.
