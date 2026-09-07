@@ -10,11 +10,15 @@ Status: canonical index for the current adult audio script inventory. Scripts ex
 - `061–075`: heavy femdom and orgasm-control progression.
 - `076–090`: denial, waiting, permission, uncertainty and payoff.
 - `091–100`: jealousy/comparison roleplay and Sofi/World support.
+- `101–105`: jealousy/World continuation.
+- `106–120`: deterministic Capricho / purchase / World Asset rewards.
+- `121–125`: after-midnight/private-secret collection.
 
 Script files:
 - `MARA_ADULT_AUDIO_INVENTORY_001_050.md`
 - `MARA_ADULT_AUDIO_INVENTORY_051_075.md`
 - `MARA_ADULT_AUDIO_INVENTORY_076_100.md`
+- `MARA_ADULT_AUDIO_INVENTORY_101_125.md`
 
 ## Permanent runtime rules
 
@@ -26,6 +30,7 @@ Script files:
 6. High-intensity I5 is not default acquisition content.
 7. Create once → sell many times. Avoid per-user production in Alpha.
 8. Purchase buys concrete content/performance/access. It does not buy affection, exclusivity or relationship status.
+9. Physical Capricho callbacks are state-bound. `FUNDED` is not `ACQUIRED`; an acquisition reveal cannot fire early.
 
 ## Current product candidates
 
@@ -37,16 +42,7 @@ Secondary future candidates should remain I2–I3 and not expose the full premiu
 
 ### AUDIO SINGLE — DIRECT / CONTROL
 Candidates:
-- `001`
-- `002`
-- `009`
-- `013`
-- `031`
-- `040`
-- `044`
-- `078`
-- `085`
-- `096`
+`001, 002, 009, 013, 031, 040, 044, 078, 085, 096, 103, 121, 124`.
 
 ### PACK — MARA: OBEDECE
 Candidate sequence:
@@ -66,17 +62,41 @@ Explicit opt-in sequence:
 
 ### PACK — MARA: CELOS
 Opt-in story/fantasy sequence:
-`091 → 093 → 095 → 096 → 098 → 100`
+`091 → 093 → 095 → 096 → 098 → 100 → 101 → 103 → 104`
+
+### PACK — MARA: DESPUÉS DE MEDIANOCHE
+Candidate sequence:
+`121 → 122 → 123 → 124 → 125`
 
 ### SOFI_FRIDAY_01 SUPPORT
 Candidates:
-`092 → 095 → 097 → 098 → 100`
+`092 → 095 → 097 → 098 → 100 → 102 → 105`
+
+### CAPRICHO REWARD — BASE
+Reward grammars:
+- neutral/playful: `106`
+- dominant: `107`
+- dominant humiliation: `108`
+- high-contribution direct: `116`
+- high-contribution dominant: `117`
+- high-contribution humiliation: `118`
+
+### BLACK BAG / CAMERA / MACBOOK
+- Black Bag: `109`
+- Camera: `110`
+- MacBook lifecycle: `111 → 112 → 113 → 114 → 115`
+
+`114` and `115` are eligible only after verified `ACQUIRED` state.
+
+### PURCHASE RESUME
+- Private Drop: `119`
+- Story Pass: `120`
 
 ## First voice-production batch
 
-Do NOT synthesize 100 assets immediately.
+Do NOT synthesize 125 assets immediately.
 
-Recommended first production batch = 18 scripts:
+Recommended first production batch = 20 scripts:
 
 1. `007` — free hook.
 2. `001` — direct teaser paid candidate.
@@ -96,6 +116,8 @@ Recommended first production batch = 18 scripts:
 16. `075` — premium `CERDITO` finale.
 17. `092` — Sofi/World story support.
 18. `100` — jealousy-story return callback.
+19. `108` — Capricho humiliation reward.
+20. `121` — after-midnight entry.
 
 ## Voice QA gate
 
@@ -127,6 +149,12 @@ Before a paid audio is active, it needs:
 - user category eligibility;
 - adult gate.
 
+For Capricho rewards also require:
+- confirmed payment/contribution state;
+- correct goal state;
+- reward grant idempotency;
+- no pre-acquisition World Asset claim.
+
 ## Measurement
 
 Per asset / pack track:
@@ -143,13 +171,15 @@ Per asset / pack track:
 - revenue;
 - contribution margin.
 
+For Capricho rewards additionally track reward-delivered, reward-consumed, contributor callback engagement and repeat contribution.
+
 Do not store raw intimate audio responses or inferred arousal state in generic analytics.
 
 ## Production priority
 
 P0: prove Mara voice identity with 3–5 assets.
-P1: produce the 18-script batch above.
-P2: test singles vs one coherent pack.
+P1: produce the 20-script batch above.
+P2: test singles vs one coherent pack plus one Capricho reward.
 P3: produce only the next assets that improve conversion, retention or narrative continuity.
 
 The current objective is not catalog size. It is to discover which Mara voice grammar creates repeat purchase.
