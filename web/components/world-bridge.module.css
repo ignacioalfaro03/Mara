@@ -1,10 +1,7 @@
 .bridge {
-  position: fixed;
-  left: 50%;
-  bottom: 82px;
-  transform: translateX(-50%);
-  width: min(calc(100% - 28px), 470px);
-  z-index: 20;
+  position: relative;
+  width: 100%;
+  margin: 18px 0;
   border: 1px solid rgba(255, 255, 255, 0.11);
   border-radius: 17px;
   padding: 11px 13px;
@@ -51,5 +48,18 @@
   background: transparent;
   color: #aaa3a0;
   font-size: 18px;
+  cursor: pointer;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.discuss {
+  margin-top: 12px;
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid #625853;
+  border-radius: 22px;
+  color: inherit;
+  background: #302925;
   cursor: pointer;
 }

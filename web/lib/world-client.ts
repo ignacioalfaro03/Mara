@@ -1,4 +1,5 @@
 import { SOFI_FOUND_FOOTAGE, type SofiWorldKnowledge } from "@/lib/world-canon";
+import { deviceVersion } from "@/lib/local-device-state";
 
 const LOCAL_KEY = "mara_world_knowledge_v1";
 
@@ -39,16 +40,19 @@ function localKnowledge(): SofiWorldKnowledge {
 }
 
 export async function loadSofiWorldKnowledge(): Promise<SofiWorldKnowledge> {
+  const version = deviceVersion();
   const local = localKnowledge();
 
   try {
     const response = await fetch("/api/world/sofi", {
       cache: "no-store",
       credentials: "same-origin",
+      signal: AbortSignal.timeout(5000),
     });
     if (!response.ok) return local;
 
     const payload = (await response.json()) as WorldPayload;
+    if (deviceVersion() !== version) return { discovered: false, discoveredAt: null, source: "none" };
     if (!payload.knowledge?.discovered) return local;
 
     const discoveredAt = payload.knowledge.discoveredAt ?? new Date().toISOString();
@@ -60,6 +64,7 @@ export async function loadSofiWorldKnowledge(): Promise<SofiWorldKnowledge> {
 }
 
 export async function discoverSofiFoundFootage(): Promise<SofiWorldKnowledge> {
+  const version = deviceVersion();
   const discoveredAt = localKnowledge().discoveredAt ?? new Date().toISOString();
   writeLocal({ ...readLocal(), [SOFI_FOUND_FOOTAGE.factKey]: discoveredAt });
 
@@ -68,15 +73,25 @@ export async function discoverSofiFoundFootage(): Promise<SofiWorldKnowledge> {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "same-origin",
+      signal: AbortSignal.timeout(5000),
       body: JSON.stringify({ action: "discover_found_footage" }),
     });
     if (!response.ok) return { discovered: true, discoveredAt, source: "local" };
 
     const payload = (await response.json()) as WorldPayload;
+    if (deviceVersion() !== version) return { discovered: false, discoveredAt: null, source: "none" };
     const remoteAt = payload.knowledge?.discoveredAt ?? discoveredAt;
     writeLocal({ ...readLocal(), [SOFI_FOUND_FOOTAGE.factKey]: remoteAt });
     return { discovered: true, discoveredAt: remoteAt, source: "server" };
   } catch {
     return { discovered: true, discoveredAt, source: "local" };
   }
+}
+
+export async function flushPendingWorldKnowledge() {
+  if (!localKnowledge().discovered) return;
+  const version = deviceVersion();
+  const existing = await loadSofiWorldKnowledge();
+  if (version !== deviceVersion()) return;
+  if (existing.source !== "server") await discoverSofiFoundFootage();
 }

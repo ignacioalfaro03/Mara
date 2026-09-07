@@ -8,6 +8,7 @@ export async function GET() {
       status: "ok",
       service: "mara-vera-web",
       release: "public-alpha",
+      commit: process.env.MARA_RELEASE_SHA ?? process.env.VERCEL_GIT_COMMIT_SHA ?? null,
     },
     {
       status: 200,

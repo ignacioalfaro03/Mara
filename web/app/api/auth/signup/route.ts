@@ -22,15 +22,15 @@ export async function POST(request: Request) {
 
   let body: SignupBody;
   try {
-    body = (await request.json()) as SignupBody;
+    body = (await request.json()) ?? {};
   } catch {
     return NextResponse.json({ error: "invalid_json" }, { status: 400 });
   }
 
-  const email = body.email?.trim().toLowerCase() ?? "";
-  const password = body.password ?? "";
+  const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+  const password = typeof body.password === "string" ? body.password : "";
 
-  if (!body.adultConfirmed) {
+  if (body.adultConfirmed !== true) {
     return NextResponse.json({ error: "adult_confirmation_required" }, { status: 400 });
   }
   if (!validEmail(email)) {

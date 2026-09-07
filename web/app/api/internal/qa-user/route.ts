@@ -39,7 +39,8 @@ function adminHeaders(serviceRoleKey: string): Record<string, string> {
 export async function POST(request: Request) {
   // This route is inert unless an isolated proof deployment explicitly injects
   // MARA_QA_PROOF_TOKEN. Canonical production does not configure that token.
-  if (!process.env.MARA_QA_PROOF_TOKEN?.trim()) {
+  if (!process.env.MARA_QA_PROOF_TOKEN?.trim()
+    || (process.env.VERCEL_ENV === "production" && process.env.VERCEL_PROJECT_ID === "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK")) {
     return new NextResponse(null, { status: 404 });
   }
   if (!authorized(request)) {
@@ -89,6 +90,15 @@ export async function POST(request: Request) {
     const userId = body.userId?.trim() ?? "";
     if (!UUID.test(userId)) {
       return NextResponse.json({ ok: false, error: "invalid_qa_user" }, { status: 400 });
+    }
+
+    const lookup = await fetch(`${config.url}/auth/v1/admin/users/${userId}`, {
+      headers: adminHeaders(config.serviceRoleKey), cache: "no-store",
+    });
+    if (lookup.status === 404) return NextResponse.json({ ok: true });
+    const user = await lookup.json().catch(() => ({}));
+    if (!lookup.ok || !QA_EMAIL.test(user.email ?? "")) {
+      return NextResponse.json({ ok: false, error: "not_a_qa_identity" }, { status: 403 });
     }
 
     const upstream = await fetch(`${config.url}/auth/v1/admin/users/${userId}`, {

@@ -26,11 +26,11 @@ export default function LegalPage() {
         </article>
         <article>
           <h2>Pagos</h2>
-          <p>Este Preview puede mostrar productos o Caprichos. No hay suscripciones, checkout ni cobros reales activos sin proveedor aprobado y confirmación server-side.</p>
+          <p>Esta Alpha es gratuita. Las notas en preparación pueden mostrar un precio de referencia, pero todavía no se pueden comprar. No hay suscripciones ni cobros activos.</p>
         </article>
         <article>
           <h2>Borrar y reportar</h2>
-          <p>Puedes borrar el estado local desde la propia experiencia. No envíes información sensible dentro de Mara para reportar un problema; el canal formal de reportes se publicará antes de cualquier modalidad comercial.</p>
+          <p>En Cuenta y privacidad puedes cerrar sesión o borrar la copia de este dispositivo. Eso no elimina tu cuenta ni su memoria: al volver a entrar puede recuperarse. No envíes información sensible en el chat para reportar un problema.</p>
         </article>
       </section>
     </main>

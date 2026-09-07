@@ -1,5 +1,6 @@
 import { SofiExperience } from "./sofi-experience";
+import { DeviceMemoryBoundary } from "@/components/device-memory-boundary";
 
 export default function SofiWorldPage() {
-  return <SofiExperience />;
+  return <DeviceMemoryBoundary><SofiExperience /></DeviceMemoryBoundary>;
 }

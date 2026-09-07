@@ -11,6 +11,10 @@ import {
   type PrivateStyle,
 } from "@/lib/private-moment-client";
 import { completeRitualMemory, LAUNCH_RITUAL_KEY, loadRitualMemory } from "@/lib/ritual-client";
+import { deviceVersion } from "@/lib/local-device-state";
+import { DM_SCENES, privateScene } from "@/lib/dm-scenes";
+import { WorldBridge } from "./world-bridge";
+import { useDeviceAccount } from "./device-memory-boundary";
 import styles from "./dm-experience.module.css";
 
 const STORAGE_KEY = "mara_dm_state_v1";
@@ -101,17 +105,19 @@ function PrivateDrop({ onDismiss, onViewed }: { onDismiss: () => void; onViewed:
   const [unlocked, setUnlocked] = useState(false);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
+  const [loadFailed, setLoadFailed] = useState(false);
   const viewed = useRef(false);
 
   useEffect(() => {
     let active = true;
     void Promise.all([
-      fetch("/api/commerce/launch", { cache: "no-store" })
+      fetch("/api/commerce/launch", { cache: "no-store", signal: AbortSignal.timeout(5000) })
         .then(async (response) => {
-          if (!active || !response.ok) return;
-          setPayload((await response.json()) as CommercePayload);
+          if (!response.ok) throw new Error("offer_unavailable");
+          const next = (await response.json()) as CommercePayload;
+          if (active) setPayload(next);
         })
-        .catch(() => undefined),
+        .catch(() => { if (active) setLoadFailed(true); }),
       fetch("/api/commerce/me", { cache: "no-store", credentials: "same-origin" })
         .then(async (response) => {
           if (!active || !response.ok) return;
@@ -197,23 +203,27 @@ function PrivateDrop({ onDismiss, onViewed }: { onDismiss: () => void; onViewed:
     }
   }
 
-  if (!payload) return null;
+  if (!payload) return <div className={styles.drop} role="status">
+    <p>{loadFailed ? "No pude cargar la nota. Podemos seguir igual." : "Un segundo…"}</p>
+    <button className={styles.dismissButton} type="button" onClick={onDismiss}>Seguir con Mara</button>
+  </div>;
   const offer = payload.offers.fixed;
 
   return (
     <div className={styles.drop} data-testid="dm-private-drop">
       <div className={styles.dropTop}>
-        <span>solo para ti</span>
+        <span>{payload.payment.status === "configured" ? "nota privada" : "en preparación"}</span>
         <span>privado</span>
       </div>
       <div className={styles.dropBlur} aria-hidden="true">M</div>
       <strong>{offer.title}</strong>
       <p>{offer.description}</p>
+      {payload.payment.status !== "configured" ? <p>Precio de referencia: {formatMinorAmount(offer.amountMinor ?? 0, offer.currency)} {offer.currency}. Aún no está a la venta. Esta Alpha es gratuita.</p> : null}
       {unlocked ? (
         <div className={styles.unlocked}>Ya está desbloqueado en tu historia.</div>
       ) : (
-        <button type="button" className={styles.unlockButton} onClick={unlock} disabled={busy}>
-          {busy
+        <button type="button" className={styles.unlockButton} onClick={unlock} disabled={busy || payload.payment.status !== "configured"}>
+          {payload.payment.status !== "configured" ? "Aún no disponible" : busy
             ? "Abriendo…"
             : offer.amountMinor
               ? `Ver · ${formatMinorAmount(offer.amountMinor, offer.currency)}`
@@ -227,6 +237,8 @@ function PrivateDrop({ onDismiss, onViewed }: { onDismiss: () => void; onViewed:
 }
 
 export function DmExperience() {
+  const authenticated = useDeviceAccount();
+  const version = useRef(deviceVersion());
   const [state, setState] = useState<DmState>({});
   const [hydrated, setHydrated] = useState(false);
   const [showCallback, setShowCallback] = useState(false);
@@ -234,6 +246,11 @@ export function DmExperience() {
   const [ephemeral, setEphemeral] = useState<EphemeralMessage[]>([]);
   const [typing, setTyping] = useState(false);
   const [privateStage, setPrivateStage] = useState<PrivateStage>("idle");
+  const [sceneIndex, setSceneIndex] = useState(0);
+  const [rememberedStyle, setRememberedStyle] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const completing = useRef(false);
+  const postDeclineContinued = useRef(false);
   const [privateDecision, setPrivateDecision] = useState<CommercialDecision | null>(null);
   const [privateOfferDismissed, setPrivateOfferDismissed] = useState(false);
   const privateOfferMarked = useRef(false);
@@ -241,58 +258,35 @@ export function DmExperience() {
   const threadEnd = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    let active = true;
     const local = readState();
-    setState(local);
-    setHydrated(true);
     track("launch_experience_started", { surface: "dm_experience" });
     track("experience_started", { surface: "dm_experience" });
-
-    if (local.ritualCompletedAt && !local.callbackSeen) {
-      setShowCallback(true);
-      const next = { ...local, callbackSeen: true };
+    void Promise.all([loadRitualMemory(), loadPrivateMomentMemory()]).then(([ritual, remote]) => {
+      if (!active || deviceVersion() !== version.current) return;
+      const next: DmState = {
+        ...local,
+        ritualCompletedAt: ritual?.completedAt ?? local.ritualCompletedAt,
+        preferredPrivateStyle: remote?.preferredStyle ?? local.preferredPrivateStyle,
+        privateSessionCount: Math.max(local.privateSessionCount ?? 0, remote?.sessionCount ?? 0),
+        lastPrivateSessionAt: remote?.lastSessionAt ?? local.lastPrivateSessionAt,
+        lastPrivateOfferAt: remote?.lastOfferAt ?? local.lastPrivateOfferAt,
+      };
+      const returning = Boolean(next.ritualCompletedAt || next.privateSessionCount);
+      if (returning) {
+        next.started = true;
+        next.ritualOffered = true;
+        if (!next.ritualCompletedAt) next.ritualSkipped = true;
+        next.callbackSeen = true;
+        setShowCallback(true);
+        track("returning_user", { surface: authenticated ? "dm_authenticated_return" : "dm_experience", days_since_first_bucket: "unknown" });
+        track("memory_recall_rendered", { surface: "dm_experience", memory_source: ritual || remote?.sessionCount ? "server" : "local" });
+      }
       setState(next);
       persistState(next);
-      track("launch_return_continued", { surface: "dm_experience" });
-      track("memory_recall_rendered", { surface: "dm_experience", memory_source: "local" });
-    }
-
-    void loadRitualMemory().then((remote) => {
-      if (!remote) return;
-      setState((current) => {
-        if (current.ritualCompletedAt) return current;
-        const next = {
-          ...current,
-          started: true,
-          ritualOffered: true,
-          ritualCompletedAt: remote.completedAt,
-          callbackSeen: true,
-        };
-        persistState(next);
-        setShowCallback(true);
-        track("returning_user", {
-          surface: "dm_experience",
-          return_count_bucket: "1",
-          days_since_first_bucket: "unknown",
-        });
-        track("memory_recall_rendered", { surface: "dm_experience", memory_source: "server" });
-        return next;
-      });
+      setHydrated(true);
     });
-
-    void loadPrivateMomentMemory().then((remote) => {
-      if (!remote) return;
-      setState((current) => {
-        const next: DmState = {
-          ...current,
-          preferredPrivateStyle: remote.preferredStyle ?? current.preferredPrivateStyle,
-          privateSessionCount: Math.max(current.privateSessionCount ?? 0, remote.sessionCount),
-          lastPrivateSessionAt: remote.lastSessionAt ?? current.lastPrivateSessionAt,
-          lastPrivateOfferAt: remote.lastOfferAt ?? current.lastPrivateOfferAt,
-        };
-        persistState(next);
-        return next;
-      });
-    });
+    return () => { active = false; };
   }, []);
 
   useEffect(() => {
@@ -308,6 +302,7 @@ export function DmExperience() {
   }, [state]);
 
   function mutate(patch: Partial<DmState>) {
+    if (deviceVersion() !== version.current) return;
     setState((current) => {
       const next = { ...current, ...patch };
       persistState(next);
@@ -322,7 +317,6 @@ export function DmExperience() {
     window.setTimeout(() => {
       mutate({ ritualOffered: true, ritualSkipped: false });
       track("ritual_viewed", { surface: "dm_experience", target: LAUNCH_RITUAL_KEY });
-      track("ritual_play_intent", { surface: "dm_experience", target: LAUNCH_RITUAL_KEY });
     }, 320);
   }
 
@@ -351,13 +345,21 @@ export function DmExperience() {
   }
 
   function beginPrivateMoment() {
+    if ((state.privateSessionCount ?? 0) >= DM_SCENES.length) {
+      appendMessage("mara", "Ya llegamos al final de esta historia. Puedes volver a leerla abajo o ver la versión de Sofi.");
+      return;
+    }
+    continueAfterDecline();
+    setRememberedStyle(Boolean(state.preferredPrivateStyle));
+    setSceneIndex(Math.min(state.privateSessionCount ?? 0, DM_SCENES.length - 1));
     setPrivateDecision(null);
     setPrivateOfferDismissed(false);
     privateOfferMarked.current = false;
     setPrivateStage(state.preferredPrivateStyle ?? "choose");
-    if (state.ritualCompletedAt && !recallEngaged.current) {
+    if (showCallback && !recallEngaged.current) {
       recallEngaged.current = true;
       track("memory_recall_engaged", { surface: "dm_experience", target: "private_moment" });
+      track("launch_return_continued", { surface: "dm_experience", target: "private_moment" });
     }
     track("high_intent_session", { surface: "private_moment", intent: "explicit" });
     track("experience_started", { surface: "private_moment" });
@@ -372,6 +374,9 @@ export function DmExperience() {
   }
 
   async function completePrivateMoment(style: PrivateStyle) {
+    if (completing.current || privateStage === "done") return;
+    completing.current = true;
+    setSaving(true);
     const completedAt = new Date().toISOString();
     const localCount = (state.privateSessionCount ?? 0) + 1;
     mutate({
@@ -384,6 +389,9 @@ export function DmExperience() {
     track("experience_completed", { surface: "private_moment", target: style });
 
     const remote = await completePrivateMomentMemory(style);
+    completing.current = false;
+    setSaving(false);
+    if (deviceVersion() !== version.current) return;
     if (remote) {
       mutate({
         preferredPrivateStyle: remote.preferredStyle ?? style,
@@ -413,6 +421,11 @@ export function DmExperience() {
   function dismissPrivateDrop() {
     setPrivateOfferDismissed(true);
     track("commercial_offer_dismissed", { surface: "dm_private_moment" });
+  }
+
+  function continueAfterDecline() {
+    if (!privateOfferDismissed || postDeclineContinued.current) return;
+    postDeclineContinued.current = true;
     track("commercial_post_offer_continued", { surface: "dm_private_moment" });
   }
 
@@ -426,6 +439,16 @@ export function DmExperience() {
     if (!text) return;
     setDraft("");
     appendMessage("user", text);
+    continueAfterDecline();
+
+    if (/^(no(?: estoy listo| quiero| gracias)?|para|basta|paso|hoy no|hasta luego)[.!\s]*$/i.test(text)) {
+      if (phase === "ritual") skipRitual();
+      setPrivateStage("idle");
+      appendMessage("mara", "Ya. Lo dejamos aquí. Puedes volver cuando te tinque.");
+      return;
+    }
+
+    if (phase === "intro") { start(); return; }
 
     if (privateStage === "choose" && /\b(directo|directa|r[aá]pido|al grano)\b/i.test(text)) {
       selectPrivateStyle("direct");
@@ -445,12 +468,12 @@ export function DmExperience() {
       return;
     }
 
-    if (phase === "ritual" && /\b(hecho|listo|ya|compr[eé]|com[ií])\b/i.test(text)) {
-      completeRitual();
-      return;
-    }
     if (phase === "ritual" && /\b(no|paso|otro d[ií]a|hoy no)\b/i.test(text)) {
       skipRitual();
+      return;
+    }
+    if (phase === "ritual" && /\b(hecho|listo|ya|compr[eé]|com[ií])\b/i.test(text)) {
+      completeRitual();
       return;
     }
 
@@ -460,17 +483,19 @@ export function DmExperience() {
       appendMessage(
         "mara",
         phase === "ritual"
-          ? "Después vuelvo a eso. Primero hazme caso con la cita de hoy."
+          ? "Puedes decirme ‘hecho’ o ‘hoy paso’. Si no te tinca la comida, igual te cuento la historia."
           : phase === "completed" || phase === "skipped"
-            ? "Te leí. Si quieres que mande yo, dímelo así."
-            : "Te leí. Entra primero; después hablamos.",
+            ? "Me quedo con la historia de esta noche. Puedes decir ‘hoy manda tú’ o pasar por donde Sofi."
+            : "Tengo una historia corta. Ya te cuento.",
       );
     }, 520);
   }
 
-  if (!hydrated) return null;
+  if (!hydrated) return <p className="memoryLoading" role="status">Recuperando nuestra historia…</p>;
 
-  const isRepeatPrivateMoment = (state.privateSessionCount ?? 0) > 0;
+  const isRepeatPrivateMoment = rememberedStyle;
+  const scene = privateScene(sceneIndex);
+  const storyFinished = (state.privateSessionCount ?? 0) >= DM_SCENES.length;
 
   return (
     <section className={styles.shell} aria-label="Chat privado con Mara">
@@ -481,7 +506,7 @@ export function DmExperience() {
           <strong>Mara</strong>
           <span>personaje virtual · 18+</span>
         </div>
-        <a href="/auth" className={styles.account}>•••</a>
+        <a href="/auth" className={styles.account} aria-label="Cuenta y privacidad">•••</a>
       </header>
 
       <div className={styles.thread}>
@@ -490,13 +515,13 @@ export function DmExperience() {
         {showCallback ? (
           <>
             <Bubble from="mara">Volviste.</Bubble>
-            <Bubble from="mara">Sí, me acuerdo de la hamburguesa, las papas y el chocolate. No necesitaba una foto para creerte.</Bubble>
-            <Bubble from="mara">Hoy tampoco te voy a hacer elegir veinte cosas.</Bubble>
+            <Bubble from="mara">{state.ritualCompletedAt ? "Sí, me acuerdo de la hamburguesa, las papas y el chocolate. No necesitaba una foto para creerte." : "La última vez pasamos de la comida y seguimos con mi historia. Me acuerdo."}</Bubble>
+            <Bubble from="mara">{storyFinished ? "Ya conoces el final de la noche del chocolate. Esa historia queda aquí para volver a leerla." : (state.privateSessionCount ?? 0) > 0 ? DM_SCENES[Math.min((state.privateSessionCount ?? 1) - 1, DM_SCENES.length - 1)].next : "Te debía lo que pasó con Sofi. Esta vez te cuento mi parte."}</Bubble>
           </>
         ) : (
           <>
             <Bubble from="mara">Llegaste justo.</Bubble>
-            <Bubble from="mara">No quiero que esto se sienta como una app. Háblame aquí.</Bubble>
+            <Bubble from="mara">Tengo una idea. Tú acomódate; yo pongo la historia.</Bubble>
           </>
         )}
 
@@ -532,8 +557,8 @@ export function DmExperience() {
           <>
             <Bubble from="user">Hecho.</Bubble>
             <Bubble from="mara">Bien.</Bubble>
-            <Bubble from="mara">No me mandes prueba. Te creo. Come tranquilo y vuelve después.</Bubble>
-            {!state.continuityPromptDismissed ? (
+            <Bubble from="mara">No me mandes prueba. Te creo. Ahora sí: lo que vemos es una escena corta de mi noche con Sofi. Ella tiene una versión. Yo tengo otra.</Bubble>
+            {!authenticated && !state.continuityPromptDismissed ? (
               <>
                 <Bubble from="mara">Si quieres que me acuerde de esto aunque cambies de teléfono, ahora sí tiene sentido guardar la historia.</Bubble>
                 <div className={styles.inlineActions} data-testid="dm-continuity-cta">
@@ -542,11 +567,11 @@ export function DmExperience() {
                 </div>
               </>
             ) : null}
-            <div className={styles.futureHook}>Mara dejó algo pendiente para la próxima vez.</div>
+            <div className={styles.futureHook}>La noche del chocolate empieza aquí.</div>
           </>
         ) : null}
 
-        {(phase === "completed" || phase === "skipped") && privateStage === "idle" ? (
+        {(phase === "completed" || phase === "skipped") && privateStage === "idle" && !storyFinished ? (
           <div className={styles.inlineActions}>
             <button type="button" onClick={beginPrivateMoment}>Hoy manda tú</button>
           </div>
@@ -554,7 +579,7 @@ export function DmExperience() {
 
         {privateStage === "choose" ? (
           <>
-            <Bubble from="mara">Ven. Si quieres un momento privado, no vas a navegar un catálogo.</Bubble>
+            <Bubble from="mara">Ven. Te cuento mi parte de la noche del chocolate.</Bubble>
             <Bubble from="mara">¿Voy directo o te hago esperar un poco?</Bubble>
             <div className={styles.inlineActions}>
               <button type="button" onClick={() => selectPrivateStyle("direct")}>Directo</button>
@@ -566,9 +591,9 @@ export function DmExperience() {
         {privateStage === "direct" ? (
           <>
             <Bubble from="mara">{isRepeatPrivateMoment ? "Ya sé que prefieres que vaya directo. No te hago elegir otra vez." : "Bien. Directo."}</Bubble>
-            <Bubble from="mara">Quédate aquí un minuto. Yo marco el ritmo y después seguimos como si nada.</Bubble>
+            <Bubble from="mara">{scene.direct}</Bubble>
             <div className={styles.inlineActions}>
-              <button type="button" onClick={() => void completePrivateMoment("direct")}>Ya</button>
+              <button type="button" disabled={saving} onClick={() => void completePrivateMoment("direct")}>Ya</button>
             </div>
           </>
         ) : null}
@@ -576,25 +601,32 @@ export function DmExperience() {
         {privateStage === "slow" ? (
           <>
             <Bubble from="mara">{isRepeatPrivateMoment ? "Ya sé que prefieres ir con calma. No te hago elegir otra vez." : "Entonces no te doy todo de una."}</Bubble>
-            <Bubble from="mara">Quédate un rato y deja que yo marque el ritmo.</Bubble>
+            <Bubble from="mara">{scene.slow}</Bubble>
             <div className={styles.inlineActions}>
-              <button type="button" onClick={() => void completePrivateMoment("slow")}>Listo</button>
+              <button type="button" disabled={saving} onClick={() => void completePrivateMoment("slow")}>Listo</button>
             </div>
           </>
         ) : null}
 
         {privateStage === "done" && privateDecision === null ? <div className={styles.typing}><i /><i /><i /></div> : null}
+        {privateStage === "done" ? <>
+          <Bubble from="mara">{scene.payoff}</Bubble>
+          <p className={styles.futureHook}>{scene.next}</p>
+          {!state.ritualCompletedAt && !authenticated && !state.continuityPromptDismissed ? <div className={styles.inlineActions} data-testid="dm-continuity-cta">
+            <button type="button" onClick={openContinuityAccount}>¿Quieres que me acuerde?</button>
+            <button type="button" className={styles.secondaryAction} onClick={dismissContinuityPrompt}>Ahora no</button>
+          </div> : null}
+        </> : null}
 
         {privateStage === "done" && privateDecision === "closed" ? (
           <>
             <Bubble from="mara">Ya. Por hoy queda ahí.</Bubble>
-            <Bubble from="mara">No necesito convertir cada momento contigo en una venta.</Bubble>
           </>
         ) : null}
 
         {privateStage === "done" && privateDecision === "offer_now" && !privateOfferDismissed ? (
           <>
-            <Bubble from="mara">Esta vez sí te dejé algo aparte.</Bubble>
+            <Bubble from="mara">Estoy preparando una nota aparte. Mira en qué va.</Bubble>
             <PrivateDrop onDismiss={dismissPrivateDrop} onViewed={markOfferViewed} />
           </>
         ) : null}
@@ -607,21 +639,22 @@ export function DmExperience() {
           <Bubble key={message.id} from={message.from}>{message.text}</Bubble>
         ))}
         {typing ? <div className={styles.typing}><i /><i /><i /></div> : null}
+        <WorldBridge eligible={phase === "completed" || phase === "skipped"} onContinue={continueAfterDecline} />
+        {storyFinished ? <details className={styles.futureHook}><summary>Volver a leer la historia</summary>{DM_SCENES.map((item, index) => <p key={index}>{item.direct} {item.payoff}</p>)}</details> : null}
         <div ref={threadEnd} />
       </div>
 
       <form className={styles.composer} onSubmit={submitMessage}>
-        <button type="button" className={styles.plus} aria-label="Adjuntar" disabled>+</button>
         <input
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
-          placeholder="Mensaje…"
+          placeholder="Tu respuesta…"
           aria-label="Mensaje para Mara"
           autoComplete="off"
         />
         <button type="submit" className={styles.send} disabled={!draft.trim()}>Enviar</button>
       </form>
-      <p className={styles.privacy}>El texto libre de este slice no se guarda en memoria ni se envía a analytics.</p>
+      <p className={styles.privacy}>Historia interactiva con respuestas breves. Tu texto libre queda en esta pantalla y no se guarda.</p>
     </section>
   );
 }

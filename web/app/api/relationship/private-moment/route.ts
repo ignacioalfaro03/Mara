@@ -79,15 +79,46 @@ export async function POST(request: Request) {
   const context = await verifiedContext();
   if (!context.ok) return context.response;
 
-  let body: { action?: unknown; style?: unknown };
+  let body: { action?: unknown; style?: unknown; completedScenes?: unknown };
   try {
-    body = (await request.json()) as { action?: unknown; style?: unknown };
+    body = (await request.json()) ?? {};
   } catch {
     return NextResponse.json({ error: "invalid_json" }, { status: 400 });
   }
 
   let rpc: string;
   let rpcBody: Record<string, string> = {};
+
+  if (body.action === "import_anonymous") {
+    if ((body.style !== "direct" && body.style !== "slow") || !Number.isInteger(body.completedScenes)
+      || (body.completedScenes as number) < 0 || (body.completedScenes as number) > 3) {
+      return NextResponse.json({ error: "invalid_anonymous_progress" }, { status: 400 });
+    }
+    const headers = {
+      apikey: context.config.publishableKey,
+      Authorization: `Bearer ${context.session.accessToken}`,
+      "Content-Type": "application/json",
+    };
+    const imported = {
+      preferred_private_style: body.style,
+      private_session_count: body.completedScenes,
+      last_private_session_at: (body.completedScenes as number) > 0 ? new Date().toISOString() : null,
+    };
+    // RLS still enforces auth.uid(). No privileged key and no client-selected owner.
+    // Ignore existing rows; conditional PATCH only fills an untouched account.
+    const insert = await fetch(`${context.config.url}/rest/v1/relationship_state?on_conflict=user_id`, {
+      method: "POST", headers: { ...headers, Prefer: "resolution=ignore-duplicates" },
+      body: JSON.stringify({ user_id: context.userId, ...imported }), cache: "no-store",
+    });
+    if (!insert.ok) return NextResponse.json({ error: "private_moment_write_failed" }, { status: 502 });
+    const update = await fetch(`${context.config.url}/rest/v1/relationship_state?user_id=eq.${encodeURIComponent(context.userId)}&private_session_count=eq.0&preferred_private_style=is.null&last_private_session_at=is.null`, {
+      method: "PATCH", headers, body: JSON.stringify(imported), cache: "no-store",
+    });
+    if (!update.ok) return NextResponse.json({ error: "private_moment_write_failed" }, { status: 502 });
+    const response = NextResponse.json({ ok: true });
+    if (context.session.refreshedSession) setSessionCookies(response, context.session.refreshedSession);
+    return response;
+  }
 
   if (body.action === "complete") {
     if (body.style !== "direct" && body.style !== "slow") {

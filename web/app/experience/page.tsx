@@ -1,11 +1,10 @@
 import { DmExperience } from "@/components/dm-experience";
-import { WorldBridge } from "@/components/world-bridge";
+import { DeviceMemoryBoundary } from "@/components/device-memory-boundary";
 
 export default function ExperiencePage() {
   return (
     <main>
-      <DmExperience />
-      <WorldBridge />
+      <DeviceMemoryBoundary><DmExperience /></DeviceMemoryBoundary>
     </main>
   );
 }

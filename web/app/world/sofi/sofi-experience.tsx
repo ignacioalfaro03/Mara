@@ -12,8 +12,10 @@ export function SofiExperience() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
+    let active = true;
     track("experience_started", { surface: "world_sofi", target: SOFI_FOUND_FOOTAGE.eventKey });
     void loadSofiWorldKnowledge().then((knowledge) => {
+      if (!active) return;
       setDiscovered(knowledge.discovered);
       setSource(knowledge.source);
       if (knowledge.discovered) {
@@ -24,6 +26,7 @@ export function SofiExperience() {
         });
       }
     });
+    return () => { active = false; };
   }, []);
 
   async function reveal() {
@@ -54,13 +57,10 @@ export function SofiExperience() {
 
       <section className={styles.phone} data-testid="sofi-found-footage">
         <div className={styles.phoneTop}>
-          <span>grabado desde el celu de Sofi</span>
-          <span>vertical · casual</span>
+          <span>la noche del chocolate</span>
+          <span>escena escrita</span>
         </div>
-        <div className={styles.frame}>
-          <img src="/mara/mara-v1-reference.jpg" alt="Vista previa provisional de Mara dentro del lenguaje visual de celular de Sofi" />
-          <span className={styles.cameraBadge}>preview found-footage · asset final pendiente</span>
-        </div>
+        <p className={styles.caption}>Dos cucharas. La música en la cocina. Mara cantando como si nadie fuera a entrar.</p>
         <div className={styles.caption}>{SOFI_FOUND_FOOTAGE.followup}</div>
       </section>
 

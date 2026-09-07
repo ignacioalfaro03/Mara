@@ -264,8 +264,8 @@ export async function POST(request: Request) {
   const properties = sanitizeProperties(payload.properties);
   const timestamp = safeTimestamp(payload.timestamp);
   const sessionId = safeSessionId(payload.sessionId);
-  const decisionEligible = isCanonicalProductionRuntime();
   const qaPersistenceProbe = isQaPersistenceProbe(event, properties);
+  const decisionEligible = isCanonicalProductionRuntime() && !qaPersistenceProbe;
 
   // Hosted Preview and isolated proof deployments exercise the real UI and can
   // emit the same browser events as customers. They must never become the

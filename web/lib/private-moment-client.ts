@@ -21,6 +21,7 @@ async function requestPrivateMoment(init?: RequestInit): Promise<PrivateMomentMe
     const response = await fetch("/api/relationship/private-moment", {
       credentials: "same-origin",
       cache: "no-store",
+      signal: AbortSignal.timeout(5000),
       ...init,
     });
     if (!response.ok) return null;
@@ -29,6 +30,20 @@ async function requestPrivateMoment(init?: RequestInit): Promise<PrivateMomentMe
   } catch {
     return null;
   }
+}
+
+// Import at most the three completed launch scenes, once. These are narrative
+// progress only, never entitlements or paid usage; existing account history wins.
+export async function flushPendingPrivateStyle() {
+  try {
+    const local = JSON.parse(window.localStorage.getItem("mara_dm_state_v1") || "{}");
+    if (local.preferredPrivateStyle !== "direct" && local.preferredPrivateStyle !== "slow") return;
+    await requestPrivateMoment({
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "import_anonymous", style: local.preferredPrivateStyle,
+        completedScenes: Math.min(3, Math.max(0, Math.floor(local.privateSessionCount || 0))) }),
+    });
+  } catch { /* The anonymous copy stays available for a later sign-in retry. */ }
 }
 
 export function loadPrivateMomentMemory() {

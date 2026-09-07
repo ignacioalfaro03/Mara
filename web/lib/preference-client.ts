@@ -1,3 +1,4 @@
+import { deviceVersion } from "@/lib/local-device-state";
 const PENDING_KEY = "mara_pending_preference_events_v1";
 
 export type VisualPreferenceEvent = {
@@ -36,6 +37,7 @@ function queue(event: VisualPreferenceEvent) {
 async function send(event: VisualPreferenceEvent) {
   return fetch("/api/preferences", {
     method: "POST",
+    signal: AbortSignal.timeout(5000),
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(event),
   });
@@ -61,11 +63,13 @@ export async function recordVisualPreference(selectedOption: "pose_a" | "pose_b"
 }
 
 export async function flushPendingPreferenceEvents() {
+  const version = deviceVersion();
   const pending = readPending();
   if (!pending.length) return;
 
   const remaining: VisualPreferenceEvent[] = [];
   for (const event of pending) {
+    if (version !== deviceVersion()) return;
     try {
       const response = await send(event);
       if (!response.ok) remaining.push(event);
@@ -73,5 +77,5 @@ export async function flushPendingPreferenceEvents() {
       remaining.push(event);
     }
   }
-  writePending(remaining);
+  if (version === deviceVersion()) writePending(remaining);
 }

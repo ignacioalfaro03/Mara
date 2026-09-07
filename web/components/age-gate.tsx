@@ -6,10 +6,12 @@ import { track } from "@/lib/analytics";
 const STORAGE_KEY = "mara_age_gate_passed";
 
 export function AgeGate() {
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    const passed = window.localStorage.getItem(STORAGE_KEY) === "true";
+    let passed = false;
+    try { passed = window.localStorage.getItem(STORAGE_KEY) === "true"; } catch { /* Ask again when storage is unavailable. */ }
+    setVisible(!passed);
     if (!passed) {
       setVisible(true);
       track("age_gate_view");
@@ -19,7 +21,7 @@ export function AgeGate() {
   if (!visible) return null;
 
   function confirmAdult() {
-    window.localStorage.setItem(STORAGE_KEY, "true");
+    try { window.localStorage.setItem(STORAGE_KEY, "true"); } catch { /* Consent still applies to this page. */ }
     track("age_gate_pass");
     track("age_gate_accepted");
     setVisible(false);
