@@ -65,6 +65,7 @@ const ALLOWED_EVENTS = new Set([
   "pledge_created",
   "commit_created",
   "fulfillment_viewed",
+  "fulfillment_completed",
   "history_viewed",
 ]);
 
