@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getVerifiedSession, setSessionCookies } from "@/lib/auth-session";
 import { readWeakness, type DeclaredPreferenceRow, type WorldRow } from "@/lib/mara-real-data";
+import { emitProductEvent } from "@/lib/product-telemetry";
 import { safeLocalReturn, userRest } from "@/lib/supabase/server-rest";
 import type { TablesInsert } from "@/lib/supabase/database.types";
 
@@ -60,6 +61,10 @@ export async function POST(request: Request) {
       });
       if (!inserted.ok) return NextResponse.json({ error: "weakness_save_failed" }, { status: 502 });
     }
+    await emitProductEvent(request, "weakness_saved", {
+      surface: scope === "network" ? "/me/history" : returnTo,
+      target: scope,
+    });
   }
 
   const response = NextResponse.redirect(new URL(returnTo, request.url), 303);
