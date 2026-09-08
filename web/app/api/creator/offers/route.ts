@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getVerifiedSession, setSessionCookies } from "@/lib/auth-session";
 import { readOwnCreator, type DemandRow, type OfferRow, type WorldRow } from "@/lib/mara-real-data";
+import { emitProductEvent } from "@/lib/product-telemetry";
 import { safeLocalReturn, slugify, userRest } from "@/lib/supabase/server-rest";
 import type { TablesInsert } from "@/lib/supabase/database.types";
 
@@ -69,6 +70,14 @@ export async function POST(request: Request) {
     body: JSON.stringify(row),
   });
   if (!result.ok) return NextResponse.json({ error: "offer_create_failed" }, { status: result.status === 409 ? 409 : 502 });
+
+  await emitProductEvent(request, "creator_offer_created", {
+    surface: "/creator",
+    target: demandRequestId ? "demand_to_offer" : "direct_offer",
+    offer_slug: slug,
+    offer_type: offerFamily,
+    currency,
+  });
 
   const response = NextResponse.redirect(new URL(returnTo, request.url), 303);
   if (session.refreshedSession) setSessionCookies(response, session.refreshedSession);
