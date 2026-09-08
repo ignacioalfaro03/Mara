@@ -1,0 +1,332 @@
+.shell {
+  min-height: 100vh;
+  background: #0f0d0e;
+  color: #fff8f6;
+  padding: 32px 18px 72px;
+}
+
+.container {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 52px;
+}
+
+.brand {
+  color: inherit;
+  text-decoration: none;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.navLinks {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.navLinks a {
+  color: #e9deda;
+  text-decoration: none;
+  font-size: 0.92rem;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+  gap: 28px;
+  align-items: end;
+  padding: 26px 0 44px;
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: #efb2bf;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(2.4rem, 7vw, 5.8rem);
+  line-height: 0.92;
+  letter-spacing: -0.055em;
+}
+
+.lede {
+  margin: 18px 0 0;
+  max-width: 680px;
+  color: #d8cbc6;
+  font-size: clamp(1rem, 2.4vw, 1.24rem);
+  line-height: 1.55;
+}
+
+.heroAside {
+  border: 1px solid #3b3033;
+  background: #171315;
+  border-radius: 22px;
+  padding: 22px;
+}
+
+.heroAside strong {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.heroAside p {
+  margin: 0;
+  color: #cdbfba;
+  line-height: 1.5;
+}
+
+.section {
+  margin-top: 58px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: end;
+  margin-bottom: 20px;
+}
+
+.sectionHeader h2 {
+  margin: 0;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+}
+
+.sectionHeader p {
+  margin: 0;
+  color: #bfaeaa;
+  max-width: 520px;
+  line-height: 1.5;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px;
+}
+
+.card {
+  grid-column: span 6;
+  min-height: 310px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px;
+  border-radius: 24px;
+  border: 1px solid #3a3032;
+  background: linear-gradient(145deg, #1b1618, #120f10);
+}
+
+.cardFeatured {
+  grid-column: span 12;
+  min-height: 360px;
+  background: linear-gradient(135deg, #24171c, #120f10 62%);
+}
+
+.card h3 {
+  margin: 6px 0 10px;
+  font-size: clamp(1.55rem, 4vw, 2.6rem);
+  letter-spacing: -0.03em;
+}
+
+.card p {
+  margin: 0;
+  color: #cdbfba;
+  line-height: 1.5;
+  max-width: 680px;
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: end;
+  margin-top: 28px;
+}
+
+.price {
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.linkButton,
+.primaryButton,
+.secondaryButton {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 46px;
+  padding: 0 18px;
+  border-radius: 999px;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.linkButton,
+.primaryButton {
+  border: 0;
+  color: #171012;
+  background: #f5c0cc;
+}
+
+.secondaryButton {
+  border: 1px solid #4b3d41;
+  background: transparent;
+  color: #fff8f6;
+}
+
+.primaryButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.muted {
+  color: #a89894;
+}
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.7fr);
+  gap: 24px;
+}
+
+.detailPanel,
+.purchasePanel,
+.libraryCard {
+  border: 1px solid #3a3032;
+  border-radius: 24px;
+  background: #171315;
+  padding: 24px;
+}
+
+.detailPanel h1 {
+  margin: 6px 0 16px;
+  font-size: clamp(2.3rem, 7vw, 5rem);
+  line-height: 0.96;
+  letter-spacing: -0.05em;
+}
+
+.detailPanel > p {
+  color: #d1c2bd;
+  line-height: 1.6;
+}
+
+.includes {
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.includes li {
+  border-top: 1px solid #332a2c;
+  padding-top: 10px;
+  color: #e7dad5;
+}
+
+.purchasePanel {
+  align-self: start;
+  position: sticky;
+  top: 20px;
+}
+
+.purchasePanel .price {
+  display: block;
+  margin: 8px 0 18px;
+  font-size: 1.45rem;
+}
+
+.notice {
+  margin-top: 12px;
+  color: #d7b8bf;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.buttonStack {
+  display: grid;
+  gap: 10px;
+}
+
+.libraryList {
+  display: grid;
+  gap: 14px;
+}
+
+.libraryCard h3 {
+  margin: 0 0 8px;
+}
+
+.libraryMeta {
+  color: #a99894;
+  font-size: 0.9rem;
+}
+
+.kpiStrip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.kpi {
+  border-top: 1px solid #3a3032;
+  padding-top: 12px;
+}
+
+.kpi strong {
+  display: block;
+  font-size: 1.25rem;
+}
+
+.kpi span {
+  color: #a99894;
+  font-size: 0.86rem;
+}
+
+@media (max-width: 760px) {
+  .shell {
+    padding: 22px 14px 56px;
+  }
+
+  .nav {
+    margin-bottom: 30px;
+  }
+
+  .hero,
+  .detailGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .sectionHeader,
+  .cardFooter {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .card,
+  .cardFeatured {
+    grid-column: span 12;
+  }
+
+  .purchasePanel {
+    position: static;
+  }
+
+  .kpiStrip {
+    grid-template-columns: 1fr;
+  }
+}
