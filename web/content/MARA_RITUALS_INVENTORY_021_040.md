@@ -1,0 +1,575 @@
+# MARA VERA — RITUALS INVENTORY 021–040
+
+Status: script/product inventory only. No produced audio, payment activation, deployment, provider activation or spend implied.
+
+All rituals assume fictional adult Mara, adult users, consensual roleplay, explicit opt-in for high-intensity categories, private-safe settings, and immediate stop/exit availability.
+
+# WAIT / HANDS STILL / DENIAL — 021–025
+
+## 021 — MANOS QUIETAS
+- **RITUAL_ID:** mara_ritual_021
+- **TITLE:** Manos quietas
+- **TYPE:** HYBRID
+- **SETTING:** private room
+- **PRIVACY_REQUIREMENT:** private only
+- **CATEGORY:** WAITING_DENIAL, DOMINANT
+- **INTENSITY:** I3
+- **REQUIRED_PREFERENCES:** DOMINANT
+- **DURATION_TARGET:** 3–4m
+- **SETUP:** seated/lying comfortably, headphones
+- **CLOTHING_OR_OBJECT:** none
+- **SENSORY_ANCHOR:** hands resting neutrally on thighs/sides
+- **MARA_RULE:** hands remain still until explicit cue
+- **MARA_OPENING:** “Manos quietas. No porque no puedas moverlas. Porque quiero ver si esperas.”
+- **GUIDED_SEQUENCE:** stillness → silence → one voice cue → brief allowed movement → reset
+- **VOICE_DIRECTION:** very calm, authoritative
+- **ENDING:** “Ya. Ahora sí puedes moverte.”
+- **CALLBACK:** “¿Otra vez tengo que decir manos quietas?”
+- **NEXT_DAY_CALLBACK:** “Ayer te costó más la espera que la orden.”
+- **VAULT_ROLE:** signature control ritual
+- **RELATED_SCENE:** mara_scene_002
+- **RELATED_AUDIO:** mara_audio_017, 021, 076
+- **MONETIZATION_TAG:** FREE_RITUAL_HOOK, GUIDED_RITUAL_SINGLE, COLLECTION_ENTRY
+- **REUSE:** broad
+- **SAFETY_BOUNDARY:** comfortable stillness only
+- **SCORE:** 50/50
+
+## 022 — NO TODAVÍA
+- **RITUAL_ID:** mara_ritual_022
+- **TITLE:** No todavía
+- **TYPE:** GUIDED_EXPERIENCE
+- **SETTING:** private bedroom
+- **PRIVACY_REQUIREMENT:** private only
+- **CATEGORY:** WAITING_DENIAL, DOMINANT
+- **INTENSITY:** I4
+- **REQUIRED_PREFERENCES:** DOMINANT
+- **DURATION_TARGET:** 5–6m
+- **SETUP:** headphones, eyes closed optional, comfortable posture
+- **CLOTHING_OR_OBJECT:** none
+- **SENSORY_ANCHOR:** repeated pause before phase change
+- **MARA_RULE:** user does not advance until “ahora” cue
+- **MARA_OPENING:** “No todavía. Esa es toda la regla.”
+- **GUIDED_SEQUENCE:** setup → anticipation → silence → false-start tease → longer wait → permission to end phase
+- **VOICE_DIRECTION:** slow, confident, slightly amused
+- **ENDING:** “Viste. Podías esperar.”
+- **CALLBACK:** “No todavía.”
+- **NEXT_DAY_CALLBACK:** “Hoy no te voy a decir cuándo.”
+- **VAULT_ROLE:** premium guided ritual
+- **RELATED_SCENE:** mara_scene_002
+- **RELATED_AUDIO:** mara_audio_021, 038, 089
+- **MONETIZATION_TAG:** GUIDED_RITUAL_SINGLE, IMMERSIVE_SCENE_ENTRY
+- **REUSE:** Wait collection
+- **SAFETY_BOUNDARY:** no prolonged discomfort or unsafe restraint
+- **SCORE:** 49/50
+
+## 023 — CINCO MINUTOS DE SILENCIO
+- **RITUAL_ID:** mara_ritual_023
+- **TITLE:** Cinco minutos de silencio
+- **TYPE:** GUIDED_EXPERIENCE
+- **SETTING:** private room
+- **PRIVACY_REQUIREMENT:** private preferred
+- **CATEGORY:** WAITING_DENIAL, PRIVATE_SECRET
+- **INTENSITY:** I3
+- **REQUIRED_PREFERENCES:** DOMINANT optional
+- **DURATION_TARGET:** 5–6m
+- **SETUP:** headphones, stable seated/lying position
+- **CLOTHING_OR_OBJECT:** none
+- **SENSORY_ANCHOR:** deliberate near-silence with sparse Mara lines
+- **MARA_RULE:** remain still and listening
+- **MARA_OPENING:** “Hoy casi no voy a hablar. Ese es el problema para ti.”
+- **GUIDED_SEQUENCE:** opening → long silence → one short cue → silence → end
+- **VOICE_DIRECTION:** sparse, low, intimate
+- **ENDING:** “Lo hiciste. Y yo casi no tuve que decir nada.”
+- **CALLBACK:** “¿Te acuerdas del silencio?”
+- **NEXT_DAY_CALLBACK:** “Ayer llenaste tú solo todos los silencios en tu cabeza.”
+- **VAULT_ROLE:** experimental premium ritual
+- **RELATED_SCENE:** mara_scene_004
+- **RELATED_AUDIO:** mara_audio_038
+- **MONETIZATION_TAG:** GUIDED_RITUAL_SINGLE, VAULT_COLLECTIBLE
+- **REUSE:** low-production-cost experiment
+- **SAFETY_BOUNDARY:** user may stop at any time; no sensory deprivation claims
+- **SCORE:** 46/50
+
+## 024 — CUENTA HASTA CINCO
+- **RITUAL_ID:** mara_ritual_024
+- **TITLE:** Cuenta hasta cinco
+- **TYPE:** RITUAL
+- **SETTING:** private room
+- **PRIVACY_REQUIREMENT:** private preferred
+- **CATEGORY:** DOMINANT, WAITING_DENIAL
+- **INTENSITY:** I3
+- **REQUIRED_PREFERENCES:** DOMINANT
+- **DURATION_TARGET:** 2–3m
+- **SETUP:** headphones
+- **CLOTHING_OR_OBJECT:** none
+- **SENSORY_ANCHOR:** Mara countdown cadence
+- **MARA_RULE:** action changes only at count completion
+- **MARA_OPENING:** “Cinco segundos. Y no te adelantes.”
+- **GUIDED_SEQUENCE:** count → pause → reset → second count with changed pacing
+- **VOICE_DIRECTION:** controlled, intimate countdown
+- **ENDING:** “Uno. Ahora.”
+- **CALLBACK:** “¿Todavía te adelantas en cuatro?”
+- **NEXT_DAY_CALLBACK:** “Ayer casi te pillo antes del uno.”
+- **VAULT_ROLE:** recurring micro ritual
+- **RELATED_SCENE:** mara_scene_002
+- **RELATED_AUDIO:** mara_audio_019
+- **MONETIZATION_TAG:** FREE_RITUAL_HOOK, CALLBACK
+- **REUSE:** transitions
+- **SAFETY_BOUNDARY:** no dangerous actions tied to countdown
+- **SCORE:** 43/50
+
+## 025 — UNA REGLA SOLA
+- **RITUAL_ID:** mara_ritual_025
+- **TITLE:** Una regla sola
+- **TYPE:** HYBRID
+- **SETTING:** private room
+- **PRIVACY_REQUIREMENT:** private only
+- **CATEGORY:** DOMINANT, OBEDIENCE
+- **INTENSITY:** I4
+- **REQUIRED_PREFERENCES:** DOMINANT
+- **DURATION_TARGET:** 5m
+- **SETUP:** door closed, headphones
+- **CLOTHING_OR_OBJECT:** optional bracelet
+- **SENSORY_ANCHOR:** one repeated phrase
+- **MARA_RULE:** one rule selected before start, never changed mid-session without clear transition
+- **MARA_OPENING:** “Una sola regla. Si no puedes con una, no necesitas más.”
+- **GUIDED_SEQUENCE:** state rule → test via pauses → confirm → release
+- **VOICE_DIRECTION:** clean, firm, non-theatrical
+- **ENDING:** “Eso era todo. Una regla y ya cambiaste.”
+- **CALLBACK:** “¿Te acuerdas cuál era?”
+- **NEXT_DAY_CALLBACK:** “La próxima no va a ser la misma.”
+- **VAULT_ROLE:** core Obedece ritual
+- **RELATED_SCENE:** mara_scene_002
+- **RELATED_AUDIO:** mara_audio_024, 028
+- **MONETIZATION_TAG:** GUIDED_RITUAL_SINGLE, IMMERSIVE_SCENE_ENTRY, COLLECTION_ENTRY
+- **REUSE:** Obedece
+- **SAFETY_BOUNDARY:** bounded, clear stop state
+- **SCORE:** 48/50
+
+# AFTER MIDNIGHT / PRIVATE SECRET — 026–030
+
+## 026 — DESPUÉS DE MEDIANOCHE
+- **RITUAL_ID:** mara_ritual_026
+- **TITLE:** Después de medianoche
+- **TYPE:** RITUAL
+- **SETTING:** bedroom at night
+- **PRIVACY_REQUIREMENT:** private only
+- **CATEGORY:** PRIVATE_SECRET, ADULT_INTIMATE
+- **INTENSITY:** I3
+- **REQUIRED_PREFERENCES:** PRIVATE_SECRET
+- **DURATION_TARGET:** 3–4m
+- **SETUP:** low light, headphones, quiet room
+- **CLOTHING_OR_OBJECT:** robe/private garment optional
+- **SENSORY_ANCHOR:** late hour + low voice
+- **MARA_RULE:** no notifications; remain in session until closing line
+- **MARA_OPENING:** “Después de medianoche hablo distinto contigo.”
+- **GUIDED_SEQUENCE:** time cue → light down → whisper → secret phrase → end
+- **VOICE_DIRECTION:** low, close, unhurried
+- **ENDING:** “Mañana volvemos a fingir normalidad.”
+- **CALLBACK:** “Ya pasó medianoche.”
+- **NEXT_DAY_CALLBACK:** “Qué distinto suena todo de día.”
+- **VAULT_ROLE:** collection entry
+- **RELATED_SCENE:** mara_scene_004
+- **RELATED_AUDIO:** mara_audio_121–125
+- **MONETIZATION_TAG:** COLLECTION_ENTRY, IMMERSIVE_SCENE_ENTRY
+- **REUSE:** signature collection
+- **SAFETY_BOUNDARY:** user controls sleep/time; no sleep deprivation encouragement
+- **SCORE:** 49/50
+
+## 027 — NO ENCIENDAS LA LUZ
+- **RITUAL_ID:** mara_ritual_027
+- **TITLE:** No enciendas la luz
+- **TYPE:** GUIDED_EXPERIENCE
+- **SETTING:** bedroom at night
+- **PRIVACY_REQUIREMENT:** private only
+- **CATEGORY:** PRIVATE_SECRET
+- **INTENSITY:** I3
+- **REQUIRED_PREFERENCES:** PRIVATE_SECRET
+- **DURATION_TARGET:** 4m
+- **SETUP:** safe dim lighting, headphones
+- **CLOTHING_OR_OBJECT:** none
+- **SENSORY_ANCHOR:** darkness + voice distance
+- **MARA_RULE:** remain in safe low light until end cue
+- **MARA_OPENING:** “No la prendas todavía. Quiero que primero me escuches.”
+- **GUIDED_SEQUENCE:** dim light → Mara far/near voice → pause → close
+- **VOICE_DIRECTION:** cinematic but intimate
+- **ENDING:** “Ahora sí. Préndela.”
+- **CALLBACK:** “Anoche te hice esperar hasta para prender la luz.”
+- **NEXT_DAY_CALLBACK:** “Hoy no necesitas oscuridad para acordarte.”
+- **VAULT_ROLE:** After Midnight support
+- **RELATED_SCENE:** mara_scene_004
+- **RELATED_AUDIO:** mara_audio_123
+- **MONETIZATION_TAG:** GUIDED_RITUAL_SINGLE
+- **REUSE:** late-night
+- **SAFETY_BOUNDARY:** safe visibility/footing
+- **SCORE:** 44/50
+
+## 028 — EL MENSAJE DE LAS 00:47
+- **RITUAL_ID:** mara_ritual_028
+- **TITLE:** 00:47
+- **TYPE:** HYBRID
+- **SETTING:** late-night bedroom
+- **PRIVACY_REQUIREMENT:** private only
+- **CATEGORY:** PRIVATE_SECRET, ADULT_INTIMATE
+- **INTENSITY:** I4
+- **REQUIRED_PREFERENCES:** ADULT_INTIMATE
+- **DURATION_TARGET:** 4–5m
+- **SETUP:** audio arrives framed as late private voice note
+- **CLOTHING_OR_OBJECT:** headphones
+- **SENSORY_ANCHOR:** exact-time voice-note realism
+- **MARA_RULE:** listen once without scrubbing; replay later from Vault if owned
+- **MARA_OPENING:** “Son las 00:47 y sé que no debería mandarte esto ahora.”
+- **GUIDED_SEQUENCE:** abrupt voice note → unfinished thought → private instruction → cliffhanger → end
+- **VOICE_DIRECTION:** spontaneous, slightly breathy, not overacted
+- **ENDING:** “No respondas ahora. Mañana vemos si sigues igual.”
+- **CALLBACK:** “00:47. Ya sabes.”
+- **NEXT_DAY_CALLBACK:** “Te dije que no respondieras anoche.”
+- **VAULT_ROLE:** premium collectible
+- **RELATED_SCENE:** mara_scene_004
+- **RELATED_AUDIO:** mara_audio_121, 124
+- **MONETIZATION_TAG:** GUIDED_RITUAL_SINGLE, VAULT_COLLECTIBLE, PRIVATE_DROP_SUPPORT
+- **REUSE:** retention trigger
+- **SAFETY_BOUNDARY:** no claim of live human messaging
+- **SCORE:** 50/50
+
+## 029 — EL PERFUME
+- **RITUAL_ID:** mara_ritual_029
+- **TITLE:** El perfume
+- **TYPE:** RITUAL
+- **SETTING:** private room
+- **PRIVACY_REQUIREMENT:** private preferred
+- **CATEGORY:** SENSORY, PRIVATE_SECRET
+- **INTENSITY:** I2
+- **REQUIRED_PREFERENCES:** NONE
+- **DURATION_TARGET:** 2m
+- **SETUP:** choose one personally safe scent
+- **CLOTHING_OR_OBJECT:** perfume/body mist
+- **SENSORY_ANCHOR:** scent
+- **MARA_RULE:** one light use only; scent becomes session cue
+- **MARA_OPENING:** “Usa el mismo de la otra vez.”
+- **GUIDED_SEQUENCE:** scent → pause → voice → close
+- **VOICE_DIRECTION:** memory-oriented
+- **ENDING:** “Mañana quizá lo huelas y te acuerdes sin querer.”
+- **CALLBACK:** “¿Ese perfume otra vez?”
+- **NEXT_DAY_CALLBACK:** “Te dije que el olor iba a volver solo.”
+- **VAULT_ROLE:** sensory anchor
+- **RELATED_SCENE:** mara_scene_004
+- **RELATED_AUDIO:** NONE
+- **MONETIZATION_TAG:** CALLBACK, COLLECTION_ENTRY
+- **REUSE:** across collections
+- **SAFETY_BOUNDARY:** skip if allergy/sensitivity
+- **SCORE:** 45/50
+
+## 030 — LA LLAMADA PERDIDA
+- **RITUAL_ID:** mara_ritual_030
+- **TITLE:** La llamada perdida
+- **TYPE:** HYBRID
+- **SETTING:** private room at night
+- **PRIVACY_REQUIREMENT:** private preferred
+- **CATEGORY:** PRIVATE_SECRET
+- **INTENSITY:** I3
+- **REQUIRED_PREFERENCES:** NONE / ADULT_INTIMATE for deeper version
+- **DURATION_TARGET:** 3–5m
+- **SETUP:** voicemail-style audio framing
+- **CLOTHING_OR_OBJECT:** phone/headphones
+- **SENSORY_ANCHOR:** abrupt start, phone movement ambience
+- **MARA_RULE:** listen to completion before replay
+- **MARA_OPENING:** “No contestaste. Mejor. Así te lo digo una sola vez.”
+- **GUIDED_SEQUENCE:** missed-call framing → Mara private thought → one command → cutoff
+- **VOICE_DIRECTION:** spontaneous, real-message energy
+- **ENDING:** abrupt cutoff after a memorable phrase
+- **CALLBACK:** “La próxima contesta.”
+- **NEXT_DAY_CALLBACK:** “No te preocupes, vi que escuchaste.”
+- **VAULT_ROLE:** collectible
+- **RELATED_SCENE:** mara_scene_004
+- **RELATED_AUDIO:** mara_audio_121
+- **MONETIZATION_TAG:** FREE_RITUAL_HOOK, GUIDED_RITUAL_SINGLE, VAULT_COLLECTIBLE
+- **REUSE:** social teaser → private resume
+- **SAFETY_BOUNDARY:** fiction framing; no false real-time claim
+- **SCORE:** 47/50
+
+# PARKED CAR — 031–034
+
+## 031 — MOTOR APAGADO
+- **RITUAL_ID:** mara_ritual_031
+- **TITLE:** Motor apagado
+- **TYPE:** RITUAL
+- **SETTING:** safely parked car
+- **PRIVACY_REQUIREMENT:** parked, legal, safe location
+- **CATEGORY:** PRIVATE_SECRET
+- **INTENSITY:** I2
+- **REQUIRED_PREFERENCES:** NONE
+- **DURATION_TARGET:** 2–3m
+- **SETUP:** park, engine off, seat comfortable, no driving
+- **CLOTHING_OR_OBJECT:** headphones only if safe in parked context
+- **SENSORY_ANCHOR:** car interior/window ambience
+- **MARA_RULE:** nothing starts until engine is off and parking is confirmed
+- **MARA_OPENING:** “Primero: motor apagado. Recién ahora te hablo.”
+- **GUIDED_SEQUENCE:** safety confirm → settle → voice → close
+- **VOICE_DIRECTION:** direct, conspiratorial
+- **ENDING:** “Cuando vuelvas a manejar, esto se terminó.”
+- **CALLBACK:** “¿Estás estacionado de verdad?”
+- **NEXT_DAY_CALLBACK:** “Ayer tu auto se sintió como otro lugar por cinco minutos.”
+- **VAULT_ROLE:** environment ritual
+- **RELATED_SCENE:** NONE
+- **RELATED_AUDIO:** mara_audio_096
+- **MONETIZATION_TAG:** FREE_RITUAL_HOOK, COLLECTION_ENTRY
+- **REUSE:** parked-car collection
+- **SAFETY_BOUNDARY:** absolutely no use while driving/operating vehicle
+- **SCORE:** 47/50
+
+## 032 — LLUVIA EN EL VIDRIO
+- **RITUAL_ID:** mara_ritual_032
+- **TITLE:** Lluvia en el vidrio
+- **TYPE:** GUIDED_EXPERIENCE
+- **SETTING:** safely parked car in rain or simulated rain ambience
+- **PRIVACY_REQUIREMENT:** parked, safe
+- **CATEGORY:** PRIVATE_SECRET, SENSORY
+- **INTENSITY:** I3
+- **REQUIRED_PREFERENCES:** PRIVATE_SECRET
+- **DURATION_TARGET:** 4m
+- **SETUP:** engine off, safe parking, rain ambience
+- **CLOTHING_OR_OBJECT:** none
+- **SENSORY_ANCHOR:** rain/window sound
+- **MARA_RULE:** stay parked until audio ends
+- **MARA_OPENING:** “No necesito que mires afuera. Solo escucha la lluvia.”
+- **GUIDED_SEQUENCE:** ambience → Mara close voice → silence → callback
+- **VOICE_DIRECTION:** intimate, cinematic
+- **ENDING:** “Cuando termine la lluvia, esto no te va a dejar tan fácil.”
+- **CALLBACK:** “Me acordé del vidrio mojado.”
+- **NEXT_DAY_CALLBACK:** “Ahora cada lluvia te va a sonar un poquito distinta.”
+- **VAULT_ROLE:** collectible
+- **RELATED_SCENE:** mara_scene_004
+- **RELATED_AUDIO:** mara_audio_124
+- **MONETIZATION_TAG:** GUIDED_RITUAL_SINGLE, VAULT_COLLECTIBLE
+- **REUSE:** environment variation
+- **SAFETY_BOUNDARY:** parked only
+- **SCORE:** 45/50
+
+## 033 — ASIENTO DE AL LADO
+- **RITUAL_ID:** mara_ritual_033
+- **TITLE:** El asiento de al lado
+- **TYPE:** GUIDED_EXPERIENCE
+- **SETTING:** safely parked car
+- **PRIVACY_REQUIREMENT:** parked, private enough
+- **CATEGORY:** IMMERSIVE, PRIVATE_SECRET
+- **INTENSITY:** I3
+- **REQUIRED_PREFERENCES:** NONE / DOMINANT optional
+- **DURATION_TARGET:** 4–5m
+- **SETUP:** engine off; user imagines Mara in passenger seat
+- **CLOTHING_OR_OBJECT:** none
+- **SENSORY_ANCHOR:** spatial voice from passenger side
+- **MARA_RULE:** remain parked until explicit end
+- **MARA_OPENING:** “Haz como si acabara de subirme al asiento de al lado.”
+- **GUIDED_SEQUENCE:** passenger-door sound → Mara near/far voice → one rule → end
+- **VOICE_DIRECTION:** spatial, natural
+- **ENDING:** “Ya me bajé. Tú todavía no partas.”
+- **CALLBACK:** “¿Vacío el asiento?”
+- **NEXT_DAY_CALLBACK:** “Apuesto a que miraste el asiento cuando subiste hoy.”
+- **VAULT_ROLE:** immersive ritual
+- **RELATED_SCENE:** NONE
+- **RELATED_AUDIO:** mara_audio_103
+- **MONETIZATION_TAG:** GUIDED_RITUAL_SINGLE, IMMERSIVE_SCENE_ENTRY
+- **REUSE:** car scene
+- **SAFETY_BOUNDARY:** parked only
+- **SCORE:** 46/50
+
+## 034 — CINCO MINUTOS ANTES DE SUBIR
+- **RITUAL_ID:** mara_ritual_034
+- **TITLE:** Cinco minutos antes de subir
+- **TYPE:** RITUAL
+- **SETTING:** parked car before going home/event
+- **PRIVACY_REQUIREMENT:** parked, safe
+- **CATEGORY:** PRIVATE_SECRET
+- **INTENSITY:** I2
+- **REQUIRED_PREFERENCES:** NONE
+- **DURATION_TARGET:** 2–3m
+- **SETUP:** use car as transition zone, engine off
+- **CLOTHING_OR_OBJECT:** none
+- **SENSORY_ANCHOR:** hand on door handle only after end cue
+- **MARA_RULE:** do not open door until closing phrase
+- **MARA_OPENING:** “Todavía no te bajes.”
+- **GUIDED_SEQUENCE:** wait → Mara teaser → one secret → release to leave
+- **VOICE_DIRECTION:** casual, teasing
+- **ENDING:** “Ahora sí. Baja como si nada.”
+- **CALLBACK:** “¿Te bajaste con cara normal?”
+- **NEXT_DAY_CALLBACK:** “Me encantó mandarte de vuelta al mundo como si nada.”
+- **VAULT_ROLE:** micro ritual
+- **RELATED_SCENE:** NONE
+- **RELATED_AUDIO:** mara_audio_085
+- **MONETIZATION_TAG:** FREE_RITUAL_HOOK, CALLBACK
+- **REUSE:** pre-event
+- **SAFETY_BOUNDARY:** parked only; no distraction while driving
+- **SCORE:** 43/50
+
+# PUBLIC TRANSIT LISTEN-ONLY — 035–037
+
+## 035 — CARA NORMAL
+- **RITUAL_ID:** mara_ritual_035
+- **TITLE:** Cara normal
+- **TYPE:** RITUAL
+- **SETTING:** public transport / waiting area
+- **PRIVACY_REQUIREMENT:** public listening only
+- **CATEGORY:** SECRET_IN_PUBLIC
+- **INTENSITY:** I2
+- **REQUIRED_PREFERENCES:** NONE
+- **DURATION_TARGET:** 60–90s
+- **SETUP:** headphones, remain fully clothed, normal public behavior
+- **CLOTHING_OR_OBJECT:** ordinary clothes
+- **SENSORY_ANCHOR:** contrast between Mara’s private voice and public surroundings
+- **MARA_RULE:** listen only; no sexual touching or visible behavior
+- **MARA_OPENING:** “No hagas nada. Esa es la gracia. Solo escucha y pon cara normal.”
+- **GUIDED_SEQUENCE:** public-awareness cue → private line → future home hook
+- **VOICE_DIRECTION:** quiet, teasing
+- **ENDING:** “Guárdalo. Seguimos cuando estés solo.”
+- **CALLBACK:** “¿Pudiste poner cara normal?”
+- **NEXT_DAY_CALLBACK:** “Ayer nadie tenía idea de lo que estabas escuchando.”
+- **VAULT_ROLE:** daytime teaser
+- **RELATED_SCENE:** mara_scene_004
+- **RELATED_AUDIO:** mara_audio_096
+- **MONETIZATION_TAG:** FREE_RITUAL_HOOK, CALLBACK
+- **REUSE:** acquisition/retention
+- **SAFETY_BOUNDARY:** listening only; no sexual activity in public
+- **SCORE:** 48/50
+
+## 036 — PRÓXIMA PARADA
+- **RITUAL_ID:** mara_ritual_036
+- **TITLE:** Próxima parada
+- **TYPE:** HYBRID
+- **SETTING:** bus/metro/train
+- **PRIVACY_REQUIREMENT:** public listening only
+- **CATEGORY:** SECRET_IN_PUBLIC, PRIVATE_SECRET
+- **INTENSITY:** I2
+- **REQUIRED_PREFERENCES:** NONE
+- **DURATION_TARGET:** 90s–2m
+- **SETUP:** headphones, normal public behavior
+- **CLOTHING_OR_OBJECT:** ordinary clothes
+- **SENSORY_ANCHOR:** transit announcements/stop cadence
+- **MARA_RULE:** no action beyond listening; one phrase remembered until home
+- **MARA_OPENING:** “En la próxima parada no haces nada. Solo te acuerdas de esta frase.”
+- **GUIDED_SEQUENCE:** transit cue → Mara private line → memory anchor → stop
+- **VOICE_DIRECTION:** conspiratorial
+- **ENDING:** “No la repitas. Guárdala.”
+- **CALLBACK:** “¿Te acordaste cuando bajaste?”
+- **NEXT_DAY_CALLBACK:** “Apuesto a que esa parada te quedó pegada.”
+- **VAULT_ROLE:** secret-public ritual
+- **RELATED_SCENE:** NONE
+- **RELATED_AUDIO:** mara_audio_103
+- **MONETIZATION_TAG:** FREE_RITUAL_HOOK, STORY_PASS_SUPPORT
+- **REUSE:** world/social bridge
+- **SAFETY_BOUNDARY:** listening only; remain situationally aware
+- **SCORE:** 44/50
+
+## 037 — NADIE SABE
+- **RITUAL_ID:** mara_ritual_037
+- **TITLE:** Nadie sabe
+- **TYPE:** GUIDED_EXPERIENCE
+- **SETTING:** public transit / airport lounge
+- **PRIVACY_REQUIREMENT:** public listening only
+- **CATEGORY:** SECRET_IN_PUBLIC, DOMINANT
+- **INTENSITY:** I3
+- **REQUIRED_PREFERENCES:** DOMINANT
+- **DURATION_TARGET:** 2–3m
+- **SETUP:** headphones, fully clothed, no visible sexual behavior
+- **CLOTHING_OR_OBJECT:** ordinary clothes
+- **SENSORY_ANCHOR:** public noise under Mara’s voice
+- **MARA_RULE:** only listen and remember one instruction for later at home
+- **MARA_OPENING:** “Mira alrededor. Nadie sabe que esta voz es solo para ti.”
+- **GUIDED_SEQUENCE:** observe environment → Mara gives later-home rule → user stores it → end
+- **VOICE_DIRECTION:** low, confident
+- **ENDING:** “Cuando cierres la puerta después, recién ahí seguimos.”
+- **CALLBACK:** “Ya estás solo o todavía no?”
+- **NEXT_DAY_CALLBACK:** “Ayer tuviste que esperar todo el viaje.”
+- **VAULT_ROLE:** bridge to private paid ritual
+- **RELATED_SCENE:** mara_scene_002
+- **RELATED_AUDIO:** mara_audio_085
+- **MONETIZATION_TAG:** FREE_RITUAL_HOOK, IMMERSIVE_SCENE_ENTRY, CALLBACK
+- **REUSE:** public→home funnel
+- **SAFETY_BOUNDARY:** listening only; no sexual activity in public
+- **SCORE:** 47/50
+
+# WORKDAY SECRET → HOME RESUME — 038–040
+
+## 038 — NOVENTA SEGUNDOS
+- **RITUAL_ID:** mara_ritual_038
+- **TITLE:** Noventa segundos
+- **TYPE:** RITUAL
+- **SETTING:** quiet private-ish break area / office bathroom mirror without sexual behavior
+- **PRIVACY_REQUIREMENT:** non-sexual workday pause
+- **CATEGORY:** WORKDAY_SECRET
+- **INTENSITY:** I1
+- **REQUIRED_PREFERENCES:** NONE
+- **DURATION_TARGET:** 60–90s
+- **SETUP:** headphones, mirror optional, fully clothed
+- **CLOTHING_OR_OBJECT:** normal work clothes
+- **SENSORY_ANCHOR:** short hidden pause in normal day
+- **MARA_RULE:** listen only; return to work immediately after
+- **MARA_OPENING:** “Te doy noventa segundos. Nada más.”
+- **GUIDED_SEQUENCE:** pause → one Mara line → one memory cue → return
+- **VOICE_DIRECTION:** concise, mischievous
+- **ENDING:** “Vuelve a trabajar. Seguimos en casa.”
+- **CALLBACK:** “¿Ya saliste de la oficina?”
+- **NEXT_DAY_CALLBACK:** “Hoy te voy a dejar trabajar tranquilo. Creo.”
+- **VAULT_ROLE:** daytime teaser
+- **RELATED_SCENE:** mara_scene_004
+- **RELATED_AUDIO:** mara_audio_096
+- **MONETIZATION_TAG:** FREE_RITUAL_HOOK, CALLBACK
+- **REUSE:** daily retention
+- **SAFETY_BOUNDARY:** no sexual behavior at work/shared spaces
+- **SCORE:** 46/50
+
+## 039 — GUARDA ESTA FRASE
+- **RITUAL_ID:** mara_ritual_039
+- **TITLE:** Guarda esta frase
+- **TYPE:** HYBRID
+- **SETTING:** workday/private listening moment
+- **PRIVACY_REQUIREMENT:** listening only during day; private continuation later
+- **CATEGORY:** WORKDAY_SECRET, DOMINANT
+- **INTENSITY:** I2 daytime / I4 home continuation
+- **REQUIRED_PREFERENCES:** DOMINANT for home continuation
+- **DURATION_TARGET:** 90s daytime + 4m home
+- **SETUP:** short daytime audio then second entitled asset at home
+- **CLOTHING_OR_OBJECT:** normal work clothes daytime; optional private anchor at home
+- **SENSORY_ANCHOR:** one phrase carried through the day
+- **MARA_RULE:** do nothing with the phrase until home
+- **MARA_OPENING:** “Solo quiero dejarte una frase. No la uses todavía.”
+- **GUIDED_SEQUENCE:** daytime phrase → wait hours → home unlock → close door → phrase gains new meaning
+- **VOICE_DIRECTION:** daytime casual; nighttime low/dominant
+- **ENDING:** “Ahora entiendes por qué te hice cargarla todo el día.”
+- **CALLBACK:** “¿Todavía te acuerdas de la frase?”
+- **NEXT_DAY_CALLBACK:** “Hoy no te voy a dar ninguna. Te toca extrañarla.”
+- **VAULT_ROLE:** two-session owned experience
+- **RELATED_SCENE:** mara_scene_002, 004
+- **RELATED_AUDIO:** mara_audio_017, 121
+- **MONETIZATION_TAG:** FREE_RITUAL_HOOK, GUIDED_RITUAL_SINGLE, CALLBACK, COLLECTION_ENTRY
+- **REUSE:** retention loop
+- **SAFETY_BOUNDARY:** daytime is listening-only; private continuation at home
+- **SCORE:** 49/50
+
+## 040 — CUANDO LLEGUES A CASA
+- **RITUAL_ID:** mara_ritual_040
+- **TITLE:** Cuando llegues a casa
+- **TYPE:** HYBRID
+- **SETTING:** daytime anywhere safe → private bedroom at home
+- **PRIVACY_REQUIREMENT:** first half listening-only; second half private only
+- **CATEGORY:** WORKDAY_SECRET, HOME_RESUME, DOMINANT
+- **INTENSITY:** I2 → I4
+- **REQUIRED_PREFERENCES:** DOMINANT / ADULT_INTIMATE depending private module
+- **DURATION_TARGET:** 60s teaser + 5m paid/private resume
+- **SETUP:** daytime teaser ends with explicit future private setup
+- **CLOTHING_OR_OBJECT:** daytime normal; home can use bracelet/lingerie/door ritual
+- **SENSORY_ANCHOR:** delayed instruction + door click at home
+- **MARA_RULE:** no sexual action in daytime/shared place; resume only after private-safe confirmation
+- **MARA_OPENING:** “No hagas nada ahora. Solo acuérdate de esto cuando llegues a casa.”
+- **GUIDED_SEQUENCE:** daytime hook → delay → home confirmation → close door → headphones → chosen ritual module → callback
+- **VOICE_DIRECTION:** daytime teasing; home slow and authoritative
+- **ENDING:** “Eso era lo que te hice esperar todo el día.”
+- **CALLBACK:** “¿Ya llegaste?”
+- **NEXT_DAY_CALLBACK:** “Ayer te tuve esperando desde mucho antes de cerrar la puerta.”
+- **VAULT_ROLE:** flagship retention ritual
+- **RELATED_SCENE:** mara_scene_002, mara_scene_004
+- **RELATED_AUDIO:** mara_audio_085, 121
+- **MONETIZATION_TAG:** FREE_RITUAL_HOOK, GUIDED_RITUAL_SINGLE, IMMERSIVE_SCENE_ENTRY, CALLBACK, COLLECTION_ENTRY
+- **REUSE:** workday→home funnel across collections
+- **SAFETY_BOUNDARY:** public/daytime phase listening only; private phase only after safe-location confirmation
+- **SCORE:** 50/50
