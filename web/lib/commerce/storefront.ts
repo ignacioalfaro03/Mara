@@ -15,7 +15,7 @@ export type StoreProduct = {
   priceLabel: string;
   nextSlug: string | null;
   sourceAsset: string;
-  ownedContent: string[];
+  privateAssetPath: string | null;
 };
 
 export const storefrontProducts: StoreProduct[] = [
@@ -34,12 +34,7 @@ export const storefrontProducts: StoreProduct[] = [
     priceLabel: "US$4.99",
     nextSlug: "after-midnight",
     sourceAsset: "existing commerce entitlement",
-    ownedContent: [
-      "Cerraste la puerta. Bien.",
-      "Después me quedé pensando en ese segundo en que todavía no sabías si ibas a seguirme la corriente. Esa parte me gustó más de lo que voy a admitir afuera.",
-      "Guarda esta nota. La próxima vez que aparezca algo de Mara después de medianoche, vas a entender por qué te la dejé primero.",
-      "— Mara",
-    ],
+    privateAssetPath: "text/night-note-v1.txt",
   },
   {
     slug: "other-side",
@@ -56,7 +51,7 @@ export const storefrontProducts: StoreProduct[] = [
     priceLabel: "Próximamente",
     nextSlug: "after-midnight",
     sourceAsset: "web/content/scenes/MARA_SCENE_001_OTHER_SIDE.md",
-    ownedContent: [],
+    privateAssetPath: null,
   },
   {
     slug: "after-midnight",
@@ -73,7 +68,7 @@ export const storefrontProducts: StoreProduct[] = [
     priceLabel: "Próximamente",
     nextSlug: "night-vol-1",
     sourceAsset: "web/content/scenes/MARA_SCENE_004_AFTER_MIDNIGHT.md",
-    ownedContent: [],
+    privateAssetPath: null,
   },
   {
     slug: "night-vol-1",
@@ -90,7 +85,7 @@ export const storefrontProducts: StoreProduct[] = [
     priceLabel: "En preparación",
     nextSlug: null,
     sourceAsset: "web/content/MARA_IMMERSIVE_SCENES_CATALOG_V1.md",
-    ownedContent: [],
+    privateAssetPath: null,
   },
 ];
 
