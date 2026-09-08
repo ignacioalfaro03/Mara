@@ -59,7 +59,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [ "${{ github.event.pull_request.head.ref }}" = "release/public-alpha-rc" ] || [ "${{ github.event.pull_request.head.ref }}" = "release/public-alpha-launch-readiness" ]; then
+          if [ "${{ github.event.pull_request.head.ref }}" = "execution/mara-real-app-wiring-v1" ] || [ "${{ github.event.pull_request.head.ref }}" = "release/public-alpha-rc" ] || [ "${{ github.event.pull_request.head.ref }}" = "release/public-alpha-launch-readiness" ]; then
             echo "project_id=$MARA_PROOF_VERCEL_PROJECT_ID" >> "$GITHUB_OUTPUT"
             echo "environment=production" >> "$GITHUB_OUTPUT"
             echo "host_kind=isolated-proof" >> "$GITHUB_OUTPUT"
@@ -190,11 +190,6 @@ jobs:
               --meta githubCommitSha="${{ github.event.pull_request.head.sha }}" \
               --env MARA_QA_PROOF_TOKEN="$VERCEL_AUTOMATION_BYPASS_SECRET" \
               2>&1 | tee /tmp/mara-hosted-deploy.log
-          elif [ "${{ github.event.pull_request.head.ref }}" = "execution/mara-real-app-wiring-v1" ]; then
-            test -n "$VERCEL_AUTOMATION_BYPASS_SECRET"
-            npx vercel deploy --yes --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN" \
-              --env MARA_QA_PROOF_TOKEN="$VERCEL_AUTOMATION_BYPASS_SECRET" \
-              2>&1 | tee /tmp/mara-hosted-deploy.log
           else
             npx vercel deploy --yes --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN" 2>&1 | tee /tmp/mara-hosted-deploy.log
           fi
@@ -311,10 +306,9 @@ jobs:
             echo "CANONICAL_PRODUCTION_ALIAS_UNTOUCHED=https://mara-vera.vercel.app"
           fi
 
-# RC/readiness branches deploy with --skip-domain to the isolated
-# mara-vera-proof-588e39f project. Public Supabase client config comes from the
-# versioned E2E config while the server credential remains a Vercel Sensitive
-# variable and is never pulled, copied or printed. The execution real-app branch
-# uses canonical Preview, injects only the QA proof token for an ephemeral user,
-# and never moves the canonical production alias. Other allowed branches still
-# use canonical Preview.
+# RC/readiness and execution real-app branches deploy with --skip-domain to the
+# isolated mara-vera-proof-588e39f project. Public Supabase client config comes
+# from the versioned E2E config while the server credential remains a Vercel
+# Sensitive variable and is never copied or printed. The QA bootstrap route uses
+# an ephemeral user that the E2E deletes after the test. Canonical
+# mara-vera.vercel.app is never moved. Other allowed branches use canonical Preview.
