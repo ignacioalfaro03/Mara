@@ -8,6 +8,7 @@ export const runtime = "nodejs";
 
 const FAMILIES = new Set(["digital_product", "personalized_digital", "limited_drop", "membership", "bounded_interaction"]);
 const CURRENCIES = new Set(["CLP", "USD", "EUR"]);
+const MANUAL_FULFILLMENT_FAMILIES = new Set(["personalized_digital", "bounded_interaction"]);
 
 export async function POST(request: Request) {
   const session = await getVerifiedSession();
@@ -44,6 +45,7 @@ export async function POST(request: Request) {
   const suffix = crypto.randomUUID().slice(0, 8);
   const slug = `${base}-${suffix}`;
   const fulfillmentKey = slugify(`${offerFamily}-${fulfillmentConcept}`, 100).replaceAll("-", "_") || `offer_${suffix}`;
+  const fulfillmentMode = MANUAL_FULFILLMENT_FAMILIES.has(offerFamily) ? "creator_manual" : "automatic";
   const row: TablesInsert<"commerce_offers"> = {
     creator_id: creator.id,
     world_id: world.id,
@@ -58,7 +60,7 @@ export async function POST(request: Request) {
     fulfillment_key: fulfillmentKey,
     offer_family: offerFamily,
     status,
-    metadata: { fulfillment_concept: fulfillmentConcept, alpha: true },
+    metadata: { fulfillment_concept: fulfillmentConcept, fulfillment_mode: fulfillmentMode, alpha: true },
   };
 
   const result = await userRest<OfferRow[]>(session.accessToken, "commerce_offers", {
