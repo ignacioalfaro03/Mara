@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getVerifiedSession, setSessionCookies } from "@/lib/auth-session";
 import type { DemandRow, DemandSignalRow, WorldRow } from "@/lib/mara-real-data";
+import { emitProductEvent } from "@/lib/product-telemetry";
 import { safeLocalReturn, userRest } from "@/lib/supabase/server-rest";
 import type { TablesInsert } from "@/lib/supabase/database.types";
 
@@ -54,6 +55,12 @@ export async function POST(request: Request) {
   });
   if (!created.ok || !created.data[0]) return NextResponse.json({ error: "demand_create_failed" }, { status: 502 });
 
+  await emitProductEvent(request, "demand_created", {
+    surface: returnTo,
+    target: fulfillmentType,
+    currency,
+  });
+
   const wtpMinor = Number.isFinite(wtpMajor) && wtpMajor > 0 ? Math.round(wtpMajor * 100) : null;
   const signal: TablesInsert<"demand_signals"> = {
     demand_request_id: created.data[0].id,
@@ -69,6 +76,12 @@ export async function POST(request: Request) {
     body: JSON.stringify(signal),
   });
   if (!signaled.ok) return NextResponse.json({ error: "demand_created_signal_failed", demandId: created.data[0].id }, { status: 502 });
+
+  await emitProductEvent(request, "want_created", {
+    surface: returnTo,
+    target: privacyMode,
+    currency,
+  });
 
   const response = NextResponse.redirect(new URL(returnTo, request.url), 303);
   if (session.refreshedSession) setSessionCookies(response, session.refreshedSession);
