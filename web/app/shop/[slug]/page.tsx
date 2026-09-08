@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import styles from "@/app/storefront.module.css";
-import { StorefrontCheckoutButton } from "@/components/storefront-checkout-button";
+import { StorefrontProductAccess } from "@/components/storefront-product-access";
 import { getStoreProduct, storefrontProducts } from "@/lib/commerce/storefront";
 
 export function generateStaticParams() {
@@ -34,13 +34,17 @@ export default async function StoreProductPage({ params }: { params: Promise<{ s
           </article>
 
           <aside className={styles.purchasePanel}>
-            <p className={styles.eyebrow}>{product.status === "available" ? "DISPONIBLE" : "EN PREPARACIÓN"}</p>
-            <span className={styles.price}>{product.priceLabel}</span>
-
-            {product.status === "available" && product.offerSlug ? (
-              <StorefrontCheckoutButton offerSlug={product.offerSlug} label="Desbloquear" />
+            {product.status === "available" && product.offerSlug && product.entitlementKey ? (
+              <StorefrontProductAccess
+                offerSlug={product.offerSlug}
+                entitlementKey={product.entitlementKey}
+                priceLabel={product.priceLabel}
+                ownedContent={product.ownedContent}
+              />
             ) : (
               <div className={styles.buttonStack}>
+                <p className={styles.eyebrow}>EN PREPARACIÓN</p>
+                <span className={styles.price}>{product.priceLabel}</span>
                 <span className={styles.secondaryButton} aria-disabled="true">Todavía no te la puedo abrir</span>
                 <p className={styles.notice}>Cuando esté completa de verdad, aparecerá aquí para desbloquearla.</p>
               </div>
