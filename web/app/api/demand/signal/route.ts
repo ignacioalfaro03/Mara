@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getVerifiedSession, setSessionCookies } from "@/lib/auth-session";
 import type { DemandRow, DemandSignalRow } from "@/lib/mara-real-data";
+import { emitProductEvent } from "@/lib/product-telemetry";
 import { safeLocalReturn, userRest } from "@/lib/supabase/server-rest";
 import type { TablesInsert } from "@/lib/supabase/database.types";
 
@@ -24,6 +25,9 @@ export async function POST(request: Request) {
   const demandResult = await userRest<DemandRow[]>(session.accessToken, `demand_requests?select=*&id=eq.${encodeURIComponent(demandId)}&limit=1`);
   if (!demandResult.ok || !demandResult.data[0]) return NextResponse.json({ error: "demand_unavailable" }, { status: 404 });
 
+  const previousResult = await userRest<DemandSignalRow[]>(session.accessToken, `demand_signals?select=*&demand_request_id=eq.${encodeURIComponent(demandId)}&user_id=eq.${encodeURIComponent(session.user.id)}&limit=1`);
+  const previousLevel = previousResult.ok ? previousResult.data[0]?.signal_level : undefined;
+
   const wtpMinor = Number.isFinite(wtpMajor) && wtpMajor > 0 ? Math.round(wtpMajor * 100) : null;
   const row: TablesInsert<"demand_signals"> = {
     demand_request_id: demandId,
@@ -39,6 +43,14 @@ export async function POST(request: Request) {
     body: JSON.stringify(row),
   });
   if (!result.ok) return NextResponse.json({ error: "demand_signal_failed" }, { status: 502 });
+
+  if (previousLevel !== level) {
+    await emitProductEvent(
+      request,
+      level === "commit" ? "commit_created" : level === "pledge" ? "pledge_created" : "want_created",
+      { surface: returnTo, target: privacy, currency },
+    );
+  }
 
   const response = NextResponse.redirect(new URL(returnTo, request.url), 303);
   if (session.refreshedSession) setSessionCookies(response, session.refreshedSession);
