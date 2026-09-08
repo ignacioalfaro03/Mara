@@ -117,3 +117,4 @@ jobs:
           node scripts/launch-loop-smoke.mjs
           node scripts/creator-interest-smoke.mjs
           node scripts/creator-os-contract-smoke.mjs
+          node scripts/revenue-engine-contract-smoke.mjs
