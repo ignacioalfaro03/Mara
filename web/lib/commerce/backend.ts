@@ -1,54 +1,15 @@
 import type { MaraBackendConfig, MaraServerBackendConfig } from "@/lib/backend-config";
-import type { CommerceGoal, CommerceOffer, OfferStatus, OfferType, PriceMode } from "@/lib/commerce/catalog";
+import type { CommerceGoal, CommerceOffer } from "@/lib/commerce/catalog";
+import type { Tables } from "@/lib/supabase/database.types";
 
-export type CommerceOfferRow = {
-  id: string;
-  slug: string;
-  type: OfferType;
-  title: string;
-  description: string;
-  price_mode: PriceMode;
-  amount_minor: number | null;
-  min_amount_minor: number | null;
-  max_amount_minor: number | null;
-  currency: string;
-  fulfillment_key: string | null;
-  status: OfferStatus;
-};
-
-export type CommerceGoalRow = {
-  id: string;
-  slug: string;
-  offer_id: string;
-  title: string;
-  description: string;
-  visual_path: string | null;
-  target_amount_minor: number;
-  funded_amount_minor: number | null;
-  currency: string;
-  status: CommerceGoal["status"];
-  completed_at: string | null;
-  world_state_key: string;
-};
-
-export type CommerceCheckoutIntentRow = {
-  id: string;
-  user_id: string;
-  offer_id: string;
-  client_request_id: string;
-  amount_minor: number;
-  currency: string;
-  provider: string;
-  provider_checkout_id: string | null;
-  provider_checkout_url: string | null;
-  status: "pending" | "provider_failed" | "completed" | "expired" | "canceled";
-};
+export type CommerceOfferRow = Tables<"commerce_offers">;
+export type CommerceGoalRow = Tables<"commerce_goals">;
+export type CommerceCheckoutIntentRow = Tables<"commerce_checkout_intents">;
 
 export function publicHeaders(config: MaraBackendConfig) {
-  return {
-    apikey: config.publishableKey,
-  };
+  return { apikey: config.publishableKey };
 }
+
 export function serviceHeaders(config: MaraServerBackendConfig, contentType = true) {
   return {
     apikey: config.serviceRoleKey,
@@ -60,16 +21,16 @@ export function serviceHeaders(config: MaraServerBackendConfig, contentType = tr
 export function toCommerceOffer(row: CommerceOfferRow): CommerceOffer {
   return {
     slug: row.slug,
-    type: row.type,
+    type: row.type as CommerceOffer["type"],
     title: row.title,
     description: row.description,
-    priceMode: row.price_mode,
+    priceMode: row.price_mode as CommerceOffer["priceMode"],
     amountMinor: row.amount_minor,
     minAmountMinor: row.min_amount_minor,
     maxAmountMinor: row.max_amount_minor,
     currency: row.currency,
     fulfillmentKey: row.fulfillment_key,
-    status: row.status,
+    status: row.status as CommerceOffer["status"],
   };
 }
 
@@ -83,7 +44,7 @@ export function toCommerceGoal(row: CommerceGoalRow, offerSlug: string): Commerc
     targetAmountMinor: row.target_amount_minor,
     fundedAmountMinor: row.funded_amount_minor ?? 0,
     currency: row.currency,
-    status: row.status,
+    status: row.status as CommerceGoal["status"],
     completedAt: row.completed_at,
     worldStateKey: row.world_state_key,
   };
