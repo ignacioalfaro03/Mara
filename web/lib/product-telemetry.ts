@@ -15,6 +15,7 @@ export type ProductEvent =
   | "offer_viewed"
   | "purchase_completed"
   | "fulfillment_viewed"
+  | "fulfillment_completed"
   | "history_viewed"
   | "returning_user";
 
@@ -37,6 +38,6 @@ export async function emitProductEvent(request: Request, event: ProductEvent, pr
       cache: "no-store",
     });
   } catch {
-    // Product writes must not fail because anonymous launch analytics is unavailable.
+    // Product writes must not fail because launch analytics is unavailable.
   }
 }
