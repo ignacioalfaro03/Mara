@@ -4,7 +4,7 @@ Status: **CANONICAL PRODUCT ARCHITECTURE**
 Parent authority: `MARA_FOUNDER_CONSTITUTION_V2.md`  
 Effective: 2026-09-08
 
-This file maps the company thesis into a small number of engines, product surfaces and monetization rails. It exists to prevent strategy fragmentation.
+This file maps the company thesis into a small number of engines, surfaces and monetization rails. It also prevents the user experience from degenerating into either a generic marketplace or an overbuilt virtual world.
 
 ---
 
@@ -20,87 +20,205 @@ This file maps the company thesis into a small number of engines, product surfac
 
 →
 
-`FULFILLED DEMAND GMV`
+`CONNECTED CREATOR WORLDS`
 
-Mara does not need another strategic engine unless a future founder decision explicitly replaces this architecture.
+→
+
+`FULFILLED DEMAND GMV + RETURN`
+
+Mara is the connective host/intelligence layer across the Worlds. Mara is not another creator competing inside the network.
 
 ---
 
-# 2. ENGINE MAP
+# 2. EXPERIENCE CONTRACT
+
+The economics underneath can behave like a marketplace. The product surface should feel like a connected set of living Creator Worlds.
+
+Permanent rule:
+
+> **DO NOT BUILD IMMERSION. DESIGN THE FEELING OF IMMERSION.**
+
+The product should achieve that feeling with only three mechanisms unless evidence justifies more:
+
+1. **Creator World** — one coherent creator space.
+2. **Mara Connects** — lightweight discovery/context across Worlds.
+3. **Continuity** — meaningful user actions reappear later as history, progress or consequence.
+
+No 3D world, game map, complex lore, XP economy or metaverse is required.
+
+A proposed immersive feature must improve at least one of:
+
+- conversion;
+- return/retention;
+- demand quality;
+- cross-World discovery.
+
+Otherwise do not build it.
+
+---
+
+# 3. ENGINE MAP
 
 | Engine | Job | Core objects | Primary surfaces | Primary KPI |
 |---|---|---|---|---|
-| Creator Identity & Privacy | unlock creator supply safely | Creator, Character, Exposure Policy, Geo Policy, Voice Policy | Privacy Shield, Creator World Manager | creator activation / privacy-safe supply |
+| Creator Identity & Privacy | unlock creator supply safely | Creator, Persona, Exposure Policy, Geo Policy, Voice Policy | Privacy Shield, Creator World Manager | creator activation / privacy-safe supply |
 | Demand | capture and aggregate desire | Demand Request, Cluster, WANT, PLEDGE, COMMIT, WTP | Make It Happen, What Your World Wants | Verified Demand GMV |
-| Commerce & Fulfillment | turn demand into delivered value | Offer, Purchase, Entitlement/Booking, Fulfillment | Store/Offers, checkout, library | Fulfilled Demand GMV |
-| World, Memory & Retention | make participation accumulate | World, History Event, Collection, Membership, Activity | Creator World, My History, Since You Left | repeat purchase / returning-buyer GMV |
+| Commerce & Fulfillment | turn demand/inventory into delivered value | Offer, Purchase, Entitlement/Booking, Fulfillment | contextual offers, checkout, library/history | Fulfilled Demand GMV |
+| World, Memory & Retention | make participation accumulate | World, History Event, Collection, Membership, Activity | Creator World, For You, My History, Since You Left | repeat purchase / returning-buyer GMV |
 
 ---
 
-# 3. CONSUMER INFORMATION ARCHITECTURE
+# 4. MARA'S PRODUCT ROLE
+
+Mara is the layer behind the network that:
+
+- connects Creator Worlds;
+- curates relevant discovery;
+- remembers meaningful participation;
+- detects and aggregates demand;
+- helps creators understand opportunity;
+- applies privacy/trust rules;
+- improves offer packaging and timing;
+- coordinates commerce and later fulfillment.
+
+Mara Vera may remain a brand/experience persona and product-test asset, but should not be presented as “another creator” or used as the structural template for every creator.
+
+Internal principle:
+
+> **MARA IS BEHIND THE WORLDS, NOT JUST ANOTHER WORLD.**
+
+---
+
+# 5. CONSUMER INFORMATION ARCHITECTURE
 
 Target conceptual navigation:
 
-- **HOME / WORLDS**
+- **FOR YOU / HOME**
 - **MAKE IT HAPPEN**
 - **ACTIVITY**
 - **ME**
 
-Do not force a navigation rewrite merely for conceptual purity. Existing routes may be reused until the new architecture is production-proven.
+Avoid marketplace-first navigation dominated by `Creators / Store / Events / Buy`.
+
+Commerce should remain easy to access, but inside context.
+
+## For You / Home
+
+Mara can surface simple connective cards such as:
+
+- something new from a followed World;
+- a demand item that is growing;
+- an item the user joined that changed state;
+- a relevant new creator;
+- “while you were away” updates.
+
+This is not a generic feed. Every card should have a clear reason to exist.
 
 ## Creator World
 
-A World should progressively contain:
+A World progressively contains:
 
-- character identity;
-- current offers;
+- creator persona/identity;
+- what is new;
+- current offers/unlocks;
 - active demand;
-- membership / Inner Circle;
+- membership/Inner Circle;
 - collections;
-- relevant community activity;
 - creator-approved availability;
-- history / outcomes;
-- future licensed local activations.
+- relevant community activity;
+- the user's history with that creator;
+- later licensed local activations.
 
-A Creator World replaces the need to think of profile, store, community and demand as four separate businesses.
+A Creator World replaces the need to think of profile, store, community and demand as separate businesses.
+
+## Make It Happen
+
+Demand creation/joining surface.
+
+The UX may use human language like:
+
+- “people are asking for this”;
+- “this is growing”;
+- “join”;
+- “I'd pay…”;
+- “help make it happen”.
+
+The underlying economic states must remain explicit and truthful.
+
+## Activity / History
+
+Shows:
+
+- demand joined;
+- pledge/commit state;
+- purchases;
+- unlocks;
+- fulfillment;
+- relevant callbacks.
+
+This is where continuity becomes visible.
 
 ---
 
-# 4. CREATOR INFORMATION ARCHITECTURE
+# 6. COMMERCE CLARITY RULE
+
+Immersive presentation stops being abstract when money moves.
+
+At checkout/commitment boundaries Mara must clearly state:
+
+- exact product/experience;
+- price;
+- fulfillment owner;
+- what the user gets;
+- expected timing;
+- rules;
+- cancellation/refund conditions where applicable.
+
+Principle:
+
+> **WORLD ON THE SURFACE. COMMERCE CLARITY AT CHECKOUT.**
+
+Do not hide material commercial facts behind narrative language.
+
+---
+
+# 7. CREATOR INFORMATION ARCHITECTURE
 
 ## Creator World Manager
 
 Controls:
 
-- public character identity;
+- public persona;
 - disclosure mode;
-- offer/catalog settings;
+- offers/catalog;
 - availability;
 - World configuration.
+
+Creators should not need to become game designers or daily community operators.
 
 ## Privacy Shield
 
 Controls:
 
-- face / real-content exposure;
+- face/real-content exposure;
 - voice mode;
 - target markets;
 - excluded markets;
 - protected geographic zones;
 - identity-leak warnings;
-- representative / operator visibility rules.
+- representative/operator visibility rules.
 
 ## What Your World Wants
 
-Shows aggregate opportunity:
+Shows aggregated opportunity:
 
 - demand clusters;
-- committed users;
+- commitment level;
 - WTP;
-- pledged/verified demand GMV;
-- geography where safe;
+- verified demand GMV;
+- safe geography;
 - fulfillment complexity;
-- suggested next commercial action.
+- suggested next action.
 
 ## Commerce
 
@@ -113,36 +231,33 @@ Controls:
 - earnings;
 - refunds/cancellations where supported.
 
-## Creator OS definition
+## Creator OS
 
-“Creator OS” is the collection of these creator-side operating surfaces. It is not a fifth engine and not a separate strategic thesis.
+Creator OS is the collection of these creator-side operating surfaces. It is not a fifth engine and not a separate thesis.
 
 ---
 
-# 5. CORE DATA / DOMAIN OBJECTS
+# 8. CORE DOMAIN OBJECTS
 
-The conceptual domain should converge around reusable primitives rather than feature-specific ledgers.
+Use reusable primitives rather than feature-specific ledgers.
 
-## Creator / Character
+## Creator / Persona
 
-Represents verified private operator + public persona relationship.
+Private verified operator + public persona relationship.
 
 ## Exposure Policy
 
-Defines what may be public across:
+Controls identity, face, real content, voice, geography and direct interaction.
 
-- identity;
-- face;
-- real content;
-- voice;
-- geography;
-- direct interaction.
+## Creator World
+
+Persistent container connecting persona, offers, demand, activity and history.
 
 ## Demand Request / Demand Cluster
 
 Represents raw desire and grouped similar demand.
 
-Fields conceptually include:
+Conceptual fields:
 
 - World/Creator;
 - category;
@@ -159,7 +274,7 @@ Fields conceptually include:
 
 Reusable sellable contract.
 
-Potential families:
+Families:
 
 - DIGITAL_PRODUCT;
 - PERSONALIZED_DIGITAL;
@@ -178,7 +293,7 @@ Tracks promised value becoming delivered value.
 
 ## History Event
 
-Records meaningful consequence such as:
+Meaningful consequence such as:
 
 - DEMAND_CREATED;
 - DEMAND_JOINED;
@@ -192,19 +307,20 @@ Records meaningful consequence such as:
 
 ---
 
-# 6. CONCEPT CONSOLIDATION MATRIX
+# 9. CONCEPT CONSOLIDATION MATRIX
 
 | Concept | Decision | Strategic home | Reason / destination |
 |---|---|---|---|
-| Mara Vera | KEEP | Creator Zero | acquisition + first commerce/demand proof |
-| Creator Zero | KEEP | operating model | seed supply and reusable proof |
-| Character Canon | KEEP | specialist execution | Mara-specific identity only |
-| chatbot | DEMOTE | World/retention | bounded support, not core business |
+| Mara | KEEP | connective host/intelligence layer | connects Worlds, demand, memory and discovery |
+| Mara Vera | KEEP | brand/experience persona | acquisition + brand + controlled product testing; not another marketplace creator |
+| Creator Zero framing | DEMOTE | historical/product proof | useful internally for old commerce evidence, not current user-facing company model |
+| Character Canon | KEEP | specialist execution | Mara Vera-specific identity only |
+| chatbot | DEMOTE | World/retention | bounded assistance, not core business |
 | Relationship Engine | DEMOTE | World/retention | reuse only where it improves return/commerce |
 | rituals | MERGE | Offer / World content | SKU/engagement format |
 | Story Pass | MERGE | Offer | commercial format, not platform engine |
-| audio inventory | MERGE | Offer | Creator Zero SKU format |
-| immersive scenes | MERGE | Offer | Creator Zero SKU format |
+| audio inventory | MERGE | Offer | offer format |
+| immersive scenes | MERGE | Offer | offer/content format, not product architecture |
 | Creator Store | MERGE | Creator World | commerce surface inside World |
 | Creator World | KEEP | World/retention | canonical creator container |
 | Creator OS | KEEP | creator back office | cross-engine operating surface |
@@ -212,11 +328,12 @@ Records meaningful consequence such as:
 | Caprichos | MERGE | Demand + Commerce | branded demand/goal UX, no separate ledger |
 | Make It Happen | KEEP | Demand | primary demand-creation action |
 | WANT / PLEDGE / COMMIT | KEEP | Demand | economic signal ladder |
-| Demand Marketplace | KEEP | Demand | canonical integrating DEV lab / future network primitive |
+| Demand Marketplace | KEEP | Demand | canonical integrating DEV lab / network primitive |
 | Demand Graph | KEEP | Demand/moat | aggregate compounding asset |
-| My History | KEEP | World/retention | consequence and return |
-| Since You Left | KEEP | World/retention | return surface after history exists |
-| Inner Circle | KEEP | World + Commerce | membership product family, NEXT |
+| My History | KEEP | World/retention | continuity and return |
+| Since You Left | KEEP | World/retention | return cue after history exists |
+| Mara Connects / For You | KEEP | World/retention | lightweight cross-World connection, not generic feed |
+| Inner Circle | KEEP | World + Commerce | membership family, evidence-gated |
 | Creator Privacy Shield | KEEP | Identity & Privacy | core supply differentiator |
 | voice transformation | MERGE | Privacy Shield | voice exposure control |
 | geo-fencing | MERGE | Privacy Shield | geographic exposure control |
@@ -225,53 +342,48 @@ Records meaningful consequence such as:
 | Host Marketplace | DEFER | Fulfillment | requires validated physical demand |
 | Role Marketplace | DEFER | Fulfillment | later supply/reputation layer |
 | MARA IRL | DEFER | Fulfillment | later, gated by safety/ops/provider readiness |
-| Event VIP | DEFER | Commerce | physical scarcity/service layer |
-| Global VIP | DEFER | Commerce | requires multi-World liquidity |
-| Concierge | DEFER | Fulfillment/Commerce | high operational load; later |
+| VIP | DEFER | Commerce | scarcity/service/privacy/priority, never consent |
+| Concierge | DEFER | Fulfillment/Commerce | high operational load |
 | Creator Pro | KEEP | monetization | only after real workflow value exists |
-| Creator Growth | DEFER | Creator OS | distribution tooling after creator pilot |
+| Creator Growth | DEFER | Creator OS | after creator pilot |
 | Agency OS | DEFER | B2B | later scale layer |
-| Brand Marketplace | DEFER | B2B | later, after organic creator commerce |
-| Creator App Store | DEFER | ecosystem | maturity-stage platform layer |
+| Brand Marketplace | DEFER | B2B | later |
 | promoted discovery | DEFER | marketplace revenue | requires organic discovery liquidity |
-| Mara Pass | DEFER | consumer recurring | only after cross-World repeat value |
-| generic social feed | KILL | none | weak strategic fit / complexity |
+| generic social feed | KILL | none | complexity without clear strategic value |
 | unlimited AI chat | KILL | none | variable cost + strategic distraction |
-| 3D world/metaverse | KILL | none | no MVP value |
+| 3D world/metaverse | KILL | none | immersion does not require it |
+| game map / heavy lore | KILL | none | operational complexity without current KPI case |
+| XP/complex badge economy | KILL | none | unnecessary gamification |
 | crypto/NFT economy | KILL | none | no current business need |
 | separate new lab per idea | KILL | governance | causes strategic entropy |
 
-KILL means do not roadmap/build. Existing code need not be destructively removed unless maintenance cost later justifies cleanup.
+KILL means do not roadmap/build. Existing code need not be destructively removed unless maintenance later justifies cleanup.
 
 ---
 
-# 7. LAB PORTFOLIO
+# 10. LAB PORTFOLIO
 
-The repository currently contains multiple DEV labs. They are evidence, not independent product lines.
-
-## Canonical integrator
+Canonical strategic integrator:
 
 `/experience/demand-marketplace-lab`
 
-This should increasingly prove the end-to-end strategic loop because it already spans demand family, World context, privacy mode, WTP, commitment and opportunity.
+Supporting evidence labs:
 
-## Supporting evidence labs
+- `creator-os-lab`;
+- `revenue-engine-lab`;
+- `commerce-lab`;
+- `caprichos-lab`;
+- `wtp-lab`;
+- `rituals-lab`;
+- other historical labs as research.
 
-- `creator-os-lab` — creator back-office/provenance evidence;
-- `revenue-engine-lab` — economic scenario evidence;
-- `commerce-lab` — commerce primitives;
-- `caprichos-lab` — branded goal/demand behavior;
-- `wtp-lab` — WTP evidence;
-- `rituals-lab` — Creator Zero content/engagement evidence;
-- other historical labs — preserve as research unless maintenance becomes material.
-
-Rule:
+Do **not** create a separate “immersive world lab”. The practical experience hypothesis should be tested by improving existing surfaces.
 
 > **NO NEW DEV LAB IF THE HYPOTHESIS CAN BE PROVEN BY EXTENDING THE CANONICAL INTEGRATOR OR AN EXISTING SPECIALIST LAB.**
 
 ---
 
-# 8. MONETIZATION MAP
+# 11. MONETIZATION MAP
 
 | Rail | Payer | Engine | Phase | Value |
 |---|---|---|---|---|
@@ -279,7 +391,7 @@ Rule:
 | differentiated source economics | Creator | Demand + Commerce | NEXT | fair pricing based on who generated demand |
 | Creator Pro | Creator | Creator OS | NEXT/LATER | analytics/automation/merchandising/privacy workflow |
 | Inner Circle | buyer | World + Commerce | NEXT | recurring access/belonging |
-| Studio/setup | Creator | Privacy + Commerce | LATER | managed character/business setup |
+| Studio/setup | Creator | Privacy + Commerce | LATER | managed persona/business setup |
 | VIP | buyer | Commerce | LATER | scarcity, service, privacy, hospitality |
 | Host/licensing fees | Host/Creator/operator | Fulfillment | LATER | validated demand + orchestration |
 | venue/capacity matching | Venue/Host | Fulfillment | LATER | demand access and utilization |
@@ -289,7 +401,7 @@ Rule:
 
 ---
 
-# 9. BUILD FILTER
+# 12. BUILD FILTER
 
 A feature may enter execution only if it materially improves at least one:
 
@@ -297,6 +409,7 @@ A feature may enter execution only if it materially improves at least one:
 - demand quality;
 - fulfillment/conversion;
 - repeat purchase;
+- cross-World discovery;
 - creator earnings;
 - contribution margin;
 - trust/privacy/compliance;
@@ -307,18 +420,27 @@ It must also have:
 - one strategic engine;
 - one accountable KPI;
 - one phase;
-- one clear user/payer.
+- one clear user/payer;
+- an existing surface whenever possible.
 
 Otherwise: backlog, not roadmap.
 
 ---
 
-# 10. FINAL PRODUCT TEST
+# 13. FINAL PRODUCT TEST
 
-The architecture is coherent when every meaningful feature can be explained as:
+The architecture is coherent when the user can feel:
 
-`PRIVACY-SAFE CREATOR SUPPLY → WORLD → DEMAND → OFFER → FULFILLMENT → HISTORY → RETURN`
+`I ENTER A WORLD → SOMETHING MATTERS → I PARTICIPATE → SOMETHING CHANGES → MARA REMEMBERS → I DISCOVER WHAT COMES NEXT`
 
-Anything outside that loop requires exceptional justification.
+while the business underneath runs:
+
+`PRIVACY-SAFE CREATOR SUPPLY → DEMAND → OFFER → PURCHASE → FULFILLMENT → HISTORY → RETURN`
+
+The first loop is the experience.
+
+The second loop is the business.
+
+They should reinforce each other without requiring a complex virtual world.
 
 **NO MERGE unless Ignacio explicitly writes `mergea`.**
