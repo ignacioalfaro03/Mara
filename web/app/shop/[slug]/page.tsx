@@ -14,6 +14,9 @@ export default async function StoreProductPage({ params }: { params: Promise<{ s
   if (!product) notFound();
 
   const next = product.nextSlug ? getStoreProduct(product.nextSlug) : null;
+  const deliveryReady = process.env.MARA_PREMIUM_DELIVERY_READY === "true"
+    && Boolean(process.env.MARA_PREMIUM_STORAGE_BUCKET?.trim())
+    && Boolean(product.privateAssetPath);
 
   return (
     <main className={styles.shell}>
@@ -36,10 +39,11 @@ export default async function StoreProductPage({ params }: { params: Promise<{ s
           <aside className={styles.purchasePanel}>
             {product.status === "available" && product.offerSlug && product.entitlementKey ? (
               <StorefrontProductAccess
+                slug={product.slug}
                 offerSlug={product.offerSlug}
                 entitlementKey={product.entitlementKey}
                 priceLabel={product.priceLabel}
-                ownedContent={product.ownedContent}
+                deliveryReady={deliveryReady}
               />
             ) : (
               <div className={styles.buttonStack}>

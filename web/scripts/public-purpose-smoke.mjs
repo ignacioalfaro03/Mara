@@ -28,6 +28,9 @@ try {
   const premium = await context.request.get(`${baseUrl}/premium`);
   assert(premium.status() === 404, `/premium is parked and must stay 404, got ${premium.status()}`);
 
+  const anonymousPremiumAsset = await context.request.get(`${baseUrl}/api/commerce/content/night-note`);
+  assert(anonymousPremiumAsset.status() === 401, `premium asset must require auth, got ${anonymousPremiumAsset.status()}`);
+
   // Latest founder contract: Home sells the evergreen catalog first; DM remains a free sample.
   await page.goto(`${baseUrl}/`, { waitUntil: "networkidle" });
   await passAgeGate(page);
@@ -42,7 +45,8 @@ try {
   await page.getByRole("link", { name: "Ver experiencia" }).click();
   await page.waitForURL(/\/shop\/night-note$/);
   await page.getByRole("heading", { name: "La nota de esta noche" }).waitFor();
-  await page.getByRole("button", { name: "Desbloquear" }).waitFor();
+  await page.getByText("Aún no disponible").waitFor();
+  assert(await page.getByRole("button", { name: "Desbloquear" }).count() === 0, "checkout must stay closed until private fulfillment is explicitly ready");
 
   // Library must derive ownership from server truth. Anonymous visitors are asked to authenticate.
   await page.goto(`${baseUrl}/library`, { waitUntil: "networkidle" });

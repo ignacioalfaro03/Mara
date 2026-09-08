@@ -10,15 +10,17 @@ type ViewerPayload = {
 };
 
 export function StorefrontProductAccess({
+  slug,
   offerSlug,
   entitlementKey,
   priceLabel,
-  ownedContent,
+  deliveryReady,
 }: {
+  slug: string;
   offerSlug: string;
   entitlementKey: string;
   priceLabel: string;
-  ownedContent: string[];
+  deliveryReady: boolean;
 }) {
   const [checking, setChecking] = useState(true);
   const [owned, setOwned] = useState(false);
@@ -60,13 +62,20 @@ export function StorefrontProductAccess({
 
   if (owned) {
     return (
-      <div>
+      <div className={styles.buttonStack}>
         <p className={styles.eyebrow}>TUYO</p>
         <span className={styles.price}>Desbloqueado</span>
-        <div className={styles.libraryCard}>
-          {ownedContent.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-        </div>
-        <p className={styles.notice}>Esta experiencia está asociada a tu cuenta y puedes volver a abrirla desde Mi biblioteca.</p>
+        {deliveryReady ? (
+          <a className={styles.primaryButton} href={`/api/commerce/content/${encodeURIComponent(slug)}`} target="_blank" rel="noreferrer">
+            Abrir contenido
+          </a>
+        ) : (
+          <>
+            <span className={styles.secondaryButton} aria-disabled="true">Entrega privada en preparación</span>
+            <p className={styles.notice}>Tu acceso está registrado. Esta rama no habilita el activo premium hasta que el canal privado esté configurado.</p>
+          </>
+        )}
+        <Link className={styles.secondaryButton} href="/library">Ir a mi biblioteca</Link>
       </div>
     );
   }
@@ -77,6 +86,17 @@ export function StorefrontProductAccess({
         <p className={styles.eyebrow}>ACCESO</p>
         <p className={styles.notice}>No pude verificar ahora si ya tienes esta experiencia. Para evitar cobrarte dos veces, no abriré checkout hasta poder comprobarlo.</p>
         <Link className={styles.secondaryButton} href="/library">Revisar mi biblioteca</Link>
+      </div>
+    );
+  }
+
+  if (!deliveryReady) {
+    return (
+      <div className={styles.buttonStack}>
+        <p className={styles.eyebrow}>EN PREPARACIÓN</p>
+        <span className={styles.price}>{priceLabel}</span>
+        <span className={styles.secondaryButton} aria-disabled="true">Aún no disponible</span>
+        <p className={styles.notice}>El precio ya está definido, pero el checkout seguirá cerrado hasta que la entrega premium privada esté lista de punta a punta.</p>
       </div>
     );
   }

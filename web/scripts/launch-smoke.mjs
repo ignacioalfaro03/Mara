@@ -2,7 +2,7 @@ import { chromium } from "playwright";
 
 const baseUrl = process.env.BASE_URL || "http://127.0.0.1:3000";
 const protectionBypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET?.trim();
-const publicPaths = ["/", "/meet-mara", "/legal"];
+const publicPaths = ["/", "/meet-mara", "/legal", "/shop", "/library"];
 const parkedPaths = ["/premium"];
 const labPaths = [
   "/experience/caprichos-lab",
@@ -97,7 +97,7 @@ try {
   const home = await page.goto(`${baseUrl}/?src=ig&campaign=must-not-leak`, { waitUntil: "networkidle" });
   assert(home?.status() === 200, `Home returned ${home?.status()}`);
   await passAgeGate(page);
-  await page.getByText("Llegaste justo.").waitFor();
+  await page.getByText("No tienes que hablar conmigo todo el día.").waitFor();
   await assertMaraImageLoaded(page, "home");
   await assertNoHorizontalOverflow(page, "/");
 
