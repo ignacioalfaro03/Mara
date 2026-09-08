@@ -23,6 +23,12 @@ for (const required of [
   "ACTION_COOLDOWN_DAYS",
   "earningsPerCreatorHour",
   "dashboardSummary",
+  "createdAt",
+  "scope",
+  "consentStatus",
+  "creatorVisible",
+  "userEditable",
+  "visiblePreferenceSignals",
 ]) {
   assert(lib.includes(required), `Missing Creator OS contract token: ${required}`);
 }
@@ -48,6 +54,11 @@ for (const forbiddenField of [
 
 assert(lib.includes("fan.lastCreatorActionDaysAgo < ACTION_COOLDOWN_DAYS"), "Next Best Action must include cooldown logic");
 assert(lib.includes("Empieza con valor gratuito, no con presión de compra."), "Dormant reactivation must not default to aggressive upsell");
+assert(lib.includes("fan.preferences.filter((signal) => signal.creatorVisible)"), "Creator-visible signal helper must enforce visibility");
+assert(page.includes("visiblePreferenceSignals(fan)"), "Creator OS page must render only creator-visible signals");
+assert(!page.includes("fan.preferences.map("), "Creator OS page must not bypass creator-visible filtering");
+assert(page.includes("scope={signal.scope}"), "Fan 360 UI must expose signal scope provenance");
+assert(page.includes("consent={signal.consentStatus}"), "Fan 360 UI must expose consent provenance");
 
 const baseUrl = process.env.BASE_URL || "http://127.0.0.1:3000";
 const response = await fetch(`${baseUrl}/experience/creator-os-lab`, { redirect: "manual" });
