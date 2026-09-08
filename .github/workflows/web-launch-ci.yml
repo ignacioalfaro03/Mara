@@ -116,3 +116,4 @@ jobs:
           node scripts/world-sofi-smoke.mjs
           node scripts/launch-loop-smoke.mjs
           node scripts/creator-interest-smoke.mjs
+          node scripts/creator-os-contract-smoke.mjs
