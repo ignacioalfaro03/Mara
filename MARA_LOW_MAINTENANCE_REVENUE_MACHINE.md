@@ -154,7 +154,7 @@ Do not turn it into a complex gamification system.
 - refunds/revocation;
 - first-party analytics;
 - character canon;
-- reusable content/scene/ritual inventory.
+- reusable content/scene/ritual inventory as ideation/prototype material.
 
 ### SIMPLIFY / REPOSITION
 
@@ -207,19 +207,65 @@ freeze feature development.
 
 Reopen engineering only when evidence identifies a commercial bottleneck.
 
-## 12. Current execution focus
+## 12. Premium asset security contract
+
+The Mara repository is currently public. That creates a hard commercial boundary:
+
+### PUBLIC / SAFE TO COMMIT
+
+- storefront code;
+- product names;
+- public descriptions;
+- prices;
+- teasers and previews intentionally given away;
+- entitlement keys and non-secret catalog metadata;
+- private storage object paths when the bucket itself is protected.
+
+### PRIVATE / NEVER SHIP IN THE PUBLIC REPO OR CLIENT BUNDLE
+
+- final paid scripts;
+- paid photos;
+- paid video;
+- paid audio;
+- complete premium experience payloads;
+- any asset whose scarcity/access is part of the purchase value.
+
+Premium assets must be delivered through a private authenticated channel. The current implementation uses this contract:
+
+`AUTHENTICATED USER → ACTIVE ENTITLEMENT CHECK → SERVER ROUTE → PRIVATE STORAGE ASSET`
+
+Checkout must remain closed unless both server-side gates are configured:
+
+- `MARA_PREMIUM_STORAGE_BUCKET`
+- `MARA_PREMIUM_DELIVERY_READY=true`
+
+The readiness flag is deliberate. Merely configuring a bucket must never accidentally make an untested paid experience sellable.
+
+The private content route must:
+
+1. verify the current user server-side;
+2. verify an active entitlement server-side;
+3. retrieve the premium asset using server-only credentials;
+4. never expose service credentials to the browser;
+5. use private/no-store delivery semantics;
+6. return no premium payload to unauthorized users.
+
+Existing scene Markdown in this public repository is therefore **prototype/ideation material**, not a secure final paid asset. Do not sell those files verbatim. Final premium versions must be produced separately and stored privately, or the repository itself must become private before those assets are committed.
+
+## 13. Current execution focus
 
 The first transformation slice is:
 
 1. make `/shop` the editorial commercial surface;
 2. keep `/experience` as a secondary free sample;
-3. expose the existing fixed paid unlock as the first real purchasable item;
+3. expose the existing fixed paid unlock as the first configured entry SKU, but keep checkout closed until private fulfillment passes end-to-end;
 4. surface the next prepared experience families without falsely claiming unproduced media exists;
 5. add `/library` on top of existing server-authoritative entitlements/purchases;
-6. preserve Caprichos and relationship infrastructure without putting them at the center;
-7. do not activate real payments, deploy production, or merge without founder authorization.
+6. add entitlement-gated private premium delivery infrastructure;
+7. preserve Caprichos and relationship infrastructure without putting them at the center;
+8. do not activate real payments, mutate production storage, deploy production, or merge without founder authorization.
 
-## 13. Override rule
+## 14. Override rule
 
 When older documents conflict with this direction, use this decision:
 
