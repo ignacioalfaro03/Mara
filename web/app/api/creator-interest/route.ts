@@ -35,7 +35,7 @@ type CreatorInterestPayload = {
   website?: unknown;
 };
 
-function writeHeaders(config: NonNullable<ReturnType<typeof getServerBackendConfig>>) {
+function writeHeaders(config: NonNullable<ReturnType<typeof getServerBackendConfig>>): Record<string, string> {
   if (config.serviceRoleKey.startsWith("sb_secret_")) {
     return {
       apikey: config.serviceRoleKey,
