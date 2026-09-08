@@ -10,8 +10,9 @@ PR: #62
 - Signed-test commerce only. No real payment or payout was executed.
 - No production alias or deployment was moved.
 - No merge was performed.
-- QA personas reuse existing test-capable auth accounts but this proof intentionally does not record emails or auth user IDs.
+- QA personas reused existing test-capable auth accounts only for the bounded proof; this document intentionally records no emails or auth user IDs.
 - Cross-creator authorization was exercised under authenticated JWT/RLS context.
+- All persistent QA fixture rows were deleted after evidence capture. Final QA fixture counts are zero.
 
 ## E2E path exercised
 
@@ -19,7 +20,7 @@ PR: #62
 
 Creator B was used as the negative isolation persona.
 
-## Bug found during E2E
+## Bug 1 found during E2E — PURCHASE was collapsing into FULFILLMENT
 
 Before this run, every creator offer was represented as `fixed_unlock`, and `fulfill_mara_commerce_checkout` wrote `fulfilled_at = now()` immediately. For `personalized_digital` and `bounded_interaction`, this incorrectly collapsed PURCHASE and FULFILLMENT into one event, prevented the `FULFILL` Next Best Action from becoming reachable, and could grant entitlement before the creator delivered.
 
@@ -52,7 +53,7 @@ Two COMMIT signals were persisted against the QA demand request.
 - aggregate `commit_wtp_total_minor`: **3,300,000 CLP minor units**
 - Creator A raw signal rows visible under RLS: **1**
 
-The second COMMIT used `privacy_mode = private`, so it contributes to privacy-safe aggregate demand while remaining hidden as a raw customer signal from the creator.
+The second COMMIT used `privacy_mode = private`, so it contributed to privacy-safe aggregate demand while remaining hidden as a raw customer signal from the creator.
 
 ### State immediately after signed-test purchase
 
@@ -107,13 +108,51 @@ Under Customer A authenticated context:
 - creator CRM rows visible: **0**
 - own active entitlement rows for the QA purchase: **1**
 
+## Bug 2 found during QA cleanup — demand metric cascade delete
+
+The first fixture cleanup attempt exposed a referential-integrity defect: deleting a `demand_request` cascades into `demand_signals`, whose DELETE trigger attempted to recreate `demand_request_metrics` after the parent request no longer existed. The transaction failed safely and rolled back.
+
+### Fix applied
+
+Migration: `mara_demand_metrics_delete_cascade_guard`
+Repository migration: `supabase/migrations/20260908165500_mara_demand_metrics_delete_cascade_guard.sql`
+
+`private.refresh_mara_demand_request_metrics()` now exits without recreating metrics when the parent demand request no longer exists.
+
+The same cleanup then completed successfully.
+
+## QA cleanup result
+
+After proof capture, all fixture rows were removed from the connected database:
+
+- QA creators: **0**
+- QA Worlds: **0**
+- QA demand requests: **0**
+- QA offers: **0**
+- QA purchases: **0**
+- QA webhook events: **0**
+
+Only the product/database fixes remain.
+
+## Regression protection
+
+`web/scripts/real-app-wiring-contract-smoke.mjs` now asserts the manual-fulfillment contract, including:
+
+- manual fulfillment families remain explicit;
+- creator fulfillment uses `complete_mara_creator_fulfillment` rather than service-role direct patching;
+- premature entitlement guard remains in the migration;
+- the creator-scoped authorization error remains present;
+- generated DB types include the fulfillment RPC.
+
+The smoke is wired into `Web Launch CI` as `Verify Real App Wiring contract`.
+
 ## Result
 
 The core Private Alpha commercial loop is proven against the live Supabase primitives using signed-test payment semantics:
 
 `Demand -> Offer -> Purchase -> CRM -> NBA -> Fulfillment -> Entitlement -> History`
 
-RLS preserves Creator A / Creator B isolation, and private demand participates in aggregates without exposing raw private signals.
+RLS preserves Creator A / Creator B isolation, private demand participates in aggregates without exposing raw private signals, and QA cleanup is now safe under cascade deletion.
 
 ## Remaining gates
 
