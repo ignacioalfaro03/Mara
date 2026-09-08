@@ -8,7 +8,7 @@
 > Current sequencing: [`docs/strategy/MARA_EXECUTION_ROADMAP_90D_V1.md`](./docs/strategy/MARA_EXECUTION_ROADMAP_90D_V1.md)  
 > New-idea governance: [`docs/strategy/MARA_IDEA_INTAKE_GOVERNANCE_V1.md`](./docs/strategy/MARA_IDEA_INTAKE_GOVERNANCE_V1.md)
 >
-> Older founder constitutions, amendments and strategy documents are retained as historical/specialist context. If they conflict with the authority above, **V2 wins**.
+> Older founder constitutions, amendments and strategy documents are historical/specialist context. If they conflict with V2, **V2 wins**.
 >
 > Founder boundary: **NO MERGE unless Ignacio explicitly writes `mergea`.** No production deployment, payment activation, payout activation or external spend is implied by strategy work.
 
@@ -16,27 +16,86 @@
 
 # Company thesis
 
-Mara is a **privacy-first creator commerce and demand network** for verified adult creators.
+Mara is a **privacy-first creator commerce and demand network presented as a connected world, not as a marketplace directory**.
 
-> **MARA HELPS VERIFIED CREATORS MONETIZE WITHOUT MAKING THEIR REAL-WORLD IDENTITY THE PRODUCT, WHILE TURNING AUDIENCE DEMAND INTO FULFILLED COMMERCE.**
+> **MARA CONNECTS CREATOR WORLDS, HELPS CREATORS OPERATE BETTER BUSINESSES AND TURNS AUDIENCE DEMAND INTO FULFILLED COMMERCE — WITHOUT MAKING THE CREATOR'S REAL-WORLD IDENTITY THE PRODUCT.**
 
-Mara Vera is **Creator Zero**: first character, first demand seed, first commerce proof and reusable product template — not the ceiling of the company.
+Each creator has her own World.
 
-Core creator promise:
+Mara is the **host, connective presence and intelligence layer behind those Worlds**.
 
-> **Your character can be public. You do not have to be.**
+Mara is not another creator competing inside the network.
 
-Privacy means controlled public exposure and verified pseudonymity where appropriate. It does not mean avoiding KYC, consent, tax, payout or lawful obligations.
+Mara Vera may remain a brand/experience persona, acquisition asset and controlled product-test asset, but the company should not be modeled as “Mara Vera plus other creators”.
+
+Internal principle:
+
+> **MARA IS BEHIND THE WORLDS, NOT JUST ANOTHER WORLD.**
 
 ---
 
-# One canonical loop
+# Product experience principle
+
+The backend may behave like a marketplace.
+
+The surface should not feel like one.
+
+> **DO NOT BUILD IMMERSION. DESIGN THE FEELING OF IMMERSION.**
+
+For now, Mara should create that feeling with only three practical mechanisms:
+
+1. **Creator World** — one coherent creator space instead of separate profile/store/community/request products.
+2. **Mara Connects** — lightweight discovery and context across Worlds.
+3. **Continuity** — meaningful actions come back later as progress, history or consequence.
+
+Examples of lightweight Mara cues:
+
+- “something you joined changed”;
+- “this is growing”;
+- “while you were away…”;
+- “you may like this World next”.
+
+This does **not** require:
+
+- 3D worlds;
+- metaverse;
+- game maps;
+- XP systems;
+- complex lore;
+- heavy gamification;
+- constant chatbot interaction.
+
+Build rule:
+
+> **IF AN IMMERSIVE FEATURE DOES NOT IMPROVE CONVERSION, RETURN, DEMAND QUALITY OR CROSS-WORLD DISCOVERY, DO NOT BUILD IT.**
+
+---
+
+# Commerce clarity
+
+Narrative/World presentation can make discovery feel natural, but when money moves Mara must become explicit.
+
+At purchase/commitment boundaries show clearly:
+
+- what is being purchased;
+- price;
+- fulfillment responsibility;
+- what the buyer receives;
+- expected timing;
+- rules;
+- cancellation/refund conditions where applicable.
+
+> **WORLD ON THE SURFACE. COMMERCE CLARITY AT CHECKOUT.**
+
+---
+
+# One canonical economic loop
 
 `CREATOR → WORLD → AUDIENCE → WANT → PLEDGE → COMMIT → AGGREGATED DEMAND → OFFER → TRANSACTION → FULFILLMENT → MEMORY → RETURN`
 
 Mara should not build supply blindly when demand can be captured first.
 
-Mara should not count a WANT, PLEDGE, COMMIT and PURCHASE as the same economic signal.
+WANT, PLEDGE, COMMIT and PURCHASE are different economic states and must remain distinct.
 
 ---
 
@@ -46,12 +105,16 @@ Mara should not count a WANT, PLEDGE, COMMIT and PURCHASE as the same economic s
 
 Unlock creator supply through:
 
-- character/public persona separation;
+- persona/public identity separation;
 - exposure controls;
-- geo targeting and excluded cities/regions/radii;
-- voice modes: real, transformed, character, text-only or mixed;
+- geo targeting and excluded zones;
+- real/transformed/character/text-only voice modes;
 - privacy/deanonymization checks;
 - minimum-necessary information exposure.
+
+Core promise:
+
+> **A creator should be able to monetize a large audience without having to monetize her real-world identity.**
 
 ## 2. Demand
 
@@ -60,49 +123,65 @@ Learn what communities want through:
 - Make It Happen;
 - WANT / PLEDGE / COMMIT;
 - WTP;
-- demand clustering;
+- clustering;
 - location-aware demand;
 - Creator Opportunity View;
 - Demand Graph.
 
 ## 3. Commerce & Fulfillment
 
-Turn approved demand into delivered value through:
+Turn approved demand/inventory into delivered value:
 
-`DEMAND → OFFER → PURCHASE → ENTITLEMENT / BOOKING → FULFILLMENT`
+`DEMAND / INVENTORY → OFFER → PURCHASE → ENTITLEMENT / BOOKING → FULFILLMENT`
 
-Digital products come first because they are lower-complexity and more compatible with the low-maintenance operating constraint.
+Digital products come first because they are lower-complexity and fit the low-maintenance operating constraint.
 
 ## 4. World, Memory & Retention
 
 Make participation accumulate through:
 
 - Creator World;
-- offers/store;
 - My History;
 - Since You Left;
 - collections;
-- membership/Inner Circle;
-- meaningful community activity.
+- membership;
+- relevant community activity;
+- Mara cross-World discovery.
 
-Community is not a generic feed. It must create demand, commerce, reputation, belonging or repeat behavior.
+Community is not a generic feed. It must create demand, commerce, belonging, reputation or repeat behavior.
 
 ---
 
 # Important concept decisions
 
+- **Mara** = host/connective intelligence across Worlds.
+- **Mara Vera** = brand/experience persona + acquisition/product-test asset; not another marketplace creator.
+- **Creator Zero framing** = historical/internal proof language only; demoted from company model.
 - **Creator World** = canonical creator container.
-- **Creator Store** = commerce surface inside the World.
-- **Creator OS** = creator back-office across the four engines; not a separate company thesis.
+- **Creator Store** = commerce surface inside a World.
+- **Creator OS** = creator back-office across the four engines.
 - **Fan 360** = narrow creator-scoped commercial context; not a dossier.
-- **Caprichos** = Mara-native UX on top of Demand + Commerce; not a separate economy/ledger.
-- **Audio / rituals / Story Pass / immersive scenes / drops** = Creator Zero offer/fulfillment formats; not separate strategies.
-- **Chat / Relationship Engine** = supporting retention/engagement tools; not the core business.
-- **Hosts / Roles / Venues / IRL** = future fulfillment layers; not MVP.
+- **Caprichos** = branded UX on top of Demand + Commerce; not a separate economy.
+- **Audio / rituals / Story Pass / immersive scenes / drops** = offer/content formats, not separate strategies.
+- **Chat / Relationship Engine** = supporting engagement only.
+- **Hosts / Roles / Venues / IRL** = future fulfillment layers, not MVP.
 
-Operating principle for later physical fulfillment:
+Later physical operating principle:
 
 > **MARA ORCHESTRATES. THIRD PARTIES FULFILL.**
+
+---
+
+# Consumer surface
+
+Keep it simple:
+
+- **FOR YOU / HOME** — Mara-curated activity and cross-World discovery.
+- **CREATOR WORLD** — the creator's coherent space.
+- **MAKE IT HAPPEN** — create or join demand.
+- **MY ACTIVITY / HISTORY** — what the user joined, bought, unlocked or is waiting on.
+
+Avoid a marketplace-first product dominated by `Creators / Store / Events / Buy`.
 
 ---
 
@@ -110,7 +189,7 @@ Operating principle for later physical fulfillment:
 
 # FULFILLED DEMAND GMV
 
-Leading prototype metric before real commerce can be activated:
+Leading prototype metric before real commerce activation:
 
 **Verified Demand GMV**
 
@@ -122,7 +201,7 @@ Guardrails:
 - Mara contribution margin;
 - refund/cancellation/incident rate.
 
-Do not use follower count, generated content volume or message volume as North Star metrics.
+“Inmersión” is not a KPI by itself.
 
 ---
 
@@ -131,10 +210,11 @@ Do not use follower count, generated content volume or message volume as North S
 ## NOW
 
 1. creator supply interviews / privacy-value validation;
-2. payment + payout + compliance feasibility for the actual business model;
-3. demand behavior validation in the existing canonical demand lab;
-4. preserve/reuse Creator Zero digital commerce as reusable proof;
-5. no new strategy/lab proliferation.
+2. payment + payout + compliance feasibility for the actual model;
+3. demand behavior validation in the existing demand lab;
+4. reuse existing digital commerce proof;
+5. test lightweight World + continuity presentation using existing surfaces;
+6. no new strategy/lab proliferation.
 
 ## NEXT — only after evidence
 
@@ -144,6 +224,7 @@ Do not use follower count, generated content volume or message volume as North S
 - 3–5 creator private pilot;
 - demand → approved offer → digital purchase → fulfillment;
 - My History / Since You Left;
+- lightweight cross-World discovery;
 - source-of-demand attribution.
 
 ## LATER
@@ -156,6 +237,8 @@ Hosts, venues, IRL, City Activation, licensing, VIP, concierge, Agency OS, Brand
 - generic social feed;
 - open marketplace onboarding;
 - 3D worlds/metaverse;
+- game map or heavy lore systems;
+- XP/complex badges;
 - native mobile as launch dependency;
 - crypto/NFTs;
 - complex wallet/loyalty economy;
@@ -166,13 +249,13 @@ Hosts, venues, IRL, City Activation, licensing, VIP, concierge, Agency OS, Brand
 
 # DEV lab policy
 
-The repository contains several historical/specialist labs under `/experience`.
-
 Strategic integrator:
 
 `/experience/demand-marketplace-lab`
 
-Supporting evidence labs may remain for Creator OS, commerce, revenue, WTP, Caprichos and other hypotheses.
+Supporting labs remain evidence only.
+
+Do **not** create an “immersive world lab”. Test this direction by improving existing surfaces.
 
 > **NO NEW DEV LAB IF THE HYPOTHESIS CAN BE TESTED BY EXTENDING THE CANONICAL INTEGRATOR OR AN EXISTING SPECIALIST LAB.**
 
@@ -185,29 +268,13 @@ A new idea is not automatically a roadmap item.
 It must identify:
 
 1. one of the four engines;
-2. the user/payer;
-3. the KPI it should improve;
-4. the monetization or retention effect;
+2. user/payer;
+3. KPI;
+4. monetization or retention effect;
 5. NOW / NEXT / LATER / NOT NOW;
-6. the existing product surface or backlog destination.
+6. existing surface it can extend.
 
 If it cannot, do not build it.
-
-See [`docs/strategy/MARA_IDEA_INTAKE_GOVERNANCE_V1.md`](./docs/strategy/MARA_IDEA_INTAKE_GOVERNANCE_V1.md).
-
----
-
-# Mara Vera character authority
-
-For Mara Vera visual/personality identity specifically:
-
-[`MARA_CHARACTER_CANON.md`](./MARA_CHARACTER_CANON.md)
-
-Permanent rule:
-
-**ONE MARA. MANY CONTEXTS.**
-
-Character canon is a specialist execution authority and does not redefine the company strategy.
 
 ---
 
@@ -230,13 +297,13 @@ Required principles include:
 
 # Low-maintenance operating rule
 
-Founder time is scarce.
+Founder and creator time are scarce.
 
 Preferred model:
 
 `AUTOMATION + CREATOR SUPPLY + COMMUNITY ACTIVITY + AGGREGATED DEMAND + REUSABLE DIGITAL FULFILLMENT + THIRD-PARTY FULFILLMENT LATER`
 
-Do not create a business that requires the founder to post daily, chat continuously, coordinate every event, fulfill every request or manually operate every transaction.
+Do not create a business that requires daily founder posting, continuous chat, manual event coordination, high-touch content operations or creators designing complicated “worlds”.
 
 ---
 
@@ -248,8 +315,8 @@ Read strategy in this order:
 2. `docs/strategy/MARA_PRODUCT_ARCHITECTURE_V1.md`;
 3. `docs/strategy/MARA_EXECUTION_ROADMAP_90D_V1.md`;
 4. `docs/strategy/MARA_IDEA_INTAKE_GOVERNANCE_V1.md`;
-5. specialist strategy/product docs relevant to the task;
-6. historical founder documents and old labs as evidence only.
+5. specialist strategy/product docs;
+6. historical founder docs and labs as evidence only.
 
 Audit record:
 
