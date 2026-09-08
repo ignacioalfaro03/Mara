@@ -15,7 +15,7 @@ export default function HomePage() {
           <p className="eyebrow">MARA · EXPERIENCIAS PRIVADAS</p>
           <h1>No tienes que hablar conmigo todo el día.</h1>
           <p className="lede">
-            Entra, prueba una escena y quédate con lo que te guste. Mara ahora se construye alrededor de experiencias, audios y colecciones que puedes volver a abrir cuando quieras.
+            Entra, prueba una escena y quédate con lo que te guste. Hay experiencias, audios y colecciones privadas que puedes volver a abrir cuando quieras.
           </p>
           <div className="ctaRow">
             <Link
