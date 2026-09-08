@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getVerifiedSession } from "@/lib/auth-session";
+import { ProductTelemetry } from "@/components/product-telemetry";
 import { StorefrontCheckoutButton } from "@/components/storefront-checkout-button";
 import {
   formatMoney,
@@ -39,6 +40,8 @@ export default async function CreatorWorldPage({ params }: { params: Promise<{ s
 
   return (
     <main className={styles.shell}>
+      <ProductTelemetry event="world_viewed" surface={returnTo} target={owner ? "owner" : "visitor"} />
+      {history.length > 0 ? <ProductTelemetry event="returning_user" surface={returnTo} target="world_history" /> : null}
       <div className={styles.container}>
         <nav className={styles.nav}>
           <Link href="/">MARA</Link>
@@ -197,6 +200,7 @@ export default async function CreatorWorldPage({ params }: { params: Promise<{ s
         <section className={styles.grid}>
           {offers.filter((offer) => offer.status === "active" || owner).length === 0 ? <p className={`${styles.empty} ${styles.wide}`}>Todavía no hay una oferta activa. Este World puede empezar por escuchar antes de vender.</p> : offers.filter((offer) => offer.status === "active" || owner).map((offer) => (
             <article className={styles.card} key={offer.id}>
+              {offer.status === "active" ? <ProductTelemetry event="offer_viewed" surface={returnTo} target="creator_offer" offerSlug={offer.slug} offerType={offer.offer_family} currency={offer.currency} /> : null}
               <div className={styles.row}><p className={styles.eyebrow}>{offer.offer_family}</p><span className={styles.pill}>{offer.status}</span></div>
               <h2>{offer.title}</h2>
               <p className={styles.muted}>{offer.description}</p>
