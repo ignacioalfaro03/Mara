@@ -7,6 +7,7 @@ import {
   money,
   recommendNextAction,
   syntheticFans,
+  visiblePreferenceSignals,
 } from "@/lib/creator-os-lab";
 
 const segmentLabels: Record<string, string> = {
@@ -98,6 +99,7 @@ export default function CreatorOsLabPage() {
             const segments = deriveSegments(fan);
             const action = recommendNextAction(fan);
             const perHour = earningsPerCreatorHour(fan);
+            const visibleSignals = visiblePreferenceSignals(fan);
 
             return (
               <article className={styles.fanCard} key={fan.alias} data-testid={`fan-${fan.alias}`}>
@@ -128,7 +130,7 @@ export default function CreatorOsLabPage() {
 
                 <div className={styles.signalList}>
                   <p className={styles.kicker}>FAN 360 · PROVENANCE</p>
-                  {fan.preferences.map((signal) => (
+                  {visibleSignals.map((signal) => (
                     <div className={styles.signal} key={`${fan.alias}-${signal.key}`}>
                       <div>
                         <span className={styles.signalLabel}>{signal.label}</span>
@@ -136,7 +138,7 @@ export default function CreatorOsLabPage() {
                       </div>
                       <p>{signal.explanation}</p>
                       <small>
-                        source={signal.source} · confidence={signal.confidence} · {signal.userEditable ? "editable" : "derived from system truth"}
+                        source={signal.source} · confidence={signal.confidence} · scope={signal.scope} · consent={signal.consentStatus} · created={signal.createdAt} · {signal.userEditable ? "editable" : "system-derived/not directly editable"}
                       </small>
                     </div>
                   ))}
