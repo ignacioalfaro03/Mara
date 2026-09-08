@@ -45,12 +45,12 @@ export default async function StoreProductPage({ params }: { params: Promise<{ s
               <StorefrontCheckoutButton offerSlug={product.offerSlug} label="Desbloquear" />
             ) : (
               <div className={styles.buttonStack}>
-                <span className={styles.secondaryButton} aria-disabled="true">Todavía no está a la venta</span>
-                <p className={styles.notice}>Mara no habilita checkout hasta que el activo final, QA y acceso estén listos.</p>
+                <span className={styles.secondaryButton} aria-disabled="true">Todavía no te la puedo abrir</span>
+                <p className={styles.notice}>Cuando esté completa de verdad, aparecerá aquí para desbloquearla.</p>
               </div>
             )}
 
-            <p className={styles.notice}>Compra de producto digital concreto. No compra atención humana, afecto ni conversación ilimitada.</p>
+            <p className={styles.notice}>Desbloqueas una experiencia digital de Mara. Mara sigue siendo un personaje virtual; no estás comprando atención humana ni una relación real.</p>
           </aside>
         </section>
 
@@ -59,9 +59,9 @@ export default async function StoreProductPage({ params }: { params: Promise<{ s
             <div className={styles.sectionHeader}>
               <div>
                 <p className={styles.eyebrow}>DESPUÉS</p>
-                <h2>El siguiente paso ya está definido.</h2>
+                <h2>Si quieres seguir, ya sé por dónde.</h2>
               </div>
-              <p>La lógica de catálogo hace que cada producto tenga una continuación comercial clara sin necesitar intervención manual.</p>
+              <p>Cada experiencia puede llevarte naturalmente a otra, sin obligarte a quedarte conectado.</p>
             </div>
             <article className={styles.card}>
               <div>
