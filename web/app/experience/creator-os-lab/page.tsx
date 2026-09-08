@@ -9,6 +9,16 @@ import {
   syntheticFans,
   visiblePreferenceSignals,
 } from "@/lib/creator-os-lab";
+import {
+  caprichoProgress,
+  channelConversion,
+  creatorCommerceSummary,
+  gmvPerVisitorMinor,
+  syntheticCaprichos,
+  syntheticChannels,
+  syntheticCreator,
+  syntheticOffers,
+} from "@/lib/creator-commerce-lab";
 
 const segmentLabels: Record<string, string> = {
   FIRST_TIME_BUYER: "Primera compra",
@@ -29,22 +39,40 @@ function sourceLabel(source: "CREATOR" | "MARA" | "CROSS_CREATOR") {
   return "Cross-creator";
 }
 
+function channelLabel(channel: string) {
+  return channel.replaceAll("_", " ");
+}
+
 export default function CreatorOsLabPage() {
   if (process.env.NODE_ENV !== "development") {
     notFound();
   }
 
   const summary = dashboardSummary(syntheticFans);
+  const commerce = creatorCommerceSummary();
 
   return (
     <main className={styles.page}>
       <header className={styles.hero}>
-        <p className={styles.eyebrow}>DEV · MARA CREATOR OS LAB</p>
-        <h1>Qué pasó. Quién importa. Qué hacer después.</h1>
+        <p className={styles.eyebrow}>DEV · MARA CREATOR COMMERCE OS LAB</p>
+        <h1>Convierte atención en ingresos.</h1>
         <p className={styles.lede}>
-          Prototipo interno con datos sintéticos. Fan 360 muestra contexto comercial y procedencia de cada señal sin exponer identidad civil, contacto privado ni inferencias íntimas ocultas.
+          Prototipo interno con datos sintéticos. Une Creator Store, Offers, Caprichos, Bring Your Audience y Fan 360 sin activar pagos, payouts ni datos reales de creadoras.
         </p>
       </header>
+
+      <section className={styles.creatorIdentity} aria-label="Identidad comercial de creadora">
+        <div>
+          <p className={styles.kicker}>CREATOR STORE</p>
+          <h2>{syntheticCreator.publicName} <span>{syntheticCreator.handle}</span></h2>
+          <p>{syntheticCreator.publicStoreUrl}</p>
+        </div>
+        <div className={styles.identityMode}>
+          <span>Exposure mode</span>
+          <strong>{syntheticCreator.exposureMode.replaceAll("_", " ")}</strong>
+          <small>La exposición es una configuración, no el producto.</small>
+        </div>
+      </section>
 
       <section className={styles.summaryGrid} aria-label="Resumen creadora">
         <article>
@@ -63,6 +91,112 @@ export default function CreatorOsLabPage() {
           <span>Ganancia / hora creadora</span>
           <strong>{money(summary.earningsPerHourMinor)}</strong>
         </article>
+      </section>
+
+      <section className={styles.section}>
+        <div className={styles.sectionHeading}>
+          <div>
+            <p className={styles.kicker}>ANYTHING PERMITTED CAN BECOME AN OFFER</p>
+            <h2>Creator Store.</h2>
+          </div>
+          <p>
+            La creadora define qué vende, precio, límites y fulfillment. La plataforma no la obliga a una suscripción ni a un formato único.
+          </p>
+        </div>
+
+        <div className={styles.offerGrid}>
+          {syntheticOffers.map((offer) => (
+            <article className={styles.offerCard} key={offer.id}>
+              <div className={styles.offerTopline}>
+                <span>{offer.family.replaceAll("_", " ")}</span>
+                <span>{offer.fulfillmentMode.replaceAll("_", " ")}</span>
+              </div>
+              <h3>{offer.title}</h3>
+              <strong>{money(offer.priceMinor)}</strong>
+              <div className={styles.offerMeta}>
+                <span>{offer.sold} ventas</span>
+                <span>{offer.capacity === null ? "Sin límite fijo" : `${offer.capacity} cupos`}</span>
+                <span>{offer.deliveryHours === null ? "Entrega según producto" : `${offer.deliveryHours}h SLA`}</span>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className={styles.commerceStrip}>
+          <div><span>Offers activos</span><strong>{commerce.activeOffers}</strong></div>
+          <div><span>GMV sintético de Offers</span><strong>{money(commerce.offerGmvMinor)}</strong></div>
+          <div><span>Caprichos financiados</span><strong>{money(commerce.caprichoFundedMinor)}</strong></div>
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <div className={styles.sectionHeading}>
+          <div>
+            <p className={styles.kicker}>CAPRICHOS</p>
+            <h2>Financia deseos, no solo contenido.</h2>
+          </div>
+          <p>
+            Un Capricho es participación en el mundo de la creadora. Si promete un entregable concreto, deja de ser solo Capricho y debe modelarse como Offer.
+          </p>
+        </div>
+
+        <div className={styles.caprichoGrid}>
+          {syntheticCaprichos.map((capricho) => {
+            const progress = Math.round(caprichoProgress(capricho) * 100);
+            return (
+              <article className={styles.caprichoCard} key={capricho.id}>
+                <div className={styles.caprichoHeader}>
+                  <span>{capricho.status}</span>
+                  <strong>{progress}%</strong>
+                </div>
+                <h3>{capricho.title}</h3>
+                <p>{money(capricho.fundedMinor)} de {money(capricho.targetMinor)}</p>
+                <div className={styles.progressTrack} aria-label={`${progress}% financiado`}>
+                  <div style={{ width: `${progress}%` }} />
+                </div>
+                <div className={styles.offerMeta}>
+                  <span>{capricho.contributors} aportantes</span>
+                  <span>Desde {money(capricho.contributionMinimumMinor)}</span>
+                  <span>{capricho.linkedUpdate ? "Update vinculado" : "Sin entregable prometido"}</span>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <div className={styles.sectionHeading}>
+          <div>
+            <p className={styles.kicker}>BRING YOUR AUDIENCE</p>
+            <h2>Qué canal trae dinero, no solo visitas.</h2>
+          </div>
+          <p>
+            Instagram, TikTok, X y otros canales siguen siendo adquisición. Mara debe atribuir visita → comprador → GMV → recompra y cobrar distinto cuando Mara realmente genera la demanda.
+          </p>
+        </div>
+
+        <div className={styles.channelTable} role="table" aria-label="Atribución por canal">
+          <div className={styles.channelRowHeader} role="row">
+            <span>Canal</span><span>Visitas</span><span>Compradores</span><span>Conversión</span><span>GMV</span><span>GMV/visita</span>
+          </div>
+          {syntheticChannels.map((channel) => (
+            <div className={styles.channelRow} role="row" key={channel.channel}>
+              <strong>{channelLabel(channel.channel)}</strong>
+              <span>{channel.visits.toLocaleString("es-CL")}</span>
+              <span>{channel.buyers}</span>
+              <span>{(channelConversion(channel) * 100).toFixed(1)}%</span>
+              <span>{money(channel.gmvMinor)}</span>
+              <span>{money(gmvPerVisitorMinor(channel))}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className={styles.commerceStrip}>
+          <div><span>GMV creator-sourced</span><strong>{money(commerce.creatorSourcedGmvMinor)}</strong></div>
+          <div><span>GMV Mara-sourced</span><strong>{money(commerce.maraSourcedGmvMinor)}</strong></div>
+          <div><span>GMV atribuido total</span><strong>{money(commerce.totalChannelGmvMinor)}</strong></div>
+        </div>
       </section>
 
       <section className={styles.splitStats}>
