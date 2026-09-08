@@ -45,6 +45,11 @@ export type DemandMetrics = {
   progressPercent: number;
 };
 
+export type SimilarDemandMatch = {
+  idea: DemandIdea;
+  score: number;
+};
+
 export const wtpOptionsMinor = [15_000_00, 25_000_00, 35_000_00, 50_000_00];
 
 export const seededDemandIdeas: DemandIdea[] = [
@@ -244,11 +249,17 @@ export function demandSimilarityScore(title: string, city: string, idea: DemandI
   return overlap / Math.max(1, Math.min(proposed.size, existing.size));
 }
 
-export function findSimilarDemand(title: string, city: string, ideas: DemandIdea[]) {
-  return ideas
+export function findSimilarDemand(
+  title: string,
+  city: string,
+  ideas: DemandIdea[],
+): SimilarDemandMatch | null {
+  const matches = ideas
     .map((idea) => ({ idea, score: demandSimilarityScore(title, city, idea) }))
     .filter((candidate) => candidate.score >= 0.5)
-    .sort((a, b) => b.score - a.score)[0] ?? null;
+    .sort((a, b) => b.score - a.score);
+
+  return matches.length > 0 ? matches[0] : null;
 }
 
 export function formatClp(minor: number): string {
