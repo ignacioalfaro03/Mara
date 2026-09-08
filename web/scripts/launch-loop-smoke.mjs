@@ -27,9 +27,9 @@ try {
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await visit(page, "/");
-  const cta = await page.getByRole("link", { name: "A ver." }).boundingBox();
-  assert(cta && cta.y + cta.height <= 844, "Mobile landing CTA is below the first viewport");
-  await page.getByRole("link", { name: "A ver." }).click();
+  const cta = await page.getByRole("link", { name: "Probar a Mara gratis" }).boundingBox();
+  assert(cta && cta.y + cta.height <= 844, "Mobile landing free-sample CTA is below the first viewport");
+  await page.getByRole("link", { name: "Probar a Mara gratis" }).click();
   await start(page);
   // Negative language must not be mistaken for 'ya/listo' completion.
   await page.getByLabel("Mensaje para Mara").fill("no estoy listo");

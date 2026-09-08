@@ -115,3 +115,4 @@ jobs:
           node scripts/continuity-cta-smoke.mjs
           node scripts/world-sofi-smoke.mjs
           node scripts/launch-loop-smoke.mjs
+          node scripts/creator-interest-smoke.mjs

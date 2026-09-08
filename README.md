@@ -1,216 +1,262 @@
-# Mara Vera
+# Mara
 
-> ## 🔒 MARA CHARACTER CANON V1 — READ THIS FIRST
+> ## 🔒 READ THIS FIRST — FOUNDER BUSINESS CONSTITUTION
 >
-> **Mara's reproducible face/body/personality identity is frozen at repository root in [`MARA_CHARACTER_CANON.md`](./MARA_CHARACTER_CANON.md).**
+> **The highest-priority business authority for this repository is [`MARA_FOUNDER_BUSINESS_CONSTITUTION.md`](./MARA_FOUNDER_BUSINESS_CONSTITUTION.md).**
 >
-> Permanent rule: **ONE MARA. MANY CONTEXTS.** A prettier image that looks like another woman is not Mara.
+> Mara is now defined as a **private creator economy marketplace and monetization operating system** for verified adult creators who want to build and monetize digital personas while retaining control over how much of their real-world identity becomes public.
 >
-> Current V1 calibration: **24 years · 1.68 m · ~64 kg · ~93/70/108 cm · ~64 cm thigh · curvy/realistic · natural lower-abdomen softness · honey-beige blonde · green/hazel eyes · playful, confident, subtly dominant.**
+> Core promise: **YOUR IDENTITY STAYS YOURS. YOUR CHARACTER EARNS.**
 >
-> All future stills, video references, generation prompts, face consistency work and production QA must start from the canon. **Do not drift Mara one generation at a time.**
+> **Mara Vera is Creator Zero.** She is the first character, initial demand engine and reusable commerce proof — not the ceiling of the company.
+>
+> Older Mara-only, chatbot-first, relationship-first, adult-catalog-first or storefront-only assumptions are subordinate when they conflict with the Founder Business Constitution.
+>
+> Founder boundary: **NO MERGE without Ignacio saying exactly `mergea`.** No production deployment, payment activation, payout activation or external spend is implied by strategy work.
 
-Mara Vera is an AI-native virtual character business designed to turn attention into recurring paid digital relationships through content, interaction, personalization and premium experiences.
+## Business thesis
 
-## Product thesis
+Mara exists to unlock creator supply that conventional public creator platforms may fail to capture: adults who want to monetize personality, creativity, voice, content, experiences or bounded time without making their legal identity, employer-facing identity or personal social graph the public product.
 
-Mara Vera is not just an AI influencer and not just a chatbot. The product is the persistent relationship around a recognizable synthetic character.
+The platform separates:
 
-Core commercial loop:
+**PRIVATE VERIFIED CREATOR → PUBLIC CHARACTER → SKU / EXPERIENCE → CUSTOMER → TRANSACTION → CREATOR EARNINGS**
 
-**Social discovery → Mara Vera web → interaction → subscription / paid experience → repeat spend → retention**
+Public pseudonymity is not regulatory anonymity. Mara must privately verify creators and satisfy age, identity, consent, payment, tax and lawful-disclosure requirements where applicable.
 
-The business is designed from day one around monetization, retention, unit economics and scalable distribution, while maintaining strong legal, payment, platform, safety and privacy guardrails.
+Mara must also be truthful with customers about whether they are interacting with:
 
-## The web is a core product surface
+- a fictional AI-generated character;
+- a verified adult creator operating a character;
+- AI-generated output;
+- the creator directly;
+- or an explicitly disclosed combination.
 
-Mara Vera will have her own first-party website. The website is not a secondary landing page: it is the owned hub of the brand and conversion funnel.
+Privacy is a product benefit. Deception is not.
 
-Initial responsibilities of the web:
+## Mara Vera = Creator Zero
 
-- establish Mara Vera's identity, aesthetic and story;
-- clearly disclose that Mara Vera is an AI-generated virtual character;
-- provide age-appropriate / 18+ gating where required;
-- route users toward the current monetization surface;
-- capture first-party analytics for the acquisition funnel;
-- host policies, terms, privacy disclosures and other compliance information;
-- create an owned surface that reduces long-term dependence on any single social network or creator platform;
-- progressively become the home of the proprietary Relationship Engine after product-market fit is validated.
+Mara Vera remains strategically important.
 
-The MVP should **not** attempt to replace mature payment or creator infrastructure before there is evidence of paying demand. Initially, third-party monetization infrastructure may coexist with the first-party web.
+She is:
 
-## Monetization constitution
+- the first character;
+- the initial social acquisition engine;
+- the first storefront;
+- the first content catalog;
+- the first conversion test;
+- the first reusable commerce template;
+- the proof that a character can create demand and transactions.
 
-1. **Make money.** Every meaningful feature should have a hypothesis tied to acquisition, conversion, ARPPU, retention, margin or strategic defensibility.
-2. **Transparent AI identity.** Mara Vera must never be represented to customers as a real human woman.
-3. **Adults only for adult experiences.** No ambiguity around minors or age-regressive presentation.
-4. **Consent before intensity.** More intense, sexual, dominant or roleplay-oriented experiences require explicit user choice and appropriate platform/compliance support.
-5. **Monetize desire, not vulnerability.** Scarcity, fantasy, personalization and exclusivity are valid commercial mechanics; coercion, exploitation, manipulation of financial distress or dependency are not.
-6. **Compliance by design.** Payments, privacy, intellectual property, platform policies and applicable regulation are product requirements, not post-launch cleanup.
-7. **Synthetic IP.** Mara Vera should be original IP, not a deepfake, voice clone or imitation of an identifiable real person.
-8. **Data minimization.** Relationship memory should retain only what creates legitimate product value, with clear consent, purpose and deletion controls.
+Her current Character Canon remains authoritative for Mara Vera specifically:
 
-## Revenue model — MVP
+[`MARA_CHARACTER_CANON.md`](./MARA_CHARACTER_CANON.md)
 
-Potential revenue surfaces to validate:
+Permanent character rule remains:
 
-- recurring subscription;
-- premium / PPV content;
-- paid personalized interactions;
-- paid voice notes or similar premium responses where supported;
-- premium roleplay or experiences within agreed boundaries;
-- bundles / limited releases;
-- later, higher-value relationship tiers if retention data supports them.
+**ONE MARA. MANY CONTEXTS.**
 
-The primary behavioral milestone is not the first payment. It is:
+The character canon does not define the entire future marketplace. Future verified creators may have their own characters and character-specific canons.
 
-**first payment → second payment → retained spender.**
+## Current product architecture
 
-## 30-day launch roadmap
+The company now has two linked systems.
 
-### Phase 0 — Days 1–3: Foundation
+### 1. Mara Originals / Creator Zero
 
-- lock Mara Vera name and positioning;
-- create Character Constitution;
-- define adult age, personality, tone, interests, boundaries and disclosure language;
-- define monetization catalog and prohibited mechanics;
-- define privacy / data / platform compliance baseline;
-- define initial metrics and funnel instrumentation.
+Current reusable commercial loop:
 
-**Exit criterion:** one source of truth defining who Mara is, what we sell and what we will not do.
+**Social → Mara → storefront → free taste → purchase → library → related product → repeat purchase**
 
-### Phase 1 — Days 4–7: Character system
+This continues because it proves the transaction primitive the future marketplace needs.
 
-- canonical visual identity;
-- face/body consistency rules;
-- wardrobe and styling system;
-- recurring environments and lifestyle cues;
-- voice and writing style;
-- character lore and behavioral rules;
-- generation QA checklist.
+### 2. Mara Creators
 
-**KPI:** content generated across different situations is still immediately recognizable as Mara Vera.
+Future marketplace loop:
 
-### Phase 2 — Days 5–12: Web MVP
+**Creator → character → product/SKU → buyer → earnings → repeat buyer → more creator supply**
 
-Build the initial first-party web in parallel with the character system.
+Initial creator products may include:
 
-Required MVP surfaces:
+- digital collections;
+- audio;
+- personalized digital products;
+- bounded paid chat windows;
+- scheduled audio/video interaction where enabled;
+- memberships;
+- bundles;
+- later creator collaboration products.
 
-- premium mobile-first home;
-- Mara Vera introduction / story;
-- clear AI disclosure;
-- CTA into the monetization experience;
-- analytics events across the funnel;
-- privacy and terms surfaces;
-- age / adult-content guardrails as required;
-- social links;
-- architecture that can later accept authentication and the Relationship Engine without rebuilding the entire product.
+Sexual explicitness is not the monetization ladder.
 
-The initial website should optimize for **clarity, intrigue and conversion**, not feature count.
+Higher willingness to pay should primarily come from:
 
-**Primary web event:** qualified CTA click into the paid experience.
+**MORE ACCESS + MORE PERSONALIZATION + MORE SCARCITY + MORE CREATOR TIME + BETTER CATALOG + BETTER DISTRIBUTION.**
 
-### Phase 3 — Days 8–14: Revenue Engine MVP
+## Creator exposure ladder
 
-- activate initial creator / payment infrastructure;
-- define subscription price hypothesis;
-- build initial PPV catalog;
-- define personalization offers;
-- create response / upsell playbooks that remain consensual and transparent;
-- instrument subscriber, first purchase and repeat purchase events.
+Creators should be able to stop at any level they choose.
 
-### Phase 4 — Days 8–14: Content Engine
+1. **Character only** — public digital persona; minimal public personal exposure.
+2. **Voice** — optional voice products/interactions.
+3. **Selective real content** — only creator-approved real media.
+4. **Direct interaction** — bounded, scheduled interaction under creator-defined rules.
 
-Launch inventory target:
+No creator should need to connect her full public identity merely to make the product economically viable.
 
-- 30–50 strong still assets;
-- 10–15 short-form vertical videos;
-- 15–20 story assets;
-- 10 premium assets;
-- 5–10 initial paid offers / PPV assets.
+## Monetization architecture
 
-Public content should feel like a social-native character, not an endless advertisement for adult content.
+Mara should not depend on a single revenue stream.
 
-### Phase 5 — Days 15–21: Soft launch
+Potential engines, subject to real validation:
 
-Initial distribution:
+- marketplace transaction take rate;
+- creator SaaS / Pro tooling;
+- managed Studio/setup services;
+- Creator Privacy Pro;
+- merchandising/catalog optimization tooling;
+- personalized digital products;
+- bounded scheduled creator time;
+- creator referrals/collaborations;
+- consumer Mara Pass later;
+- promoted discovery later;
+- B2B / white-label creator infrastructure later.
 
-- Instagram;
-- TikTok;
-- X where strategically useful;
-- owned web;
-- monetization platform.
+Every monetization mechanism must be evaluated on contribution margin, creator benefit, customer value, scalability, founder burden, payment risk and compliance risk.
 
-Track:
+## Marketplace North Star
 
-**impression → profile visit → follow → web visit → monetization CTA → subscriber → first paid extra → repeat purchase**
+Do not optimize creator count or follower count in isolation.
 
-Do not optimize for vanity metrics if they do not correlate with revenue.
+The supply-side question is:
 
-### Phase 6 — Days 22–30: Commercial optimization
+> **Can an adult creator who would not have built a conventional public creator business create a character, launch a SKU, earn money and repeat the process while exposing less of her real-world identity?**
 
-Analyze:
+Key operating metric:
 
-- content-to-profile conversion;
-- social-to-web conversion;
-- web-to-paid-surface conversion;
-- visitor-to-subscriber conversion;
-- first-purchase rate;
-- repeat-purchase rate;
-- ARPPU;
-- early retention;
-- revenue by content/personality angle.
+**CREATOR NET EARNINGS / CREATOR HOURS INVESTED**
 
-Use experiments to identify which expression of Mara creates buyers, not merely engagement.
+Key network behavior:
 
-## Day-30 validation gate
+**FIRST PURCHASE → SECOND PURCHASE → SECOND CREATOR → NETWORK RETENTION**
 
-### GREEN
+## The moat
 
-Evidence of paying demand and repeat spending. Continue investment and begin proprietary product development.
+Avatar generation alone is not the moat. It will commoditize.
 
-### YELLOW
+The defensible system is the combination of:
 
-Attention exists but monetization or retention is weak. Iterate offer, funnel, character expression and pricing before increasing engineering investment.
+**PRIVATE CREATOR IDENTITY**
++
+**CHARACTERS**
++
+**CREATOR TRUST**
++
+**CONTENT / PRODUCT INVENTORY**
++
+**PAYMENTS / PAYOUTS**
++
+**DISCOVERY**
++
+**CUSTOMER DEMAND GRAPH**
++
+**CREATOR CRM**
++
+**BOOKING / CAPACITY**
++
+**AUTOMATION**
++
+**CROSS-SELLING**
++
+**MARKETPLACE LIQUIDITY**
 
-### RED
+The strongest possible supply-side outcome is:
 
-Neither distribution nor monetization shows convincing signal after meaningful experimentation. Do not build expensive proprietary infrastructure; pivot or stop.
+> **Creators make more money per hour on Mara while exposing less of their real identity than they would alone.**
 
-## Post-validation moat
+## Web-first
 
-Only after commercial validation should the project invest substantially in a proprietary **Mara Relationship Engine**.
+The first-party website remains the core surface.
 
-The engine should enable a persistent, consent-based relationship state per user, including only useful and permitted memory such as:
+It must support:
 
-- interaction preferences;
-- explicit interests;
-- purchased experiences;
-- boundaries;
-- consensual intensity preferences;
-- relevant prior interactions.
+- character discovery;
+- creator storefronts;
+- digital product commerce;
+- creator intake;
+- customer accounts/library;
+- compliance/disclosure;
+- analytics;
+- later booking and cross-creator discovery.
 
-Potential lifecycle states:
+Native mobile is not a launch dependency while adult-oriented creator/UGC distribution policy risk remains material.
 
-**new → curious → recurrent → fan → high-value**
+## Payment and compliance are P0 architecture
 
-The long-term moat is not image generation. It is the combination of:
+Do not assume a generic payment processor will support the final model.
 
-**character IP + distribution + behavioral data + relationship memory + monetization intelligence + operational automation.**
+Before real third-party creator commerce activates, Mara must verify provider compatibility for:
 
-## Strategic sequencing
+- target geography;
+- marketplace/platform structure;
+- third-party creator payouts;
+- adult-oriented content/services if present;
+- AI/synthetic content if present;
+- KYC/age verification;
+- consent records;
+- chargebacks/fraud;
+- complaints/takedowns;
+- prohibited transaction categories.
 
-1. One character.
-2. One web funnel.
-3. Real traffic.
-4. Real buyers.
-5. Repeat spend.
-6. Relationship Engine.
-7. Automation.
-8. Scalable acquisition.
-9. Only then consider additional characters or a broader Character Commerce platform.
+A successful test payment is not proof that the business model is permitted.
 
-Current execution objective:
+## Premium asset security
 
-> **Launch Mara Vera within 30 days, validate real willingness to pay, and prove repeat spending before overbuilding the technology stack.**
+This repository is public.
+
+Never commit final paid/private assets or creator-private source material to the public repo.
+
+Private content delivery must remain server-authoritative and entitlement-gated. Creator identity artifacts, verification records, consent documentation and payout/tax data must live outside the public repository under appropriate access controls.
+
+See [`MARA_LOW_MAINTENANCE_REVENUE_MACHINE.md`](./MARA_LOW_MAINTENANCE_REVENUE_MACHINE.md) for the active operating-efficiency and private premium delivery contract.
+
+## Current implementation status
+
+The active founder-thesis PR adds:
+
+- the Founder Business Constitution;
+- marketplace execution plan;
+- `/creators` pilot acquisition surface;
+- server-only creator-interest intake;
+- RLS/revoked-browser-access migration contract;
+- explicit creator-pilot privacy language;
+- creator-intake CI smoke;
+- synchronization with the latest storefront/private premium delivery base.
+
+On the exact founder-thesis head, the main Web Launch `validate` job passes dependency audit, parser self-test, DEV-lab guard, TypeScript, production build and the full production mobile/browser smoke suite. The repository still has a separate pre-existing launch blocker: the canonical Mara JPEG is truncated and the dedicated integrity job correctly remains red until the exact approved source image is restored.
+
+## Current validation sequence
+
+1. Restore the exact approved canonical Mara source image; do not patch the truncated JPEG by merely appending bytes.
+2. Apply the `creator_interest` migration only in an isolated/authorized environment.
+3. Prove `/creators → persisted creator interest` end-to-end.
+4. Interview/recruit 10–20 target adult creators.
+5. Validate exposure preferences, product preferences and economics.
+6. Resolve payment/payout/provider eligibility in parallel.
+7. Design the 5–10 creator private pilot only after supply + provider credibility.
+8. Prove `FIRST SKU → FIRST SALE → SECOND SALE → PAYOUT`.
+9. Automate only after the manual pilot proves the workflow.
+
+## Operating doctrine
+
+The active low-maintenance operating rules remain useful, but are subordinate to the Founder Business Constitution:
+
+[`MARA_LOW_MAINTENANCE_REVENUE_MACHINE.md`](./MARA_LOW_MAINTENANCE_REVENUE_MACHINE.md)
+
+Core operating principle:
+
+> **Mara should be rich for creators and customers and boring for the founder to operate.**
+
+Build systems that increase creator earnings, demand, transactions, margin or operating leverage.
+
+Do not build complexity that does none of those things.

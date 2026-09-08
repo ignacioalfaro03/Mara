@@ -1,134 +1,171 @@
-# MARA VERA — LOW-MAINTENANCE REVENUE MACHINE
+# MARA — LOW-MAINTENANCE REVENUE MACHINE
 
-Status: **latest founder operating direction**.
+Status: **ACTIVE OPERATING-EFFICIENCY DOCTRINE, SUBORDINATE TO [`MARA_FOUNDER_BUSINESS_CONSTITUTION.md`](./MARA_FOUNDER_BUSINESS_CONSTITUTION.md).**
 
-This document supersedes any older assumption that Mara should be optimized primarily as a chatbot, relationship simulator, or high-frequency content operation. Existing infrastructure may remain when it is cheap and useful, but roadmap priority is governed by this document.
+This document no longer defines what the company is. It defines **how Mara should operate efficiently** inside the private creator economy thesis.
+
+If anything here conflicts with the Founder Business Constitution, the constitution wins.
+
+The former Mara-only storefront strategy remains useful as **Creator Zero proof** and as a template for future creator storefronts.
+
+---
 
 ## 1. Founder objective
 
 Mara must maximize:
 
-`REVENUE / FOUNDER HOUR`
+`ENTERPRISE VALUE + CONTRIBUTION MARGIN + CREATOR EARNINGS / FOUNDER HOUR`
 
-Target steady-state founder load after setup:
+Founder operating principle:
 
-**2–4 hours per month.**
+> **Mara should be rich for creators and customers and boring for the founder to operate.**
 
-Mara should be rich for the customer and boring to operate.
+The founder must not become a full-time creator operator, moderator, customer-service agent or manual fulfillment layer.
 
-## 2. Product definition
+---
 
-Mara is:
+## 2. Updated product interpretation
 
-**virtual interactive character + digital IP + premium experience catalog + automated commerce.**
+Mara is now:
 
-Mara is not primarily:
+**private creator economy marketplace + character commerce infrastructure + Mara Originals + automated monetization tooling.**
 
-- an unlimited chatbot;
-- a relationship SaaS;
-- a daily creator operation;
-- a custom-content service;
-- a product that depends on founder DMs or manual fulfillment.
+Mara Vera remains Creator Zero.
 
-The core commercial loop is:
+The current Creator Zero commercial loop remains valid:
 
 `SOCIAL ATTENTION → STOREFRONT → FREE TASTE → FIRST PURCHASE → LIBRARY → RELATED PRODUCT → COLLECTION/BUNDLE → REPEAT PURCHASE`
 
-Membership is optional and deferred until the evergreen catalog is deep enough to support it without recurring founder labor.
+The marketplace loop that sits above it is:
+
+`CREATOR → CHARACTER → SKU → BUYER → REPEAT BUYER → PAYOUT → MORE CREATOR SUPPLY`
+
+Membership is optional and should not become a founder-labor obligation.
+
+---
 
 ## 3. Priority order
 
-### P0 — Evergreen commerce
+### P0 — Creator Zero commerce proof
 
-1. Editorial storefront.
-2. Named bounded experiences.
-3. One-time purchase.
-4. Server-authoritative entitlement.
-5. Customer library / replay surface.
-6. Related-product upsell.
-7. Collections and bundles.
-8. Funnel analytics.
+Keep proving:
 
-### P1 — Lifecycle automation
+1. editorial storefront;
+2. named bounded experiences;
+3. one-time purchase;
+4. server-authoritative entitlement;
+5. customer library / replay;
+6. related-product upsell;
+7. collections and bundles;
+8. funnel analytics.
 
-- email capture;
-- welcome flow;
-- purchase follow-up;
-- related-product recommendation;
-- collection completion;
-- reactivation;
-- occasional drop announcement.
+This is no longer the final business model. It is the first reusable commerce template.
 
-### P2 — Lightweight interactivity
+### P1 — Supply discovery
 
-Chat, preferences, memory and World may support:
+Before building large marketplace infrastructure:
 
-- sampling Mara;
-- onboarding;
-- product recommendation;
-- short bounded character interactions;
-- optional continuity.
+- interview/recruit target creators;
+- validate public-pseudonymity demand;
+- understand exposure boundaries;
+- understand which SKUs they would actually sell;
+- measure willingness to join under different take-rate / SaaS models.
 
-They are not roadmap blockers for commerce.
+### P2 — Creator acquisition surface
 
-### P3 — High-operations experiments
+Build a low-maintenance creator application/waitlist that captures structured demand without requiring manual daily operations.
 
-Caprichos, custom generation, complex relationship state, open-ended AI use and high-touch features are experiments only after the evergreen machine proves demand and unit economics.
+### P3 — Payment/compliance path
 
-Caprichos infrastructure may be retained, but it must not displace storefront, catalog, library, bundles or lifecycle automation.
+Resolve payment-provider eligibility, payouts, KYC/consent requirements, moderation and takedown operations before real creator commerce is activated.
+
+### P4 — Private creator pilot
+
+Operate manually enough to learn, but do not over-automate before repeated creator earnings are proven.
+
+### P5 — Marketplace automation
+
+Only automate workflows that have demonstrated transaction value.
+
+---
 
 ## 4. Product rule
 
 Every new feature must materially improve at least one of:
 
+- creator acquisition;
+- creator activation;
+- creator earnings;
 - traffic;
 - conversion;
-- average order value;
+- AOV;
 - repeat purchase;
-- gross margin;
-- founder-time reduction.
+- cross-creator discovery;
+- contribution margin;
+- founder-time reduction;
+- safety/compliance;
+- marketplace liquidity.
 
 If not, do not build it.
 
+---
+
 ## 5. Content operating model
 
-Default social cadence:
+Mara Originals and creator tooling should default to batch production and reuse.
 
-**approximately one strong new publication per week.**
+Default Mara social cadence remains approximately:
 
-Build 12–24 weeks of inventory in batches. One production session should create multiple commercial outputs:
+**one strong publication per week**, unless evidence shows a different cadence is required.
 
-`MASTER ASSET → SOCIAL POST → REEL → STORY → FREE PREVIEW → PRODUCT COVER → PREMIUM EXPERIENCE → BUNDLE ASSET → EMAIL CREATIVE`
+Build inventory in batches.
+
+One production session should create multiple outputs:
+
+`MASTER ASSET → SOCIAL POST → REEL → STORY → FREE PREVIEW → PRODUCT COVER → PREMIUM PRODUCT → BUNDLE ASSET → EMAIL/CRM CREATIVE`
+
+For creators, the same principle becomes:
+
+> **Turn existing inventory into SKUs before asking for more production.**
 
 Create once, distribute many times, sell many times.
 
+---
+
 ## 6. Commercial ladder
 
-Initial order of operations:
+For Mara Originals and future creators:
 
-1. Free taste.
-2. Low-friction entry product.
-3. Core experience.
-4. Related experience.
-5. Collection / bundle.
-6. Repeat purchase.
-7. Membership only when inventory depth supports it.
+1. free discovery;
+2. low-friction entry product;
+3. core product;
+4. related product;
+5. collection/bundle;
+6. repeat purchase;
+7. membership where catalog depth supports it;
+8. bounded personalization/time where the creator chooses it.
 
-Do not make prepaid chat packs a P0 launch dependency. Variable-cost AI use must remain bounded if retained.
+Do not make open-ended chat a P0 dependency.
+
+Variable-cost AI use must remain bounded.
+
+---
 
 ## 7. Storefront philosophy
 
-The public web experience should feel like a premium character storefront, not a SaaS dashboard.
+The public experience should feel like entering character worlds, not a SaaS dashboard.
 
-Home hierarchy:
+Each creator storefront should make the commercial action obvious:
 
-`MARA → FEATURED EXPERIENCE → START HERE → COLLECTIONS → FREE TASTE → LIBRARY / ACCOUNT`
+`CHARACTER → FEATURED PRODUCT → START HERE → COLLECTIONS → FREE TASTE → LIBRARY / ACCOUNT`
 
-The primary CTA should lead to what can be consumed or purchased. Free chat/experience can remain a secondary sample path.
+The primary CTA should lead to something consumable or purchasable.
+
+---
 
 ## 8. Library philosophy
 
-Purchased experiences should persist in a simple customer library.
+Purchased products should persist in a simple customer library.
 
 The library exists for:
 
@@ -136,9 +173,12 @@ The library exists for:
 - replay;
 - purchase history;
 - collection completion;
-- next-product recommendation.
+- next-product recommendation;
+- later cross-creator discovery.
 
-Do not turn it into a complex gamification system.
+Do not turn it into complex gamification unless real retention data justifies it.
+
+---
 
 ## 9. Current infrastructure classification
 
@@ -154,22 +194,28 @@ Do not turn it into a complex gamification system.
 - refunds/revocation;
 - first-party analytics;
 - character canon;
-- reusable content/scene/ritual inventory as ideation/prototype material.
+- reusable content/scene/ritual inventory as ideation/prototype material;
+- storefront/library work;
+- entitlement-gated private premium delivery infrastructure.
 
-### SIMPLIFY / REPOSITION
+### REPOSITION
 
-- DM experience → free taste / optional interaction;
-- memory → optional continuity, not core value proposition;
-- World → narrative asset, not launch dependency;
-- preferences → lightweight recommendations.
+- Mara storefront → Creator Zero commerce template;
+- DM → free taste / optional bounded interaction;
+- memory → optional continuity;
+- World → character narrative asset;
+- preferences → recommendations;
+- character portfolio → precursor to multi-creator discovery.
 
 ### DEPRIORITIZE
 
-- chat packs as primary monetization;
+- Mara-only product architecture as the final company;
+- unlimited chat;
 - complex relationship progression;
-- continuous AI usage;
-- new World engineering before storefront conversion is proven;
-- daily content operations.
+- continuous AI consumption;
+- new World engineering before transaction proof;
+- daily founder-run content operations;
+- native mobile app as launch dependency.
 
 ### RETAIN AS OPTIONAL EXPERIMENT
 
@@ -177,39 +223,61 @@ Do not turn it into a complex gamification system.
 - Reward Engine;
 - high-ticket world participation.
 
-They should not consume founder time until base commerce works.
+These may remain experimental inventory for Mara Originals but do not define marketplace P0.
+
+---
 
 ## 10. Founder scorecard
 
-Monthly review should fit on one page:
+Monthly review should fit on one page.
+
+### Creator Zero
 
 - revenue;
 - orders;
 - buyers;
-- site conversion rate;
+- conversion rate;
 - AOV;
-- revenue per visitor;
 - repeat purchase rate;
 - top product;
-- top traffic source;
 - founder hours;
-- **revenue / founder hour**.
+- revenue / founder hour.
 
-Then choose at most one operating action for the next month.
+### Marketplace supply
+
+- creator leads;
+- verified/qualified creator interviews;
+- activated creators;
+- first-SKU rate;
+- first-earning rate;
+- earnings per creator hour.
+
+### Marketplace demand
+
+- first purchase;
+- second purchase;
+- cross-creator purchase;
+- contribution margin.
+
+Choose at most one or two operating priorities per review period.
+
+---
 
 ## 11. Product freeze rule
 
-Once the loop works:
+Once a loop works:
 
 `DISCOVER → SAMPLE → BUY → ACCESS → RECOMMEND → REPURCHASE`
 
-freeze feature development.
+freeze feature development until evidence identifies a bottleneck.
 
-Reopen engineering only when evidence identifies a commercial bottleneck.
+Likewise, do not automate creator workflows before manual pilot evidence proves the workflow is economically valuable.
+
+---
 
 ## 12. Premium asset security contract
 
-The Mara repository is currently public. That creates a hard commercial boundary:
+The Mara repository is currently public. That creates a hard commercial and creator-safety boundary.
 
 ### PUBLIC / SAFE TO COMMIT
 
@@ -219,7 +287,7 @@ The Mara repository is currently public. That creates a hard commercial boundary
 - prices;
 - teasers and previews intentionally given away;
 - entitlement keys and non-secret catalog metadata;
-- private storage object paths when the bucket itself is protected.
+- private storage object paths when the underlying storage remains protected.
 
 ### PRIVATE / NEVER SHIP IN THE PUBLIC REPO OR CLIENT BUNDLE
 
@@ -228,9 +296,15 @@ The Mara repository is currently public. That creates a hard commercial boundary
 - paid video;
 - paid audio;
 - complete premium experience payloads;
-- any asset whose scarcity/access is part of the purchase value.
+- creator source media not intentionally public;
+- identity-verification documents;
+- consent/model-release evidence containing private data;
+- payout/tax records;
+- any asset whose scarcity, privacy or access control is part of the purchase value.
 
-Premium assets must be delivered through a private authenticated channel. The current implementation uses this contract:
+Premium assets must be delivered through a private authenticated channel.
+
+Current Creator Zero contract:
 
 `AUTHENTICATED USER → ACTIVE ENTITLEMENT CHECK → SERVER ROUTE → PRIVATE STORAGE ASSET`
 
@@ -250,23 +324,21 @@ The private content route must:
 5. use private/no-store delivery semantics;
 6. return no premium payload to unauthorized users.
 
-Existing scene Markdown in this public repository is therefore **prototype/ideation material**, not a secure final paid asset. Do not sell those files verbatim. Final premium versions must be produced separately and stored privately, or the repository itself must become private before those assets are committed.
+Existing scene Markdown in this public repository is therefore **prototype/ideation material**, not secure final paid inventory. Do not sell those files verbatim.
+
+For external creators, the rule becomes stricter: original uploads and private identity artifacts must never enter the public repository at all. Creator media should live in appropriately private storage with explicit ownership, access, retention and deletion controls.
+
+---
 
 ## 13. Current execution focus
 
-The first transformation slice is:
-
-1. make `/shop` the editorial commercial surface;
-2. keep `/experience` as a secondary free sample;
-3. expose the existing fixed paid unlock as the first configured entry SKU, but keep checkout closed until private fulfillment passes end-to-end;
-4. surface the next prepared experience families without falsely claiming unproduced media exists;
-5. add `/library` on top of existing server-authoritative entitlements/purchases;
-6. add entitlement-gated private premium delivery infrastructure;
-7. preserve Caprichos and relationship infrastructure without putting them at the center;
-8. do not activate real payments, mutate production storage, deploy production, or merge without founder authorization.
-
-## 14. Override rule
-
-When older documents conflict with this direction, use this decision:
-
-> **MARA IS A LOW-MAINTENANCE DIGITAL CATALOG BUSINESS FIRST. CHAT IS SUPPORTING UX, NOT THE PRODUCT CENTER.**
+1. keep `/shop` and `/library` as Creator Zero commerce proof;
+2. make Founder Business Constitution the repository authority;
+3. validate the creator ICP before building full marketplace infrastructure;
+4. prepare a truthful creator acquisition/waitlist surface;
+5. preserve entitlement-gated private premium delivery;
+6. resolve payment/payout/compliance feasibility;
+7. recruit a small private creator pilot;
+8. prove `FIRST SKU → FIRST SALE → SECOND SALE → PAYOUT`;
+9. only then automate marketplace onboarding/discovery;
+10. do not activate real payments, deploy production or merge without founder authorization.

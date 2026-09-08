@@ -10,23 +10,31 @@ export default function LegalPage() {
       <section className="legalSections">
         <article>
           <h2>Quién es Mara</h2>
-          <p>Mara Vera es un personaje virtual ficticio generado con inteligencia artificial. No es una persona humana real.</p>
+          <p>Mara Vera es el primer personaje virtual ficticio de Mara y es generado con inteligencia artificial. No es una persona humana real.</p>
         </article>
         <article>
           <h2>Solo adultos</h2>
-          <p>Esta experiencia está dirigida exclusivamente a personas de 18 años o más.</p>
+          <p>Las experiencias de Mara y el piloto de creadoras están dirigidos exclusivamente a personas de 18 años o más.</p>
         </article>
         <article>
           <h2>Consentimiento</h2>
-          <p>Puedes detenerte, rechazar una opción o salir cuando quieras. Las experiencias de mayor intensidad, si existen más adelante, deben ser siempre opt-in.</p>
+          <p>Puedes detenerte, rechazar una opción o salir cuando quieras. Las experiencias de mayor intensidad, si existen más adelante, deben ser siempre opt-in. El pago nunca reemplaza el consentimiento de una creadora o de un usuario.</p>
         </article>
         <article>
           <h2>Privacidad</h2>
           <p>La Alpha guarda un pequeño estado en tu navegador y, si creas cuenta, elecciones concretas para continuidad. La telemetría pública no debe recibir conversaciones íntimas, fantasías ni texto libre sensible.</p>
         </article>
         <article>
+          <h2>Interés en el piloto de creadoras</h2>
+          <p>El formulario para creadoras guarda únicamente un correo de contacto, preferencias comerciales acotadas, nivel de exposición elegido y la constancia de mayoría de edad/consentimiento para contacto. Esa información se usa para evaluar y contactar candidatas al piloto; no crea una cuenta pública, no activa pagos y no se muestra a clientes.</p>
+        </article>
+        <article>
+          <h2>Pseudonimato de creadoras</h2>
+          <p>Mara busca permitir que una creadora use un personaje frente al público. Eso no significa anonimato regulatorio: un piloto comercial podrá exigir verificación privada de identidad y edad, documentación de consentimiento, requisitos tributarios y de pago, y otras verificaciones legales aplicables.</p>
+        </article>
+        <article>
           <h2>Pagos</h2>
-          <p>Esta Alpha es gratuita. Las notas en preparación pueden mostrar un precio de referencia, pero todavía no se pueden comprar. No hay suscripciones ni cobros activos.</p>
+          <p>Los precios visibles son hipótesis o productos preparados según el estado del entorno. No se debe considerar un medio de pago o payout activo hasta que Mara lo indique expresamente y el proveedor correspondiente haya sido habilitado para el modelo real del negocio.</p>
         </article>
         <article>
           <h2>Borrar y reportar</h2>
