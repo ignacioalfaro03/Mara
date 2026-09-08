@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getVerifiedSession, setSessionCookies } from "@/lib/auth-session";
 import { readOwnCreator, type WorldRow } from "@/lib/mara-real-data";
+import { emitProductEvent } from "@/lib/product-telemetry";
 import { safeLocalReturn, serviceRest, slugify, userRest } from "@/lib/supabase/server-rest";
 import type { TablesInsert } from "@/lib/supabase/database.types";
 
@@ -46,6 +47,7 @@ export async function POST(request: Request) {
     headers: { Prefer: "return=minimal" },
     body: JSON.stringify({ onboarding_state: "active", updated_at: new Date().toISOString() }),
   });
+  await emitProductEvent(request, "creator_world_created", { surface: "/creator", target: visibility });
 
   const response = NextResponse.redirect(new URL(returnTo, request.url), 303);
   if (session.refreshedSession) setSessionCookies(response, session.refreshedSession);
