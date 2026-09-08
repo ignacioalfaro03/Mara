@@ -35,7 +35,7 @@ try {
   await page.getByText(/experiencias, audios y colecciones/).waitFor();
   await page.getByRole("link", { name: "Explorar experiencias" }).click();
   await page.waitForURL(/\/shop$/);
-  await page.getByText(/La primera compra debe ser simple/).waitFor();
+  await page.getByText(/Empieza por algo pequeño/).waitFor();
   await page.getByText("La nota de esta noche").waitFor();
   await page.getByText("US$4.99").waitFor();
 
