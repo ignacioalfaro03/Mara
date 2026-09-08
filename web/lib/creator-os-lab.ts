@@ -1,6 +1,8 @@
 export type AttributionSource = "CREATOR" | "MARA" | "CROSS_CREATOR";
 export type SignalSource = "USER_DECLARED" | "PURCHASE_BEHAVIOR" | "PLATFORM_EVENT" | "DERIVED";
 export type SignalLabel = "DECLARED" | "OBSERVED" | "DERIVED";
+export type SignalScope = "CREATOR_CHARACTER" | "CREATOR_ACCOUNT";
+export type ConsentStatus = "USER_PROVIDED" | "TRANSACTIONAL_NECESSITY" | "DERIVED_FROM_ALLOWED_SIGNALS";
 export type ProductFormat = "audio" | "collection" | "personalized" | "session" | "membership";
 export type FanSegment =
   | "FIRST_TIME_BUYER"
@@ -30,6 +32,9 @@ export type PreferenceSignal = {
   displayValue: string;
   explanation: string;
   confidence: "explicit" | "high" | "medium";
+  createdAt: string;
+  scope: SignalScope;
+  consentStatus: ConsentStatus;
   creatorVisible: boolean;
   userEditable: boolean;
 };
@@ -62,6 +67,37 @@ export type NextBestAction = {
 export const ACTION_COOLDOWN_DAYS = 7;
 export const DORMANT_DAYS = 30;
 
+const SYNTHETIC_SIGNAL_DATE = "2026-09-07T12:00:00Z";
+
+type BaseSignal = Omit<PreferenceSignal, "createdAt" | "scope" | "consentStatus">;
+
+function declaredSignal(signal: BaseSignal): PreferenceSignal {
+  return {
+    ...signal,
+    createdAt: SYNTHETIC_SIGNAL_DATE,
+    scope: "CREATOR_CHARACTER",
+    consentStatus: "USER_PROVIDED",
+  };
+}
+
+function observedSignal(signal: BaseSignal): PreferenceSignal {
+  return {
+    ...signal,
+    createdAt: SYNTHETIC_SIGNAL_DATE,
+    scope: "CREATOR_CHARACTER",
+    consentStatus: "TRANSACTIONAL_NECESSITY",
+  };
+}
+
+function derivedSignal(signal: BaseSignal): PreferenceSignal {
+  return {
+    ...signal,
+    createdAt: SYNTHETIC_SIGNAL_DATE,
+    scope: "CREATOR_CHARACTER",
+    consentStatus: "DERIVED_FROM_ALLOWED_SIGNALS",
+  };
+}
+
 export const syntheticFans: SyntheticFan[] = [
   {
     alias: "luna_24",
@@ -79,7 +115,7 @@ export const syntheticFans: SyntheticFan[] = [
     lastCreatorActionDaysAgo: 30,
     attribution: "MARA",
     preferences: [
-      {
+      declaredSignal({
         label: "DECLARED",
         source: "USER_DECLARED",
         key: "preferred_format",
@@ -88,8 +124,8 @@ export const syntheticFans: SyntheticFan[] = [
         confidence: "explicit",
         creatorVisible: true,
         userEditable: true,
-      },
-      {
+      }),
+      observedSignal({
         label: "OBSERVED",
         source: "PURCHASE_BEHAVIOR",
         key: "last_purchase_format",
@@ -98,7 +134,7 @@ export const syntheticFans: SyntheticFan[] = [
         confidence: "high",
         creatorVisible: true,
         userEditable: false,
-      },
+      }),
     ],
   },
   {
@@ -117,7 +153,7 @@ export const syntheticFans: SyntheticFan[] = [
     lastCreatorActionDaysAgo: 9,
     attribution: "CREATOR",
     preferences: [
-      {
+      observedSignal({
         label: "OBSERVED",
         source: "PURCHASE_BEHAVIOR",
         key: "collection_pattern",
@@ -126,8 +162,8 @@ export const syntheticFans: SyntheticFan[] = [
         confidence: "high",
         creatorVisible: true,
         userEditable: false,
-      },
-      {
+      }),
+      derivedSignal({
         label: "DERIVED",
         source: "DERIVED",
         key: "collection_completion",
@@ -136,7 +172,7 @@ export const syntheticFans: SyntheticFan[] = [
         confidence: "high",
         creatorVisible: true,
         userEditable: false,
-      },
+      }),
     ],
   },
   {
@@ -155,7 +191,7 @@ export const syntheticFans: SyntheticFan[] = [
     lastCreatorActionDaysAgo: 36,
     attribution: "MARA",
     preferences: [
-      {
+      derivedSignal({
         label: "DERIVED",
         source: "DERIVED",
         key: "commercial_dormancy",
@@ -164,7 +200,7 @@ export const syntheticFans: SyntheticFan[] = [
         confidence: "high",
         creatorVisible: true,
         userEditable: false,
-      },
+      }),
     ],
   },
   {
@@ -183,7 +219,7 @@ export const syntheticFans: SyntheticFan[] = [
     lastCreatorActionDaysAgo: 1,
     attribution: "CREATOR",
     preferences: [
-      {
+      declaredSignal({
         label: "DECLARED",
         source: "USER_DECLARED",
         key: "preferred_language",
@@ -192,8 +228,8 @@ export const syntheticFans: SyntheticFan[] = [
         confidence: "explicit",
         creatorVisible: true,
         userEditable: true,
-      },
-      {
+      }),
+      observedSignal({
         label: "OBSERVED",
         source: "PLATFORM_EVENT",
         key: "pending_fulfillment",
@@ -202,10 +238,14 @@ export const syntheticFans: SyntheticFan[] = [
         confidence: "high",
         creatorVisible: true,
         userEditable: false,
-      },
+      }),
     ],
   },
 ];
+
+export function visiblePreferenceSignals(fan: SyntheticFan) {
+  return fan.preferences.filter((signal) => signal.creatorVisible);
+}
 
 export function deriveSegments(fan: SyntheticFan): FanSegment[] {
   const segments: FanSegment[] = [];
