@@ -15,10 +15,10 @@ function resolveMetadataBase() {
 export const metadata: Metadata = {
   metadataBase: resolveMetadataBase(),
   title: "Mara Vera",
-  description: "Llegaste justo. Mara ya estaba en medio de algo.",
+  description: "Experiencias privadas, escenas y colecciones de Mara Vera.",
   openGraph: {
     title: "Mara Vera",
-    description: "Entraste en medio de algo. A ver qué haces.",
+    description: "Entra, prueba una escena y quédate con lo que eliges.",
     images: ["/mara/mara-v1-reference.jpg"],
     type: "website",
   },
@@ -33,8 +33,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <header className="siteHeader">
           <Link href="/" className="wordmark">MARA VERA</Link>
           <nav aria-label="Navegación principal">
-            <Link href="/experience">Entrar</Link>
-            <Link href="/meet-mara">Mara</Link>
+            <Link href="/shop">Experiencias</Link>
+            <Link href="/library">Biblioteca</Link>
+            <Link href="/experience">Probar</Link>
           </nav>
         </header>
         {children}
