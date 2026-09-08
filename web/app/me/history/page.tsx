@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getVerifiedSession } from "@/lib/auth-session";
+import { ProductTelemetry } from "@/components/product-telemetry";
 import { historyCopy, readWeakness, type ActivityHistoryRow } from "@/lib/mara-real-data";
 import { userRest } from "@/lib/supabase/server-rest";
 import styles from "@/app/real-product.module.css";
@@ -20,6 +21,8 @@ export default async function UserHistoryPage() {
 
   return (
     <main className={styles.shell}><div className={styles.container}>
+      <ProductTelemetry event="history_viewed" surface="/me/history" target={history.length > 0 ? "has_history" : "empty_history"} />
+      {history.length > 0 ? <ProductTelemetry event="returning_user" surface="/me/history" target="history_return" /> : null}
       <nav className={styles.nav}><Link href="/">MARA</Link><Link className={styles.secondary} href="/auth">Cuenta</Link></nav>
       <header className={styles.hero}><p className={styles.eyebrow}>YOUR HISTORY</p><h1>Mara recuerda lo que sí importa.</h1><p>No es un log técnico. Es continuidad: decisiones tuyas, demanda que ayudaste a mover, compras y entregas.</p></header>
 
