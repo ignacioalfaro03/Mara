@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerBackendConfig } from "@/lib/backend-config";
-import { getVerifiedSession, setSessionCookies } from "@/lib/auth-session";
+import { getVerifiedSession, setSessionCookies, type MaraAuthSession } from "@/lib/auth-session";
 import { serviceHeaders } from "@/lib/commerce/backend";
 import { getStoreProduct } from "@/lib/commerce/storefront";
 
@@ -10,11 +10,9 @@ function encodedStoragePath(path: string) {
   return path.split("/").map((segment) => encodeURIComponent(segment)).join("/");
 }
 
-function jsonError(error: string, status: number, refreshedSession: Awaited<ReturnType<typeof getVerifiedSession>> extends infer _T ? unknown : never) {
+function jsonError(error: string, status: number, refreshedSession: MaraAuthSession | null) {
   const response = NextResponse.json({ error }, { status });
-  if (refreshedSession && typeof refreshedSession === "object" && "access_token" in refreshedSession) {
-    setSessionCookies(response, refreshedSession as Parameters<typeof setSessionCookies>[1]);
-  }
+  if (refreshedSession) setSessionCookies(response, refreshedSession);
   return response;
 }
 
