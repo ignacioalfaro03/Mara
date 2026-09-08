@@ -135,6 +135,7 @@ export type Database = {
       user_activity_history: { Row: { creator_id:string|null; event_at:string|null; event_type:string|null; metadata:Json|null; object_id:string|null; user_id:string|null; world_id:string|null }; Relationships: [] }
     }
     Functions: {
+      complete_mara_creator_fulfillment: { Args:{ p_purchase_id:string }; Returns:{ fulfilled_at:string; purchase_id:string }[] }
       complete_mara_ritual: { Args:{ p_ritual_key:string }; Returns:{ last_ritual_completed_at:string; last_ritual_key:string }[] }
       fulfill_mara_commerce_checkout: { Args:{ p_amount_minor:number; p_currency:string; p_event_type?:string; p_payload_sha256?:string; p_provider:string; p_provider_checkout_id:string; p_provider_event_id:string; p_provider_payment_id:string }; Returns:string }
       mark_private_offer_shown: { Args:never; Returns:{ last_private_offer_at:string; last_private_session_at:string; preferred_private_style:string; private_session_count:number }[] }
