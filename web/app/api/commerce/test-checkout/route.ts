@@ -3,6 +3,7 @@ import { getServerBackendConfig } from "@/lib/backend-config";
 import { serviceHeaders, type CommerceCheckoutIntentRow } from "@/lib/commerce/backend";
 import { getPaymentRuntime, signWebhookPayload, verifyTestCheckoutSignature } from "@/lib/commerce/config";
 import { fulfillSignedTestWebhook } from "@/lib/commerce/payment-fulfillment";
+import { emitProductEvent } from "@/lib/product-telemetry";
 
 export const runtime = "nodejs";
 
@@ -123,6 +124,13 @@ export async function POST(request: Request) {
   if (!fulfillment.ok) {
     return unavailable("La confirmacion firmada no pudo completar el fulfillment.", fulfillment.status);
   }
+
+  await emitProductEvent(request, "purchase_completed", {
+    surface: "/api/commerce/test-checkout",
+    target: "signed_test",
+    placement: "private_alpha",
+    currency: result.intent.currency,
+  });
 
   return NextResponse.redirect(new URL("/experience?commerce=return", request.url), 303);
 }
