@@ -28,11 +28,30 @@ try {
   const premium = await context.request.get(`${baseUrl}/premium`);
   assert(premium.status() === 404, `/premium is parked and must stay 404, got ${premium.status()}`);
 
+  // Latest founder contract: Home sells the evergreen catalog first; DM remains a free sample.
   await page.goto(`${baseUrl}/`, { waitUntil: "networkidle" });
   await passAgeGate(page);
-  await page.getByText(/Tengo una idea para esta noche/).waitFor();
-  await page.getByText(/Si no te tinca, me dices que no/).waitFor();
-  await page.getByRole("link", { name: "A ver." }).click();
+  await page.getByText(/No tienes que hablar conmigo todo el día/).waitFor();
+  await page.getByText(/experiencias, audios y colecciones/).waitFor();
+  await page.getByRole("link", { name: "Explorar experiencias" }).click();
+  await page.waitForURL(/\/shop$/);
+  await page.getByText(/La primera compra debe ser simple/).waitFor();
+  await page.getByText("La nota de esta noche").waitFor();
+  await page.getByText("US$4.99").waitFor();
+
+  await page.getByRole("link", { name: "Ver experiencia" }).click();
+  await page.waitForURL(/\/shop\/night-note$/);
+  await page.getByRole("heading", { name: "La nota de esta noche" }).waitFor();
+  await page.getByRole("button", { name: "Desbloquear" }).waitFor();
+
+  // Library must derive ownership from server truth. Anonymous visitors are asked to authenticate.
+  await page.goto(`${baseUrl}/library`, { waitUntil: "networkidle" });
+  await page.getByText(/Tu acceso vive en tu cuenta/).waitFor();
+  await page.getByRole("link", { name: "Crear cuenta o entrar" }).waitFor();
+
+  // Free Mara interaction still exists, but it is no longer the primary commercial home CTA.
+  await page.goto(`${baseUrl}/`, { waitUntil: "networkidle" });
+  await page.getByRole("link", { name: "Probar a Mara gratis" }).click();
   await page.waitForURL(/\/experience/);
   await page.getByText("Tengo una idea. Tú acomódate; yo pongo la historia.").waitFor();
   await page.getByRole("button", { name: "Entrar" }).click();
@@ -62,15 +81,15 @@ try {
     data: {
       event: "hero_cta_click",
       properties: {
-        surface: "meet_mara",
-        placement: "top",
-        target: "launch_experience",
+        surface: "home",
+        placement: "primary",
+        target: "storefront",
         entry_source: "direct",
       },
       timestamp: new Date().toISOString(),
     },
   });
-  assert(telemetry.status() === 200, `Meet Mara CTA telemetry returned ${telemetry.status()}`);
+  assert(telemetry.status() === 200, `Storefront CTA telemetry returned ${telemetry.status()}`);
 
   console.log("MARA_PUBLIC_PURPOSE_SMOKE PASS");
 } finally {
