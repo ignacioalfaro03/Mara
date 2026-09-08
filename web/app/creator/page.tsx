@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getVerifiedSession } from "@/lib/auth-session";
+import { ProductTelemetry } from "@/components/product-telemetry";
 import { formatMoney, readCreatorDashboard, readOwnCreator, readOwnWorlds } from "@/lib/mara-real-data";
 import styles from "@/app/real-product.module.css";
 
@@ -48,9 +49,14 @@ export default async function CreatorHomePage({ searchParams }: { searchParams: 
   const repeat = dashboard.customers.filter((customer) => (customer.purchase_count ?? 0) >= 2).length;
   const topAction = dashboard.nextActions.find((item) => item.priority === "high") ?? dashboard.nextActions[0];
   const bestOpportunity = dashboard.opportunities[0];
+  const canAcknowledgeTopAction = Boolean(
+    topAction?.user_id && topAction.action && !["FULFILL", "WAIT", "NO_ACTION"].includes(topAction.action),
+  );
 
   return (
     <main className={styles.shell}><div className={styles.container}>
+      {bestOpportunity ? <ProductTelemetry event="creator_opportunity_viewed" surface="/creator" target="best_opportunity" placement="creator_home" /> : null}
+      {pending.length > 0 ? <ProductTelemetry event="fulfillment_viewed" surface="/creator" target="pending_fulfillment" placement="creator_home" /> : null}
       <nav className={styles.nav}><Link href="/">MARA</Link><div className={styles.actions}>{defaultWorld ? <Link className={styles.secondary} href={`/world/${defaultWorld.slug}`}>Ver World</Link> : null}<Link className={styles.secondary} href="/auth">Cuenta</Link></div></nav>
       <header className={styles.hero}><p className={styles.eyebrow}>CREATOR OS · {creator.status} · {creator.plan}</p><h1>Lo importante hoy.</h1><p>Mara reduce datos a decisiones: qué quiere tu World, quién merece atención, qué vendiste y qué conviene hacer después.</p></header>
 
@@ -67,7 +73,10 @@ export default async function CreatorHomePage({ searchParams }: { searchParams: 
         </article>
         <article className={styles.card}>
           <p className={styles.eyebrow}>NEXT ACTION</p>
-          {topAction ? <><h2>{actionTitle(topAction.action)}</h2><p className={styles.muted}>{topAction.reason}</p><span className={styles.pill}>{topAction.priority}</span></> : <p className={styles.empty}>Todavía no hay suficiente actividad para recomendar una acción.</p>}
+          {topAction ? <><h2>{actionTitle(topAction.action)}</h2><p className={styles.muted}>{topAction.reason}</p><span className={styles.pill}>{topAction.priority}</span>
+            {topAction.action === "FULFILL" ? <p><a className={styles.secondary} href="#pending-fulfillment">Ir a la entrega pendiente</a></p> : null}
+            {canAcknowledgeTopAction ? <form method="post" action="/api/creator/customers/action"><input type="hidden" name="userId" value={topAction.user_id ?? ""} /><input type="hidden" name="action" value={topAction.action ?? ""} /><input type="hidden" name="returnTo" value="/creator" /><button className={styles.secondary} type="submit">Marcar acción realizada</button></form> : null}
+          </> : <p className={styles.empty}>Todavía no hay suficiente actividad para recomendar una acción.</p>}
         </article>
       </section>
 
@@ -99,7 +108,7 @@ export default async function CreatorHomePage({ searchParams }: { searchParams: 
         </article>
       </section>
 
-      <h2 className={styles.sectionTitle}>Pending fulfillment</h2>
+      <h2 className={styles.sectionTitle} id="pending-fulfillment">Pending fulfillment</h2>
       <section className={styles.grid}><article className={`${styles.card} ${styles.wide}`}>
         {pending.length === 0 ? <p className={styles.empty}>No hay entregas pendientes.</p> : <ul className={styles.list}>{pending.map((purchase) => <li className={styles.item} key={purchase.id}><div className={styles.row}><div><strong>{formatMoney(purchase.amount_minor, purchase.currency)}</strong><p className={styles.muted}>Compra {purchase.id.slice(0, 8)} · {new Date(purchase.created_at).toLocaleDateString("es-CL")}</p></div><form method="post" action="/api/creator/fulfillment"><input type="hidden" name="purchaseId" value={purchase.id} /><input type="hidden" name="returnTo" value="/creator" /><button className={styles.button} type="submit">Marcar entregado</button></form></div></li>)}</ul>}
       </article></section>
