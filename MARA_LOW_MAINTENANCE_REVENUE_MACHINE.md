@@ -194,8 +194,9 @@ Do not turn it into complex gamification unless real retention data justifies it
 - refunds/revocation;
 - first-party analytics;
 - character canon;
-- reusable content/scene/ritual inventory;
-- storefront/library work.
+- reusable content/scene/ritual inventory as ideation/prototype material;
+- storefront/library work;
+- entitlement-gated private premium delivery infrastructure.
 
 ### REPOSITION
 
@@ -274,14 +275,70 @@ Likewise, do not automate creator workflows before manual pilot evidence proves 
 
 ---
 
-## 12. Current execution focus
+## 12. Premium asset security contract
+
+The Mara repository is currently public. That creates a hard commercial and creator-safety boundary.
+
+### PUBLIC / SAFE TO COMMIT
+
+- storefront code;
+- product names;
+- public descriptions;
+- prices;
+- teasers and previews intentionally given away;
+- entitlement keys and non-secret catalog metadata;
+- private storage object paths when the underlying storage remains protected.
+
+### PRIVATE / NEVER SHIP IN THE PUBLIC REPO OR CLIENT BUNDLE
+
+- final paid scripts;
+- paid photos;
+- paid video;
+- paid audio;
+- complete premium experience payloads;
+- creator source media not intentionally public;
+- identity-verification documents;
+- consent/model-release evidence containing private data;
+- payout/tax records;
+- any asset whose scarcity, privacy or access control is part of the purchase value.
+
+Premium assets must be delivered through a private authenticated channel.
+
+Current Creator Zero contract:
+
+`AUTHENTICATED USER → ACTIVE ENTITLEMENT CHECK → SERVER ROUTE → PRIVATE STORAGE ASSET`
+
+Checkout must remain closed unless both server-side gates are configured:
+
+- `MARA_PREMIUM_STORAGE_BUCKET`
+- `MARA_PREMIUM_DELIVERY_READY=true`
+
+The readiness flag is deliberate. Merely configuring a bucket must never accidentally make an untested paid experience sellable.
+
+The private content route must:
+
+1. verify the current user server-side;
+2. verify an active entitlement server-side;
+3. retrieve the premium asset using server-only credentials;
+4. never expose service credentials to the browser;
+5. use private/no-store delivery semantics;
+6. return no premium payload to unauthorized users.
+
+Existing scene Markdown in this public repository is therefore **prototype/ideation material**, not secure final paid inventory. Do not sell those files verbatim.
+
+For external creators, the rule becomes stricter: original uploads and private identity artifacts must never enter the public repository at all. Creator media should live in appropriately private storage with explicit ownership, access, retention and deletion controls.
+
+---
+
+## 13. Current execution focus
 
 1. keep `/shop` and `/library` as Creator Zero commerce proof;
 2. make Founder Business Constitution the repository authority;
 3. validate the creator ICP before building full marketplace infrastructure;
 4. prepare a truthful creator acquisition/waitlist surface;
-5. resolve payment/payout/compliance feasibility;
-6. recruit a small private creator pilot;
-7. prove `FIRST SKU → FIRST SALE → SECOND SALE → PAYOUT`;
-8. only then automate marketplace onboarding/discovery;
-9. do not activate real payments, deploy production or merge without founder authorization.
+5. preserve entitlement-gated private premium delivery;
+6. resolve payment/payout/compliance feasibility;
+7. recruit a small private creator pilot;
+8. prove `FIRST SKU → FIRST SALE → SECOND SALE → PAYOUT`;
+9. only then automate marketplace onboarding/discovery;
+10. do not activate real payments, deploy production or merge without founder authorization.
