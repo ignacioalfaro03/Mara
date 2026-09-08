@@ -9,14 +9,6 @@ export default function ShopPage() {
   return (
     <main className={styles.shell}>
       <div className={styles.container}>
-        <nav className={styles.nav} aria-label="Mara navigation">
-          <Link href="/" className={styles.brand}>MARA VERA</Link>
-          <div className={styles.navLinks}>
-            <Link href="/experience">Prueba gratis</Link>
-            <Link href="/library">Mi biblioteca</Link>
-          </div>
-        </nav>
-
         <section className={styles.hero}>
           <div>
             <p className={styles.eyebrow}>EL LADO PRIVADO DE MARA</p>
