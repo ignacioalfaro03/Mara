@@ -19,15 +19,15 @@ export default function ShopPage() {
 
         <section className={styles.hero}>
           <div>
-            <p className={styles.eyebrow}>EXPERIENCIAS DE MARA</p>
-            <h1 className={styles.title}>Entra cuando quieras. Quédate con lo que eliges.</h1>
+            <p className={styles.eyebrow}>EL LADO PRIVADO DE MARA</p>
+            <h1 className={styles.title}>No todo lo dejo afuera.</h1>
             <p className={styles.lede}>
-              Mara ahora se construye como una biblioteca de experiencias privadas, escenas y colecciones que puedes comprar una vez y volver a abrir después. Sin depender de una conversación infinita.
+              Hay escenas, audios y pequeñas cosas que puedes desbloquear y guardar. Entras cuando quieres, eliges una y vuelves a ella después.
             </p>
           </div>
           <aside className={styles.heroAside}>
-            <strong>Cómo funciona</strong>
-            <p>Prueba a Mara gratis, elige una experiencia, desbloquéala y guárdala en tu biblioteca. Las nuevas colecciones llegan como drops, no como obligación diaria.</p>
+            <strong>Empieza por una.</strong>
+            <p>Primero puedes probar a Mara gratis. Si quieres seguir, desbloqueas una experiencia concreta y queda en tu biblioteca.</p>
           </aside>
         </section>
 
@@ -35,9 +35,9 @@ export default function ShopPage() {
           <div className={styles.sectionHeader}>
             <div>
               <p className={styles.eyebrow}>START HERE</p>
-              <h2>La primera compra debe ser simple.</h2>
+              <h2>Empieza por algo pequeño.</h2>
             </div>
-            <p>Un producto concreto, precio claro y acceso persistente. El backend actual ya protege compra, entitlement y refund.</p>
+            <p>Una continuación privada de la primera escena. Precio claro, una sola compra y algo que después sigue siendo tuyo.</p>
           </div>
 
           <div className={styles.grid}>
@@ -58,10 +58,10 @@ export default function ShopPage() {
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
             <div>
-              <p className={styles.eyebrow}>CATÁLOGO</p>
-              <h2>Inventario que se acumula.</h2>
+              <p className={styles.eyebrow}>DESPUÉS</p>
+              <h2>Hay más cosas esperando.</h2>
             </div>
-            <p>Estos productos ya tienen base editorial en el repositorio. Permanecen marcados como próximos hasta que el activo final y su entitlement estén realmente listos.</p>
+            <p>Cuando una experiencia esté realmente lista, aparece aquí. No necesitas perseguir cada publicación para encontrarla.</p>
           </div>
 
           <div className={styles.grid}>
@@ -83,9 +83,9 @@ export default function ShopPage() {
 
         <section className={styles.section}>
           <div className={styles.kpiStrip}>
-            <div className={styles.kpi}><strong>1×</strong><span>crear el activo</span></div>
-            <div className={styles.kpi}><strong>N×</strong><span>venderlo y revenderlo</span></div>
-            <div className={styles.kpi}><strong>2–4 h/mes</strong><span>objetivo operativo fundador</span></div>
+            <div className={styles.kpi}><strong>Una vez</strong><span>desbloqueas</span></div>
+            <div className={styles.kpi}><strong>Tu biblioteca</strong><span>lo guarda</span></div>
+            <div className={styles.kpi}><strong>Cuando quieras</strong><span>vuelves</span></div>
           </div>
         </section>
       </div>
