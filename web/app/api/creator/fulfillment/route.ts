@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getVerifiedSession, setSessionCookies } from "@/lib/auth-session";
 import { readOwnCreator, type PurchaseRow } from "@/lib/mara-real-data";
+import { emitProductEvent } from "@/lib/product-telemetry";
 import { safeLocalReturn, userRest } from "@/lib/supabase/server-rest";
 
 export const runtime = "nodejs";
@@ -24,12 +25,19 @@ export async function POST(request: Request) {
   if (!purchase) return NextResponse.json({ error: "purchase_not_authorized" }, { status: 404 });
   if (purchase.status !== "succeeded") return NextResponse.json({ error: "purchase_not_fulfillable" }, { status: 409 });
 
+  let didFulfill = false;
   if (!purchase.fulfilled_at) {
     const fulfilled = await userRest<FulfillmentResult[]>(session.accessToken, "rpc/complete_mara_creator_fulfillment", {
       method: "POST",
       body: JSON.stringify({ p_purchase_id: purchase.id }),
     });
     if (!fulfilled.ok) return NextResponse.json({ error: "fulfillment_failed" }, { status: fulfilled.status === 400 ? 409 : 502 });
+    didFulfill = true;
+  }
+
+  if (didFulfill) {
+    await emitProductEvent(request, "fulfillment_completed", { surface: "/creator", target: "creator_manual" });
+    await emitProductEvent(request, "creator_next_action_used", { surface: "/creator", target: "fulfill" });
   }
 
   const response = NextResponse.redirect(new URL(returnTo, request.url), 303);
