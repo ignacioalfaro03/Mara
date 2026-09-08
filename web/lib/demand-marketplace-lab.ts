@@ -10,9 +10,18 @@ export type DemandStage =
   | "COMPLETED"
   | "MEMORY";
 
-export type ExperienceType = "PHYSICAL" | "DIGITAL" | "HYBRID";
+export type DemandFulfillmentType =
+  | "DIGITAL_PRODUCT"
+  | "DIGITAL_EXPERIENCE"
+  | "MEMBERSHIP"
+  | "COLLAB"
+  | "MERCH"
+  | "PHYSICAL_EXPERIENCE"
+  | "HYBRID";
+
 export type DemandOrigin = "COMMUNITY" | "CREATOR" | "HOST";
 export type HostStatus = "NONE" | "WANTED" | "INTERESTED" | "PROPOSALS" | "SELECTED";
+export type PrivacyMode = "PUBLIC" | "PSEUDONYMOUS" | "PRIVATE";
 
 export type WtpBucket = {
   amountMinor: number;
@@ -26,13 +35,16 @@ export type DemandIdea = {
   category: string;
   description: string;
   creatorLabel: string | null;
+  worldLabel: string | null;
   origin: DemandOrigin;
-  experienceType: ExperienceType;
+  fulfillmentType: DemandFulfillmentType;
+  privacyMode: PrivacyMode;
   stage: DemandStage;
   interestedCount: number;
+  pledgedCount: number;
   committedCount: number;
   targetCommitments: number;
-  capacityTarget: number;
+  capacityTarget: number | null;
   hostStatus: HostStatus;
   wtpBuckets: WtpBucket[];
   tags: string[];
@@ -41,6 +53,7 @@ export type DemandIdea = {
 export type DemandMetrics = {
   averageWtpMinor: number;
   interestGmvMinor: number;
+  pledgedGmvMinor: number;
   verifiedDemandGmvMinor: number;
   progressPercent: number;
 };
@@ -50,100 +63,137 @@ export type SimilarDemandMatch = {
   score: number;
 };
 
-export const wtpOptionsMinor = [15_000_00, 25_000_00, 35_000_00, 50_000_00];
+export const wtpOptionsMinor = [5_000_00, 8_000_00, 12_000_00, 20_000_00, 35_000_00, 50_000_00, 80_000_00];
 
 export const seededDemandIdeas: DemandIdea[] = [
+  {
+    id: "mara-audio-collection-online",
+    title: "Mara Audio Collection: Community Cut",
+    city: "Online",
+    category: "Creator content",
+    description: "La comunidad pide una colección digital producida una vez y desbloqueada por demanda agregada.",
+    creatorLabel: "Mara Vera",
+    worldLabel: "Mara World",
+    origin: "COMMUNITY",
+    fulfillmentType: "DIGITAL_PRODUCT",
+    privacyMode: "PSEUDONYMOUS",
+    stage: "RISING",
+    interestedCount: 264,
+    pledgedCount: 148,
+    committedCount: 96,
+    targetCommitments: 120,
+    capacityTarget: null,
+    hostStatus: "NONE",
+    wtpBuckets: [
+      { amountMinor: 5_000_00, count: 48 },
+      { amountMinor: 8_000_00, count: 62 },
+      { amountMinor: 12_000_00, count: 28 },
+      { amountMinor: 20_000_00, count: 10 },
+    ],
+    tags: ["mara", "audio", "collection", "digital", "creator"],
+  },
+  {
+    id: "mara-inner-circle-online",
+    title: "Mara Inner Circle — Founding Cohort",
+    city: "Online",
+    category: "Membership",
+    description: "Demanda por una membresía limitada con prioridad, votaciones, drops y reconocimiento dentro del World.",
+    creatorLabel: "Mara Vera",
+    worldLabel: "Mara World",
+    origin: "COMMUNITY",
+    fulfillmentType: "MEMBERSHIP",
+    privacyMode: "PRIVATE",
+    stage: "VALIDATED",
+    interestedCount: 181,
+    pledgedCount: 103,
+    committedCount: 79,
+    targetCommitments: 90,
+    capacityTarget: 150,
+    hostStatus: "NONE",
+    wtpBuckets: [
+      { amountMinor: 8_000_00, count: 29 },
+      { amountMinor: 12_000_00, count: 41 },
+      { amountMinor: 20_000_00, count: 25 },
+      { amountMinor: 35_000_00, count: 8 },
+    ],
+    tags: ["mara", "inner", "circle", "membership", "private"],
+  },
   {
     id: "mara-masked-night-chillan",
     title: "Mara Masked Night",
     city: "Chillán",
-    category: "Nightlife",
-    description: "Una noche de máscaras, música y universo Mara activada por demanda local.",
+    category: "Community IRL",
+    description: "Una noche de máscaras y universo Mara activada por demanda local, con privacidad como parte central del formato.",
     creatorLabel: "Mara Vera",
+    worldLabel: "Mara World",
     origin: "COMMUNITY",
-    experienceType: "PHYSICAL",
+    fulfillmentType: "PHYSICAL_EXPERIENCE",
+    privacyMode: "PSEUDONYMOUS",
     stage: "HOST_WANTED",
     interestedCount: 186,
+    pledgedCount: 118,
     committedCount: 72,
     targetCommitments: 88,
     capacityTarget: 180,
     hostStatus: "WANTED",
     wtpBuckets: [
       { amountMinor: 20_000_00, count: 39 },
-      { amountMinor: 25_000_00, count: 71 },
-      { amountMinor: 35_000_00, count: 54 },
-      { amountMinor: 50_000_00, count: 22 },
+      { amountMinor: 35_000_00, count: 43 },
+      { amountMinor: 50_000_00, count: 26 },
+      { amountMinor: 80_000_00, count: 10 },
     ],
-    tags: ["mara", "masked", "party", "fiesta", "night"],
+    tags: ["mara", "masked", "party", "fiesta", "night", "privacy"],
   },
   {
-    id: "karaoke-mara-concepcion",
-    title: "Karaoke Mara",
-    city: "Concepción",
-    category: "Social",
-    description: "Karaoke de comunidad con una capa Mara, grupos pequeños y final colectivo.",
-    creatorLabel: "Mara Vera",
+    id: "creator-collab-online",
+    title: "Mara × Creator Pilot — Community Collab",
+    city: "Online",
+    category: "Collaboration",
+    description: "Los usuarios piden una colaboración entre Worlds antes de que ambas Creator decidan producirla.",
+    creatorLabel: "Mara Vera + Creator Pilot",
+    worldLabel: "Cross-World",
     origin: "COMMUNITY",
-    experienceType: "PHYSICAL",
-    stage: "RISING",
-    interestedCount: 91,
-    committedCount: 27,
-    targetCommitments: 60,
-    capacityTarget: 100,
-    hostStatus: "NONE",
+    fulfillmentType: "COLLAB",
+    privacyMode: "PUBLIC",
+    stage: "UNLOCKED",
+    interestedCount: 319,
+    pledgedCount: 176,
+    committedCount: 132,
+    targetCommitments: 120,
+    capacityTarget: null,
+    hostStatus: "SELECTED",
     wtpBuckets: [
-      { amountMinor: 12_000_00, count: 20 },
-      { amountMinor: 18_000_00, count: 39 },
-      { amountMinor: 25_000_00, count: 24 },
-      { amountMinor: 35_000_00, count: 8 },
+      { amountMinor: 5_000_00, count: 42 },
+      { amountMinor: 8_000_00, count: 69 },
+      { amountMinor: 12_000_00, count: 47 },
+      { amountMinor: 20_000_00, count: 18 },
     ],
-    tags: ["mara", "karaoke", "music", "social"],
+    tags: ["mara", "creator", "collab", "cross", "world", "digital"],
   },
   {
     id: "rooftop-dinner-santiago",
     title: "Rooftop Dinner After Dark",
     city: "Santiago",
-    category: "Food & social",
-    description: "Cena nocturna en rooftop para conocer gente nueva. No requiere Creator.",
+    category: "Community",
+    description: "Demanda comunitaria para una cena nocturna. Demuestra que el engine también puede funcionar sin Creator.",
     creatorLabel: null,
+    worldLabel: "Community Demand",
     origin: "COMMUNITY",
-    experienceType: "PHYSICAL",
+    fulfillmentType: "PHYSICAL_EXPERIENCE",
+    privacyMode: "PUBLIC",
     stage: "VALIDATED",
     interestedCount: 128,
+    pledgedCount: 82,
     committedCount: 58,
     targetCommitments: 70,
     capacityTarget: 90,
     hostStatus: "INTERESTED",
     wtpBuckets: [
-      { amountMinor: 30_000_00, count: 29 },
-      { amountMinor: 45_000_00, count: 47 },
-      { amountMinor: 60_000_00, count: 38 },
-      { amountMinor: 80_000_00, count: 14 },
+      { amountMinor: 35_000_00, count: 21 },
+      { amountMinor: 50_000_00, count: 33 },
+      { amountMinor: 80_000_00, count: 28 },
     ],
     tags: ["dinner", "rooftop", "food", "social", "night"],
-  },
-  {
-    id: "creator-room-digital",
-    title: "Creator Room: Build It With Us",
-    city: "Online",
-    category: "Creator",
-    description: "Sesión digital limitada donde la comunidad decide el próximo concepto junto a una Creator.",
-    creatorLabel: "Creator Pilot",
-    origin: "CREATOR",
-    experienceType: "DIGITAL",
-    stage: "UNLOCKED",
-    interestedCount: 214,
-    committedCount: 104,
-    targetCommitments: 100,
-    capacityTarget: 150,
-    hostStatus: "SELECTED",
-    wtpBuckets: [
-      { amountMinor: 8_000_00, count: 56 },
-      { amountMinor: 12_000_00, count: 81 },
-      { amountMinor: 20_000_00, count: 54 },
-      { amountMinor: 30_000_00, count: 23 },
-    ],
-    tags: ["creator", "digital", "community", "session"],
   },
 ];
 
@@ -166,6 +216,7 @@ export function calculateDemandMetrics(idea: DemandIdea): DemandMetrics {
   return {
     averageWtpMinor,
     interestGmvMinor: averageWtpMinor * idea.interestedCount,
+    pledgedGmvMinor: averageWtpMinor * idea.pledgedCount,
     verifiedDemandGmvMinor: averageWtpMinor * idea.committedCount,
     progressPercent: Math.min(100, Math.round((idea.committedCount / target) * 100)),
   };
@@ -176,16 +227,20 @@ export function aggregateDemandMarketplace(ideas: DemandIdea[]) {
     (summary, idea) => {
       const metrics = calculateDemandMetrics(idea);
       summary.interested += idea.interestedCount;
+      summary.pledged += idea.pledgedCount;
       summary.committed += idea.committedCount;
       summary.interestGmvMinor += metrics.interestGmvMinor;
+      summary.pledgedGmvMinor += metrics.pledgedGmvMinor;
       summary.verifiedDemandGmvMinor += metrics.verifiedDemandGmvMinor;
       if (idea.stage === "HOST_WANTED") summary.hostWanted += 1;
       return summary;
     },
     {
       interested: 0,
+      pledged: 0,
       committed: 0,
       interestGmvMinor: 0,
+      pledgedGmvMinor: 0,
       verifiedDemandGmvMinor: 0,
       hostWanted: 0,
     },
@@ -216,6 +271,13 @@ const synonymMap: Record<string, string> = {
   masked: "masked",
   rooftop: "rooftop",
   terraza: "rooftop",
+  audio: "audio",
+  audios: "audio",
+  membresia: "membership",
+  membership: "membership",
+  colaboracion: "collab",
+  collaboration: "collab",
+  collab: "collab",
 };
 
 function normalizeTokens(input: string): string[] {
@@ -273,4 +335,12 @@ export function formatClp(minor: number): string {
 
 export function stageLabel(stage: DemandStage): string {
   return stage.replaceAll("_", " ");
+}
+
+export function fulfillmentLabel(type: DemandFulfillmentType): string {
+  return type.replaceAll("_", " ");
+}
+
+export function isPhysicalDemand(type: DemandFulfillmentType): boolean {
+  return type === "PHYSICAL_EXPERIENCE" || type === "HYBRID";
 }
