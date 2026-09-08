@@ -36,6 +36,28 @@ function adminHeaders(serviceRoleKey: string): Record<string, string> {
   };
 }
 
+async function cleanupQaCreatorScope(config: NonNullable<ReturnType<typeof getServerBackendConfig>>, userId: string) {
+  const headers = adminHeaders(config.serviceRoleKey);
+  const creatorLookup = await fetch(`${config.url}/rest/v1/creators?select=id&user_id=eq.${encodeURIComponent(userId)}&limit=1`, {
+    headers,
+    cache: "no-store",
+  });
+  if (!creatorLookup.ok) return false;
+  const creators = (await creatorLookup.json().catch(() => [])) as Array<{ id?: string }>;
+  const creatorId = creators[0]?.id;
+  if (!creatorId || !UUID.test(creatorId)) return true;
+
+  // Creator Worlds intentionally SET NULL on commerce offers to preserve real
+  // purchase history. QA cleanup must delete the test offer first so a deleted
+  // proof creator cannot leave an active global offer behind.
+  const offers = await fetch(`${config.url}/rest/v1/commerce_offers?creator_id=eq.${encodeURIComponent(creatorId)}`, {
+    method: "DELETE",
+    headers: { ...headers, Prefer: "return=minimal" },
+    cache: "no-store",
+  });
+  return offers.ok;
+}
+
 export async function POST(request: Request) {
   // This route is inert unless an isolated proof deployment explicitly injects
   // MARA_QA_PROOF_TOKEN. Canonical production does not configure that token.
@@ -99,6 +121,12 @@ export async function POST(request: Request) {
     const user = await lookup.json().catch(() => ({}));
     if (!lookup.ok || !QA_EMAIL.test(user.email ?? "")) {
       return NextResponse.json({ ok: false, error: "not_a_qa_identity" }, { status: 403 });
+    }
+
+    const creatorScopeClean = await cleanupQaCreatorScope(config, userId);
+    if (!creatorScopeClean) {
+      console.error("MARA_QA_CREATOR_SCOPE_CLEANUP_FAILED");
+      return NextResponse.json({ ok: false, error: "qa_creator_scope_cleanup_failed" }, { status: 502 });
     }
 
     const upstream = await fetch(`${config.url}/auth/v1/admin/users/${userId}`, {
