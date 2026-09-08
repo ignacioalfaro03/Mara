@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getVerifiedSession, setSessionCookies } from "@/lib/auth-session";
 import { readOwnCreator, type CreatorRow } from "@/lib/mara-real-data";
+import { emitProductEvent } from "@/lib/product-telemetry";
 import { safeLocalReturn, serviceRest } from "@/lib/supabase/server-rest";
 import type { TablesInsert } from "@/lib/supabase/database.types";
 
@@ -29,6 +30,7 @@ export async function POST(request: Request) {
 
   const existing = await readOwnCreator(session.accessToken, session.user.id);
   if (!existing) {
+    await emitProductEvent(request, "creator_onboarding_started", { surface: "/creator", target: "creator_activation" });
     const row: TablesInsert<"creators"> = { user_id: session.user.id, status: "pilot", plan: "free", onboarding_state: "setup" };
     const created = await serviceRest<CreatorRow[]>("creators", {
       method: "POST",
@@ -36,6 +38,7 @@ export async function POST(request: Request) {
       body: JSON.stringify(row),
     });
     if (!created.ok) return NextResponse.json({ error: "creator_activation_failed" }, { status: 502 });
+    await emitProductEvent(request, "creator_activated", { surface: "/creator", target: "creator_alpha" });
   }
 
   let returnTo = "/creator";
