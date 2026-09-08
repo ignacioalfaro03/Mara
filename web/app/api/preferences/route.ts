@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getBackendConfig } from "@/lib/backend-config";
 import { getVerifiedSession, setSessionCookies } from "@/lib/auth-session";
+import { emitProductEvent } from "@/lib/product-telemetry";
 import { safeLocalReturn } from "@/lib/supabase/server-rest";
 import type { TablesInsert } from "@/lib/supabase/database.types";
 
@@ -117,6 +118,14 @@ export async function POST(request: Request) {
       headers: { apikey: config.publishableKey, Authorization: `Bearer ${session.accessToken}`, "Content-Type": "application/json", Prefer: "return=minimal" },
       body: JSON.stringify({ last_visual_choice: body.selectedOption, updated_at: new Date().toISOString() }),
       cache: "no-store",
+    });
+  }
+
+  if (dbResponse.ok) {
+    await emitProductEvent(request, "taste_signal_created", {
+      surface: body.surface!,
+      target: body.signalScope === "creator_world" ? "creator_world" : "network",
+      preference_group: body.choiceGroup!,
     });
   }
 
