@@ -1,38 +1,94 @@
 # Mara
 
-> ## 🔒 READ THIS FIRST — FOUNDER BUSINESS CONSTITUTION
+> ## 🔒 READ THIS FIRST — CURRENT FOUNDER AUTHORITY
 >
-> **The highest-priority business authority for this repository is [`MARA_FOUNDER_BUSINESS_CONSTITUTION.md`](./MARA_FOUNDER_BUSINESS_CONSTITUTION.md).**
+> **The highest-priority business authority is now [`MARA_DEMAND_TO_EXPERIENCE_FOUNDER_AMENDMENT.md`](./MARA_DEMAND_TO_EXPERIENCE_FOUNDER_AMENDMENT.md).**
 >
-> Mara is now defined as a **private creator economy marketplace and monetization operating system** for verified adult creators who want to build and monetize digital personas while retaining control over how much of their real-world identity becomes public.
+> The prior [`MARA_FOUNDER_BUSINESS_CONSTITUTION.md`](./MARA_FOUNDER_BUSINESS_CONSTITUTION.md) remains valid as the creator-economy and privacy foundation wherever it does not conflict with the newer demand-to-experience amendment.
 >
-> Core promise: **YOUR IDENTITY STAYS YOURS. YOUR CHARACTER EARNS.**
+> Core thesis: **MARA TURNS DESIRE INTO DEMAND, AND DEMAND INTO EXPERIENCES.**
 >
-> **Mara Vera is Creator Zero.** She is the first character, initial demand engine and reusable commerce proof — not the ceiling of the company.
->
-> Older Mara-only, chatbot-first, relationship-first, adult-catalog-first or storefront-only assumptions are subordinate when they conflict with the Founder Business Constitution.
->
-> Founder boundary: **NO MERGE without Ignacio saying exactly `mergea`.** No production deployment, payment activation, payout activation or external spend is implied by strategy work.
+> Founder boundary: **NO MERGE without Ignacio saying exactly `mergea`.** Strategy or prototype work does not authorize production deployment, real payments, payouts, venue bookings or external spend.
 
-## Business thesis
+## Company definition
 
-Mara exists to unlock creator supply that conventional public creator platforms may fail to capture: adults who want to monetize personality, creativity, voice, content, experiences or bounded time without making their legal identity, employer-facing identity or personal social graph the public product.
+Mara is evolving into a **demand-to-experience marketplace**.
 
-The platform separates:
+People express what they want to happen. Other people see that demand and join it. Mara measures the quality of the demand, including willingness to pay and eventually verified commitment. Hosts, Creators and Operators can then compete or collaborate to make the experience happen.
 
-**PRIVATE VERIFIED CREATOR → PUBLIC CHARACTER → SKU / EXPERIENCE → CUSTOMER → TRANSACTION → CREATOR EARNINGS**
+Canonical company loop:
 
-Public pseudonymity is not regulatory anonymity. Mara must privately verify creators and satisfy age, identity, consent, payment, tax and lawful-disclosure requirements where applicable.
+**DESIRE → DISCOVERY → JOIN → WTP → COMMIT → VERIFIED DEMAND → HOST / CREATOR / OPERATOR → UNLOCK → TRANSACTION → EXPERIENCE → MEMORY → NEXT DESIRE**
 
-Mara must also be truthful with customers about whether they are interacting with:
+The business should not begin by guessing which events or products to produce.
 
-- a fictional AI-generated character;
-- a verified adult creator operating a character;
-- AI-generated output;
-- the creator directly;
-- or an explicitly disclosed combination.
+It should begin with:
 
-Privacy is a product benefit. Deception is not.
+> **What do people want to happen, how many people want it, and how economically real is that demand?**
+
+## The strategic asset
+
+The long-term asset is the **Demand Graph**.
+
+Mara should learn, in a privacy-safe way:
+
+- what groups of people want;
+- in which city or market;
+- when they want it;
+- what formats they prefer;
+- how many people will join;
+- how much they are willing to pay;
+- how much demand is actually verified;
+- which Hosts can fulfill it reliably;
+- which experiences generate repeat demand.
+
+The primary North Star hypothesis is:
+
+# VERIFIED DEMAND GMV
+
+Do not confuse interest with verified demand, unlocked demand or executed GMV.
+
+## What users do
+
+A first-time user should understand Mara in seconds:
+
+> **Aquí veo cosas que la gente quiere hacer. Me puedo sumar o puedo proponer lo mío.**
+
+Core consumer actions:
+
+1. discover public demand;
+2. tap **ME SUMO**;
+3. optionally state willingness to pay;
+4. later make a stronger commitment when the payment model is authorized;
+5. propose a new idea;
+6. join an existing similar demand instead of fragmenting the market;
+7. bring successful experiences to another city.
+
+A user does not need to think like an event producer. A request such as “quiero karaoke con gente de Mara en Chillán” is enough to begin forming demand.
+
+## Marketplace actors
+
+### Demanders
+
+Users who propose or join demand.
+
+### Creators
+
+Creators or characters who may contribute audience, identity, IP, content, approval, digital participation or physical presence.
+
+### Creator Hosts
+
+Authorized people or teams that operate experiences for a Creator.
+
+### Venue Hosts
+
+Businesses such as pubs, bars, restaurants, hotels, clubs, studios, gyms or event venues that can fulfill demand.
+
+### Operators
+
+Independent organizers or production teams capable of executing an opportunity.
+
+One entity may perform more than one role.
 
 ## Mara Vera = Creator Zero
 
@@ -40,223 +96,288 @@ Mara Vera remains strategically important.
 
 She is:
 
+- Creator Zero;
 - the first character;
-- the initial social acquisition engine;
-- the first storefront;
-- the first content catalog;
-- the first conversion test;
-- the first reusable commerce template;
-- the proof that a character can create demand and transactions.
+- an initial acquisition engine;
+- the first demand-generating universe;
+- the first reusable commerce proof;
+- a source of seeded marketplace liquidity;
+- a future source of repeatable Experience Templates.
 
-Her current Character Canon remains authoritative for Mara Vera specifically:
+But Mara Vera is **not the ceiling of the company**.
+
+An Experience may belong to:
+
+- Mara Vera;
+- another Creator;
+- a Host;
+- a community;
+- or no Creator at all.
+
+Her Character Canon remains authoritative specifically for Mara Vera:
 
 [`MARA_CHARACTER_CANON.md`](./MARA_CHARACTER_CANON.md)
 
-Permanent character rule remains:
+## Creator economy remains a supply engine
 
-**ONE MARA. MANY CONTEXTS.**
+The private creator-economy thesis is not discarded.
 
-The character canon does not define the entire future marketplace. Future verified creators may have their own characters and character-specific canons.
+It becomes one powerful supply layer inside the broader marketplace.
 
-## Current product architecture
+Creators can still build character businesses, monetize digital products, voice, personalized products, bounded availability and memberships. They can also originate or license experiences and let third-party Hosts execute them.
 
-The company now has two linked systems.
+The privacy principle remains:
 
-### 1. Mara Originals / Creator Zero
+> **Your character can be public. You do not have to be.**
 
-Current reusable commercial loop:
+Public pseudonymity is not regulatory anonymity. KYC, age, consent, tax, payout and lawful-disclosure obligations still apply where required.
 
-**Social → Mara → storefront → free taste → purchase → library → related product → repeat purchase**
+## Demand objects
 
-This continues because it proves the transaction primitive the future marketplace needs.
+### DemandRequest
 
-### 2. Mara Creators
+A raw expression of desire from a user.
 
-Future marketplace loop:
+### DemandCluster
 
-**Creator → character → product/SKU → buyer → earnings → repeat buyer → more creator supply**
+A canonical pool that aggregates sufficiently similar demand in the same relevant market.
 
-Initial creator products may include:
+Demand should concentrate instead of fragmenting across near-duplicate ideas.
 
-- digital collections;
-- audio;
-- personalized digital products;
-- bounded paid chat windows;
-- scheduled audio/video interaction where enabled;
-- memberships;
-- bundles;
-- later creator collaboration products.
+Example:
 
-Sexual explicitness is not the monetization ladder.
+- “Mara Party Chillán”
+- “Fiesta de Mara en Chillán”
+- “Mara Night Chillán”
 
-Higher willingness to pay should primarily come from:
+should normally trigger an existing-demand suggestion before creating three separate pools.
 
-**MORE ACCESS + MORE PERSONALIZATION + MORE SCARCITY + MORE CREATOR TIME + BETTER CATALOG + BETTER DISTRIBUTION.**
+## Demand lifecycle
 
-## Creator exposure ladder
+Canonical states:
 
-Creators should be able to stop at any level they choose.
+**IDEA → RISING → VALIDATED → HOST WANTED → HOST PROPOSALS → UNLOCKED → BOOKING → HAPPENING → COMPLETED → MEMORY**
 
-1. **Character only** — public digital persona; minimal public personal exposure.
-2. **Voice** — optional voice products/interactions.
-3. **Selective real content** — only creator-approved real media.
-4. **Direct interaction** — bounded, scheduled interaction under creator-defined rules.
+Not every experience needs every state, but the system must preserve the distinction between demand formation, supply matching and real execution.
 
-No creator should need to connect her full public identity merely to make the product economically viable.
+## Host thesis
+
+Do not sell a pub or hotel generic advertising.
+
+Sell a validated opportunity.
+
+Canonical Host proposition:
+
+> **There are people near you who want this, and Mara can show the quality of that demand.**
+
+A Host opportunity can eventually include aggregated metrics such as:
+
+- city;
+- category;
+- interested people;
+- verified commitments;
+- average willingness to pay;
+- potential demand GMV;
+- capacity requirement;
+- time window;
+- Creator / IP requirements.
+
+Mara should not expose private individual buyer histories merely to make an opportunity attractive.
+
+## Operating rule
+
+# MARA ORCHESTRATES. HOSTS EXECUTE.
+
+Mara should own the marketplace infrastructure:
+
+- discovery;
+- demand aggregation;
+- clustering;
+- commitments;
+- payment orchestration when authorized;
+- QR / access primitives;
+- reputation;
+- Host proposals;
+- Creator approvals;
+- rules / compliance;
+- revenue splits;
+- refunds / disputes;
+- analytics.
+
+Mara should avoid becoming the default physical producer of every experience.
+
+The business should remain asset-light and operationally scalable.
+
+## Experience types
+
+Mara can support:
+
+### Physical
+
+Legal entertainment, hospitality, food, sports, culture, social, community, educational or creator formats.
+
+### Digital
+
+Creator sessions, livestreams, group experiences, digital challenges, classes or guided experiences.
+
+### Hybrid
+
+Physical fulfillment combined with digital participation, Creator IP, content or post-experience products.
+
+Physical adult-oriented experiences must not become a mechanism for sexual services, coercion, illegal activity or unsafe conduct. Payment never changes consent or safety boundaries.
 
 ## Monetization architecture
 
-Mara should not depend on a single revenue stream.
+Mara should monetize the value created by demand in multiple layers without destroying trust.
 
-Potential engines, subject to real validation:
+Priority engines:
 
 - marketplace transaction take rate;
-- creator SaaS / Pro tooling;
-- managed Studio/setup services;
-- Creator Privacy Pro;
-- merchandising/catalog optimization tooling;
-- personalized digital products;
-- bounded scheduled creator time;
-- creator referrals/collaborations;
-- consumer Mara Pass later;
-- promoted discovery later;
-- B2B / white-label creator infrastructure later.
+- commitment / reservation economics only after legal and provider validation;
+- Host performance fees or Host Pro;
+- Creator royalty / licensing administration;
+- VIP and upgrades;
+- experience extras;
+- post-experience commerce;
+- Host SaaS / CRM / analytics;
+- aggregated Demand Intelligence;
+- idle-capacity matching;
+- later promoted opportunities with explicit labeling.
 
-Every monetization mechanism must be evaluated on contribution margin, creator benefit, customer value, scalability, founder burden, payment risk and compliance risk.
+Do not optimize only headline take rate.
 
-## Marketplace North Star
+Optimize:
 
-Do not optimize creator count or follower count in isolation.
+**VALUE CREATED × CONVERSION × REPEAT × CONTRIBUTION MARGIN × TRUST**
 
-The supply-side question is:
+## Current V1 implementation
 
-> **Can an adult creator who would not have built a conventional public creator business create a character, launch a SKU, earn money and repeat the process while exposing less of her real-world identity?**
+The current demand-marketplace implementation is deliberately **DEV-only and synthetic**.
 
-Key operating metric:
+Route:
 
-**CREATOR NET EARNINGS / CREATOR HOURS INVESTED**
+`/experience/demand-marketplace-lab`
 
-Key network behavior:
+It proves:
 
-**FIRST PURCHASE → SECOND PURCHASE → SECOND CREATOR → NETWORK RETENTION**
+- visible public demand;
+- **ME SUMO**;
+- willingness-to-pay selection;
+- synthetic commitment;
+- unlock progress;
+- Interest GMV;
+- Verified Demand GMV;
+- idea proposal;
+- basic same-city duplicate detection;
+- join-existing vs create-variant behavior;
+- **HOST WANTED**;
+- synthetic Host interest;
+- experiences with and without Creator dependency.
 
-## The moat
+The route must return 404 outside development.
 
-Avatar generation alone is not the moat. It will commoditize.
+No real payment, reservation, Host contract, venue booking, payout, production database migration or physical fulfillment is activated by this V1.
 
-The defensible system is the combination of:
+See:
 
-**PRIVATE CREATOR IDENTITY**
+[`docs/strategy/MARA_DEMAND_TO_EXPERIENCE_MARKETPLACE_V1.md`](./docs/strategy/MARA_DEMAND_TO_EXPERIENCE_MARKETPLACE_V1.md)
+
+## Supporting strategic layers
+
+The following remain active where compatible with the demand-to-experience amendment:
+
+- [`MARA_FOUNDER_BUSINESS_CONSTITUTION.md`](./MARA_FOUNDER_BUSINESS_CONSTITUTION.md) — creator economy, privacy, creator business and marketplace foundation;
+- Creator OS / Fan Intelligence strategy — creator-side CRM and monetization intelligence;
+- Creator Commerce / Caprichos strategy — offers, creator demand and audience monetization;
+- Revenue Expansion Platform strategy — transaction, SaaS, Growth, agency, brand and ecosystem revenue layers;
+- [`MARA_LOW_MAINTENANCE_REVENUE_MACHINE.md`](./MARA_LOW_MAINTENANCE_REVENUE_MACHINE.md) — operating leverage doctrine;
+- [`MARA_MONETIZATION_OS.md`](./MARA_MONETIZATION_OS.md) — existing monetization and commerce primitives;
+- Character / World / social canons — execution systems, not the definition of the company.
+
+## Marketplace moat
+
+The defensible system can become the combination of:
+
+**DEMAND GRAPH**
 +
-**CHARACTERS**
+**WILLINGNESS-TO-PAY SIGNALS**
 +
-**CREATOR TRUST**
+**VERIFIED COMMITMENTS**
 +
-**CONTENT / PRODUCT INVENTORY**
+**HOST NETWORK**
 +
-**PAYMENTS / PAYOUTS**
+**CREATOR / IP NETWORK**
 +
-**DISCOVERY**
+**EXPERIENCE TEMPLATES**
 +
-**CUSTOMER DEMAND GRAPH**
+**TRANSACTION HISTORY**
 +
-**CREATOR CRM**
+**REPUTATION**
 +
-**BOOKING / CAPACITY**
+**CAPACITY MATCHING**
 +
-**AUTOMATION**
-+
-**CROSS-SELLING**
-+
-**MARKETPLACE LIQUIDITY**
+**MEMORY / REPEAT DEMAND**
 
-The strongest possible supply-side outcome is:
+The strategic advantage is knowing what people want before traditional supply knows what to build.
 
-> **Creators make more money per hour on Mara while exposing less of their real identity than they would alone.**
+## Payment, compliance and trust are P0 architecture
 
-## Web-first
+Before real marketplace transactions activate, Mara must validate the actual business model with the relevant payment / payout providers and legal requirements.
 
-The first-party website remains the core surface.
+That includes, where applicable:
 
-It must support:
-
-- character discovery;
-- creator storefronts;
-- digital product commerce;
-- creator intake;
-- customer accounts/library;
-- compliance/disclosure;
-- analytics;
-- later booking and cross-creator discovery.
-
-Native mobile is not a launch dependency while adult-oriented creator/UGC distribution policy risk remains material.
-
-## Payment and compliance are P0 architecture
-
-Do not assume a generic payment processor will support the final model.
-
-Before real third-party creator commerce activates, Mara must verify provider compatibility for:
-
+- marketplace structure;
+- third-party payouts;
 - target geography;
-- marketplace/platform structure;
-- third-party creator payouts;
-- adult-oriented content/services if present;
-- AI/synthetic content if present;
-- KYC/age verification;
-- consent records;
-- chargebacks/fraud;
-- complaints/takedowns;
+- age / identity verification;
+- Creator consent and IP rights;
+- adult-oriented content/service compatibility;
+- fraud / chargebacks;
+- Host responsibility;
+- cancellations / refunds;
+- complaints / takedowns;
+- physical-event safety;
 - prohibited transaction categories.
 
 A successful test payment is not proof that the business model is permitted.
 
-## Premium asset security
+## Premium and private data security
 
 This repository is public.
 
-Never commit final paid/private assets or creator-private source material to the public repo.
+Do not commit:
 
-Private content delivery must remain server-authoritative and entitlement-gated. Creator identity artifacts, verification records, consent documentation and payout/tax data must live outside the public repository under appropriate access controls.
+- final paid/private assets;
+- private Creator source material;
+- identity-verification documents;
+- consent evidence;
+- payout/tax records;
+- private customer demand histories.
 
-See [`MARA_LOW_MAINTENANCE_REVENUE_MACHINE.md`](./MARA_LOW_MAINTENANCE_REVENUE_MACHINE.md) for the active operating-efficiency and private premium delivery contract.
+Private delivery and sensitive marketplace truth must remain server-authoritative with appropriate authorization.
 
-## Current implementation status
+## Current engineering boundary
 
-The active founder-thesis PR adds:
+The demand marketplace branch is intentionally stacked on the latest Creator OS + Revenue Platform branch rather than rebuilding from `main`.
 
-- the Founder Business Constitution;
-- marketplace execution plan;
-- `/creators` pilot acquisition surface;
-- server-only creator-interest intake;
-- RLS/revoked-browser-access migration contract;
-- explicit creator-pilot privacy language;
-- creator-intake CI smoke;
-- synchronization with the latest storefront/private premium delivery base.
+No production alias movement, payment activation, payout activation, venue operation or merge is implied.
 
-On the exact founder-thesis head, the main Web Launch `validate` job passes dependency audit, parser self-test, DEV-lab guard, TypeScript, production build and the full production mobile/browser smoke suite. The repository still has a separate pre-existing launch blocker: the canonical Mara JPEG is truncated and the dedicated integrity job correctly remains red until the exact approved source image is restored.
+The repository still has an inherited independent launch blocker: the approved canonical Mara JPEG is truncated, and the dedicated integrity job must remain red until the exact approved source is restored. Do not “repair” that asset by merely appending bytes.
 
-## Current validation sequence
+## Final operating doctrine
 
-1. Restore the exact approved canonical Mara source image; do not patch the truncated JPEG by merely appending bytes.
-2. Apply the `creator_interest` migration only in an isolated/authorized environment.
-3. Prove `/creators → persisted creator interest` end-to-end.
-4. Interview/recruit 10–20 target adult creators.
-5. Validate exposure preferences, product preferences and economics.
-6. Resolve payment/payout/provider eligibility in parallel.
-7. Design the 5–10 creator private pilot only after supply + provider credibility.
-8. Prove `FIRST SKU → FIRST SALE → SECOND SALE → PAYOUT`.
-9. Automate only after the manual pilot proves the workflow.
+Mara should be rich for users, Creators and Hosts — and operationally boring for the founder.
 
-## Operating doctrine
+Build systems that increase:
 
-The active low-maintenance operating rules remain useful, but are subordinate to the Founder Business Constitution:
-
-[`MARA_LOW_MAINTENANCE_REVENUE_MACHINE.md`](./MARA_LOW_MAINTENANCE_REVENUE_MACHINE.md)
-
-Core operating principle:
-
-> **Mara should be rich for creators and customers and boring for the founder to operate.**
-
-Build systems that increase creator earnings, demand, transactions, margin or operating leverage.
+- verified demand;
+- marketplace liquidity;
+- transaction volume;
+- Creator / Host earnings;
+- repeat experiences;
+- contribution margin;
+- operating leverage.
 
 Do not build complexity that does none of those things.
+
+# DESIRE → DEMAND → EXPERIENCE → REVENUE → MEMORY → DESIRE
