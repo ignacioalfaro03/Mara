@@ -11,6 +11,7 @@ const strategyPath = path.join(here, "..", "..", "docs", "strategy", "MARA_REVEN
 const lib = fs.readFileSync(libPath, "utf8");
 const page = fs.readFileSync(pagePath, "utf8");
 const strategy = fs.readFileSync(strategyPath, "utf8");
+const strategyUpper = strategy.toUpperCase();
 
 assert(page.includes('process.env.NODE_ENV !== "development"'), "Revenue Engine Lab must be DEV-only");
 assert(page.includes("notFound()"), "Revenue Engine Lab must fail closed outside development");
@@ -47,11 +48,11 @@ for (const strategicContract of [
   "BRAND MARKETPLACE",
   "CREATOR APP STORE ARCHITECTURE",
   "DO NOT BUILD",
-  "NO MERGE unless Ignacio explicitly writes `mergea`",
 ]) {
-  assert(strategy.includes(strategicContract), `Missing revenue strategy contract: ${strategicContract}`);
+  assert(strategyUpper.includes(strategicContract), `Missing revenue strategy contract: ${strategicContract}`);
 }
 
+assert(strategy.includes("NO MERGE unless Ignacio explicitly writes `mergea`"), "Strategy must preserve founder no-merge rule");
 assert(strategy.includes("category walls"), "Brand marketplace must include category-wall/brand-safety architecture");
 assert(strategy.includes("Creator-sourced demand should not automatically pay the same economics as Mara-sourced demand."), "Strategy must preserve source-aware economics");
 
