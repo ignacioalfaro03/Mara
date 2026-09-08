@@ -22,7 +22,8 @@
 .hero h1,
 .sectionHeading h2,
 .splitStats h2,
-.guardrail h2 {
+.guardrail h2,
+.creatorIdentity h2 {
   margin: 0;
   letter-spacing: -0.04em;
 }
@@ -41,11 +42,61 @@
   opacity: 0.78;
 }
 
+.creatorIdentity {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.55fr);
+  gap: 14px;
+  margin: 34px 0 16px;
+}
+
+.creatorIdentity > div,
+.offerCard,
+.caprichoCard,
+.commerceStrip,
+.channelTable {
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  background: rgba(255, 255, 255, 0.035);
+  border-radius: 22px;
+}
+
+.creatorIdentity > div {
+  padding: 22px;
+}
+
+.creatorIdentity h2 {
+  font-size: clamp(2rem, 4vw, 3.4rem);
+}
+
+.creatorIdentity h2 span,
+.creatorIdentity p,
+.identityMode small {
+  opacity: 0.62;
+}
+
+.creatorIdentity p {
+  margin-bottom: 0;
+}
+
+.identityMode {
+  display: grid;
+  align-content: center;
+  gap: 8px;
+}
+
+.identityMode span,
+.identityMode small {
+  font-size: 0.78rem;
+}
+
+.identityMode strong {
+  font-size: 1.2rem;
+}
+
 .summaryGrid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
-  margin: 34px 0;
+  margin: 18px 0 34px;
 }
 
 .summaryGrid article,
@@ -80,7 +131,7 @@
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
   gap: 28px;
   align-items: end;
-  margin: 52px 0 72px;
+  margin: 72px 0;
 }
 
 .splitStats > div:first-child p:last-child,
@@ -131,6 +182,149 @@
 
 .sectionHeading > p {
   margin: 0;
+}
+
+.offerGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.offerCard {
+  padding: 20px;
+}
+
+.offerTopline,
+.caprichoHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.offerTopline span,
+.caprichoHeader span {
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.56;
+}
+
+.offerCard h3,
+.caprichoCard h3 {
+  margin: 26px 0 10px;
+  font-size: 1.35rem;
+  letter-spacing: -0.025em;
+}
+
+.offerCard > strong {
+  display: block;
+  margin-bottom: 18px;
+  font-size: 1.8rem;
+}
+
+.offerMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.offerMeta span {
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 0.68rem;
+  opacity: 0.72;
+}
+
+.commerceStrip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+.commerceStrip > div {
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.commerceStrip span {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.74rem;
+  opacity: 0.58;
+}
+
+.commerceStrip strong {
+  font-size: 1.35rem;
+}
+
+.caprichoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.caprichoCard {
+  padding: 22px;
+}
+
+.caprichoCard > p {
+  margin: 0 0 14px;
+  opacity: 0.72;
+}
+
+.progressTrack {
+  width: 100%;
+  height: 10px;
+  margin: 14px 0 18px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+}
+
+.progressTrack > div {
+  height: 100%;
+  background: rgba(255, 255, 255, 0.72);
+  border-radius: inherit;
+}
+
+.channelTable {
+  overflow: hidden;
+}
+
+.channelRowHeader,
+.channelRow {
+  display: grid;
+  grid-template-columns: minmax(140px, 1.2fr) repeat(5, minmax(90px, 1fr));
+  gap: 12px;
+  align-items: center;
+  padding: 14px 18px;
+}
+
+.channelRowHeader {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.52;
+}
+
+.channelRow {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.86rem;
+}
+
+.channelRow strong {
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+}
+
+.channelRow span {
+  opacity: 0.74;
 }
 
 .fanGrid {
@@ -286,6 +480,21 @@
   padding: 28px;
 }
 
+@media (max-width: 920px) {
+  .offerGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .channelTable {
+    overflow-x: auto;
+  }
+
+  .channelRowHeader,
+  .channelRow {
+    min-width: 780px;
+  }
+}
+
 @media (max-width: 820px) {
   .page {
     width: min(100% - 22px, 680px);
@@ -296,7 +505,9 @@
   .fanGrid,
   .fourLayers,
   .splitStats,
-  .sectionHeading {
+  .sectionHeading,
+  .creatorIdentity,
+  .caprichoGrid {
     grid-template-columns: 1fr;
   }
 
@@ -311,6 +522,16 @@
   .sectionHeading {
     gap: 12px;
   }
+
+  .commerceStrip {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .offerGrid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 470px) {
@@ -323,7 +544,12 @@
   .summaryGrid article,
   .attributionCards article,
   .fourLayers article,
-  .guardrail {
+  .guardrail,
+  .creatorIdentity > div,
+  .offerCard,
+  .caprichoCard,
+  .commerceStrip,
+  .channelTable {
     border-radius: 18px;
   }
 }
