@@ -8,40 +8,141 @@ Founder boundary: **NO MERGE unless Ignacio explicitly writes `mergea`.**
 
 This document consolidates the strategic evolution previously spread across the Founder Business Constitution, Demand-to-Experience amendment, Private Demand Network amendment, Creator OS, Revenue Platform and Creator Privacy documents.
 
-Any older document that calls itself “highest priority” is now historical/subordinate when it conflicts with this Constitution.
+Any older document that calls itself “highest priority” is historical/subordinate when it conflicts with this Constitution.
 
 ---
 
 # 1. COMPANY THESIS
 
-Mara is a **privacy-first creator commerce and demand network** for verified adult creators.
+Mara is a **privacy-first creator commerce and demand network presented as a connected world, not as a marketplace directory**.
 
-Mara lets creators monetize through controlled digital identities while converting audience demand into sellable products, access, memberships and later experiences.
+Mara helps verified adult creators operate and monetize their own Creator Worlds while protecting how much of their real-world identity becomes public. Mara also captures audience demand, aggregates it, turns it into viable offers and helps connect those offers to fulfillment.
 
 Canonical definition:
 
-> **MARA HELPS VERIFIED CREATORS MONETIZE WITHOUT MAKING THEIR REAL-WORLD IDENTITY THE PRODUCT, WHILE TURNING AUDIENCE DEMAND INTO FULFILLED COMMERCE.**
+> **MARA CONNECTS CREATOR WORLDS, HELPS CREATORS OPERATE BETTER BUSINESSES AND TURNS AUDIENCE DEMAND INTO FULFILLED COMMERCE — WITHOUT MAKING THE CREATOR'S REAL-WORLD IDENTITY THE PRODUCT.**
 
-Mara Vera is **Creator Zero**: the first character, demand seed, commerce proof and reusable product template. She is not the company ceiling.
+The marketplace/network economics exist underneath. The user-facing experience should feel coherent, alive and continuous rather than like a grid of sellers.
 
 Mara is not primarily:
 
+- another creator competing with creators;
 - a chatbot;
 - an AI girlfriend;
 - an adult-content feed;
 - a single virtual influencer;
 - an events agency;
 - a generic social network;
-- a generic creator profile host;
+- a creator directory;
+- a metaverse;
 - a collection of unrelated experiments.
 
 ---
 
-# 2. THE ONE CANONICAL ECONOMIC LOOP
+# 2. MARA'S ROLE IN THE PRODUCT
+
+Mara is the **host, connective presence and intelligence layer behind the network**.
+
+Each Creator owns her own World, identity, audience relationship, boundaries and commercial inventory.
+
+Mara improves the system by:
+
+- connecting Worlds;
+- helping users discover what matters next;
+- remembering meaningful participation;
+- identifying aggregated demand;
+- helping creators understand what their communities want;
+- improving packaging, timing and merchandising;
+- applying privacy and trust rules;
+- coordinating commerce and later fulfillment.
+
+Mara should not feel like another seller inside the marketplace.
+
+Mara Vera may remain a **brand/experience persona, acquisition asset and product-test asset**, but she is not the conceptual model for every creator and should not compete with creators for the center of the platform.
+
+Internal product principle:
+
+> **MARA IS BEHIND THE WORLDS, NOT JUST ANOTHER WORLD.**
+
+---
+
+# 3. EXPERIENCE PRINCIPLE — IMMERSIVE, BUT PRACTICAL
+
+The backend may operate like a marketplace. The surface should not feel like one.
+
+Permanent product rule:
+
+> **DO NOT BUILD IMMERSION. DESIGN THE FEELING OF IMMERSION.**
+
+Mara does **not** need 3D worlds, game maps, avatars walking around, XP economies, complex lore systems or heavy gamification.
+
+For the current product, the feeling of a living world should come from only three practical mechanisms:
+
+## 1. CREATOR WORLD
+
+Each creator has one coherent World rather than a disconnected profile + store + community + request page.
+
+A World can contain:
+
+- identity/persona;
+- what is new;
+- offers/unlocks;
+- active community demand;
+- experiences when relevant;
+- membership/collections;
+- the user's history with that creator.
+
+## 2. MARA CONNECTS THE WORLDS
+
+Mara provides lightweight connective moments such as:
+
+- relevant creator discovery;
+- “this is growing”;
+- “something you joined changed”;
+- “while you were away”;
+- “you may like this World next”.
+
+These should be useful product cues, not endless chatbot conversation.
+
+## 3. CONTINUITY
+
+Actions should have visible consequences.
+
+If a user joins demand, buys something, helps unlock an outcome or follows an opportunity, the product should remember it and surface the consequence later.
+
+This creates immersion through **memory + causality + time**, not technical spectacle.
+
+Build filter:
+
+> **IF AN “IMMERSIVE” FEATURE DOES NOT IMPROVE CONVERSION, RETURN, DEMAND QUALITY OR CROSS-WORLD DISCOVERY, DO NOT BUILD IT.**
+
+---
+
+# 4. COMMERCE MUST BECOME CLEAR AT THE TRANSACTION BOUNDARY
+
+Narrative presentation must never make a purchase ambiguous.
+
+The product can present discovery and demand naturally, but when money moves Mara must clearly state:
+
+- what is being purchased;
+- price;
+- who is responsible for fulfillment;
+- what the buyer receives;
+- expected timing;
+- important rules;
+- cancellation/refund terms where applicable.
+
+Principle:
+
+> **WORLD ON THE SURFACE. COMMERCE CLARITY AT CHECKOUT.**
+
+Do not sacrifice consumer clarity or trust for atmosphere.
+
+---
+
+# 5. THE ONE CANONICAL ECONOMIC LOOP
 
 `CREATOR → WORLD → AUDIENCE → WANT → PLEDGE → COMMIT → AGGREGATED DEMAND → OFFER → TRANSACTION → FULFILLMENT → MEMORY → RETURN`
-
-This loop applies to digital products first and can later extend to memberships, bounded interaction, merchandise, licensed local activations and IRL.
 
 Definitions:
 
@@ -52,40 +153,39 @@ Definitions:
 - **OFFER** = creator/platform-approved sellable proposition.
 - **TRANSACTION** = money actually moves.
 - **FULFILLMENT** = promised value is delivered.
-- **MEMORY** = the user/account retains consequence and history from participation.
+- **MEMORY** = meaningful consequence/history retained by the account.
 
-Do not present these states as equivalent.
+Never present these states as economically equivalent.
 
 ---
 
-# 3. CORE PLATFORM ENGINES
+# 6. FOUR CORE PLATFORM ENGINES
 
 Mara has exactly four strategic engines.
 
 ## ENGINE 1 — CREATOR IDENTITY & PRIVACY
 
-Purpose: increase creator supply by reducing unnecessary public exposure.
+Purpose: unlock creator supply by reducing unnecessary public exposure.
 
 Includes:
 
 - verified pseudonymity;
-- character identity;
+- character/persona identity;
 - exposure controls;
 - face / real-content controls;
-- voice modes: REAL / TRANSFORMED / CHARACTER / TEXT-ONLY / MIXED;
+- REAL / TRANSFORMED / CHARACTER / TEXT-ONLY / MIXED voice modes;
 - geographic targeting;
-- excluded cities / regions / protected radius;
-- metadata/background/identifier privacy checks;
-- creator representative / Host privacy firewall;
-- truthful AI / creator disclosure.
-
-Essential privacy protection is core infrastructure, not a paywall hostage.
-
-Advanced automation, analytics and operational tooling may later support Creator Pro economics.
+- excluded cities/regions/protected radii;
+- privacy/deanonymization checks;
+- minimum-necessary data disclosure;
+- representative/Host privacy firewall;
+- truthful AI/creator disclosure.
 
 Permanent rule:
 
 > **A CREATOR SHOULD BE ABLE TO MONETIZE A LARGE AUDIENCE WITHOUT HAVING TO MONETIZE HER REAL-WORLD IDENTITY.**
+
+Core privacy controls are baseline infrastructure, not a paywall hostage.
 
 ## ENGINE 2 — DEMAND
 
@@ -96,158 +196,132 @@ Includes:
 - Make It Happen;
 - WANT / PLEDGE / COMMIT;
 - WTP;
-- duplicate demand clustering;
+- demand clustering;
 - location-aware demand;
 - unlock thresholds;
 - Creator Opportunity View;
-- geographic demand intelligence;
 - Demand Graph;
-- later City Activation recommendations.
+- later City Activation.
 
-Demand is the network primitive. It is not limited to events.
+Demand is not limited to events.
 
 ## ENGINE 3 — COMMERCE & FULFILLMENT
 
-Purpose: convert validated demand into paid, delivered value.
+Purpose: turn approved demand and creator inventory into delivered value.
 
-Canonical commercial contract:
+Canonical contract:
 
-`DEMAND → OFFER → PURCHASE → ENTITLEMENT / BOOKING → FULFILLMENT → PAYOUT / COMPLETION → REVIEW`
+`DEMAND / INVENTORY → OFFER → PURCHASE → ENTITLEMENT / BOOKING → FULFILLMENT → COMPLETION / PAYOUT → REVIEW`
 
-Initial fulfillment should favor low-complexity digital inventory.
+Digital fulfillment comes first because it is lower complexity and more compatible with the low-maintenance operating model.
 
-Includes:
+Potential offer families:
 
-- creator digital products;
-- drops;
+- digital products;
 - audio;
 - personalized digital products;
-- bundles / collections;
-- memberships / Inner Circle;
-- bounded creator time where operationally/legal/provider supported;
-- later merchandise;
-- later licensed physical experiences.
+- drops;
+- bundles/collections;
+- membership/Inner Circle;
+- bounded creator time when legally/provider/operationally supported;
+- merchandise later;
+- physical/hybrid experiences later.
 
 ## ENGINE 4 — WORLD, MEMORY & RETENTION
 
-Purpose: make transactions and participation accumulate into reasons to return.
+Purpose: turn isolated transactions into continuity and reasons to return.
 
 Includes:
 
 - Creator World;
-- Creator Store as a World surface;
 - My History;
 - Since You Left;
 - collections;
-- status / participation history;
-- community primitives that create demand, transaction, reputation or repeat behavior;
-- cross-World discovery later.
+- meaningful community activity;
+- cross-World discovery;
+- Mara connective cues.
 
-Community is not a generic feed. A community feature must create demand, commerce, belonging, reputation or retention.
+Community is not a generic feed. It must create demand, commerce, belonging, reputation or retention.
 
 ---
 
-# 4. PRODUCT SURFACES
+# 7. CREATOR WORLD
 
-The platform engines should converge into a small number of understandable surfaces.
+A Creator World is the canonical creator container.
+
+It replaces the idea that profile, store, community, demand and history are separate businesses.
+
+A World may progressively include:
+
+- public persona;
+- current activity;
+- offers/unlocks;
+- active demand;
+- membership;
+- collections;
+- creator-approved availability;
+- user history/outcomes;
+- future licensed physical activations.
+
+Creators should not need to become game designers or full-time community managers to make a World feel good.
+
+Mara should provide the structure and automation; the creator provides identity, boundaries, approved inventory and occasional direction.
+
+---
+
+# 8. PRODUCT SURFACES
 
 ## Consumer
 
-- **HOME / WORLDS** — discovery and current activity.
+Keep the surface small:
+
+- **HOME / FOR YOU** — Mara-curated activity and cross-World discovery.
+- **CREATOR WORLD** — the creator's coherent space.
 - **MAKE IT HAPPEN** — create or join demand.
-- **CREATOR WORLD** — identity, offers, active demand, collections, membership and history.
-- **MY ACTIVITY / HISTORY** — requests, pledges, purchases, unlocks and fulfilled participation.
+- **MY ACTIVITY / HISTORY** — things the user joined, bought, unlocked or is waiting on.
+
+Avoid a marketplace-first navigation dominated by “Creators / Store / Events / Buy”. Commerce remains accessible inside context.
 
 ## Creator
 
-- **CREATOR WORLD MANAGER** — identity, offers and World configuration.
-- **WHAT YOUR WORLD WANTS** — aggregated opportunity dashboard.
-- **PRIVACY SHIELD** — exposure, geo and voice controls.
-- **COMMERCE** — offer, inventory, fulfillment and earnings controls.
+- **CREATOR WORLD MANAGER**;
+- **WHAT YOUR WORLD WANTS**;
+- **PRIVACY SHIELD**;
+- **COMMERCE**.
 
-“Creator OS” is the creator back-office experience across these engines. It is not a separate company thesis.
-
----
-
-# 5. CREATOR WORLD
-
-A Creator World is the persistent container for:
-
-- public character identity;
-- store/offers;
-- active demand;
-- membership / Inner Circle;
-- collections;
-- community participation that matters;
-- creator-approved availability;
-- memories/history;
-- future licensed Hosts/IRL.
-
-Do not build separate profile, storefront, community hub and demand page as unrelated product families when they can live inside one World.
+“Creator OS” is the creator back-office across these engines, not a separate company thesis.
 
 ---
 
-# 6. CAPRICHOS — RESOLVED
+# 9. CONCEPT RESOLUTION
 
-Caprichos is **not an independent economic architecture**.
+## Caprichos
 
-It is a branded demand/funding interaction that sits on top of the Demand + Commerce engines.
+Caprichos is branded UX on top of Demand + Commerce, not a parallel economic architecture.
 
-Canonical mapping:
+`CAPRICHO → DEMAND OBJECT → PLEDGE / INTENT → THRESHOLD → APPROVED OFFER / GOAL → TRANSACTION → FULFILLMENT → WORLD MEMORY`
 
-`CAPRICHO → DEMAND OBJECT → PLEDGE / CONTRIBUTION INTENT → THRESHOLD → APPROVED OFFER / GOAL → TRANSACTION → FULFILLMENT → WORLD MEMORY`
+No separate wallet/ledger simply because the UX is branded Caprichos.
 
-Keep the Mara-native emotional/brand concept where it improves conversion or continuity.
+## Mara-specific content
 
-Do not maintain a parallel wallet, ledger, crowdfunding system or product taxonomy only for Caprichos.
+Audio, rituals, Story Passes, immersive scenes, private drops and similar inventory are offer/fulfillment formats and brand assets, not separate company strategies.
 
----
+## Chat / Relationship Engine
 
-# 7. MARA ORIGINALS / CONTENT INVENTORY — RESOLVED
+Supporting engagement only. Do not make continuous chat or deep relationship-state engineering a core dependency.
 
-Audio, immersive scenes, rituals, Story Passes, private drops and similar Mara Vera inventory are **Creator Zero SKUs / fulfillment formats**, not separate company strategies.
+## Creator OS / Fan 360
 
-They remain useful when they prove:
-
-- conversion;
-- repeat purchase;
-- bundling;
-- catalog economics;
-- low-maintenance fulfillment;
-- retention.
-
-Chat and relationship mechanics are supporting engagement layers. They are not the primary business.
+Creator OS remains useful operational tooling. Fan 360 remains narrow creator-scoped commercial context with provenance and privacy controls; never a hidden vulnerability dossier.
 
 ---
 
-# 8. CREATOR OS / FAN 360 — RESOLVED
+# 10. HOSTS / ROLES / IRL
 
-Creator OS remains a useful operating surface.
+Hosts, venues, operators and paid roles are future fulfillment infrastructure, not the MVP.
 
-Fan 360 remains creator-scoped commercial context with provenance, visibility and privacy controls.
-
-It is not a dossier and must not become hidden vulnerability profiling.
-
-Creator OS should answer only high-value operating questions such as:
-
-- what does my World want;
-- what should I sell next;
-- which buyers are returning;
-- what inventory is converting;
-- how much am I earning per creator hour;
-- which actions should I take now.
-
-Do not expand CRM complexity before transaction and retention data justify it.
-
----
-
-# 9. HOSTS / ROLES / IRL — RESOLVED
-
-Hosts, venues, operators and paid roles are **future fulfillment infrastructure**.
-
-They do not define the MVP.
-
-Canonical later flow:
+Later flow:
 
 `VALIDATED LOCAL DEMAND → CREATOR/IP APPROVAL → HOST / OPERATOR → VENUE → PREPAYMENT → RULES → QR / ACCESS → EXPERIENCE → PAYOUT → REVIEW → MEMORY`
 
@@ -255,92 +329,79 @@ Operating principle:
 
 > **MARA ORCHESTRATES. THIRD PARTIES FULFILL.**
 
-Mara must not become a founder-operated production/events agency.
+Mara must not become a founder-operated events agency.
 
-Payment never buys another person’s consent.
+Payment never buys another person's consent.
 
 ---
 
-# 10. MONETIZATION ARCHITECTURE
+# 11. MONETIZATION
 
-Every revenue rail must attach to a real payer and engine.
+Every revenue rail must have a real payer, product value and contribution-margin logic.
 
-## NOW / EARLY
+## EARLY
 
-### Transaction take rate
-Payer: transaction economics shared with Creator.  
-Value: demand, checkout, entitlement, trust, fulfillment infrastructure, discovery where applicable.
+- marketplace/transaction take rate;
+- potentially differentiated creator-sourced vs Mara-sourced economics;
+- digital offer commerce;
+- creator memberships only when repeat value exists.
 
-### Creator-sourced vs Mara-sourced economics
-Creator-sourced buyer: lower infrastructure-oriented economics may be appropriate.  
-Mara-sourced buyer: higher economics may be justified because Mara created demand/discovery.
+## LATER, ONLY WITH EVIDENCE
 
-Exact pricing remains a hypothesis until provider costs, conversion and creator economics are known.
-
-### Creator Pro — later only after useful tooling exists
-Payer: Creator.  
-Value: advanced analytics, automation, merchandising, additional operational/privacy workflow.
-
-## NEXT/LATER
-
-- Inner Circle / creator membership economics;
-- VIP as scarcity/service/privacy/priority, never consent;
-- managed Studio/setup;
+- Creator Pro;
+- Studio/setup;
+- advanced privacy/automation workflow;
 - Growth/distribution tooling;
-- merchandise/preorder economics;
-- Host / venue / licensing administration;
+- VIP based on scarcity/service/privacy/priority, never consent;
+- Host/venue/licensing administration;
 - concierge;
-- agency/B2B tooling;
-- promoted discovery only after organic discovery works;
-- developer ecosystem only after platform maturity.
+- Agency/B2B tooling;
+- promoted discovery after organic discovery works.
 
-Do not create a revenue rail because it sounds monetizable. It must have a product, payer and contribution-margin logic.
+Do not create monetization rails simply because they sound monetizable.
 
 ---
 
-# 11. NORTH STAR
+# 12. NORTH STAR
 
 Long-term primary North Star:
 
 # FULFILLED DEMAND GMV
 
-Why:
+Leading prototype metric before real commerce is enabled:
 
-- request volume alone can be vanity;
-- pledges are not transactions;
-- GMV without fulfillment can be harmful;
-- fulfilled demand measures whether Mara converts real desire into delivered economic value.
+**VERIFIED DEMAND GMV**
 
-Guardrail KPIs:
+Guardrails:
 
-1. **Creator net earnings / creator hour**;
-2. **repeat purchase rate**;
-3. **% fulfilled GMV from returning buyers**;
-4. **Mara contribution margin**;
-5. **refund / cancellation / incident rate**.
+1. creator net earnings / creator hour;
+2. repeat purchase rate;
+3. returning-buyer GMV;
+4. Mara contribution margin;
+5. refund/cancellation/incident rate.
 
-Near-term prototype metrics may use Verified Demand GMV before real transactions are legally/provider enabled, but it must never be confused with fulfilled GMV.
+The experience layer is successful only if it improves these economics or meaningful retention, not because it appears more “immersive”.
 
 ---
 
-# 12. MOAT
+# 13. MOAT
 
 Ranked compounding assets:
 
-1. **Demand Graph** — what communities want, WTP, geography, commitment and fulfillment outcome.
-2. **Creator Privacy / Trust Infrastructure** — ability to unlock supply that will not operate publicly elsewhere.
-3. **Creator World transaction + retention history** — repeat behavior and catalog knowledge.
-4. **Merchandising / fulfillment intelligence** — ability to turn demand and inventory into better offers.
-5. **Marketplace liquidity and reputation** — buyers, creators and later Hosts can transact with less friction.
-6. **Cross-World discovery** — network-level LTV independent of one creator.
+1. Demand Graph;
+2. Creator Privacy / Trust Infrastructure;
+3. cross-World network memory and discovery;
+4. creator transaction/retention history;
+5. merchandising/fulfillment intelligence;
+6. marketplace liquidity and reputation.
 
-Avatar generation alone is not a moat.
+Avatar generation and visual “world building” alone are not moats.
 
 ---
 
-# 13. LOW-MAINTENANCE OPERATING CONSTRAINT
+# 14. LOW-MAINTENANCE OPERATING CONSTRAINT
 
-Founder time is scarce.
+Founder and creator time are scarce.
 
 Preferred architecture:
 
@@ -349,54 +410,56 @@ Preferred architecture:
 Avoid requiring:
 
 - daily founder posting;
+- constant creator posting;
 - continuous manual chat;
-- founder-managed event logistics;
+- manual event coordination;
 - manual payout reconciliation;
-- high-touch custom fulfillment as the default;
-- endless content generation without proven demand.
+- high-touch custom fulfillment as default;
+- complex narrative operations;
+- creators designing their own game systems.
 
-Track **revenue / founder hour** as an operating guardrail.
+Track **revenue / founder hour** and **creator earnings / creator hour** as operating guardrails.
 
 ---
 
-# 14. NOW / NEXT / LATER / NOT NOW
+# 15. NOW / NEXT / LATER / NOT NOW
 
-## NOW — prove only three hypotheses
+## NOW — prove only three business hypotheses
 
 ### H1 — Creator supply
-Target creators value the privacy proposition enough to complete onboarding and define at least one sellable offer.
+Target creators value privacy/control enough to define at least one sellable offer and operate a World.
 
 ### H2 — Demand
-Users will create/join creator-linked demand and provide economically stronger signals than passive engagement.
+Users will create/join creator-linked demand and provide stronger economic signals than passive engagement.
 
-### H3 — Commerce
-At least one validated demand path can become fulfilled digital commerce and generate repeat purchase with viable contribution economics.
+### H3 — Commerce + return
+Validated demand/inventory can become fulfilled digital commerce and create a reason to return.
+
+The practical experience layer may be tested using existing surfaces only. Do not create a new “immersive world” project.
 
 ## NEXT
 
 - production-safe demand persistence;
-- real creator authorization/ownership;
-- Privacy Shield baseline controls;
-- Creator Opportunity dashboard;
-- digital offer conversion;
+- creator ownership/authorization;
+- baseline Privacy Shield;
+- first 3–5 creator pilot;
+- demand → approved digital offer → purchase → fulfillment;
 - My History / Since You Left;
-- first private creator pilot;
-- Creator Pro only if real creator workflows justify it.
+- lightweight cross-World discovery;
+- source-of-demand attribution.
 
 ## LATER
 
-- Hosts;
-- venues;
-- IRL;
+- Hosts/venues/IRL;
 - City Activation;
-- Creator licensing;
-- Global VIP;
+- licensing;
+- VIP;
 - concierge;
 - Agency OS;
 - Brand Marketplace;
 - promoted discovery;
-- developer/app ecosystem;
-- B2B white-label.
+- developer ecosystem;
+- B2B infrastructure.
 
 ## NOT NOW
 
@@ -405,59 +468,14 @@ At least one validated demand path can become fulfilled digital commerce and gen
 - generic social feed;
 - open creator marketplace;
 - native mobile as launch dependency;
-- 3D worlds;
+- 3D worlds/metaverse;
+- game maps;
+- XP/complex badge economies;
 - crypto/NFTs;
-- wallets/stored value before regulatory review;
-- complex loyalty economies;
-- autonomous creator sales agents without proven demand;
+- complex wallets/loyalty currencies;
+- heavy lore/narrative systems;
 - large IRL infrastructure;
-- new independent labs for every idea.
-
----
-
-# 15. MVP
-
-The MVP is a **private, privacy-first creator-demand-to-digital-fulfillment loop**.
-
-## Creator side
-
-A verified/approved pilot creator can:
-
-- choose a public character identity;
-- define exposure/privacy mode;
-- define one or more sellable digital offer families;
-- view aggregated demand/opportunity.
-
-## User side
-
-A user can:
-
-- enter a Creator World;
-- express or join demand;
-- choose WANT / PLEDGE / COMMIT with clear semantics;
-- later purchase an approved unlocked digital offer when payments are permitted;
-- receive fulfillment;
-- see the action in history.
-
-## Economic event
-
-`DEMAND → APPROVED OFFER → PURCHASE → FULFILLMENT`
-
-## Retention event
-
-The user has an unresolved or completed consequence worth returning to: unlock progress, fulfillment, collection continuation or second offer.
-
-## Minimum privacy promise
-
-Creator public identity does not expose protected legal/contact/location information; public exposure is creator-controlled; no false claim of perfect anonymity.
-
-## Primary MVP metrics
-
-1. creator activation to first offer;
-2. WANT → PLEDGE → COMMIT progression;
-3. demand → purchase conversion when enabled;
-4. fulfilled-demand repeat purchase;
-5. creator net earnings / creator hour.
+- one new lab for every idea.
 
 ---
 
@@ -470,8 +488,9 @@ No new idea enters the roadmap unless it answers:
 3. Which KPI should it improve?
 4. Which monetization rail or retention mechanism does it support?
 5. Is it NOW, NEXT, LATER or NOT NOW?
+6. Can it be implemented by extending an existing surface instead of creating a new subsystem?
 
-If these cannot be answered, the idea goes to the backlog, not the product roadmap.
+If these cannot be answered, the idea goes to backlog.
 
 Permanent rules:
 
@@ -481,21 +500,24 @@ Permanent rules:
 
 > **CONSOLIDATE BEFORE EXPANDING.**
 
+> **NO COMPLEXITY JUST TO FEEL IMMERSIVE.**
+
 ---
 
 # 17. DOCUMENT AUTHORITY
 
 Repository strategy must be interpreted in this order:
 
-1. **`MARA_FOUNDER_CONSTITUTION_V2.md`** — sole company authority.
-2. **`docs/strategy/MARA_PRODUCT_ARCHITECTURE_V1.md`** — product/engine/surface mapping.
-3. **`docs/strategy/MARA_EXECUTION_ROADMAP_90D_V1.md`** — current sequencing and gates.
-4. Specialist strategy docs — evidence and detailed contracts only where compatible with 1–3.
-5. Character/content/social canons — execution-specific authorities.
-6. Old founder constitutions/amendments — historical decision context, not competing authority.
-7. Existing code — implementation evidence, not business authority.
+1. `MARA_FOUNDER_CONSTITUTION_V2.md` — sole company authority.
+2. `docs/strategy/MARA_PRODUCT_ARCHITECTURE_V1.md` — product/engine/surface mapping.
+3. `docs/strategy/MARA_EXECUTION_ROADMAP_90D_V1.md` — current sequencing and gates.
+4. `docs/strategy/MARA_IDEA_INTAKE_GOVERNANCE_V1.md` — new-idea intake.
+5. Specialist strategy docs — detailed contracts only where compatible with 1–4.
+6. Character/content/social canons — execution-specific authority.
+7. Old founder constitutions/amendments — historical context only.
+8. Existing code — implementation evidence, not business authority.
 
-No future document may call itself a new “highest-priority founder thesis” without explicitly replacing this file and updating the authority map.
+No future document may create a competing “highest-priority thesis” without explicitly replacing this file and updating the authority map.
 
 ---
 
@@ -506,7 +528,7 @@ No future document may call itself a new “highest-priority founder thesis” w
 - creator/likeness/voice rights;
 - no impersonation without authorization;
 - no coercion;
-- no transaction that purchases another person’s consent;
+- no transaction purchasing another person's consent;
 - no real marketplace payment/payout activation until provider eligibility for the actual model is confirmed;
 - private paid assets and identity/verification records never belong in the public repository;
 - web-first while platform/content policy risk remains material.
@@ -517,14 +539,18 @@ No future document may call itself a new “highest-priority founder thesis” w
 
 Creator:
 
-> **I can monetize a character on my terms without making my real identity the public product.**
+> **Mara helps me run a better creator business while I keep control of my identity, boundaries and World.**
 
 User:
 
-> **I can say what I want, join real demand, help it unlock and receive something when it becomes real.**
+> **I enter connected Creator Worlds, discover things that matter to me, help things happen and can see what changed because I participated.**
+
+Experience:
+
+> **It feels like a connected world without requiring a complex virtual world.**
 
 Business:
 
-> **Mara owns the infrastructure that turns privacy-protected creator supply + aggregated demand into fulfilled commerce and repeat transactions.**
+> **Mara owns the intelligence and infrastructure connecting privacy-safe creator supply, aggregated demand, commerce, fulfillment and repeat behavior.**
 
 **NO MERGE unless Ignacio explicitly writes `mergea`.**
