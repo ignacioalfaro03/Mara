@@ -74,7 +74,7 @@ export function LibraryClient() {
       <div className={styles.libraryCard}>
         <p className={styles.eyebrow}>TU BIBLIOTECA</p>
         <h3>Tu acceso vive en tu cuenta.</h3>
-        <p className={styles.muted}>Entra para recuperar compras y desbloqueos sin depender de este navegador.</p>
+        <p className={styles.muted}>Entra para recuperar lo que hayas desbloqueado y volver desde cualquier sesión.</p>
         <div className={styles.buttonStack}>
           <Link className={styles.primaryButton} href="/auth">Crear cuenta o entrar</Link>
           <Link className={styles.secondaryButton} href="/shop">Explorar experiencias</Link>
@@ -90,7 +90,7 @@ export function LibraryClient() {
       <div className={styles.libraryCard}>
         <p className={styles.eyebrow}>VACÍA POR AHORA</p>
         <h3>Tu primera experiencia puede quedar aquí.</h3>
-        <p className={styles.muted}>La biblioteca solo muestra acceso confirmado por el backend; no inventa compras ni desbloqueos locales.</p>
+        <p className={styles.muted}>Solo aparece lo que esté realmente asociado a tu cuenta.</p>
         <Link className={styles.primaryButton} href="/shop">Ir a la tienda</Link>
       </div>
     );
