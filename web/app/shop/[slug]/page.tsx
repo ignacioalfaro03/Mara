@@ -18,13 +18,9 @@ export default async function StoreProductPage({ params }: { params: Promise<{ s
   return (
     <main className={styles.shell}>
       <div className={styles.container}>
-        <nav className={styles.nav} aria-label="Mara navigation">
-          <Link href="/shop" className={styles.brand}>← MARA STORE</Link>
-          <div className={styles.navLinks}>
-            <Link href="/experience">Prueba gratis</Link>
-            <Link href="/library">Mi biblioteca</Link>
-          </div>
-        </nav>
+        <div className={styles.buttonStack} style={{ marginBottom: 24, maxWidth: 220 }}>
+          <Link href="/shop" className={styles.secondaryButton}>← Volver a experiencias</Link>
+        </div>
 
         <section className={styles.detailGrid}>
           <article className={styles.detailPanel}>
