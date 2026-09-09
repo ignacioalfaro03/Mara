@@ -19,7 +19,7 @@ env:
 
 jobs:
   preview:
-    if: github.event.pull_request.head.ref == 'execution/mara-real-app-wiring-v1' || github.event.pull_request.head.ref == 'codex/launch-execution-control' || github.event.pull_request.head.ref == 'feature/world-sofi-first-slice' || contains(fromJSON('["release/public-alpha-rc","release/public-alpha-launch-readiness"]'), github.event.pull_request.head.ref)
+    if: github.event.pull_request.head.ref == 'execution/mara-real-app-wiring-v1' || github.event.pull_request.head.ref == 'codex/launch-execution-control' || github.event.pull_request.head.ref == 'feature/world-sofi-first-slice' || contains(fromJSON('["release/public-alpha-rc","release/public-alpha-launch-readiness","release/mara-creator-alpha-20260909"]'), github.event.pull_request.head.ref)
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -59,7 +59,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [ "${{ github.event.pull_request.head.ref }}" = "execution/mara-real-app-wiring-v1" ] || [ "${{ github.event.pull_request.head.ref }}" = "release/public-alpha-rc" ] || [ "${{ github.event.pull_request.head.ref }}" = "release/public-alpha-launch-readiness" ]; then
+          if [ "${{ github.event.pull_request.head.ref }}" = "execution/mara-real-app-wiring-v1" ] || [ "${{ github.event.pull_request.head.ref }}" = "release/public-alpha-rc" ] || [ "${{ github.event.pull_request.head.ref }}" = "release/public-alpha-launch-readiness" ] || [ "${{ github.event.pull_request.head.ref }}" = "release/mara-creator-alpha-20260909" ]; then
             echo "project_id=$MARA_PROOF_VERCEL_PROJECT_ID" >> "$GITHUB_OUTPUT"
             echo "environment=production" >> "$GITHUB_OUTPUT"
             echo "host_kind=isolated-proof" >> "$GITHUB_OUTPUT"
@@ -144,7 +144,7 @@ jobs:
           NODE
 
       - name: Verify Mara backend env shape without exposing values
-        if: steps.preflight.outputs.ready == 'true' && (github.event.pull_request.head.ref == 'execution/mara-real-app-wiring-v1' || contains(fromJSON('["release/public-alpha-rc","release/public-alpha-launch-readiness"]'), github.event.pull_request.head.ref))
+        if: steps.preflight.outputs.ready == 'true' && (github.event.pull_request.head.ref == 'execution/mara-real-app-wiring-v1' || contains(fromJSON('["release/public-alpha-rc","release/public-alpha-launch-readiness","release/mara-creator-alpha-20260909"]'), github.event.pull_request.head.ref))
         working-directory: web
         env:
           TARGET_ENVIRONMENT: ${{ steps.target.outputs.environment }}
@@ -211,7 +211,7 @@ jobs:
         run: npx vercel inspect "$DEPLOYMENT_URL" --wait --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN"
 
       - name: Prove hosted Mara backend configuration
-        if: steps.preflight.outputs.ready == 'true' && (github.event.pull_request.head.ref == 'execution/mara-real-app-wiring-v1' || contains(fromJSON('["release/public-alpha-rc","release/public-alpha-launch-readiness"]'), github.event.pull_request.head.ref))
+        if: steps.preflight.outputs.ready == 'true' && (github.event.pull_request.head.ref == 'execution/mara-real-app-wiring-v1' || contains(fromJSON('["release/public-alpha-rc","release/public-alpha-launch-readiness","release/mara-creator-alpha-20260909"]'), github.event.pull_request.head.ref))
         working-directory: web
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -261,14 +261,14 @@ jobs:
           NODE
 
       - name: Install hosted browser proof runtime
-        if: steps.preflight.outputs.ready == 'true' && (github.event.pull_request.head.ref == 'execution/mara-real-app-wiring-v1' || github.event.pull_request.head.ref == 'feature/world-sofi-first-slice' || contains(fromJSON('["release/public-alpha-rc","release/public-alpha-launch-readiness"]'), github.event.pull_request.head.ref))
+        if: steps.preflight.outputs.ready == 'true' && (github.event.pull_request.head.ref == 'execution/mara-real-app-wiring-v1' || github.event.pull_request.head.ref == 'feature/world-sofi-first-slice' || contains(fromJSON('["release/public-alpha-rc","release/public-alpha-launch-readiness","release/mara-creator-alpha-20260909"]'), github.event.pull_request.head.ref))
         working-directory: web
         run: |
           npm install --no-save --no-package-lock --no-audit --no-fund "playwright@${PLAYWRIGHT_VERSION}"
           npx playwright install --with-deps chromium
 
       - name: Prove identity and cross-device memory on hosted target
-        if: steps.preflight.outputs.ready == 'true' && (github.event.pull_request.head.ref == 'execution/mara-real-app-wiring-v1' || contains(fromJSON('["release/public-alpha-rc","release/public-alpha-launch-readiness"]'), github.event.pull_request.head.ref))
+        if: steps.preflight.outputs.ready == 'true' && (github.event.pull_request.head.ref == 'execution/mara-real-app-wiring-v1' || contains(fromJSON('["release/public-alpha-rc","release/public-alpha-launch-readiness","release/mara-creator-alpha-20260909"]'), github.event.pull_request.head.ref))
         working-directory: web
         env:
           EXPECTED_SHA: ${{ github.event.pull_request.head.sha }}
@@ -284,7 +284,7 @@ jobs:
           node scripts/hosted-memory-e2e.mjs
 
       - name: Prove World P0 on hosted target
-        if: steps.preflight.outputs.ready == 'true' && (github.event.pull_request.head.ref == 'execution/mara-real-app-wiring-v1' || github.event.pull_request.head.ref == 'feature/world-sofi-first-slice' || contains(fromJSON('["release/public-alpha-rc","release/public-alpha-launch-readiness"]'), github.event.pull_request.head.ref))
+        if: steps.preflight.outputs.ready == 'true' && (github.event.pull_request.head.ref == 'execution/mara-real-app-wiring-v1' || github.event.pull_request.head.ref == 'feature/world-sofi-first-slice' || contains(fromJSON('["release/public-alpha-rc","release/public-alpha-launch-readiness","release/mara-creator-alpha-20260909"]'), github.event.pull_request.head.ref))
         working-directory: web
         env:
           EXPECTED_SHA: ${{ github.event.pull_request.head.sha }}
