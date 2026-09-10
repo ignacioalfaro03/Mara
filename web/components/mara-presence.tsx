@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 
-const DEFAULT_MARA_IMAGE_URL = "/mara/mara-v1-reference.jpg";
-const DEFAULT_MARA_IMAGE_VERSION = "1c4c4d3";
+const DEFAULT_MARA_IMAGE_URL = "/mara/mara-v2-reference.webp";
+const DEFAULT_MARA_IMAGE_VERSION = "b4db8bb2";
 const ENV_MARA_IMAGE_URL = process.env.NEXT_PUBLIC_MARA_HERO_IMAGE?.trim();
 const MARA_VOICE_URL = process.env.NEXT_PUBLIC_MARA_VOICE_URL?.trim();
 const MAX_IMAGE_ATTEMPTS = 3;
@@ -26,8 +26,8 @@ function MaraImage({ className, compact = false, label }: { className: string; c
           key={src}
           src={src}
           alt={label}
-          width={1024}
-          height={1536}
+          width={384}
+          height={576}
           loading="eager"
           decoding="async"
           fetchPriority={compact ? "auto" : "high"}
