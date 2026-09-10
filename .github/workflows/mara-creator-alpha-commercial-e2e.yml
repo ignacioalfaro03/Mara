@@ -145,6 +145,16 @@ jobs:
           DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
         run: npx vercel inspect "$DEPLOYMENT_URL" --wait --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN"
 
+      - name: Prove creator pilot intake through hosted UI
+        working-directory: web
+        env:
+          BASE_URL: ${{ steps.deploy.outputs.deployment_url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/hosted-creator-interest-e2e.mjs
+
       - name: Run Creator Alpha browser/session commercial loop
         working-directory: web
         env:
