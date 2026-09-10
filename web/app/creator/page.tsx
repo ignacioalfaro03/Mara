@@ -1,23 +1,11 @@
 import Link from "next/link";
 import { getVerifiedSession } from "@/lib/auth-session";
 import { ProductTelemetry } from "@/components/product-telemetry";
+import { creatorActionTitle, isCreatorActionAcknowledgeable, normalizeCreatorAction } from "@/lib/creator-actions";
 import { formatMoney, readCreatorDashboard, readOwnCreator, readOwnWorlds } from "@/lib/mara-real-data";
 import styles from "@/app/real-product.module.css";
 
 export const dynamic = "force-dynamic";
-
-function actionTitle(action: string | null) {
-  const map: Record<string, string> = {
-    FULFILL: "Fulfill this first.",
-    POST_PURCHASE_FOLLOWUP: "Cuida esta primera compra.",
-    COMPLETE_COLLECTION: "Hay una compra siguiente relevante.",
-    OFFER_MEMBERSHIP: "Puede tener sentido ofrecer recurrencia.",
-    REACTIVATE_WITH_FREE_PREVIEW: "Reactiva con valor, no presión.",
-    WAIT: "No vendas nada ahora.",
-    NO_ACTION: "No hay una acción comercial clara.",
-  };
-  return map[action ?? ""] ?? action ?? "Sin acción";
-}
 
 export default async function CreatorHomePage({ searchParams }: { searchParams: Promise<{ demand?: string }> }) {
   const query = await searchParams;
@@ -48,9 +36,10 @@ export default async function CreatorHomePage({ searchParams }: { searchParams: 
   const gmv = dashboard.customers.reduce((sum, customer) => sum + (customer.creator_gmv_minor ?? 0), 0);
   const repeat = dashboard.customers.filter((customer) => (customer.purchase_count ?? 0) >= 2).length;
   const topAction = dashboard.nextActions.find((item) => item.priority === "high") ?? dashboard.nextActions[0];
+  const normalizedTopAction = normalizeCreatorAction(topAction?.action);
   const bestOpportunity = dashboard.opportunities[0];
   const canAcknowledgeTopAction = Boolean(
-    topAction?.user_id && topAction.action && !["FULFILL", "WAIT", "NO_ACTION"].includes(topAction.action),
+    topAction?.user_id && isCreatorActionAcknowledgeable(topAction.action),
   );
 
   return (
@@ -73,9 +62,9 @@ export default async function CreatorHomePage({ searchParams }: { searchParams: 
         </article>
         <article className={styles.card}>
           <p className={styles.eyebrow}>NEXT ACTION</p>
-          {topAction ? <><h2>{actionTitle(topAction.action)}</h2><p className={styles.muted}>{topAction.reason}</p><span className={styles.pill}>{topAction.priority}</span>
-            {topAction.action === "FULFILL" ? <p><a className={styles.secondary} href="#pending-fulfillment">Ir a la entrega pendiente</a></p> : null}
-            {canAcknowledgeTopAction ? <form method="post" action="/api/creator/customers/action"><input type="hidden" name="userId" value={topAction.user_id ?? ""} /><input type="hidden" name="action" value={topAction.action ?? ""} /><input type="hidden" name="returnTo" value="/creator" /><button className={styles.secondary} type="submit">Marcar acción realizada</button></form> : null}
+          {topAction ? <><h2>{creatorActionTitle(topAction.action)}</h2><p className={styles.muted}>{topAction.reason}</p><span className={styles.pill}>{topAction.priority}</span>
+            {normalizedTopAction === "fulfill" ? <p><a className={styles.secondary} href="#pending-fulfillment">Ir a la entrega pendiente</a></p> : null}
+            {canAcknowledgeTopAction ? <form method="post" action="/api/creator/customers/action"><input type="hidden" name="userId" value={topAction.user_id ?? ""} /><input type="hidden" name="action" value={normalizedTopAction} /><input type="hidden" name="returnTo" value="/creator" /><button className={styles.secondary} type="submit">Marcar acción realizada</button></form> : null}
           </> : <p className={styles.empty}>Todavía no hay suficiente actividad para recomendar una acción.</p>}
         </article>
       </section>
@@ -103,7 +92,7 @@ export default async function CreatorHomePage({ searchParams }: { searchParams: 
         <article className={`${styles.card} ${styles.wide}`}>
           {dashboard.customers.length === 0 ? <p className={styles.empty}>No customers yet. Share your World to start learning what people want.</p> : <ul className={styles.list}>{dashboard.customers.map((customer) => {
             const next = dashboard.nextActions.find((item) => item.user_id === customer.user_id);
-            return <li className={styles.item} key={customer.user_id ?? "unknown"}><div className={styles.row}><div><Link className={styles.customerLink} href={`/creator/customers/${customer.user_id}`}>{customer.alias || "Mara user"}</Link><p className={styles.muted}>{customer.lifecycle_stage} · {customer.purchase_count ?? 0} compras · {formatMoney(customer.creator_gmv_minor)}</p></div><div><span className={styles.pill}>{next?.action ?? "NO_ACTION"}</span><p className={styles.small}>{next?.reason ?? "Sin acción recomendada"}</p></div></div></li>;
+            return <li className={styles.item} key={customer.user_id ?? "unknown"}><div className={styles.row}><div><Link className={styles.customerLink} href={`/creator/customers/${customer.user_id}`}>{customer.alias || "Mara user"}</Link><p className={styles.muted}>{customer.lifecycle_stage} · {customer.purchase_count ?? 0} compras · {formatMoney(customer.creator_gmv_minor)}</p></div><div><span className={styles.pill}>{normalizeCreatorAction(next?.action)}</span><p className={styles.small}>{next?.reason ?? "Sin acción recomendada"}</p></div></div></li>;
           })}</ul>}
         </article>
       </section>
