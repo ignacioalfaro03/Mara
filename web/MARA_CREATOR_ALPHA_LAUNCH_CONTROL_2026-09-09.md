@@ -1,166 +1,206 @@
 # MARA CREATOR ALPHA — LAUNCH CONTROL
 
-Date: 2026-09-09
+Updated: 2026-09-10
 Release line: `release/mara-creator-alpha-20260909`
-Source product head: `32a4538b7f385164c83ce3e31d2368e5b8569a9c`
+Decision PR: `#63`
 
 ## Objective
 
-Cut a controlled Mara Creator Alpha from the current real-app execution line without reopening product strategy, weakening privacy, activating unsupported payments, or moving production before the release gates are satisfied.
+Cut a controlled Mara Creator Alpha from the current real-app execution line without reopening product strategy, weakening privacy, activating unsupported payments, or moving canonical production before release gates are satisfied.
 
 ## Product thesis for this release
 
 Mara is a privacy-first creator commerce and demand network presented as connected Creator Worlds.
 
-This Alpha must prove the smallest useful loop:
+The Alpha proves this smallest useful loop:
 
 `CREATOR -> WORLD -> AUDIENCE -> WANT/PLEDGE/COMMIT -> AGGREGATED DEMAND -> OFFER -> SIGNED-TEST PURCHASE -> CREATOR FULFILLMENT -> ENTITLEMENT/HISTORY -> RETURN`
 
-The release is not a marketplace-scale launch and is not a promise of live payouts.
+This is a controlled product/creator-demand Alpha. It is not yet a marketplace-scale launch and it is not a promise of live payouts.
 
-## Proven on the source execution line
+## Current release status
 
-### Real Supabase product wiring
+### Product / backend — PASS
 
-Proven end to end with persistent backend truth:
+Proven end to end with persistent Supabase truth:
 
 - controlled Creator Alpha activation;
 - creator World creation;
 - dynamic `/world/[slug]`;
 - preference/taste persistence;
-- `My Weakness` CRUD with scoped storage;
+- scoped `My Weakness` CRUD;
 - demand creation;
 - WANT / PLEDGE / COMMIT transitions;
-- aggregate creator opportunity;
+- privacy-safe aggregate creator opportunity;
 - creator-scoped customer CRM;
 - creator offer creation;
 - demand -> offer;
 - signed-test checkout;
-- creator-manual fulfillment;
+- paid-but-unfulfilled creator-manual purchase state;
+- creator fulfillment;
 - entitlement after fulfillment;
 - customer History;
-- creator Next Best Action;
+- Creator Next Best Action;
 - cross-creator RLS isolation.
 
-Detailed proof remains in `REAL_APP_WIRING_E2E_PROOF_2026-09-08.md`.
+### Automated Creator Alpha acceptance — PASS
 
-### CI
+The hosted Creator Alpha commercial E2E now proves the complete multi-session loop on the isolated Vercel proof project, including:
 
-On exact source head:
+1. creator activation;
+2. Creator World creation;
+3. customer preference / Weakness;
+4. demand creation;
+5. isolated demand commitments;
+6. aggregate opportunity visibility;
+7. private commitment identity protection;
+8. demand -> offer;
+9. signed-test purchase;
+10. paid-but-pending manual fulfillment;
+11. second-creator isolation and unauthorized fulfillment rejection;
+12. owner fulfillment;
+13. entitlement / History;
+14. Creator OS post-purchase WAIT state.
 
-- production dependency audit: PASS;
-- Alpha report parser: PASS;
-- Real App Wiring contract: PASS;
-- DEV labs production block: PASS;
-- Typecheck: PASS;
-- Next.js production build: PASS;
-- production mobile smoke: PASS.
+Screenshot artifacts were reviewed after the passing run. This caught and led to fixes for two UI contract bugs before release freeze:
 
-The only failing Web Launch CI job is the independent canonical-image integrity gate.
+- lowercase database Next Best Action values versus uppercase UI assumptions;
+- History event names falling back to generic copy.
 
-### Hosted proof
+Both were corrected and the complete commercial E2E passed again on the corrected line.
 
-The exact source head was built and proven on the isolated Vercel proof project.
+### Security / privacy audit — PASS
 
-- remote build/deployment: PASS;
-- hosted health/memory: PASS;
-- telemetry persistence probe: PASS;
-- Playwright runtime: PASS;
-- browser auth/session/cross-device memory: PASS;
-- hosted World smoke: PASS;
-- canonical `mara-vera.vercel.app`: UNTOUCHED.
+See `MARA_CREATOR_ALPHA_SECURITY_AUDIT_2026-09-10.md`.
 
-## P0 — blocks release cut
+Live Supabase inspection confirmed:
 
-### 1. Restore the exact approved canonical Mara JPEG
+- all current `public` tables have RLS enabled;
+- all four public product views use `security_invoker=true`;
+- creator-visible Weakness/preferences are creator-world scoped and require `creator_visible=true`;
+- raw private demand signals are hidden from creators while still contributing to aggregate metrics;
+- a private demand signal does not create an identifiable creator/customer CRM relationship;
+- manual fulfillment checks creator ownership;
+- payment/refund truth functions are service-role only;
+- QA administration is token-gated and explicitly blocked on canonical production.
 
-Current file:
+No schema mutation was needed from this audit.
+
+### Release safety automation — PASS / ENFORCED
+
+Web Launch CI now includes `release-safety:contract`.
+
+It guards against accidental launch-boundary drift such as:
+
+- signed-test becoming generally available in production;
+- removing the canonical production QA block;
+- removing signed-test signature/QA-token protections;
+- exposing a service credential through `NEXT_PUBLIC_*`;
+- silently introducing a live payment provider into the Alpha runtime.
+
+The launch-operator token comparison was also hardened with constant-time comparison.
+
+### Hosted proof — PASS
+
+The release line is deployed and tested only on the isolated Vercel proof project.
+
+Validated repeatedly on exact release heads:
+
+- remote build/deployment;
+- backend environment shape;
+- telemetry persistence;
+- Playwright runtime;
+- browser auth/session/cross-device memory;
+- World P0;
+- full Creator Alpha commercial loop.
+
+Canonical `mara-vera.vercel.app` remains untouched.
+
+Canonical production runtime error inspection found no runtime error groups in the prior seven-day window at the time of the audit.
+
+## Only known technical release blocker
+
+### Restore the exact approved canonical Mara JPEG
+
+Current path:
 
 `web/public/mara/mara-v1-reference.jpg`
 
-The repository blob is the expected canonical blob but is physically truncated and missing JPEG EOI.
+The repository blob is the historical expected blob but is physically truncated and missing JPEG EOI. The independent `canonical-integrity` job correctly rejects it.
 
-Required action:
+Required:
 
 - recover the exact intact approved source image;
-- visually confirm identity against the approved Mara canon;
-- replace the truncated binary without changing Mara identity;
-- update the canonical blob lock only after the intact source is reviewed;
-- rerun `canonical-integrity` and the full Web Launch CI.
+- visually confirm it is the approved Mara identity;
+- replace the binary without changing identity;
+- update the canonical blob lock only after source review;
+- rerun canonical integrity + full Web Launch CI + hosted proof on the new exact SHA.
 
-Do not bypass the gate and do not repair the file by appending bytes.
+Do **not** bypass the gate, append bytes, or silently generate a replacement face.
 
-## P0 — Alpha acceptance before production cutover
+Repository history, previous deployment artifacts and available project files have not yielded an intact copy so far.
 
-### 2. Human Creator Alpha UI journey
+## Human acceptance boundary
 
-Run one real human operator through the hosted release candidate using a controlled Alpha creator account:
+The automated multi-session acceptance and screenshot review now satisfy the **technical** Creator Alpha journey gate.
 
-1. activate creator;
-2. create Creator World;
-3. open World as a customer;
-4. save one declared preference / Weakness;
-5. create demand;
-6. produce at least two demand commitments from isolated customer identities;
-7. confirm creator sees aggregate opportunity but no unauthorized private raw data;
-8. create offer from demand;
-9. complete signed-test purchase;
-10. confirm purchase remains unfulfilled;
-11. creator completes fulfillment;
-12. confirm entitlement and customer History;
-13. confirm Creator OS moves from FULFILL to WAIT;
-14. repeat critical checks on a second creator identity to prove isolation.
+Before intentionally inviting public Alpha traffic, a short founder/operator spot-check is still recommended for subjective product feel:
 
-Acceptance evidence:
+- open Home / Creator OS on mobile;
+- inspect one World;
+- confirm wording and visual identity feel acceptable;
+- confirm no obviously broken navigation.
 
-- screenshots or recorded QA notes for the complete journey;
-- no cross-creator leakage;
-- no unexpected 5xx;
-- no production business telemetry contamination from proof/preview environments.
+This is a product GO/NO-GO judgment, not a substitute for the already-passing functional E2E.
 
 ## Public Alpha payment boundary
 
 For this release candidate:
 
-- live payment provider: OFF;
-- creator payouts: OFF;
-- real-money creator offers: OFF unless separately approved after provider/compliance diligence;
-- signed-test checkout remains the commercial-flow proof mechanism.
+- live payment provider: **OFF**;
+- creator payouts: **OFF**;
+- real-money creator offers: **OFF**;
+- signed-test checkout: isolated proof mechanism only.
 
-This means the initial cut is a product/creator-demand Alpha, not the final monetized marketplace launch.
+Live money requires a separate provider/compliance decision and explicit authorization.
 
-## Production cutover gate
+## Production cutover sequence
 
-Only after P0 gates are green and founder authorization is explicit:
+Only after the canonical image gate is green and founder authorization is explicit:
 
-1. freeze exact release SHA;
-2. require Web Launch CI green, including canonical integrity;
-3. require hosted release proof green on the same SHA;
-4. verify canonical Vercel project has required production Supabase public config and server-only backend credential shape;
-5. verify QA-only secrets/tokens are absent from canonical production;
-6. merge only with explicit founder instruction `mergea`;
-7. deploy the resulting exact `main` SHA to canonical `mara-vera`;
-8. verify `/api/health`, memory health, telemetry persistence, Auth, Creator World, History and production mobile smoke;
-9. verify DEV/lab routes remain unavailable in production;
-10. verify payments remain disabled unless separately authorized.
+1. freeze the exact release SHA;
+2. require Web Launch CI green, including `canonical-integrity` and `release-safety:contract`;
+3. require Hosted Activation Preview green on the same SHA;
+4. require Creator Alpha Commercial E2E green on the same SHA;
+5. verify canonical Vercel production config shape;
+6. verify QA-only proof token/flags are absent from canonical production;
+7. record current canonical deployment as rollback target;
+8. merge only with explicit founder instruction `mergea`;
+9. deploy/promote only the resulting approved exact `main` SHA to canonical `mara-vera`;
+10. verify `/api/health` returns the expected release SHA;
+11. verify Auth, World, History, telemetry persistence and mobile smoke;
+12. verify lab/QA/proof-only routes remain unavailable on canonical production;
+13. verify payments remain disabled;
+14. inspect runtime errors immediately after cutover.
 
 ## Rollback triggers
 
-Rollback the canonical deployment if any of the following appears after cutover:
+Restore the prior known-good canonical web deployment if any of the following appears after cutover:
 
 - Auth/session failure;
 - server-backed memory failure;
-- Creator World core route failure;
+- Creator World core-route failure;
 - creator/customer RLS leakage;
 - demand/offer/fulfillment state corruption;
 - telemetry persistence failure;
-- DEV lab exposure;
+- DEV lab or QA proof-route exposure;
 - unexpected payment activation;
-- sustained new 5xx on core Alpha paths.
+- sustained new 5xx on core Alpha paths;
+- release SHA mismatch.
 
 Do not roll back Supabase migrations blindly. Restore the prior known-good web deployment first and investigate data/state compatibility.
 
-## Next commercial gate after Alpha is stable
+## Next business gate after Alpha is stable
 
 Do not expand feature scope first. Validate:
 
@@ -170,8 +210,8 @@ Do not expand feature scope first. Validate:
 - demand -> offer conversion;
 - fulfillment workload per creator;
 - repeat intent / History return behavior;
-- payment-provider and payout eligibility for the actual creator-content model;
-- contribution economics before live money activation.
+- actual payment-provider/payout eligibility for the creator-content model;
+- contribution economics before live-money activation.
 
 ## Founder boundary
 
