@@ -2,7 +2,7 @@ import fs from "node:fs";
 import crypto from "node:crypto";
 import assert from "node:assert/strict";
 
-const EXPECTED_SHA256 = "b4db8bb2c0cb5e0be811bb18982973ec9219f6f1943313630799793387003a1e";
+const EXPECTED_SHA256 = "595895c615f8ee6e9a2989933df8d8b48a91337ce509b2124379c4691c36a9eb";
 const EXPECTED_WIDTH = 384;
 const EXPECTED_HEIGHT = 576;
 const file = new URL("../public/mara/mara-v2-reference.webp", import.meta.url);
