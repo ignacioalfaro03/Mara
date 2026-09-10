@@ -9,7 +9,12 @@ const OUT = path.resolve("artifacts/design-preview");
 await fs.mkdir(OUT, { recursive: true });
 
 const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET?.trim();
-const extraHTTPHeaders = bypass ? { "x-vercel-protection-bypass": bypass } : {};
+const extraHTTPHeaders = bypass
+  ? {
+      "x-vercel-protection-bypass": bypass,
+      "x-vercel-set-bypass-cookie": "true",
+    }
+  : {};
 const browser = await chromium.launch({ headless: true });
 const evidence = [];
 
@@ -17,7 +22,7 @@ async function makeContext(viewport, agePassed = true) {
   const context = await browser.newContext({ viewport, extraHTTPHeaders });
   if (agePassed) {
     await context.addInitScript(() => {
-      window.localStorage.setItem("mara_age_gate_passed", "true");
+      try { window.localStorage.setItem("mara_age_gate_passed", "true"); } catch { /* retry naturally on the target origin */ }
     });
   }
   return context;
