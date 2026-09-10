@@ -9,17 +9,15 @@ permissions:
 
 env:
   VERCEL_CLI_VERSION: "59.11.1"
-  PLAYWRIGHT_VERSION: "1.62.1"
   VERCEL_ORG_ID: "team_KAPFjrSQT78GUeQyGZCdQRdz"
   VERCEL_PROJECT_ID: "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK"
   VERCEL_SCOPE: "ignacioalfaz-6766"
-  MARA_MAIN_VERCEL_PROJECT_ID: "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK"
 
 jobs:
   preview:
     if: github.event.pull_request.head.ref == 'design/platform-experience-reinvention-v1'
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 20
 
     steps:
       - name: Checkout exact design head
@@ -35,19 +33,13 @@ jobs:
           echo "MARA_DESIGN_SHA=${{ github.event.pull_request.head.sha }}"
 
       - name: Check Vercel preview credential
-        id: preflight
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         shell: bash
         run: |
           set -euo pipefail
-          if [ -n "$VERCEL_TOKEN" ]; then
-            echo "ready=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "::error::Missing VERCEL_TOKEN; cannot create review Preview"
-            echo "ready=false" >> "$GITHUB_OUTPUT"
-            exit 1
-          fi
+          test -n "$VERCEL_TOKEN"
+          echo "MARA_DESIGN_PREVIEW_CREDENTIAL PASS"
 
       - name: Setup Node
         uses: actions/setup-node@v7.0.0
@@ -137,31 +129,11 @@ jobs:
           console.log('MARA_DESIGN_PREVIEW_HEALTH PASS');
           NODE
 
-      - name: Install browser visual QA runtime
-        working-directory: web
-        run: |
-          npm install --no-save --no-package-lock --no-audit --no-fund "playwright@${PLAYWRIGHT_VERSION}"
-          npx playwright install --with-deps chromium
-
-      - name: Capture visual proof
-        working-directory: web
-        env:
-          BASE_URL: ${{ steps.deploy.outputs.deployment_url }}
-          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-        run: node scripts/design-preview-proof.mjs
-
-      - name: Upload visual proof artifact
-        uses: actions/upload-artifact@v4.6.2
-        with:
-          name: mara-platform-design-preview-${{ github.event.pull_request.head.sha }}
-          path: web/artifacts/design-preview
-          if-no-files-found: error
-          retention-days: 7
-
-      - name: Publish preview boundary
+      - name: Publish Preview boundary
         if: always()
         shell: bash
         run: |
           echo "MARA_DESIGN_PREVIEW=${{ steps.deploy.outputs.deployment_url }}"
           echo "MARA_DESIGN_PREVIEW_SHA=${{ github.event.pull_request.head.sha }}"
+          echo "MARA_VISUAL_PROOF_SOURCE=Web Launch CI exact production build"
           echo "CANONICAL_PRODUCTION_UNTOUCHED=https://mara-vera.vercel.app"
