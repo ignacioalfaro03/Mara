@@ -1,3 +1,4 @@
+import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { getServerBackendConfig } from "@/lib/backend-config";
 
@@ -22,10 +23,17 @@ function requestToken(request: Request) {
   return request.headers.get("x-mara-operator-token")?.trim() ?? "";
 }
 
+function tokensEqual(expected: string, received: string) {
+  if (!expected || !received) return false;
+  const expectedBytes = Buffer.from(expected);
+  const receivedBytes = Buffer.from(received);
+  return expectedBytes.length === receivedBytes.length && timingSafeEqual(expectedBytes, receivedBytes);
+}
+
 function authorize(request: Request) {
   const expected = configuredToken();
   if (!expected) return { ok: false as const, status: 404, error: "not_found" };
-  if (requestToken(request) !== expected) return { ok: false as const, status: 401, error: "operator_auth_required" };
+  if (!tokensEqual(expected, requestToken(request))) return { ok: false as const, status: 401, error: "operator_auth_required" };
   return { ok: true as const };
 }
 
