@@ -29,17 +29,19 @@ Runtime fingerprint:
 
 - dimensions: `384 × 576`
 - format: `WebP (lossy)`
-- expected Git blob SHA-1: `2e96dd45fbd2fdeaf1a060ab57da6b8de916bf98`
-- expected SHA-256: `b4db8bb2c0cb5e0be811bb18982973ec9219f6f1943313630799793387003a1e`
+- expected Git blob SHA-1: `043bbb92f1ac6cc9b98ae7686e3ad5b1dceb8710`
+- expected SHA-256: `595895c615f8ee6e9a2989933df8d8b48a91337ce509b2124379c4691c36a9eb`
 
 The runtime asset is a deterministic technical derivative of the founder-approved source, not a regenerated woman. Derivation used for this Alpha asset:
 
 1. crop the photographic left side of the reference card at source coordinates `(0, 0) → (660, 990)`;
 2. preserve the `2:3` portrait aspect ratio;
 3. resize to `384 × 576` using Lanczos resampling;
-4. encode to WebP quality `60`, method `6`.
+4. encode to WebP quality `40`, method `6`.
 
-The crop intentionally removes the black measurement panel from the public hero while preserving Mara's approved face, hair, body and scene. A future higher-resolution derivative may replace this file without changing identity, but it must be generated from the same approved source or receive a new explicit founder canonical decision.
+The crop intentionally removes the black measurement panel from the public hero while preserving Mara's approved face, hair, body and scene. The exact runtime bytes were independently recovered from the GitHub Actions source snapshot and visually checked against the founder-approved source before freezing this fingerprint.
+
+A future higher-resolution derivative may replace this file without changing identity, but it must be generated from the same approved source or receive a new explicit founder canonical decision.
 
 ## Legacy V1
 
@@ -56,8 +58,8 @@ The file is physically truncated and lacks a valid JPEG EOI marker. It is retain
 The Web Launch CI must fail unless all of the following are true:
 
 1. `mara-v2-reference.webp` exists and is non-empty;
-2. its Git blob equals `2e96dd45fbd2fdeaf1a060ab57da6b8de916bf98`;
-3. its SHA-256 equals `b4db8bb2c0cb5e0be811bb18982973ec9219f6f1943313630799793387003a1e`;
+2. its Git blob equals `043bbb92f1ac6cc9b98ae7686e3ad5b1dceb8710`;
+3. its SHA-256 equals `595895c615f8ee6e9a2989933df8d8b48a91337ce509b2124379c4691c36a9eb`;
 4. it has a valid RIFF/WEBP/VP8 signature;
 5. its natural dimensions are `384 × 576`;
 6. the Mara runtime component points to `/mara/mara-v2-reference.webp` and never falls back to the corrupt V1 file.
