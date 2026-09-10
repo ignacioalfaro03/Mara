@@ -1,0 +1,166 @@
+name: Mara Platform Design Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+env:
+  VERCEL_CLI_VERSION: "59.11.1"
+  PLAYWRIGHT_VERSION: "1.62.1"
+  VERCEL_ORG_ID: "team_KAPFjrSQT78GUeQyGZCdQRdz"
+  VERCEL_SCOPE: "ignacioalfaz-6766"
+  MARA_MAIN_VERCEL_PROJECT_ID: "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK"
+
+jobs:
+  preview:
+    if: github.event.pull_request.head.ref == 'design/platform-experience-reinvention-v1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout exact design head
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Verify exact design SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha }}"
+          echo "MARA_DESIGN_SHA=${{ github.event.pull_request.head.sha }}"
+
+      - name: Check Vercel preview credential
+        id: preflight
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -n "$VERCEL_TOKEN" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::Missing VERCEL_TOKEN; cannot create review Preview"
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+      - name: Setup Node
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install locked dependencies
+        working-directory: web
+        run: npm ci --no-audit --no-fund
+
+      - name: Verify release safety and types
+        working-directory: web
+        run: |
+          npm run release-safety:contract
+          npm run typecheck
+
+      - name: Install pinned Vercel CLI
+        working-directory: web
+        run: npm install --no-save --no-package-lock --no-audit --no-fund "vercel@${VERCEL_CLI_VERSION}"
+
+      - name: Link canonical project in Preview mode
+        working-directory: web
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .vercel
+          mkdir -p .vercel
+          node <<'NODE'
+          const fs = require('fs');
+          fs.writeFileSync('.vercel/project.json', JSON.stringify({
+            orgId: process.env.VERCEL_ORG_ID,
+            projectId: process.env.MARA_MAIN_VERCEL_PROJECT_ID,
+          }));
+          NODE
+          npx vercel pull --yes --environment=preview --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN"
+          node <<'NODE'
+          const fs = require('fs');
+          const linked = JSON.parse(fs.readFileSync('.vercel/project.json', 'utf8'));
+          if (linked.orgId !== process.env.VERCEL_ORG_ID || linked.projectId !== process.env.MARA_MAIN_VERCEL_PROJECT_ID) {
+            throw new Error('Preview target mismatch');
+          }
+          console.log('MARA_DESIGN_PREVIEW_TARGET PASS');
+          NODE
+
+      - name: Deploy exact head as Vercel Preview
+        id: deploy
+        working-directory: web
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          NEXT_TELEMETRY_DISABLED: "1"
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx vercel deploy --yes --skip-domain --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN" \
+            --env MARA_RELEASE_SHA="${{ github.event.pull_request.head.sha }}" \
+            --meta githubCommitSha="${{ github.event.pull_request.head.sha }}" \
+            2>&1 | tee /tmp/mara-design-preview.log
+          deployment_url=$(grep -Eo 'https://[^[:space:]]+\.vercel\.app' /tmp/mara-design-preview.log | tail -n 1)
+          test -n "$deployment_url"
+          echo "deployment_url=$deployment_url" >> "$GITHUB_OUTPUT"
+          echo "MARA_DESIGN_PREVIEW_URL=$deployment_url"
+
+      - name: Wait for Preview READY
+        working-directory: web
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
+        run: npx vercel inspect "$DEPLOYMENT_URL" --wait --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN"
+
+      - name: Verify hosted health
+        working-directory: web
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx vercel curl /api/health --deployment "$DEPLOYMENT_URL" -- --silent --show-error > /tmp/health.json
+          node <<'NODE'
+          const fs = require('fs');
+          const body = JSON.parse(fs.readFileSync('/tmp/health.json', 'utf8'));
+          if (body?.status !== 'ok' || body?.service !== 'mara-vera-web') throw new Error('Preview health failed');
+          console.log('MARA_DESIGN_PREVIEW_HEALTH PASS');
+          NODE
+
+      - name: Install browser visual QA runtime
+        working-directory: web
+        run: |
+          npm install --no-save --no-package-lock --no-audit --no-fund "playwright@${PLAYWRIGHT_VERSION}"
+          npx playwright install --with-deps chromium
+
+      - name: Capture visual proof
+        working-directory: web
+        env:
+          BASE_URL: ${{ steps.deploy.outputs.deployment_url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: node scripts/design-preview-proof.mjs
+
+      - name: Upload visual proof artifact
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: mara-platform-design-preview-${{ github.event.pull_request.head.sha }}
+          path: web/artifacts/design-preview
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Publish preview boundary
+        if: always()
+        shell: bash
+        run: |
+          echo "MARA_DESIGN_PREVIEW=${{ steps.deploy.outputs.deployment_url }}"
+          echo "MARA_DESIGN_PREVIEW_SHA=${{ github.event.pull_request.head.sha }}"
+          echo "CANONICAL_PRODUCTION_UNTOUCHED=https://mara-vera.vercel.app"
