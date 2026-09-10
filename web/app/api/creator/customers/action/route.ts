@@ -1,21 +1,12 @@
 import { NextResponse } from "next/server";
 import { getVerifiedSession, setSessionCookies } from "@/lib/auth-session";
+import { isCreatorActionAcknowledgeable, normalizeCreatorAction } from "@/lib/creator-actions";
 import { readOwnCreator } from "@/lib/mara-real-data";
 import { emitProductEvent } from "@/lib/product-telemetry";
 import { safeLocalReturn, serviceRest, userRest } from "@/lib/supabase/server-rest";
 import type { Tables } from "@/lib/supabase/database.types";
 
 export const runtime = "nodejs";
-
-const ACTIONS = new Set([
-  "FULFILL",
-  "POST_PURCHASE_FOLLOWUP",
-  "COMPLETE_COLLECTION",
-  "OFFER_MEMBERSHIP",
-  "REACTIVATE_WITH_FREE_PREVIEW",
-  "WAIT",
-  "NO_ACTION",
-]);
 
 export async function POST(request: Request) {
   const session = await getVerifiedSession();
@@ -25,9 +16,9 @@ export async function POST(request: Request) {
 
   const form = await request.formData();
   const customerUserId = String(form.get("userId") ?? "");
-  const action = String(form.get("action") ?? "").toUpperCase();
+  const action = normalizeCreatorAction(String(form.get("action") ?? ""));
   const returnTo = safeLocalReturn(form.get("returnTo"), "/creator");
-  if (!customerUserId || !ACTIONS.has(action)) return NextResponse.json({ error: "invalid_creator_action" }, { status: 400 });
+  if (!customerUserId || !isCreatorActionAcknowledgeable(action)) return NextResponse.json({ error: "invalid_creator_action" }, { status: 400 });
 
   const relationship = await userRest<Tables<"creator_customer_relationships">[]>(
     session.accessToken,
@@ -47,7 +38,7 @@ export async function POST(request: Request) {
 
   await emitProductEvent(request, "creator_next_action_used", {
     surface: "/creator",
-    target: action.toLowerCase(),
+    target: action,
   });
 
   const response = NextResponse.redirect(new URL(returnTo, request.url), 303);
