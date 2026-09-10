@@ -9,31 +9,39 @@ export default function ShopPage() {
   return (
     <main className={styles.shell}>
       <div className={styles.container}>
+        <nav className={styles.contextNav}>
+          <Link href="/">MARA</Link>
+          <div><span>WORLD 00</span><strong>Mara Vera · Creator Zero</strong></div>
+        </nav>
+
         <section className={styles.hero}>
           <div>
-            <p className={styles.eyebrow}>EL LADO PRIVADO DE MARA</p>
-            <h1 className={styles.title}>No todo lo dejo afuera.</h1>
+            <p className={styles.eyebrow}>PRIVATE ACCESS · MARA VERA</p>
+            <h1 className={styles.title}>Lo público termina antes.</h1>
             <p className={styles.lede}>
-              Hay escenas, audios y pequeñas cosas que puedes desbloquear y guardar. Entras cuando quieres, eliges una y vuelves a ella después.
+              Algunas cosas de este World se abren una vez y quedan contigo. No es la tienda de toda Mara: es el acceso privado de Creator Zero.
             </p>
           </div>
           <aside className={styles.heroAside}>
-            <strong>Empieza por una.</strong>
-            <p>Primero puedes probar a Mara gratis. Si quieres seguir, desbloqueas una experiencia concreta y queda en tu biblioteca.</p>
+            <p className={styles.eyebrow}>ANTES DE PAGAR</p>
+            <strong>Primero entra.</strong>
+            <p>La experiencia gratuita existe para que entiendas el tono antes de decidir si quieres abrir algo más.</p>
+            <Link className={styles.secondaryButton} href="/experience">Entrar a Mara Vera</Link>
           </aside>
         </section>
 
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
             <div>
-              <p className={styles.eyebrow}>START HERE</p>
-              <h2>Empieza por algo pequeño.</h2>
+              <p className={styles.eyebrow}>AVAILABLE NOW</p>
+              <h2>Esta sí se puede abrir.</h2>
             </div>
-            <p>Una continuación privada de la primera escena. Precio claro, una sola compra y algo que después sigue siendo tuyo.</p>
+            <p>Un acceso concreto, con precio y alcance claros cuando el proveedor de pagos esté realmente habilitado.</p>
           </div>
 
           <div className={styles.grid}>
             <article className={`${styles.card} ${styles.cardFeatured}`}>
+              <div className={styles.cardSequence}>01 / PRIVATE</div>
               <div>
                 <p className={styles.eyebrow}>{featured.eyebrow}</p>
                 <h3>{featured.title}</h3>
@@ -41,43 +49,46 @@ export default function ShopPage() {
               </div>
               <div className={styles.cardFooter}>
                 <span className={styles.price}>{featured.priceLabel}</span>
-                <Link className={styles.linkButton} href={`/shop/${featured.slug}`}>Ver experiencia</Link>
+                <Link className={styles.linkButton} href={`/shop/${featured.slug}`}>Ver qué abre</Link>
               </div>
             </article>
           </div>
         </section>
 
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <div>
-              <p className={styles.eyebrow}>DESPUÉS</p>
-              <h2>Hay más cosas esperando.</h2>
+        {rest.length > 0 ? (
+          <section className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <div>
+                <p className={styles.eyebrow}>NOT YET</p>
+                <h2>Lo que todavía no te deja abrir.</h2>
+              </div>
+              <p>Lo futuro aparece solo como anticipación. No fingimos inventario ni urgencia que todavía no existe.</p>
             </div>
-            <p>Cuando una experiencia esté realmente lista, aparece aquí. No necesitas perseguir cada publicación para encontrarla.</p>
-          </div>
 
-          <div className={styles.grid}>
-            {rest.map((product) => (
-              <article className={styles.card} key={product.slug}>
-                <div>
-                  <p className={styles.eyebrow}>{product.eyebrow}</p>
-                  <h3>{product.title}</h3>
-                  <p>{product.shortDescription}</p>
-                </div>
-                <div className={styles.cardFooter}>
-                  <span className={styles.price}>{product.priceLabel}</span>
-                  <Link className={styles.secondaryButton} href={`/shop/${product.slug}`}>Ver ficha</Link>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
+            <div className={styles.grid}>
+              {rest.map((product, index) => (
+                <article className={styles.card} key={product.slug}>
+                  <div className={styles.cardSequence}>{String(index + 2).padStart(2, "0")} / LATER</div>
+                  <div>
+                    <p className={styles.eyebrow}>{product.eyebrow}</p>
+                    <h3>{product.title}</h3>
+                    <p>{product.shortDescription}</p>
+                  </div>
+                  <div className={styles.cardFooter}>
+                    <span className={styles.price}>{product.priceLabel}</span>
+                    <Link className={styles.secondaryButton} href={`/shop/${product.slug}`}>Ver lo que viene</Link>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
 
         <section className={styles.section}>
           <div className={styles.kpiStrip}>
-            <div className={styles.kpi}><strong>Una vez</strong><span>desbloqueas</span></div>
-            <div className={styles.kpi}><strong>Tu biblioteca</strong><span>lo guarda</span></div>
-            <div className={styles.kpi}><strong>Cuando quieras</strong><span>vuelves</span></div>
+            <div className={styles.kpi}><span>ACCESS</span><strong>Abres una vez</strong></div>
+            <div className={styles.kpi}><span>MEMORY</span><strong>Queda en tu cuenta</strong></div>
+            <div className={styles.kpi}><span>RETURN</span><strong>Vuelves cuando quieres</strong></div>
           </div>
         </section>
       </div>
