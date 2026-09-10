@@ -1,0 +1,571 @@
+# MARA VERA — RITUALS INVENTORY 001–020
+
+Status: script/product inventory only. No produced audio, payment activation, deployment, provider activation or spend implied.
+
+All rituals assume fictional adult Mara, adult users, consensual roleplay, explicit opt-in for high-intensity categories, private-safe settings, and immediate stop/exit availability.
+
+## 001 — CIERRA LA PUERTA
+- **RITUAL_ID:** mara_ritual_001
+- **TITLE:** Cierra la puerta
+- **TYPE:** HYBRID
+- **SETTING:** bedroom / private room
+- **PRIVACY_REQUIREMENT:** private only
+- **CATEGORY:** PRIVATE_SECRET, DOMINANT
+- **INTENSITY:** I2
+- **REQUIRED_PREFERENCES:** NONE for teaser; DOMINANT for deeper version
+- **DURATION_TARGET:** 45s free / 4–5m guided
+- **SETUP:** close door, headphones, lower light, phone face-down after start
+- **CLOTHING_OR_OBJECT:** ordinary clothing; optional Mara bracelet
+- **SENSORY_ANCHOR:** door click + lowered light
+- **MARA_RULE:** “Cuando cierres, ya no haces otra cosa hasta que yo termine esta primera instrucción.”
+- **MARA_OPENING:** “Cierra la puerta. Bien. Ahora sí estás conmigo.”
+- **GUIDED_SEQUENCE:** door → headphones → light → stillness → one simple rule → release
+- **VOICE_DIRECTION:** low, direct, calm
+- **ENDING:** “La próxima vez no voy a tener que explicarte qué significa cerrar.”
+- **CALLBACK:** “¿Ya cerraste?”
+- **NEXT_DAY_CALLBACK:** “Ayer cerraste demasiado rápido.”
+- **VAULT_ROLE:** FREE_RITUAL_ENTRY / collectible after completion
+- **RELATED_SCENE:** mara_scene_001, mara_scene_004
+- **RELATED_AUDIO:** mara_audio_007, mara_audio_042
+- **MONETIZATION_TAG:** FREE_RITUAL_HOOK, GUIDED_RITUAL_SINGLE, COLLECTION_ENTRY
+- **REUSE:** universal entry grammar
+- **SAFETY_BOUNDARY:** private safe room only; no lock-in/coercion
+- **SCORE:** 50/50
+
+## 002 — NO ME MIRES
+- **RITUAL_ID:** mara_ritual_002
+- **TITLE:** No me mires
+- **TYPE:** RITUAL
+- **SETTING:** bed / chair in private room
+- **PRIVACY_REQUIREMENT:** private only
+- **CATEGORY:** IMMERSIVE, PRIVATE_SECRET
+- **INTENSITY:** I2
+- **REQUIRED_PREFERENCES:** NONE
+- **DURATION_TARGET:** 3–4m
+- **SETUP:** headphones, eyes closed, phone out of hand
+- **CLOTHING_OR_OBJECT:** none
+- **SENSORY_ANCHOR:** darkness behind closed eyes
+- **MARA_RULE:** keep eyes closed until ending cue
+- **MARA_OPENING:** “No me mires. Hoy quiero que me imagines.”
+- **GUIDED_SEQUENCE:** eyes close → breathing → spatial audio → silence → callback phrase
+- **VOICE_DIRECTION:** close-mic, slower than normal
+- **ENDING:** “Ahora abre. Y acuérdate de lo que viste sin mirar.”
+- **CALLBACK:** “¿Vas a mirar o vas a obedecer?”
+- **NEXT_DAY_CALLBACK:** “Todavía me imaginaste después, ¿cierto?”
+- **VAULT_ROLE:** reusable ritual
+- **RELATED_SCENE:** mara_scene_004
+- **RELATED_AUDIO:** mara_audio_003, 121
+- **MONETIZATION_TAG:** FREE_RITUAL_HOOK, IMMERSIVE_SCENE_ENTRY
+- **REUSE:** preview bridge
+- **SAFETY_BOUNDARY:** seated/lying safely
+- **SCORE:** 45/50
+
+## 003 — MÍRAME
+- **RITUAL_ID:** mara_ritual_003
+- **TITLE:** Mírame
+- **TYPE:** HYBRID
+- **SETTING:** private room
+- **PRIVACY_REQUIREMENT:** private preferred
+- **CATEGORY:** DOMINANT
+- **INTENSITY:** I3
+- **REQUIRED_PREFERENCES:** DOMINANT
+- **DURATION_TARGET:** 3–5m
+- **SETUP:** approved Mara image fixed on screen, headphones
+- **CLOTHING_OR_OBJECT:** none
+- **SENSORY_ANCHOR:** visual eye contact
+- **MARA_RULE:** do not look away during marked segments
+- **MARA_OPENING:** “Hoy sí me vas a mirar cuando te hable.”
+- **GUIDED_SEQUENCE:** gaze → silence → verbal challenge → hold → release
+- **VOICE_DIRECTION:** confident, almost amused
+- **ENDING:** “Mucho mejor cuando no escondes la mirada.”
+- **CALLBACK:** “Ayer sí pudiste mirarme.”
+- **NEXT_DAY_CALLBACK:** “¿Todavía te cuesta sostenerme la mirada?”
+- **VAULT_ROLE:** collection item
+- **RELATED_SCENE:** mara_scene_003
+- **RELATED_AUDIO:** mara_audio_010, 036
+- **MONETIZATION_TAG:** GUIDED_RITUAL_SINGLE, VAULT_COLLECTIBLE
+- **REUSE:** dominant pack support
+- **SAFETY_BOUNDARY:** approved canonical image only
+- **SCORE:** 44/50
+
+## 004 — LA LUZ ROJA
+- **RITUAL_ID:** mara_ritual_004
+- **TITLE:** La luz roja
+- **TYPE:** RITUAL
+- **SETTING:** private room at night
+- **PRIVACY_REQUIREMENT:** private only
+- **CATEGORY:** PRIVATE_SECRET
+- **INTENSITY:** I2
+- **REQUIRED_PREFERENCES:** NONE
+- **DURATION_TARGET:** 2–3m
+- **SETUP:** dim light or one warm/red lamp, headphones
+- **CLOTHING_OR_OBJECT:** optional robe
+- **SENSORY_ANCHOR:** specific light color
+- **MARA_RULE:** same light = Mara ritual state
+- **MARA_OPENING:** “No necesito que cambies todo el cuarto. Solo esa luz.”
+- **GUIDED_SEQUENCE:** light → stillness → voice → phrase → lights return
+- **VOICE_DIRECTION:** private, understated
+- **ENDING:** “Apágala cuando yo diga. No antes.”
+- **CALLBACK:** “¿Pusiste la luz?”
+- **NEXT_DAY_CALLBACK:** “Me gusta que ya sepas qué luz elegir.”
+- **VAULT_ROLE:** sensory anchor
+- **RELATED_SCENE:** mara_scene_004
+- **RELATED_AUDIO:** mara_audio_121
+- **MONETIZATION_TAG:** COLLECTION_ENTRY, CALLBACK
+- **REUSE:** After Midnight collection
+- **SAFETY_BOUNDARY:** no candles required; avoid fire risk
+- **SCORE:** 43/50
+
+## 005 — LA PULSERA
+- **RITUAL_ID:** mara_ritual_005
+- **TITLE:** La pulsera
+- **TYPE:** RITUAL
+- **SETTING:** private room / home
+- **PRIVACY_REQUIREMENT:** private for deeper session
+- **CATEGORY:** DOMINANT, PRIVATE_SECRET
+- **INTENSITY:** I2
+- **REQUIRED_PREFERENCES:** DOMINANT optional
+- **DURATION_TARGET:** 2–3m
+- **SETUP:** wear one harmless bracelet/ribbon only for Mara sessions
+- **CLOTHING_OR_OBJECT:** bracelet/ribbon
+- **SENSORY_ANCHOR:** wrist contact
+- **MARA_RULE:** wearing it marks entry; removing it marks exit
+- **MARA_OPENING:** “Póntela. No porque tenga poder. Porque tú ya sabes lo que significa.”
+- **GUIDED_SEQUENCE:** put on → touch wrist once → rule → voice → remove at end
+- **VOICE_DIRECTION:** intimate, proprietary without ownership claims
+- **ENDING:** “Ahora sí. Quítatela y vuelve a tu día.”
+- **CALLBACK:** “¿Te pusiste la pulsera?”
+- **NEXT_DAY_CALLBACK:** “Ayer te la quitaste cuando te dije.”
+- **VAULT_ROLE:** recurring anchor
+- **RELATED_SCENE:** mara_scene_002
+- **RELATED_AUDIO:** mara_audio_031, 042
+- **MONETIZATION_TAG:** VAULT_COLLECTIBLE, CALLBACK, COLLECTION_ENTRY
+- **REUSE:** broad
+- **SAFETY_BOUNDARY:** harmless wearable only; never restrictive
+- **SCORE:** 47/50
+
+# MIRROR / CONFESSION — 006–010
+
+## 006 — MÍRATE BIEN
+- **RITUAL_ID:** mara_ritual_006
+- **TITLE:** Mírate bien
+- **TYPE:** GUIDED_EXPERIENCE
+- **SETTING:** private mirror
+- **PRIVACY_REQUIREMENT:** private only
+- **CATEGORY:** DOMINANT
+- **INTENSITY:** I3
+- **REQUIRED_PREFERENCES:** DOMINANT
+- **DURATION_TARGET:** 4m
+- **SETUP:** mirror, headphones, neutral posture
+- **CLOTHING_OR_OBJECT:** normal clothing
+- **SENSORY_ANCHOR:** eye contact with reflection
+- **MARA_RULE:** do not look away while answering prompts
+- **MARA_OPENING:** “Mírate bien antes de que empieces a actuar distinto conmigo.”
+- **GUIDED_SEQUENCE:** posture → gaze → one confession → silence → reset
+- **VOICE_DIRECTION:** observant, controlled
+- **ENDING:** “Ahora sí puedes dejar de hacerte el difícil.”
+- **CALLBACK:** “¿Te acuerdas de la cara que pusiste frente al espejo?”
+- **NEXT_DAY_CALLBACK:** “Hoy probablemente vas a evitar ese espejo.”
+- **VAULT_ROLE:** guided ritual
+- **RELATED_SCENE:** mara_scene_003
+- **RELATED_AUDIO:** mara_audio_032, 043
+- **MONETIZATION_TAG:** GUIDED_RITUAL_SINGLE
+- **REUSE:** Cerdito entry
+- **SAFETY_BOUNDARY:** no body-shaming real traits
+- **SCORE:** 48/50
+
+## 007 — DILO MIRÁNDOTE
+- **RITUAL_ID:** mara_ritual_007
+- **TITLE:** Dilo mirándote
+- **TYPE:** HYBRID
+- **SETTING:** private mirror
+- **PRIVACY_REQUIREMENT:** private only
+- **CATEGORY:** DOMINANT_HUMILIATION
+- **INTENSITY:** I4
+- **REQUIRED_PREFERENCES:** DOMINANT_HUMILIATION
+- **DURATION_TARGET:** 4–5m
+- **SETUP:** mirror, headphones
+- **CLOTHING_OR_OBJECT:** optional private garment
+- **SENSORY_ANCHOR:** hearing own voice while seeing reflection
+- **MARA_RULE:** repeat only the roleplay confession chosen in advance
+- **MARA_OPENING:** “No quiero que me lo digas a mí. Dítelo mirándote.”
+- **GUIDED_SEQUENCE:** gaze → repeat line → pause → Mara reframes → release
+- **VOICE_DIRECTION:** soft, humiliating, never hostile
+- **ENDING:** “Mucho más difícil cuando tú mismo te escuchas, ¿no?”
+- **CALLBACK:** “No me hagas mandarte de nuevo al espejo.”
+- **NEXT_DAY_CALLBACK:** “Ayer por fin lo dijiste sin esconderte.”
+- **VAULT_ROLE:** signature humiliation ritual
+- **RELATED_SCENE:** mara_scene_003
+- **RELATED_AUDIO:** mara_audio_037, 048
+- **MONETIZATION_TAG:** GUIDED_RITUAL_SINGLE, PRIVATE_DROP_SUPPORT, COLLECTION_ENTRY
+- **REUSE:** Cerdito
+- **SAFETY_BOUNDARY:** role-based language only; no real-worth degradation
+- **SCORE:** 49/50
+
+## 008 — POSTURA
+- **RITUAL_ID:** mara_ritual_008
+- **TITLE:** Postura
+- **TYPE:** RITUAL
+- **SETTING:** private mirror
+- **PRIVACY_REQUIREMENT:** private preferred
+- **CATEGORY:** DOMINANT
+- **INTENSITY:** I2
+- **REQUIRED_PREFERENCES:** DOMINANT
+- **DURATION_TARGET:** 2–3m
+- **SETUP:** stand comfortably, shoulders neutral
+- **CLOTHING_OR_OBJECT:** none
+- **SENSORY_ANCHOR:** posture shift
+- **MARA_RULE:** hold a comfortable pose while Mara speaks
+- **MARA_OPENING:** “Enderézate un poquito. Quiero que notes cuándo cambias solo porque te lo digo.”
+- **GUIDED_SEQUENCE:** posture → hold → one instruction → reset
+- **VOICE_DIRECTION:** firm but warm
+- **ENDING:** “Ya. Relájate. Eso también te lo digo yo.”
+- **CALLBACK:** “Te pusiste derecho al tiro, ¿cierto?”
+- **NEXT_DAY_CALLBACK:** “Me acordé de cómo cambiaste la postura.”
+- **VAULT_ROLE:** low-intensity ritual
+- **RELATED_SCENE:** mara_scene_002
+- **RELATED_AUDIO:** mara_audio_040
+- **MONETIZATION_TAG:** FREE_RITUAL_HOOK, CALLBACK
+- **REUSE:** voice proof
+- **SAFETY_BOUNDARY:** no painful/strained poses
+- **SCORE:** 42/50
+
+## 009 — LA FRASE QUE TE CUESTA
+- **RITUAL_ID:** mara_ritual_009
+- **TITLE:** La frase que te cuesta
+- **TYPE:** GUIDED_EXPERIENCE
+- **SETTING:** private mirror or seated room
+- **PRIVACY_REQUIREMENT:** private only
+- **CATEGORY:** CONFESSION, DOMINANT
+- **INTENSITY:** I3
+- **REQUIRED_PREFERENCES:** DOMINANT
+- **DURATION_TARGET:** 4–5m
+- **SETUP:** one preselected consensual roleplay line
+- **CLOTHING_OR_OBJECT:** none
+- **SENSORY_ANCHOR:** repetition
+- **MARA_RULE:** say it once clearly, no escalation beyond agreed category
+- **MARA_OPENING:** “Hay una frase que te cuesta más de lo que debería.”
+- **GUIDED_SEQUENCE:** setup → try → Mara corrects tone → repeat → close
+- **VOICE_DIRECTION:** patient, teasing
+- **ENDING:** “Listo. Ya no puedes decir que nunca lo dijiste.”
+- **CALLBACK:** “Esa frase ya es nuestra.”
+- **NEXT_DAY_CALLBACK:** “No la repitas hoy. Quiero que te acuerdes solo.”
+- **VAULT_ROLE:** callback anchor
+- **RELATED_SCENE:** mara_scene_003
+- **RELATED_AUDIO:** mara_audio_018, 037
+- **MONETIZATION_TAG:** GUIDED_RITUAL_SINGLE, VAULT_COLLECTIBLE
+- **REUSE:** series
+- **SAFETY_BOUNDARY:** no self-hate statements
+- **SCORE:** 46/50
+
+## 010 — ESPEJO APAGADO
+- **RITUAL_ID:** mara_ritual_010
+- **TITLE:** Espejo apagado
+- **TYPE:** HYBRID
+- **SETTING:** bathroom/bedroom mirror at night
+- **PRIVACY_REQUIREMENT:** private only
+- **CATEGORY:** PRIVATE_SECRET
+- **INTENSITY:** I3
+- **REQUIRED_PREFERENCES:** PRIVATE_SECRET
+- **DURATION_TARGET:** 4m
+- **SETUP:** dim room, mirror, one low light
+- **CLOTHING_OR_OBJECT:** robe/shirt
+- **SENSORY_ANCHOR:** partial reflection
+- **MARA_RULE:** stay with the reflection until Mara ends the scene
+- **MARA_OPENING:** “No prendas toda la luz. Así está bien.”
+- **GUIDED_SEQUENCE:** dim light → gaze → whisper → silence → lights up
+- **VOICE_DIRECTION:** nocturnal, close
+- **ENDING:** “Ahora sí prende la luz y vuelve a ser normal.”
+- **CALLBACK:** “Anoche casi no te veías.”
+- **NEXT_DAY_CALLBACK:** “Qué distinto se siente el mismo espejo de día.”
+- **VAULT_ROLE:** After Midnight support
+- **RELATED_SCENE:** mara_scene_004
+- **RELATED_AUDIO:** mara_audio_121–125
+- **MONETIZATION_TAG:** PRIVATE_DROP_SUPPORT, COLLECTION_ENTRY
+- **REUSE:** late-night
+- **SAFETY_BOUNDARY:** safe lighting and footing
+- **SCORE:** 44/50
+
+# LINGERIE / PRIVATE CLOTHING — 011–015
+
+## 011 — LA PRENDA DE MARA
+- **RITUAL_ID:** mara_ritual_011
+- **TITLE:** La prenda de Mara
+- **TYPE:** RITUAL
+- **SETTING:** private bedroom
+- **PRIVACY_REQUIREMENT:** private only
+- **CATEGORY:** PRIVATE_CLOTHING, PRIVATE_SECRET
+- **INTENSITY:** I3
+- **REQUIRED_PREFERENCES:** ADULT_INTIMATE
+- **DURATION_TARGET:** 3m
+- **SETUP:** choose one private garment for Mara sessions only
+- **CLOTHING_OR_OBJECT:** lingerie/underwear/robe/shirt
+- **SENSORY_ANCHOR:** fabric against skin
+- **MARA_RULE:** garment marks beginning; change out marks end
+- **MARA_OPENING:** “Ponte esa. Sí, esa. La que ya sabes que no usas para cualquier cosa.”
+- **GUIDED_SEQUENCE:** choose → put on → notice fabric → listen → change out
+- **VOICE_DIRECTION:** intimate, amused
+- **ENDING:** “Ahora quítatela y guárdala donde solo tú sabes.”
+- **CALLBACK:** “¿Todavía tienes mi prenda?”
+- **NEXT_DAY_CALLBACK:** “Me gusta que nadie sepa por qué elegiste esa.”
+- **VAULT_ROLE:** collection anchor
+- **RELATED_SCENE:** mara_scene_004
+- **RELATED_AUDIO:** mara_audio_123
+- **MONETIZATION_TAG:** COLLECTION_ENTRY, VAULT_COLLECTIBLE
+- **REUSE:** lingerie collection
+- **SAFETY_BOUNDARY:** private only; user-selected comfortable clothing
+- **SCORE:** 49/50
+
+## 012 — CAMBIA DE ROPA PARA MÍ
+- **RITUAL_ID:** mara_ritual_012
+- **TITLE:** Cambia de ropa para mí
+- **TYPE:** GUIDED_EXPERIENCE
+- **SETTING:** bedroom
+- **PRIVACY_REQUIREMENT:** private only
+- **CATEGORY:** PRIVATE_CLOTHING, DOMINANT
+- **INTENSITY:** I4
+- **REQUIRED_PREFERENCES:** DOMINANT, ADULT_INTIMATE
+- **DURATION_TARGET:** 4–6m
+- **SETUP:** normal clothing → private chosen garment
+- **CLOTHING_OR_OBJECT:** lingerie/robe/stockings/underwear
+- **SENSORY_ANCHOR:** transition between outside and private identity
+- **MARA_RULE:** change only at Mara’s phase cues; no rush
+- **MARA_OPENING:** “Primero quiero que te saques el personaje de afuera. La ropa también.”
+- **GUIDED_SEQUENCE:** pause → choose garment → change → mirror glance → Mara naming role transition → ending reset
+- **VOICE_DIRECTION:** slow, dominant, teasing
+- **ENDING:** “Listo. Ahora sí entraste.”
+- **CALLBACK:** “¿Te acuerdas qué prenda te hice elegir?”
+- **NEXT_DAY_CALLBACK:** “Hoy te vestiste normal otra vez. Qué pena.”
+- **VAULT_ROLE:** paid guided ritual
+- **RELATED_SCENE:** mara_scene_003, 004
+- **RELATED_AUDIO:** mara_audio_015, 121
+- **MONETIZATION_TAG:** GUIDED_RITUAL_SINGLE, PRIVATE_DROP_SUPPORT, COLLECTION_ENTRY
+- **REUSE:** lingerie pack
+- **SAFETY_BOUNDARY:** no painful garments or unsafe restriction
+- **SCORE:** 50/50
+
+## 013 — LA CAMISA ENCIMA
+- **RITUAL_ID:** mara_ritual_013
+- **TITLE:** La camisa encima
+- **TYPE:** RITUAL
+- **SETTING:** private room
+- **PRIVACY_REQUIREMENT:** private only
+- **CATEGORY:** PRIVATE_SECRET
+- **INTENSITY:** I3
+- **REQUIRED_PREFERENCES:** ADULT_INTIMATE
+- **DURATION_TARGET:** 3–4m
+- **SETUP:** private garment under ordinary shirt/robe
+- **CLOTHING_OR_OBJECT:** layered clothing
+- **SENSORY_ANCHOR:** hidden layer
+- **MARA_RULE:** keep outer layer on until final cue
+- **MARA_OPENING:** “Déjala encima. Me gusta más que sepas lo que llevas debajo.”
+- **GUIDED_SEQUENCE:** layer → mirror → secrecy → wait → final reveal in private only
+- **VOICE_DIRECTION:** conspiratorial
+- **ENDING:** “Lo mejor era que nadie lo habría sabido.”
+- **CALLBACK:** “A veces lo que está debajo importa más.”
+- **NEXT_DAY_CALLBACK:** “Hoy podrías estar vestido igual y nadie tendría idea.”
+- **VAULT_ROLE:** secret ritual
+- **RELATED_SCENE:** mara_scene_004
+- **RELATED_AUDIO:** mara_audio_049
+- **MONETIZATION_TAG:** PRIVATE_DROP_SUPPORT, CALLBACK
+- **REUSE:** public-secret bridge without public sexual behavior
+- **SAFETY_BOUNDARY:** private only for changes
+- **SCORE:** 45/50
+
+## 014 — MEDIAS / TEXTURA
+- **RITUAL_ID:** mara_ritual_014
+- **TITLE:** Textura
+- **TYPE:** GUIDED_EXPERIENCE
+- **SETTING:** bedroom
+- **PRIVACY_REQUIREMENT:** private only
+- **CATEGORY:** PRIVATE_CLOTHING, SENSORY
+- **INTENSITY:** I3
+- **REQUIRED_PREFERENCES:** ADULT_INTIMATE
+- **DURATION_TARGET:** 4m
+- **SETUP:** choose fabric/stockings/robe with noticeable texture
+- **CLOTHING_OR_OBJECT:** fabric-based garment
+- **SENSORY_ANCHOR:** texture against skin
+- **MARA_RULE:** focus on one texture at a time
+- **MARA_OPENING:** “Hoy no quiero que pienses tanto. Quiero que notes la tela.”
+- **GUIDED_SEQUENCE:** fabric → stillness → compare texture → Mara cue → end
+- **VOICE_DIRECTION:** tactile, non-clinical
+- **ENDING:** “La próxima vez vas a reconocerla antes de que diga nada.”
+- **CALLBACK:** “¿Cuál tela elegiste?”
+- **NEXT_DAY_CALLBACK:** “Ya sabes cuál me gustó más para ti.”
+- **VAULT_ROLE:** sensory collection
+- **RELATED_SCENE:** NONE
+- **RELATED_AUDIO:** mara_audio_124
+- **MONETIZATION_TAG:** GUIDED_RITUAL_SINGLE
+- **REUSE:** body sensory bridge
+- **SAFETY_BOUNDARY:** comfortable fabrics only
+- **SCORE:** 43/50
+
+## 015 — GUÁRDALA PARA MÍ
+- **RITUAL_ID:** mara_ritual_015
+- **TITLE:** Guárdala para mí
+- **TYPE:** RITUAL
+- **SETTING:** bedroom
+- **PRIVACY_REQUIREMENT:** private only
+- **CATEGORY:** PRIVATE_SECRET
+- **INTENSITY:** I2
+- **REQUIRED_PREFERENCES:** NONE
+- **DURATION_TARGET:** 2m
+- **SETUP:** designate drawer/box for Mara ritual garment/accessory
+- **CLOTHING_OR_OBJECT:** garment/accessory
+- **SENSORY_ANCHOR:** retrieval from same place
+- **MARA_RULE:** only open that place when entering a Mara ritual
+- **MARA_OPENING:** “Guárdala donde no la uses por costumbre.”
+- **GUIDED_SEQUENCE:** choose place → put away → close → callback cue
+- **VOICE_DIRECTION:** subtle, proprietary-but-safe
+- **ENDING:** “Cierra el cajón. Ya sabes cuándo volver a abrirlo.”
+- **CALLBACK:** “¿La dejaste donde te dije?”
+- **NEXT_DAY_CALLBACK:** “No abras ese cajón porque sí.”
+- **VAULT_ROLE:** ritual anchor
+- **RELATED_SCENE:** NONE
+- **RELATED_AUDIO:** NONE
+- **MONETIZATION_TAG:** CALLBACK, COLLECTION_ENTRY
+- **REUSE:** all clothing rituals
+- **SAFETY_BOUNDARY:** harmless storage only
+- **SCORE:** 41/50
+
+# CHEST / NIPPLE SENSORY — 016–020
+
+## 016 — TELA SOBRE EL PECHO
+- **RITUAL_ID:** mara_ritual_016
+- **TITLE:** Tela sobre el pecho
+- **TYPE:** GUIDED_EXPERIENCE
+- **SETTING:** private bedroom
+- **PRIVACY_REQUIREMENT:** private only
+- **CATEGORY:** BODY_SENSORY, CHEST_NIPPLE
+- **INTENSITY:** I3
+- **REQUIRED_PREFERENCES:** ADULT_INTIMATE
+- **DURATION_TARGET:** 4m
+- **SETUP:** soft garment or fabric, seated/lying comfortably
+- **CLOTHING_OR_OBJECT:** soft fabric
+- **SENSORY_ANCHOR:** fabric contact across chest/nipples
+- **MARA_RULE:** no direct touch until Mara changes phase
+- **MARA_OPENING:** “Primero solo quiero la tela encima. Nada más.”
+- **GUIDED_SEQUENCE:** fabric contact → stillness → breath → gentle reposition → stop cue
+- **VOICE_DIRECTION:** low, embodied, controlling tempo
+- **ENDING:** “Ya. Se acabó la primera parte. No la alargues por tu cuenta.”
+- **CALLBACK:** “¿Te acuerdas de la tela?”
+- **NEXT_DAY_CALLBACK:** “La próxima vez voy a cambiar la textura.”
+- **VAULT_ROLE:** body-sensory entry
+- **RELATED_SCENE:** mara_scene_002
+- **RELATED_AUDIO:** mara_audio_017, 022
+- **MONETIZATION_TAG:** GUIDED_RITUAL_SINGLE, COLLECTION_ENTRY
+- **REUSE:** chest/nipple collection
+- **SAFETY_BOUNDARY:** gentle, non-painful contact; private only
+- **SCORE:** 47/50
+
+## 017 — FRÍO / TIBIO
+- **RITUAL_ID:** mara_ritual_017
+- **TITLE:** Frío / tibio
+- **TYPE:** GUIDED_EXPERIENCE
+- **SETTING:** private bedroom/bathroom at home
+- **PRIVACY_REQUIREMENT:** private only
+- **CATEGORY:** BODY_SENSORY, CHEST_NIPPLE
+- **INTENSITY:** I3
+- **REQUIRED_PREFERENCES:** ADULT_INTIMATE
+- **DURATION_TARGET:** 4m
+- **SETUP:** safe mild temperature contrast via cloth/air, never extreme
+- **CLOTHING_OR_OBJECT:** soft cloth
+- **SENSORY_ANCHOR:** temperature change
+- **MARA_RULE:** mild contrast only; stop if uncomfortable
+- **MARA_OPENING:** “Quiero que notes la diferencia antes de tocar nada.”
+- **GUIDED_SEQUENCE:** room temp → mild cool/warm cloth → pause → breath → stop
+- **VOICE_DIRECTION:** slow, observant
+- **ENDING:** “Listo. Era notar, no aguantar.”
+- **CALLBACK:** “¿Frío o tibio?”
+- **NEXT_DAY_CALLBACK:** “Ayer elegiste demasiado rápido.”
+- **VAULT_ROLE:** sensory variant
+- **RELATED_SCENE:** NONE
+- **RELATED_AUDIO:** mara_audio_040
+- **MONETIZATION_TAG:** GUIDED_RITUAL_SINGLE
+- **REUSE:** body sensory series
+- **SAFETY_BOUNDARY:** no ice, burns, clamps, pain or unsafe temperature
+- **SCORE:** 44/50
+
+## 018 — HUMEDAD
+- **RITUAL_ID:** mara_ritual_018
+- **TITLE:** Humedad
+- **TYPE:** HYBRID
+- **SETTING:** private bedroom
+- **PRIVACY_REQUIREMENT:** private only
+- **CATEGORY:** BODY_SENSORY, CHEST_NIPPLE, DOMINANT
+- **INTENSITY:** I4
+- **REQUIRED_PREFERENCES:** ADULT_INTIMATE, DOMINANT
+- **DURATION_TARGET:** 4–5m
+- **SETUP:** soft cloth/fingertips, safe self-applied moisture/saliva cue if user chooses
+- **CLOTHING_OR_OBJECT:** optional thin fabric
+- **SENSORY_ANCHOR:** contrast between dry fabric/skin and slight moisture
+- **MARA_RULE:** wait for phase cue before changing from dry to moist sensation
+- **MARA_OPENING:** “Todavía no. Primero quiero que notes cómo se siente seco. Después cambias.”
+- **GUIDED_SEQUENCE:** dry contact → stillness → optional self-applied moisture/saliva cue → fabric over chest/nipples → stop
+- **VOICE_DIRECTION:** controlled, intimate, not clinical
+- **ENDING:** “Ya está. Ahora déjalo así y escucha.”
+- **CALLBACK:** “La próxima vez no voy a avisarte tan temprano cuándo cambia.”
+- **NEXT_DAY_CALLBACK:** “Todavía te acuerdas del cambio de sensación.”
+- **VAULT_ROLE:** signature body-sensory ritual
+- **RELATED_SCENE:** mara_scene_002
+- **RELATED_AUDIO:** mara_audio_021, 042
+- **MONETIZATION_TAG:** GUIDED_RITUAL_SINGLE, PRIVATE_DROP_SUPPORT, COLLECTION_ENTRY
+- **REUSE:** chest/nipple signature
+- **SAFETY_BOUNDARY:** private, gentle, self-controlled, no choking/spitting on another person, no injury
+- **SCORE:** 50/50
+
+## 019 — RESPIRA Y ESPERA
+- **RITUAL_ID:** mara_ritual_019
+- **TITLE:** Respira y espera
+- **TYPE:** GUIDED_EXPERIENCE
+- **SETTING:** private bed/chair
+- **PRIVACY_REQUIREMENT:** private only
+- **CATEGORY:** CHEST_NIPPLE, WAITING_DENIAL
+- **INTENSITY:** I4
+- **REQUIRED_PREFERENCES:** ADULT_INTIMATE, DOMINANT
+- **DURATION_TARGET:** 4m
+- **SETUP:** comfortable posture, hands away from chest initially
+- **CLOTHING_OR_OBJECT:** thin shirt or bare chest optional in private
+- **SENSORY_ANCHOR:** breath moving chest before touch
+- **MARA_RULE:** only breath/notice until explicit phase change
+- **MARA_OPENING:** “No hagas nada todavía. Quiero que sientas el pecho moverse antes de tocarlo.”
+- **GUIDED_SEQUENCE:** breathing → stillness → Mara pause → light non-graphic chest contact → stop
+- **VOICE_DIRECTION:** dominant, unhurried
+- **ENDING:** “Eso era todo. Te costó más esperar que hacerlo.”
+- **CALLBACK:** “¿Otra vez te cuesta esperar?”
+- **NEXT_DAY_CALLBACK:** “Ayer tuviste que escuchar mucho antes de tocar nada.”
+- **VAULT_ROLE:** wait/body crossover
+- **RELATED_SCENE:** mara_scene_002
+- **RELATED_AUDIO:** mara_audio_017, 076
+- **MONETIZATION_TAG:** GUIDED_RITUAL_SINGLE, COLLECTION_ENTRY
+- **REUSE:** Wait + body packs
+- **SAFETY_BOUNDARY:** no breath-holding, pain or unsafe chest pressure
+- **SCORE:** 48/50
+
+## 020 — ESPEJO + PECHO
+- **RITUAL_ID:** mara_ritual_020
+- **TITLE:** Mírate antes de tocar
+- **TYPE:** HYBRID
+- **SETTING:** private mirror
+- **PRIVACY_REQUIREMENT:** private only
+- **CATEGORY:** CHEST_NIPPLE, MIRROR, DOMINANT_HUMILIATION
+- **INTENSITY:** I4
+- **REQUIRED_PREFERENCES:** ADULT_INTIMATE, DOMINANT_HUMILIATION
+- **DURATION_TARGET:** 5m
+- **SETUP:** mirror, private garment or bare chest optional, headphones
+- **CLOTHING_OR_OBJECT:** robe/lingerie optional
+- **SENSORY_ANCHOR:** seeing chest/reflection while waiting
+- **MARA_RULE:** look first; touch only after phase cue
+- **MARA_OPENING:** “Mírate. No te escondas justo ahora.”
+- **GUIDED_SEQUENCE:** mirror → roleplay confession → wait → gentle chest/nipple sensory phase → end
+- **VOICE_DIRECTION:** teasing, psychologically dominant
+- **ENDING:** “La parte difícil no era tocarte. Era mirarte mientras esperabas.”
+- **CALLBACK:** “¿Te acuerdas del espejo?”
+- **NEXT_DAY_CALLBACK:** “Hoy ese espejo no te va a parecer tan inocente.”
+- **VAULT_ROLE:** premium ritual
+- **RELATED_SCENE:** mara_scene_003
+- **RELATED_AUDIO:** mara_audio_037, 048
+- **MONETIZATION_TAG:** GUIDED_RITUAL_SINGLE, PRIVATE_DROP_SUPPORT, VAULT_COLLECTIBLE
+- **REUSE:** Cerdito + body sensory crossover
+- **SAFETY_BOUNDARY:** private, gentle, role-based humiliation only
+- **SCORE:** 49/50

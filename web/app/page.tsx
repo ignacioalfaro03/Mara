@@ -12,25 +12,33 @@ export default function HomePage() {
           <MaraHeroVisual />
         </div>
         <div className="heroCopy">
-          <p className="eyebrow">MARA · LA PRIMERA VEZ</p>
-          <h1>Llegaste justo.</h1>
+          <p className="eyebrow">MARA · EXPERIENCIAS PRIVADAS</p>
+          <h1>No tienes que hablar conmigo todo el día.</h1>
           <p className="lede">
-            Tengo una idea para esta noche. Entra y déjame mandar un poco. Si no te tinca, me dices que no.
+            Entra, prueba una escena y quédate con lo que te guste. Hay experiencias, audios y colecciones privadas que puedes volver a abrir cuando quieras.
           </p>
           <div className="ctaRow">
             <Link
-              href="/experience"
+              href="/shop"
               className="primaryCta"
               onClick={() => {
-                track("hero_cta_click", { surface: "home", placement: "primary", target: "launch_experience" });
-                track("mara_entered", { surface: "home", target: "launch_experience" });
+                track("hero_cta_click", { surface: "home", placement: "primary", target: "storefront" });
               }}
             >
-              A ver.
+              Explorar experiencias
             </Link>
-            <Link href="/meet-mara" className="textCta">Primero quiero cacharte a ti.</Link>
+            <Link
+              href="/experience"
+              className="textCta"
+              onClick={() => {
+                track("hero_cta_click", { surface: "home", placement: "secondary", target: "free_sample" });
+                track("mara_entered", { surface: "home", target: "free_sample" });
+              }}
+            >
+              Probar a Mara gratis
+            </Link>
           </div>
-          <p className="disclosure">Personaje virtual generado con IA · Solo adultos · Alpha gratuito</p>
+          <p className="disclosure">Personaje virtual generado con IA · Solo adultos · Productos digitales y experiencias</p>
         </div>
       </section>
     </main>

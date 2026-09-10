@@ -3,7 +3,9 @@
 import { FormEvent, useEffect, useState } from "react";
 import { flushPendingPreferenceEvents } from "@/lib/preference-client";
 import { flushPendingRitualMemory } from "@/lib/ritual-client";
-import { clearMaraLocalDeviceState } from "@/lib/local-device-state";
+import { bindMaraDeviceToAccount, checkMaraDeviceAccount, clearMaraLocalDeviceState, deviceVersion } from "@/lib/local-device-state";
+import { flushPendingPrivateStyle } from "@/lib/private-moment-client";
+import { flushPendingWorldKnowledge } from "@/lib/world-client";
 import { track } from "@/lib/analytics";
 import styles from "./auth.module.css";
 
@@ -35,11 +37,12 @@ export function AccountEntry() {
 
   useEffect(() => {
     let active = true;
-    void fetch("/api/auth/me", { cache: "no-store", credentials: "same-origin" })
+    void fetch("/api/auth/me", { cache: "no-store", credentials: "same-origin", signal: AbortSignal.timeout(5000) })
       .then(async (response) => {
-        const payload = (await response.json().catch(() => ({}))) as { authenticated?: boolean };
+        const payload = (await response.json().catch(() => ({}))) as { authenticated?: boolean; user?: { id?: string } };
         if (!active) return;
         setAuthState(payload.authenticated ? "authenticated" : "anonymous");
+        if (payload.authenticated && payload.user?.id) bindMaraDeviceToAccount(payload.user.id);
       })
       .catch(() => {
         if (active) setAuthState("anonymous");
@@ -80,8 +83,22 @@ export function AccountEntry() {
         return;
       }
 
+      // Auth succeeded, but do not merge a previous account's local cache into
+      // the new account. The server-verified identity is the only owner source.
+      if (await checkMaraDeviceAccount(true) !== "authenticated") {
+        setMessage("Entraste, pero no pude comprobar tu memoria todavía. Vuelve a intentarlo; la copia local sigue aquí.");
+        return;
+      }
+
+      const transferVersion = deviceVersion();
       await flushPendingPreferenceEvents();
+      if (transferVersion !== deviceVersion()) return;
       await flushPendingRitualMemory();
+      if (transferVersion !== deviceVersion()) return;
+      await flushPendingPrivateStyle();
+      if (transferVersion !== deviceVersion()) return;
+      await flushPendingWorldKnowledge();
+      if (transferVersion !== deviceVersion()) return;
       track(mode === "signup" ? "signup_completed" : "signin_completed", { surface: "auth" });
       if (mode === "signup") track("signup_complete", { surface: "auth" });
       window.location.assign("/experience?account=ready");
@@ -125,14 +142,15 @@ export function AccountEntry() {
     <main className={styles.shell}>
       <section className={styles.card}>
         <p className={styles.eyebrow}>MARA · MEMORIA</p>
-        <h1 className={styles.title}>{mode === "signup" ? "¿Quieres que me acuerde?" : "Volviste."}</h1>
+        <h1 className={styles.title}>{authState === "authenticated" ? "Tu historia sigue aquí." : mode === "signup" ? "¿Quieres que me acuerde?" : "Volviste."}</h1>
         <p className={styles.lead}>
-          {mode === "signup"
+          {authState === "authenticated" ? "Ya estás dentro. Vuelve con Mara para seguir desde lo que tu cuenta recuerda." : mode === "signup"
             ? "Crea una cuenta y puedo conservar tus elecciones aunque cambies de dispositivo."
             : "Entra y seguimos desde lo que ya dejamos a medias."}
         </p>
 
-        <div className={styles.tabs} role="tablist" aria-label="Cuenta">
+        {authState !== "authenticated" ? <>
+        <div className={styles.tabs} aria-label="Cuenta">
           <button type="button" className={mode === "signup" ? styles.tabActive : styles.tab} onClick={() => { setMode("signup"); setMessage(""); }}>Crear cuenta</button>
           <button type="button" className={mode === "signin" ? styles.tabActive : styles.tab} onClick={() => { setMode("signin"); setMessage(""); }}>Entrar</button>
         </div>
@@ -154,10 +172,11 @@ export function AccountEntry() {
             </label>
           ) : null}
 
-          <button className={styles.submit} type="submit" disabled={busy || (mode === "signup" && !adultConfirmed)}>
+          <button className={styles.submit} type="submit" disabled={busy || authState === "checking" || (mode === "signup" && !adultConfirmed)}>
             {busy ? "Un segundo…" : mode === "signup" ? "Que te acuerdes" : "Seguir"}
           </button>
         </form>
+        </> : null}
 
         {message ? <p className={styles.message} role="status">{message}</p> : null}
 
@@ -174,7 +193,7 @@ export function AccountEntry() {
         </section>
 
         <p className={styles.privacy}>
-          Guardamos elecciones concretas para continuidad. No convertimos una pose, look o respuesta en una etiqueta sobre tu sexualidad, soledad, dependencia o estado emocional.
+          Guardamos tus elecciones y el avance de estas historias. Borrar la copia local no elimina la memoria de tu cuenta: puede recuperarse cuando vuelvas con Mara.
         </p>
         <a className={styles.back} href="/experience">Volver con Mara</a>
       </section>

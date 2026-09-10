@@ -60,7 +60,7 @@ try {
   await page.waitForURL(/\/world\/sofi$/, { timeout: 10000 });
   await page.getByTestId("sofi-world-slice").waitFor();
   await page.getByTestId("sofi-found-footage").waitFor();
-  await page.getByText(/preview found-footage · asset final pendiente/).waitFor();
+  await page.getByText(/escena escrita/).waitFor();
   await page.getByText(/Mara no sabe que te estoy mandando esto todavía/).waitFor();
 
   await page.getByRole("button", { name: "Ya lo vi" }).click();

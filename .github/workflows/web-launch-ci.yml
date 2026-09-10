@@ -11,9 +11,19 @@ permissions:
   contents: read
 
 env:
-  CANONICAL_MARA_WEB_BLOB: "1c4c4d3615eac915cf42efd9416ed20479eb8126"
+  CANONICAL_MARA_WEB_BLOB: "043bbb92f1ac6cc9b98ae7686e3ad5b1dceb8710"
 
 jobs:
+  canonical-integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: "20"
+      - name: Validate founder-approved canonical image
+        run: node web/scripts/canonical-asset-integrity.mjs
+
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -29,13 +39,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test -s public/mara/mara-v1-reference.jpg
-          actual_blob=$(git hash-object public/mara/mara-v1-reference.jpg)
+          test -s public/mara/mara-v2-reference.webp
+          actual_blob=$(git hash-object public/mara/mara-v2-reference.webp)
           echo "Canonical Mara web blob: $actual_blob"
           if [ "$actual_blob" != "$CANONICAL_MARA_WEB_BLOB" ]; then
             echo "::error::Canonical Mara web asset changed. Expected $CANONICAL_MARA_WEB_BLOB, got $actual_blob"
             exit 1
           fi
+          node scripts/canonical-asset-integrity.mjs
           echo "MARA_CANONICAL_ASSET PASS"
 
       - name: Setup Node
@@ -56,6 +67,12 @@ jobs:
 
       - name: Verify Alpha signal report parser
         run: npm run alpha:report:selftest
+
+      - name: Verify Real App Wiring contract
+        run: npm run real-app-wiring:contract
+
+      - name: Verify release safety boundary
+        run: npm run release-safety:contract
 
       - name: Verify DEV labs are blocked in production
         shell: bash
@@ -104,3 +121,8 @@ jobs:
           node scripts/public-purpose-smoke.mjs
           node scripts/continuity-cta-smoke.mjs
           node scripts/world-sofi-smoke.mjs
+          node scripts/launch-loop-smoke.mjs
+          node scripts/creator-interest-smoke.mjs
+          node scripts/creator-os-contract-smoke.mjs
+          node scripts/revenue-engine-contract-smoke.mjs
+          node scripts/demand-marketplace-contract-smoke.mjs

@@ -157,6 +157,12 @@ export function buildSignalReport(text) {
     return_count_buckets: sortedObject(returnCountBuckets),
     return_latency_buckets: sortedObject(returnLatencyBuckets),
     core_events_by_source: sortedObject(sourceCoreEvents),
+    launch_loop: {
+      authenticated_return_views: countSurface("returning_user", "dm_authenticated_return"),
+      world_discoveries: countSurface("experience_completed", "world_sofi"),
+      world_to_mara_discussions: countSurface("experience_completed", "world_sofi_return"),
+      signin_completions: count("signin_completed"),
+    },
     directional_event_ratios: {
       home_cta_clicks_per_landing_view: safeRatio(homeCtaClicks, landingViews),
       first_interactions_per_session_start: safeRatio(firstInteractions, sessionStarts),
@@ -164,6 +170,8 @@ export function buildSignalReport(text) {
       ritual_completions_per_view: safeRatio(ritualCompletions, ritualViews),
       ritual_skips_per_view: safeRatio(ritualSkips, ritualViews),
       continuity_cta_clicks_per_ritual_completion: safeRatio(continuityCtaClicks, ritualCompletions),
+      continuity_cta_clicks_per_value_completion: safeRatio(continuityCtaClicks, ritualCompletions + privateCompletions),
+      world_discussions_per_discovery: safeRatio(countSurface("experience_completed", "world_sofi_return"), countSurface("experience_completed", "world_sofi")),
       private_moment_completions_per_start: safeRatio(privateCompletions, privateStarts),
       preference_selections_per_private_moment_start: safeRatio(privatePreferenceSelections, privateStarts),
       signup_completions_per_start: safeRatio(signupCompletions, signupStarts),
@@ -204,6 +212,7 @@ function printHumanReport(report) {
   printTable("Return depth buckets", report.return_count_buckets);
   printTable("Return latency buckets", report.return_latency_buckets);
   printTable("Launch-critical events by source", report.core_events_by_source);
+  printTable("Launch loop (event counts)", report.launch_loop);
   console.log("\nDirectional event ratios (NOT unique-user conversion/retention)");
   for (const [key, value] of Object.entries(report.directional_event_ratios)) console.log(`  ${key}: ${value ?? "n/a"}`);
   console.log(`\nWARNING: ${report.interpretation_warning}`);

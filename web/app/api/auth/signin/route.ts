@@ -14,13 +14,13 @@ export async function POST(request: Request) {
 
   let body: SigninBody;
   try {
-    body = (await request.json()) as SigninBody;
+    body = (await request.json()) ?? {};
   } catch {
     return NextResponse.json({ error: "invalid_json" }, { status: 400 });
   }
 
-  const email = body.email?.trim().toLowerCase() ?? "";
-  const password = body.password ?? "";
+  const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+  const password = typeof body.password === "string" ? body.password : "";
   if (!email || !password) {
     return NextResponse.json({ error: "credentials_required" }, { status: 400 });
   }

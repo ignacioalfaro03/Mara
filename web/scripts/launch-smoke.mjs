@@ -2,7 +2,7 @@ import { chromium } from "playwright";
 
 const baseUrl = process.env.BASE_URL || "http://127.0.0.1:3000";
 const protectionBypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET?.trim();
-const publicPaths = ["/", "/meet-mara", "/legal"];
+const publicPaths = ["/", "/meet-mara", "/legal", "/shop", "/library"];
 const parkedPaths = ["/premium"];
 const labPaths = [
   "/experience/caprichos-lab",
@@ -97,7 +97,7 @@ try {
   const home = await page.goto(`${baseUrl}/?src=ig&campaign=must-not-leak`, { waitUntil: "networkidle" });
   assert(home?.status() === 200, `Home returned ${home?.status()}`);
   await passAgeGate(page);
-  await page.getByText("Llegaste justo.").waitFor();
+  await page.getByText("No tienes que hablar conmigo todo el día.").waitFor();
   await assertMaraImageLoaded(page, "home");
   await assertNoHorizontalOverflow(page, "/");
 
@@ -116,7 +116,7 @@ try {
   await passAgeGate(page);
   await assertNoHorizontalOverflow(page, "/experience");
   await assertMaraImageLoaded(page, "dm experience");
-  await page.getByText("No quiero que esto se sienta como una app. Háblame aquí.").waitFor();
+  await page.getByText("Tengo una idea. Tú acomódate; yo pongo la historia.").waitFor();
   await page.getByRole("button", { name: "Entrar" }).click();
   await page.getByText("Hoy mando yo un poco.").waitFor();
   await page.getByText(/Esta noche: hamburguesa, papas, bebida y una barra de chocolate/).waitFor();
@@ -137,7 +137,7 @@ try {
   assert(await page.getByTestId("dm-private-drop").count() === 0, "Return callback must not auto-open commerce anymore");
 
   await page.getByRole("button", { name: "Hoy manda tú" }).click();
-  await page.getByText(/no vas a navegar un catálogo/).waitFor();
+  await page.getByText(/Te cuento mi parte de la noche del chocolate/).waitFor();
   await page.getByRole("button", { name: "Directo" }).click();
   await page.getByText("Bien. Directo.").waitFor();
   await page.getByRole("button", { name: "Ya" }).click();
@@ -154,7 +154,7 @@ try {
   await page.getByRole("button", { name: "Hoy manda tú" }).click();
   await page.getByText(/Ya sé que prefieres que vaya directo/).waitFor();
   await page.getByRole("button", { name: "Ya" }).click();
-  await page.getByText("Esta vez sí te dejé algo aparte.").waitFor();
+  await page.getByText("Estoy preparando una nota aparte. Mira en qué va.").waitFor();
   await page.getByTestId("dm-private-drop").waitFor();
   await page.getByText("Nota privada de la noche").waitFor();
   await page.getByText(/\$4\.99/).waitFor();

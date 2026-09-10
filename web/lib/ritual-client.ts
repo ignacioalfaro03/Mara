@@ -1,3 +1,4 @@
+import { deviceVersion } from "@/lib/local-device-state";
 export const LAUNCH_RITUAL_KEY = "junk_food_date_v1" as const;
 
 const LOCAL_DM_STORAGE_KEY = "mara_dm_state_v1";
@@ -23,7 +24,7 @@ function hasLocalCompletedRitual() {
 
 export async function loadRitualMemory(): Promise<RitualMemory | null> {
   try {
-    const response = await fetch("/api/relationship/ritual", { method: "GET", cache: "no-store" });
+    const response = await fetch("/api/relationship/ritual", { method: "GET", cache: "no-store", signal: AbortSignal.timeout(5000) });
     if (!response.ok) return null;
     const payload = (await response.json()) as { ritual?: RitualMemory | null };
     return payload.ritual?.ritualKey === LAUNCH_RITUAL_KEY ? payload.ritual : null;
@@ -36,6 +37,7 @@ export async function completeRitualMemory(): Promise<RitualMemory | null> {
   try {
     const response = await fetch("/api/relationship/ritual", {
       method: "POST",
+      signal: AbortSignal.timeout(5000),
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ritualKey: LAUNCH_RITUAL_KEY }),
     });
@@ -50,7 +52,9 @@ export async function completeRitualMemory(): Promise<RitualMemory | null> {
 export async function flushPendingRitualMemory(): Promise<RitualMemory | null> {
   if (!hasLocalCompletedRitual()) return null;
 
+  const version = deviceVersion();
   const existing = await loadRitualMemory();
+  if (version !== deviceVersion()) return null;
   if (existing) return existing;
 
   return completeRitualMemory();

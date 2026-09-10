@@ -58,11 +58,11 @@ async function acceptAgeGate(page) {
   }
 }
 
-async function signIn(page) {
+async function signIn(page, email = qaEmail) {
   await page.goto(`${baseUrl}/auth`, { waitUntil: "networkidle" });
   await acceptAgeGate(page);
   await page.getByRole("button", { name: "Entrar", exact: true }).click();
-  await page.getByLabel("Correo").fill(qaEmail);
+  await page.getByLabel("Correo").fill(email);
   await page.getByLabel("Contraseña").fill(qaPassword);
   await page.getByRole("button", { name: "Seguir", exact: true }).click();
   await page.waitForURL(/\/experience\?account=ready/, { timeout: 30000 });
@@ -120,6 +120,7 @@ let contextA;
 let contextB;
 let contextC;
 let qaUserId = null;
+let otherUserId = null;
 let primaryError = null;
 
 try {
@@ -129,6 +130,16 @@ try {
   console.log("MARA_QA_BOOTSTRAP PASS");
 
   const probeContext = await browser.newContext(contextOptions);
+  const health = await probeContext.request.get(`${baseUrl}/api/health`);
+  const healthPayload = await health.json();
+  assert(process.env.EXPECTED_SHA && healthPayload.commit === process.env.EXPECTED_SHA, "Hosted deployment does not prove the exact branch SHA");
+  const telemetry = await probeContext.request.post(`${baseUrl}/api/telemetry`, {
+    data: { event: "experience_completed", properties: { surface: "private_moment", target: "direct" } },
+  });
+  const telemetryPayload = await telemetry.json();
+  assert(telemetryPayload.decisionEligible === false && telemetryPayload.suppressed === true && telemetryPayload.persisted === false,
+    "Hosted QA would pollute production decision traffic");
+  console.log("MARA_HOSTED_EXACT_SHA_AND_QA_ISOLATION PASS");
   const memoryHealth = await probeContext.request.get(`${baseUrl}/api/health-memory`);
   assert(memoryHealth.status() === 200, `/api/health-memory returned ${memoryHealth.status()}`);
   const memoryBody = await memoryHealth.json();
@@ -141,7 +152,7 @@ try {
   const pageA = await contextA.newPage();
   await pageA.goto(`${baseUrl}/experience`, { waitUntil: "networkidle" });
   await acceptAgeGate(pageA);
-  await pageA.getByText("No quiero que esto se sienta como una app. Háblame aquí.").waitFor();
+  await pageA.getByText("Tengo una idea. Tú acomódate; yo pongo la historia.").waitFor();
   await pageA.getByRole("button", { name: "Entrar" }).click();
   await pageA.getByText("Hoy mando yo un poco.").waitFor();
   await pageA.getByText(/Esta noche: hamburguesa, papas, bebida y una barra de chocolate/).waitFor();
@@ -167,7 +178,7 @@ try {
   // On the current product, private-style memory is a first-class continuity signal.
   await pageA.getByRole("button", { name: "Hoy manda tú" }).waitFor({ timeout: 15000 });
   await pageA.getByRole("button", { name: "Hoy manda tú" }).click();
-  await pageA.getByText(/no vas a navegar un catálogo/).waitFor();
+  await pageA.getByText(/Te cuento mi parte de la noche del chocolate/).waitFor();
   await pageA.getByRole("button", { name: "Directo" }).click();
   await pageA.getByText("Bien. Directo.").waitFor();
   await pageA.getByRole("button", { name: "Ya" }).click();
@@ -181,6 +192,16 @@ try {
   );
   assert(privateA.privateMoment.sessionCount === 1, `Expected first private session count=1, got ${privateA.privateMoment.sessionCount}`);
   console.log("MARA_PRIVATE_MEMORY_A PASS");
+
+  // Complete the fixed World discovery through the actual UI, then prove the
+  // same knowledge and a useful reply on a clean signed-in browser.
+  await pageA.getByTestId("sofi-world-door").getByRole("link").click();
+  await pageA.getByRole("button", { name: "Ya lo vi" }).click();
+  await pageA.getByText(/en tu cuenta/).waitFor();
+  await pageA.getByTestId("return-to-mara").click();
+  await pageA.getByRole("button", { name: "Cuéntame tu versión" }).click();
+  await pageA.getByText(/cantó el segundo coro más fuerte que yo/).waitFor();
+  console.log("MARA_WORLD_ACCOUNT_PERSISTENCE PASS");
 
   // Seed the generic relationship merge with newer server truth so Browser C
   // can prove a stale snapshot cannot roll it back.
@@ -224,11 +245,16 @@ try {
   assert(hydrated.preferredPrivateStyle === "direct", "Browser B did not hydrate preferred private style");
   assert(hydrated.privateSessionCount >= 1, "Browser B did not hydrate private session count");
   console.log("MARA_CROSS_DEVICE_HYDRATION PASS");
+  await pageB.getByTestId("sofi-mara-callback").waitFor();
+  await pageB.getByRole("button", { name: "Cuéntame tu versión" }).click();
+  await pageB.getByText(/cantó el segundo coro más fuerte que yo/).waitFor();
+  console.log("MARA_WORLD_CLEAN_BROWSER_CALLBACK PASS");
 
   // A second device action must continue from the remembered style and advance
   // server history rather than starting a disconnected local branch.
   await pageB.getByRole("button", { name: "Hoy manda tú" }).click();
   await pageB.getByText(/Ya sé que prefieres que vaya directo/).waitFor();
+  await pageB.getByText(/la que pidió repetir la canción fue ella/).waitFor();
   await pageB.getByRole("button", { name: "Ya" }).click();
   const privateB = await waitForApi(
     pageB,
@@ -275,6 +301,22 @@ try {
   assert(Date.parse(afterStale.state.lastSeenAt) >= Date.parse(seeded.state.lastSeenAt), "Stale write moved last_seen_at backwards");
   console.log("MARA_STALE_STATE_PROTECTION PASS");
 
+  // Same browser, different real QA identity: sign-out must erase projections.
+  await pageC.goto(baseUrl + '/auth', { waitUntil: 'networkidle' });
+  await pageC.getByRole('button', { name: 'Cerrar sesión', exact: true }).click();
+  await pageC.getByText(/Sesión cerrada y copia local borrada/).waitFor();
+  const cleared = await pageC.evaluate(() => ['mara_dm_state_v1','mara_world_knowledge_v1','mara_sofi_callback_seen_v1'].every(key => localStorage.getItem(key) === null));
+  assert(cleared, 'Sign-out left private projections');
+  const otherEmail = qaEmail.replace('@', '.other@');
+  otherUserId = (await manageQaUser({action:'create',email:otherEmail,password:qaPassword})).userId;
+  await signIn(pageC, otherEmail);
+  await pageC.getByRole('button', { name: 'Entrar', exact: true }).waitFor();
+  assert(await pageC.getByTestId('sofi-mara-callback').count() === 0, 'Different account received World callback');
+  const otherPrivate = await readJson(pageC, '/api/relationship/private-moment');
+  assert((otherPrivate.body.privateMoment?.sessionCount ?? 0) === 0, 'Different account received scene history');
+  const otherWorld = await readJson(pageC, '/api/world/sofi');
+  assert(!otherWorld.body.knowledge?.discovered, 'Different account received World knowledge');
+  console.log('MARA_DIFFERENT_ACCOUNT_AND_SIGNOUT_ISOLATION PASS');
   console.log("MARA_HOSTED_MEMORY_E2E PASS");
 } catch (error) {
   primaryError = error;
@@ -284,6 +326,7 @@ try {
   if (contextC) await contextC.close().catch(() => {});
   await browser.close();
 
+  if (otherUserId) await manageQaUser({ action: "delete", userId: otherUserId }).catch(error => { primaryError ??= error; });
   if (qaUserId) {
     try {
       await manageQaUser({ action: "delete", userId: qaUserId });

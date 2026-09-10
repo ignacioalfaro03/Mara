@@ -50,6 +50,23 @@ const ALLOWED_EVENTS = new Set([
   "commerce_entitlement_unlocked",
   "purchase_completed",
   "commerce_contribution_progress_viewed",
+  // Private Alpha real-product events. Keep these event names stable for launch KPIs.
+  "creator_onboarding_started",
+  "creator_activated",
+  "creator_world_created",
+  "creator_offer_created",
+  "creator_opportunity_viewed",
+  "creator_next_action_used",
+  "world_viewed",
+  "taste_signal_created",
+  "weakness_saved",
+  "demand_created",
+  "want_created",
+  "pledge_created",
+  "commit_created",
+  "fulfillment_viewed",
+  "fulfillment_completed",
+  "history_viewed",
 ]);
 
 const ALLOWED_PROPERTY_KEYS = new Set([
@@ -144,31 +161,24 @@ function sanitizeProperties(value: unknown): Record<string, string | number | bo
       continue;
     }
 
-    if (typeof raw === "boolean" || typeof raw === "number") {
-      safe[key] = raw;
-    }
+    if (typeof raw === "boolean" || typeof raw === "number") safe[key] = raw;
   }
   return safe;
 }
 
 function safeTimestamp(value: unknown) {
   if (typeof value !== "string") return new Date().toISOString();
-
   const parsed = Date.parse(value.slice(0, 64));
   const now = Date.now();
   const maxFuture = now + 5 * 60 * 1000;
   const maxPast = now - 30 * 24 * 60 * 60 * 1000;
-  if (!Number.isFinite(parsed) || parsed > maxFuture || parsed < maxPast) {
-    return new Date().toISOString();
-  }
+  if (!Number.isFinite(parsed) || parsed > maxFuture || parsed < maxPast) return new Date().toISOString();
   return new Date(parsed).toISOString();
 }
 
 function safeSessionId(value: unknown) {
   if (typeof value !== "string") return null;
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value)
-    ? value
-    : null;
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value) ? value : null;
 }
 
 function token(properties: Record<string, string | number | boolean>, key: string) {
@@ -177,44 +187,23 @@ function token(properties: Record<string, string | number | boolean>, key: strin
 }
 
 function isCanonicalProductionRuntime() {
-  return process.env.VERCEL_ENV === "production"
-    && process.env.VERCEL_PROJECT_ID === CANONICAL_VERCEL_PROJECT_ID;
+  return process.env.VERCEL_ENV === "production" && process.env.VERCEL_PROJECT_ID === CANONICAL_VERCEL_PROJECT_ID;
 }
 
 function isQaPersistenceProbe(event: string, properties: Record<string, string | number | boolean>) {
-  return event === "page_view"
-    && typeof properties.surface === "string"
-    && QA_TELEMETRY_SURFACES.has(properties.surface);
+  return event === "page_view" && typeof properties.surface === "string" && QA_TELEMETRY_SURFACES.has(properties.surface);
 }
 
-function getSupabaseWriteHeaders(
-  config: NonNullable<ReturnType<typeof getServerBackendConfig>>,
-): Record<string, string> {
+function getSupabaseWriteHeaders(config: NonNullable<ReturnType<typeof getServerBackendConfig>>): Record<string, string> {
   if (config.serviceRoleKey.startsWith("sb_secret_")) {
-    return {
-      apikey: config.serviceRoleKey,
-      "Content-Type": "application/json",
-      Prefer: "return=minimal",
-    };
+    return { apikey: config.serviceRoleKey, "Content-Type": "application/json", Prefer: "return=minimal" };
   }
-
-  return {
-    apikey: config.publishableKey,
-    Authorization: `Bearer ${config.serviceRoleKey}`,
-    "Content-Type": "application/json",
-    Prefer: "return=minimal",
-  };
+  return { apikey: config.publishableKey, Authorization: `Bearer ${config.serviceRoleKey}`, "Content-Type": "application/json", Prefer: "return=minimal" };
 }
 
-async function persistTelemetry(
-  event: string,
-  properties: Record<string, string | number | boolean>,
-  occurredAt: string,
-  sessionId: string | null,
-) {
+async function persistTelemetry(event: string, properties: Record<string, string | number | boolean>, occurredAt: string, sessionId: string | null) {
   const config = getServerBackendConfig();
   if (!config) return false;
-
   try {
     const response = await fetch(`${config.url}/rest/v1/launch_events`, {
       method: "POST",
@@ -249,63 +238,25 @@ async function persistTelemetry(
 
 export async function POST(request: Request) {
   let payload: TelemetryPayload;
+  try { payload = (await request.json()) as TelemetryPayload; }
+  catch { return NextResponse.json({ ok: false }, { status: 400 }); }
 
-  try {
-    payload = (await request.json()) as TelemetryPayload;
-  } catch {
-    return NextResponse.json({ ok: false }, { status: 400 });
-  }
-
-  if (typeof payload.event !== "string" || !ALLOWED_EVENTS.has(payload.event)) {
-    return NextResponse.json({ ok: false }, { status: 400 });
-  }
+  if (typeof payload.event !== "string" || !ALLOWED_EVENTS.has(payload.event)) return NextResponse.json({ ok: false }, { status: 400 });
 
   const event = payload.event;
   const properties = sanitizeProperties(payload.properties);
   const timestamp = safeTimestamp(payload.timestamp);
   const sessionId = safeSessionId(payload.sessionId);
-  const decisionEligible = isCanonicalProductionRuntime();
   const qaPersistenceProbe = isQaPersistenceProbe(event, properties);
+  const decisionEligible = isCanonicalProductionRuntime() && !qaPersistenceProbe;
 
-  // Hosted Preview and isolated proof deployments exercise the real UI and can
-  // emit the same browser events as customers. They must never become the
-  // customer's behavior in launch reporting. Keep one fixed technical probe so
-  // CI can still prove that the telemetry write path is healthy end-to-end.
   if (!decisionEligible && !qaPersistenceProbe) {
-    console.info("MARA_QA_TELEMETRY", JSON.stringify({
-      event,
-      properties,
-      timestamp,
-      persisted: false,
-      suppressed: true,
-    }));
-    return NextResponse.json({
-      ok: true,
-      persisted: false,
-      decisionEligible: false,
-      suppressed: true,
-    });
+    console.info("MARA_QA_TELEMETRY", JSON.stringify({ event, properties, timestamp, persisted: false, suppressed: true }));
+    return NextResponse.json({ ok: true, persisted: false, decisionEligible: false, suppressed: true });
   }
 
   const persisted = await persistTelemetry(event, properties, timestamp, sessionId);
   const marker = decisionEligible ? "MARA_TELEMETRY" : "MARA_QA_TELEMETRY";
-
-  // Intentionally anonymous launch telemetry. Public events must have a current
-  // producer and founder decision; parked/dev-only events are rejected here.
-  // Do not add user IDs, IP-derived identity, conversation content, fantasies,
-  // sexual history or commercial vulnerability data.
-  console.info(marker, JSON.stringify({
-    event,
-    properties,
-    timestamp,
-    persisted,
-    suppressed: false,
-  }));
-
-  return NextResponse.json({
-    ok: true,
-    persisted,
-    decisionEligible,
-    suppressed: false,
-  });
+  console.info(marker, JSON.stringify({ event, properties, timestamp, persisted, suppressed: false }));
+  return NextResponse.json({ ok: true, persisted, decisionEligible, suppressed: false });
 }
