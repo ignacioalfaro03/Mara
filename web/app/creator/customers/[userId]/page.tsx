@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getVerifiedSession } from "@/lib/auth-session";
+import { creatorActionTitle, normalizeCreatorAction } from "@/lib/creator-actions";
 import { formatMoney, readOwnCreator, type CustomerSummaryRow, type DeclaredPreferenceRow, type DemandRow, type DemandSignalRow, type NextBestActionRow, type PurchaseRow } from "@/lib/mara-real-data";
 import { first, userRest } from "@/lib/supabase/server-rest";
 import styles from "@/app/real-product.module.css";
@@ -30,6 +31,7 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
   const demandResult = demandIds.length ? await userRest<DemandRow[]>(session.accessToken, `demand_requests?select=*&id=in.(${demandIds.map(encodeURIComponent).join(",")})&creator_id=eq.${encodeURIComponent(creator.id)}`) : null;
   const demands = demandResult?.ok ? demandResult.data : [];
   const action = actionResult.ok ? actionResult.data[0] : null;
+  const normalizedAction = normalizeCreatorAction(action?.action);
 
   return (
     <main className={styles.shell}><div className={styles.container}>
@@ -38,7 +40,7 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
 
       <section className={styles.grid}>
         <article className={styles.card}><p className={styles.eyebrow}>RELATIONSHIP</p><h2>{summary.purchase_count ?? 0} compras</h2><p className={styles.muted}>Primera actividad: {summary.first_seen_at ? new Date(summary.first_seen_at).toLocaleDateString("es-CL") : "—"}<br/>Última actividad: {summary.last_activity_at ? new Date(summary.last_activity_at).toLocaleDateString("es-CL") : "—"}</p><p className={styles.metric}>{formatMoney(summary.creator_gmv_minor)}</p></article>
-        <article className={`${styles.card} ${styles.connection}`}><p className={styles.eyebrow}>NEXT BEST ACTION</p><h2>{action?.action ?? "NO_ACTION"}</h2><p>{action?.reason ?? "No hay una acción comercial clara ahora."}</p><span className={styles.pill}>{action?.priority ?? "low"}</span></article>
+        <article className={`${styles.card} ${styles.connection}`}><p className={styles.eyebrow}>NEXT BEST ACTION</p><h2>{creatorActionTitle(action?.action)}</h2><p>{action?.reason ?? "No hay una acción comercial clara ahora."}</p><span className={styles.pill}>{normalizedAction} · {action?.priority ?? "low"}</span></article>
       </section>
 
       <section className={styles.grid}>
