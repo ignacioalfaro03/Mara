@@ -13,7 +13,7 @@ function creatorIdFrom(value: unknown) {
   return typeof value === "string" && UUID_LIKE.test(value) ? value : null;
 }
 
-function withSession(response: NextResponse, refreshedSession: Parameters<typeof setSessionCookies>[1] | undefined) {
+function withSession(response: NextResponse, refreshedSession: Parameters<typeof setSessionCookies>[1] | null | undefined) {
   if (refreshedSession) setSessionCookies(response, refreshedSession);
   return response;
 }
