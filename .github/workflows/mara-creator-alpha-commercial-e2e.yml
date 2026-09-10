@@ -32,12 +32,13 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: Verify exact release SHA
+      - name: Verify exact release SHA and isolated target
         shell: bash
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha }}"
           test "$VERCEL_PROJECT_ID" = "$MARA_PROOF_VERCEL_PROJECT_ID"
+          test "$VERCEL_PROJECT_ID" != "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK"
           echo "MARA_CREATOR_ALPHA_RELEASE_SHA=${{ github.event.pull_request.head.sha }}"
           echo "MARA_CREATOR_ALPHA_TARGET=isolated-proof"
 
@@ -62,7 +63,7 @@ jobs:
           npm install --no-save --no-package-lock --no-audit --no-fund "vercel@${VERCEL_CLI_VERSION}" "playwright@${PLAYWRIGHT_VERSION}"
           npx playwright install --with-deps chromium
 
-      - name: Link isolated proof project and pull server credential
+      - name: Link isolated proof project
         working-directory: web
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -97,7 +98,7 @@ jobs:
           console.log("MARA_CREATOR_ALPHA_ISOLATED_PROJECT PASS");
           NODE
 
-      - name: Deploy isolated Preview with signed-test commerce
+      - name: Deploy exact SHA to isolated proof production slot
         id: deploy
         working-directory: web
         env:
@@ -109,42 +110,35 @@ jobs:
           test -n "$VERCEL_TOKEN"
           test -n "$VERCEL_AUTOMATION_BYPASS_SECRET"
           test "$VERCEL_PROJECT_ID" = "$MARA_PROOF_VERCEL_PROJECT_ID"
-
-          set -a
-          source .vercel/.env.production.local
-          set +a
-
-          backend_key="${SUPABASE_SERVICE_ROLE_KEY:-${SUPABASE_SECRET_KEY:-}}"
-          test -n "$backend_key"
-          echo "::add-mask::$backend_key"
+          test "$VERCEL_PROJECT_ID" != "prj_47YN2RH1i1NvaRTuEVqqbA8cdxUK"
 
           payment_secret="$(openssl rand -hex 32)"
           echo "::add-mask::$payment_secret"
 
-          runtime_args=(
-            --env "NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL"
-            --env "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"
-            --env "SUPABASE_SERVICE_ROLE_KEY=$backend_key"
-            --env "SUPABASE_SECRET_KEY=$backend_key"
-            --env "MARA_RELEASE_SHA=${{ github.event.pull_request.head.sha }}"
-            --env "MARA_QA_PROOF_TOKEN=$VERCEL_AUTOMATION_BYPASS_SECRET"
-            --env "MARA_ALPHA_CREATOR_ONBOARDING_ENABLED=true"
-            --env "MARA_PAYMENT_PROVIDER=signed_test"
-            --env "MARA_PAYMENT_WEBHOOK_SECRET=$payment_secret"
-          )
-
-          npx vercel deploy --yes --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN" \
+          npx vercel deploy --prod --skip-domain --yes --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN" \
             --build-env "NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL" \
             --build-env "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" \
-            "${runtime_args[@]}" \
+            --env "NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL" \
+            --env "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" \
+            --env "MARA_RELEASE_SHA=${{ github.event.pull_request.head.sha }}" \
+            --env "MARA_QA_PROOF_TOKEN=$VERCEL_AUTOMATION_BYPASS_SECRET" \
+            --env "MARA_ALPHA_CREATOR_ONBOARDING_ENABLED=true" \
+            --env "MARA_PAYMENT_PROVIDER=signed_test" \
+            --env "MARA_PAYMENT_WEBHOOK_SECRET=$payment_secret" \
+            --env "MARA_SIGNED_TEST_PROOF=true" \
+            --meta "githubCommitSha=${{ github.event.pull_request.head.sha }}" \
             2>&1 | tee /tmp/mara-creator-alpha-deploy.log
 
           deployment_url="$(grep -Eo 'https://[^[:space:]]+\.vercel\.app' /tmp/mara-creator-alpha-deploy.log | tail -n 1)"
           test -n "$deployment_url"
+          case "$deployment_url" in
+            https://mara-vera-proof-588e39f-*.vercel.app) ;;
+            *) echo "::error::Unsafe hosted target: $deployment_url"; exit 1 ;;
+          esac
           echo "deployment_url=$deployment_url" >> "$GITHUB_OUTPUT"
           echo "MARA_CREATOR_ALPHA_HOSTED_URL=$deployment_url"
 
-      - name: Wait for isolated Preview READY
+      - name: Wait for isolated deployment READY
         working-directory: web
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -178,7 +172,7 @@ jobs:
         shell: bash
         run: |
           echo "MARA_CREATOR_ALPHA_PROOF_SHA=${{ github.event.pull_request.head.sha }}"
-          echo "MARA_CREATOR_ALPHA_PROOF_KIND=isolated-preview-signed-test"
+          echo "MARA_CREATOR_ALPHA_PROOF_KIND=isolated-production-slot-skip-domain-signed-test"
           echo "MARA_CREATOR_ALPHA_REAL_MONEY=false"
           echo "MARA_CREATOR_ALPHA_PAYOUTS=false"
           echo "CANONICAL_PRODUCTION_ALIAS_UNTOUCHED=https://mara-vera.vercel.app"
