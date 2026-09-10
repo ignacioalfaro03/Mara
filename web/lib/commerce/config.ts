@@ -12,12 +12,21 @@ export type PaymentRuntime =
       webhookSecret: string;
     };
 
+const ISOLATED_PROOF_PROJECT_ID = "prj_AFQlC5fN2qKwrfZ8q7VzF9PnzAHc";
+const ISOLATED_PROOF_HOST_PREFIX = "mara-vera-proof-588e39f-";
+
 export function getPaymentRuntime(): PaymentRuntime {
   const provider = process.env.MARA_PAYMENT_PROVIDER?.trim();
   const webhookSecret = process.env.MARA_PAYMENT_WEBHOOK_SECRET?.trim() ?? "";
   const isProductionDeployment = process.env.VERCEL_ENV === "production";
+  const isExplicitIsolatedProof =
+    isProductionDeployment
+    && process.env.MARA_SIGNED_TEST_PROOF === "true"
+    && process.env.MARA_QA_PROOF_TOKEN?.trim()
+    && process.env.VERCEL_PROJECT_ID === ISOLATED_PROOF_PROJECT_ID
+    && process.env.VERCEL_URL?.startsWith(ISOLATED_PROOF_HOST_PREFIX);
 
-  if (provider === "signed_test" && webhookSecret.length >= 24 && !isProductionDeployment) {
+  if (provider === "signed_test" && webhookSecret.length >= 24 && (!isProductionDeployment || isExplicitIsolatedProof)) {
     return { configured: true, provider, webhookSecret };
   }
 
