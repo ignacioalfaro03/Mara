@@ -120,6 +120,7 @@ jobs:
           if [ "$PR_HEAD_REF" = "design/platform-experience-reinvention-v1" ]; then
             echo "MARA_SMOKE_PROFILE=platform-reinvention-v1"
             node scripts/design-release-smoke.mjs
+            BASE_URL=http://127.0.0.1:3000 node scripts/design-preview-proof.mjs
           else
             echo "MARA_SMOKE_PROFILE=legacy-public-alpha"
             node scripts/launch-smoke.mjs
@@ -136,3 +137,12 @@ jobs:
           node scripts/creator-os-contract-smoke.mjs
           node scripts/revenue-engine-contract-smoke.mjs
           node scripts/demand-marketplace-contract-smoke.mjs
+
+      - name: Upload redesign visual proof
+        if: always() && github.head_ref == 'design/platform-experience-reinvention-v1'
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: mara-platform-exact-build-visual-proof-${{ github.event.pull_request.head.sha }}
+          path: web/artifacts/design-preview
+          if-no-files-found: error
+          retention-days: 7
