@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 const DEFAULT_MARA_IMAGE_URL = "/mara/mara-v2-reference.webp";
-const DEFAULT_MARA_IMAGE_VERSION = "b4db8bb2";
+const DEFAULT_MARA_IMAGE_VERSION = "595895c6";
 const ENV_MARA_IMAGE_URL = process.env.NEXT_PUBLIC_MARA_HERO_IMAGE?.trim();
 const MARA_VOICE_URL = process.env.NEXT_PUBLIC_MARA_VOICE_URL?.trim();
 const MAX_IMAGE_ATTEMPTS = 3;
