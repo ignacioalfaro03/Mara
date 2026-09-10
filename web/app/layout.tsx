@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./platform-reinvention.css";
+import "./public-home.css";
 import { AgeGate } from "@/components/age-gate";
 import { PublicPageTracker } from "@/components/public-page-tracker";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
