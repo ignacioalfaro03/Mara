@@ -50,13 +50,40 @@ const ALLOWED_EVENTS = new Set([
   "commerce_entitlement_unlocked",
   "purchase_completed",
   "commerce_contribution_progress_viewed",
-  // Private Alpha real-product events. Keep these event names stable for launch KPIs.
+
+  // Product-realization consumer funnel.
+  "app_entered",
+  "creator_viewed",
+  "creator_followed",
+  "creator_unfollowed",
+  "content_viewed",
+  "locked_content_seen",
+  "unlock_clicked",
+  "checkout_started",
+  "message_sent",
+  "request_started",
+  "request_submitted",
+  "membership_started",
+  "experience_interest",
+
+  // Creator commercial operating loop.
   "creator_onboarding_started",
   "creator_activated",
   "creator_world_created",
   "creator_offer_created",
   "creator_opportunity_viewed",
   "creator_next_action_used",
+  "creator_dashboard_viewed",
+  "content_published",
+  "customer_viewed",
+  "next_best_action_viewed",
+  "next_best_action_completed",
+  "request_accepted",
+  "request_delivered",
+  "offer_created",
+  "offer_published",
+
+  // Existing real-product engine events.
   "world_viewed",
   "taste_signal_created",
   "weakness_saved",
