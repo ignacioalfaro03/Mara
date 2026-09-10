@@ -1,12 +1,16 @@
 .shell {
-  width: min(100%, 520px);
+  width: min(100%, 560px);
   min-height: 100dvh;
   margin: 0 auto;
-  background: #0c0c0d;
-  color: #f7f7f8;
   display: grid;
   grid-template-rows: auto 1fr auto auto;
-  border-inline: 1px solid rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  border-inline: 1px solid rgba(244, 239, 233, .1);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(111, 23, 40, .17), transparent 26rem),
+    #090808;
+  color: #f4efe9;
+  box-shadow: 0 30px 90px rgba(0,0,0,.3);
 }
 
 .header {
@@ -19,22 +23,23 @@
   gap: 10px;
   align-items: center;
   padding: 10px 14px;
-  background: rgba(12, 12, 13, 0.94);
-  backdrop-filter: blur(18px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(244, 239, 233, .09);
+  background: rgba(9, 8, 8, .9);
+  backdrop-filter: blur(20px) saturate(110%);
 }
 
 .header img {
   width: 44px;
   height: 44px;
   object-fit: cover;
-  object-position: center 22%;
-  border-radius: 999px;
+  object-position: center 24%;
+  border-radius: 50%;
+  filter: saturate(.78) contrast(1.03) brightness(.9);
 }
 
 .back,
 .account {
-  color: inherit;
+  color: #d8cec8;
   text-decoration: none;
   font-size: 28px;
   line-height: 1;
@@ -42,7 +47,7 @@
 }
 
 .account {
-  font-size: 18px;
+  font-size: 17px;
   letter-spacing: 1px;
 }
 
@@ -54,32 +59,36 @@
 }
 
 .identity strong {
-  font-size: 15px;
-  font-weight: 700;
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  font-size: 16px;
+  font-weight: 400;
 }
 
 .identity span {
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 11px;
+  color: rgba(244, 239, 233, .42);
+  font-size: 10px;
+  letter-spacing: .04em;
 }
 
 .thread {
-  padding: 22px 12px 28px;
+  padding: 28px 13px 36px;
   overflow-x: hidden;
 }
 
 .day {
-  margin: 0 auto 20px;
   width: fit-content;
-  color: rgba(255, 255, 255, 0.38);
-  font-size: 11px;
-  text-transform: lowercase;
+  margin: 0 auto 24px;
+  color: rgba(244, 239, 233, .3);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
 }
 
 .row {
   display: flex;
   justify-content: flex-start;
-  margin: 5px 0;
+  margin: 7px 0;
 }
 
 .rowUser {
@@ -87,29 +96,34 @@
 }
 
 .bubble {
-  max-width: min(82%, 390px);
-  padding: 10px 13px;
-  border-radius: 19px;
+  max-width: min(84%, 410px);
+  padding: 11px 14px;
+  border: 1px solid transparent;
+  border-radius: 18px;
   font-size: 15px;
-  line-height: 1.38;
+  line-height: 1.45;
   overflow-wrap: anywhere;
 }
 
 .maraBubble {
-  background: #242426;
-  border-bottom-left-radius: 6px;
+  border-color: rgba(244, 239, 233, .07);
+  border-bottom-left-radius: 4px;
+  background: #171315;
+  color: #eee6e0;
 }
 
 .userBubble {
-  background: #5d4cff;
-  border-bottom-right-radius: 6px;
+  border-color: rgba(147, 87, 101, .32);
+  border-bottom-right-radius: 4px;
+  background: #3e1822;
+  color: #fbf3ed;
 }
 
 .inlineActions {
   display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin: 10px 2px 16px;
+  justify-content: flex-start;
+  gap: 7px;
+  margin: 12px 0 20px;
   flex-wrap: wrap;
 }
 
@@ -117,24 +131,25 @@
 .unlockButton,
 .dismissButton {
   appearance: none;
-  border: 0;
+  min-height: 40px;
+  border: 1px solid transparent;
   border-radius: 999px;
-  padding: 9px 14px;
+  padding: 0 15px;
   font: inherit;
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 760;
   cursor: pointer;
 }
 
 .inlineActions button {
-  background: #f3f3f4;
-  color: #111114;
+  background: #eee3d5;
+  color: #120e0f;
 }
 
 .inlineActions .secondaryAction {
+  border-color: rgba(244, 239, 233, .14);
   background: transparent;
-  color: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(244, 239, 233, .68);
 }
 
 .typing {
@@ -143,111 +158,127 @@
   gap: 4px;
   align-items: center;
   padding: 12px 15px;
-  margin: 6px 0;
-  border-radius: 19px;
-  border-bottom-left-radius: 6px;
-  background: #242426;
+  margin: 7px 0;
+  border: 1px solid rgba(244, 239, 233, .07);
+  border-radius: 18px;
+  border-bottom-left-radius: 4px;
+  background: #171315;
 }
 
 .typing i {
-  width: 5px;
-  height: 5px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.58);
+  background: rgba(244, 239, 233, .56);
   animation: pulse 1s infinite ease-in-out;
 }
 
-.typing i:nth-child(2) { animation-delay: 0.12s; }
-.typing i:nth-child(3) { animation-delay: 0.24s; }
+.typing i:nth-child(2) { animation-delay: .12s; }
+.typing i:nth-child(3) { animation-delay: .24s; }
 
 @keyframes pulse {
-  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+  0%, 60%, 100% { opacity: .28; transform: translateY(0); }
   30% { opacity: 1; transform: translateY(-2px); }
 }
 
 .futureHook {
-  margin: 18px auto;
   width: fit-content;
   max-width: 90%;
-  color: rgba(255, 255, 255, 0.42);
-  font-size: 11px;
+  margin: 21px auto;
+  color: rgba(244, 239, 233, .36);
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  font-size: 13px;
+  font-style: italic;
   text-align: center;
 }
 
 .drop {
-  margin: 12px 0 18px 0;
-  width: min(86%, 390px);
-  padding: 13px;
-  border-radius: 18px;
-  background: #18181a;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.28);
+  width: min(88%, 410px);
+  margin: 15px 0 22px;
+  padding: 15px;
+  border: 1px solid rgba(156, 92, 107, .28);
+  border-radius: 10px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(111, 23, 40, .24), transparent 52%),
+    #120e10;
+  box-shadow: 0 22px 54px rgba(0, 0, 0, .35);
 }
 
 .dropTop {
   display: flex;
   justify-content: space-between;
-  color: rgba(255, 255, 255, 0.44);
-  font-size: 10px;
+  color: rgba(244, 239, 233, .38);
+  font-size: 8px;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: .14em;
 }
 
 .dropBlur {
-  height: 150px;
-  margin: 10px 0 12px;
-  border-radius: 14px;
+  position: relative;
+  height: 158px;
+  margin: 12px 0 14px;
   display: grid;
   place-items: center;
   overflow: hidden;
-  background: radial-gradient(circle at 30% 20%, #53437c, #171319 65%);
-  color: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(244, 239, 233, .07);
+  border-radius: 5px;
+  background:
+    linear-gradient(130deg, transparent 0 36%, rgba(181, 113, 127, .11) 37% 39%, transparent 40%),
+    radial-gradient(circle at 64% 28%, rgba(144, 56, 74, .38), transparent 22%),
+    linear-gradient(160deg, #27151a, #0d0b0c 68%);
+  color: rgba(244, 239, 233, .08);
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
   font-size: 78px;
-  font-family: Georgia, serif;
-  filter: saturate(0.8);
 }
 
 .drop strong {
   display: block;
-  font-size: 15px;
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.05;
 }
 
 .drop p {
-  margin: 6px 0 12px;
-  color: rgba(255, 255, 255, 0.67);
+  margin: 7px 0 13px;
+  color: rgba(244, 239, 233, .62);
   font-size: 12px;
-  line-height: 1.45;
+  line-height: 1.5;
 }
 
 .unlockButton {
   width: 100%;
-  background: #f2f2f3;
-  color: #111114;
+  background: #eee3d5;
+  color: #110e0f;
 }
 
 .unlockButton:disabled {
   cursor: progress;
-  opacity: 0.65;
+  opacity: .55;
 }
 
 .dismissButton {
   width: 100%;
-  margin-top: 7px;
+  margin-top: 6px;
+  border-color: transparent;
   background: transparent;
-  color: rgba(255, 255, 255, 0.58);
+  color: rgba(244, 239, 233, .46);
 }
 
 .unlocked {
-  border-radius: 12px;
-  padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.07);
-  font-size: 12px;
+  padding: 11px 12px;
+  border: 1px solid rgba(244, 239, 233, .1);
+  border-radius: 5px;
+  background: rgba(244, 239, 233, .04);
+  color: #cfc3bc;
+  font-size: 11px;
 }
 
 .notice {
   margin: 8px 2px 0 !important;
-  color: rgba(255, 255, 255, 0.62) !important;
-  font-size: 11px !important;
+  color: rgba(244, 239, 233, .54) !important;
+  font-size: 10px !important;
 }
 
 .composer {
@@ -257,33 +288,34 @@
   grid-template-columns: 1fr auto;
   gap: 8px;
   align-items: center;
-  padding: 9px 10px;
-  background: rgba(12, 12, 13, 0.96);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 10px;
+  border-top: 1px solid rgba(244, 239, 233, .08);
+  background: rgba(9, 8, 8, .95);
+  backdrop-filter: blur(18px);
 }
 
 .composer input {
   width: 100%;
   min-width: 0;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 11px 14px;
+  border: 1px solid rgba(244, 239, 233, .13);
   border-radius: 999px;
-  padding: 10px 13px;
-  background: #171719;
-  color: #fff;
+  background: #120f10;
+  color: #f4efe9;
   outline: none;
   font: inherit;
   font-size: 16px;
 }
 
 .composer input:focus {
-  border-color: rgba(255, 255, 255, 0.36);
+  border-color: rgba(160, 98, 112, .55);
 }
 
 .plus,
 .send {
   border: 0;
   background: transparent;
-  color: #fff;
+  color: #eee3dd;
   font: inherit;
 }
 
@@ -291,39 +323,51 @@
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: #343438;
-  font-size: 20px;
+  background: #251b1e;
+  font-size: 19px;
   line-height: 1;
 }
 
 .plus:disabled {
-  opacity: 0.35;
+  opacity: .32;
 }
 
 .send {
-  font-size: 12px;
-  font-weight: 700;
-  color: #9e94ff;
+  color: #c48694;
+  font-size: 11px;
+  font-weight: 800;
 }
 
 .send:disabled {
-  opacity: 0.35;
+  opacity: .32;
 }
 
 .privacy {
   margin: 0;
-  padding: 4px 12px 9px;
-  background: #0c0c0d;
-  color: rgba(255, 255, 255, 0.32);
-  font-size: 9px;
+  padding: 5px 12px 10px;
+  background: #090808;
+  color: rgba(244, 239, 233, .28);
+  font-size: 8px;
+  letter-spacing: .02em;
   text-align: center;
 }
 
 @media (min-width: 700px) {
   .shell {
-    min-height: calc(100dvh - 36px);
-    margin-block: 18px;
-    border-radius: 22px;
-    overflow: clip;
+    min-height: calc(100dvh - 38px);
+    margin-block: 19px;
+    border-radius: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typing i {
+    animation: none;
+  }
+
+  .inlineActions button,
+  .unlockButton,
+  .dismissButton {
+    transition: none;
   }
 }
