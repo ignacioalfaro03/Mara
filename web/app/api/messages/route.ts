@@ -56,7 +56,7 @@ async function rateAllowed(userId: string) {
 }
 
 export async function GET(request: Request) {
-  if (!productCapability("messaging")) return NextResponse.json({ enabled: false, messages: [] });
+  if (!productCapability("messaging")) return NextResponse.json({ enabled: false, messages: [], offers: [] });
   const session = await getVerifiedSession();
   if (!session.ok || !session.user.id) return NextResponse.json({ error: "authentication_required" }, { status: 401 });
 
@@ -69,10 +69,19 @@ export async function GET(request: Request) {
     session.accessToken,
     `creator_messages?select=*&thread_id=eq.${encodeURIComponent(threadId)}&order=created_at.asc&limit=200`,
   );
-  const response = result.ok
-    ? NextResponse.json({ enabled: true, thread, messages: result.data })
-    : NextResponse.json({ error: "message_read_failed" }, { status: 502 });
-  return withSession(response, session.refreshedSession);
+  if (!result.ok) return withSession(NextResponse.json({ error: "message_read_failed" }, { status: 502 }), session.refreshedSession);
+
+  const offerIds = [...new Set(result.data.map((message) => message.offer_id).filter((id): id is string => Boolean(id)))];
+  let offers: OfferRow[] = [];
+  if (offerIds.length) {
+    const offerResult = await userRest<OfferRow[]>(
+      session.accessToken,
+      `commerce_offers?select=*&id=in.(${offerIds.map(encodeURIComponent).join(",")})`,
+    );
+    if (offerResult.ok) offers = offerResult.data;
+  }
+
+  return withSession(NextResponse.json({ enabled: true, thread, messages: result.data, offers }), session.refreshedSession);
 }
 
 export async function POST(request: Request) {
