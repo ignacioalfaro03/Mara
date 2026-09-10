@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 env:
-  CANONICAL_MARA_WEB_BLOB: "1c4c4d3615eac915cf42efd9416ed20479eb8126"
+  CANONICAL_MARA_WEB_BLOB: "2e96dd45fbd2fdeaf1a060ab57da6b8de916bf98"
 
 jobs:
   canonical-integrity:
@@ -21,7 +21,7 @@ jobs:
       - uses: actions/setup-node@v7.0.0
         with:
           node-version: "20"
-      - name: Reject truncated canonical image
+      - name: Validate founder-approved canonical image
         run: node web/scripts/canonical-asset-integrity.mjs
 
   validate:
@@ -39,13 +39,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test -s public/mara/mara-v1-reference.jpg
-          actual_blob=$(git hash-object public/mara/mara-v1-reference.jpg)
+          test -s public/mara/mara-v2-reference.webp
+          actual_blob=$(git hash-object public/mara/mara-v2-reference.webp)
           echo "Canonical Mara web blob: $actual_blob"
           if [ "$actual_blob" != "$CANONICAL_MARA_WEB_BLOB" ]; then
             echo "::error::Canonical Mara web asset changed. Expected $CANONICAL_MARA_WEB_BLOB, got $actual_blob"
             exit 1
           fi
+          node scripts/canonical-asset-integrity.mjs
           echo "MARA_CANONICAL_ASSET PASS"
 
       - name: Setup Node
