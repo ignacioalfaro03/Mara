@@ -27,7 +27,10 @@ const weaknessText = `QA preference ${runTag}`;
 const evidenceDir = path.resolve("artifacts/creator-alpha-e2e");
 fs.mkdirSync(evidenceDir, { recursive: true });
 
-const protectionHeaders = protectionBypass
+const apiProtectionHeaders = protectionBypass
+  ? { "x-vercel-protection-bypass": protectionBypass }
+  : {};
+const browserProtectionHeaders = protectionBypass
   ? {
       "x-vercel-protection-bypass": protectionBypass,
       "x-vercel-set-bypass-cookie": "true",
@@ -42,7 +45,7 @@ async function qaUser(body) {
   const response = await fetch(`${baseUrl}/api/internal/qa-user`, {
     method: "POST",
     headers: {
-      ...protectionHeaders,
+      ...apiProtectionHeaders,
       "Content-Type": "application/json",
       "x-mara-qa-token": qaToken,
     },
@@ -254,7 +257,7 @@ const contextOptions = {
   isMobile: true,
   hasTouch: true,
   locale: "es-CL",
-  extraHTTPHeaders: Object.keys(protectionHeaders).length ? protectionHeaders : undefined,
+  extraHTTPHeaders: Object.keys(browserProtectionHeaders).length ? browserProtectionHeaders : undefined,
 };
 
 const created = [];
