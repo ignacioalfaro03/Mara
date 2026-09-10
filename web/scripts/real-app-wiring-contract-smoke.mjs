@@ -36,6 +36,7 @@ const demand = read("app/api/demand/route.ts");
 const demandSignal = read("app/api/demand/signal/route.ts");
 const testCheckout = read("app/api/commerce/test-checkout/route.ts");
 const creatorAction = read("app/api/creator/customers/action/route.ts");
+const creatorActions = read("lib/creator-actions.ts");
 const creatorHome = read("app/creator/page.tsx");
 const worldPage = read("app/world/[slug]/page.tsx");
 const historyPage = read("app/me/history/page.tsx");
@@ -82,13 +83,26 @@ assert.match(fulfillment, /emitProductEvent\(request, "fulfillment_completed"/);
 assert.match(fulfillment, /emitProductEvent\(request, "creator_next_action_used"/);
 assert.match(creatorAction, /last_creator_action_at/);
 assert.match(creatorAction, /emitProductEvent\(request, "creator_next_action_used"/);
+assert.match(creatorAction, /normalizeCreatorAction/);
+assert.match(creatorAction, /isCreatorActionAcknowledgeable/);
+assert.doesNotMatch(creatorAction, /toUpperCase\(\)/);
 assert.match(creatorHome, /event="creator_opportunity_viewed"/);
 assert.match(creatorHome, /event="fulfillment_viewed"/);
+assert.match(creatorHome, /creatorActionTitle/);
+assert.match(creatorHome, /normalizeCreatorAction/);
+assert.doesNotMatch(creatorHome, /topAction\.action === "FULFILL"/);
 assert.match(worldPage, /event="world_viewed"/);
 assert.match(worldPage, /event="offer_viewed"/);
 assert.match(worldPage, /event="returning_user"/);
 assert.match(historyPage, /event="history_viewed"/);
 assert.match(historyPage, /event="returning_user"/);
+
+for (const action of ["fulfill", "wait", "post_purchase_followup", "reactivate_with_value", "related_offer", "learn_more", "no_action"]) {
+  assert.match(creatorActions, new RegExp(`\\b${action}\\b`), `Creator action contract missing ${action}`);
+}
+assert.match(creatorActions, /Fulfill this first\./);
+assert.match(creatorActions, /No vendas nada ahora\./);
+assert.match(creatorActions, /NON_ACKNOWLEDGEABLE_ACTIONS/);
 
 for (const sensitiveKey of ["value_text", "valueText", "description", "title", "user_id", "creator_id", "world_id"]) {
   assert.doesNotMatch(productTelemetry, new RegExp(`\\b${sensitiveKey}\\b`), `Sensitive/free-text telemetry property exposed: ${sensitiveKey}`);
