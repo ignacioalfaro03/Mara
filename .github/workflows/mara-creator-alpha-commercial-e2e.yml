@@ -16,6 +16,7 @@ env:
   VERCEL_ORG_ID: "team_KAPFjrSQT78GUeQyGZCdQRdz"
   VERCEL_SCOPE: "ignacioalfaz-6766"
   MARA_PROOF_VERCEL_PROJECT_ID: "prj_AFQlC5fN2qKwrfZ8q7VzF9PnzAHc"
+  VERCEL_PROJECT_ID: "prj_AFQlC5fN2qKwrfZ8q7VzF9PnzAHc"
   NEXT_PUBLIC_SUPABASE_URL: "https://hctykprkwenhatbjxkpb.supabase.co"
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_VQ-2Db0Di57kA3DEkeml9A_vZMYHDwi"
 
@@ -36,7 +37,9 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha }}"
+          test "$VERCEL_PROJECT_ID" = "$MARA_PROOF_VERCEL_PROJECT_ID"
           echo "MARA_CREATOR_ALPHA_RELEASE_SHA=${{ github.event.pull_request.head.sha }}"
+          echo "MARA_CREATOR_ALPHA_TARGET=isolated-proof"
 
       - name: Setup Node
         uses: actions/setup-node@v7.0.0
@@ -67,6 +70,7 @@ jobs:
         run: |
           set -euo pipefail
           test -n "$VERCEL_TOKEN"
+          test "$VERCEL_PROJECT_ID" = "$MARA_PROOF_VERCEL_PROJECT_ID"
           rm -rf .vercel
           mkdir -p .vercel
           node <<'NODE'
@@ -75,7 +79,7 @@ jobs:
             ".vercel/project.json",
             JSON.stringify({
               orgId: process.env.VERCEL_ORG_ID,
-              projectId: process.env.MARA_PROOF_VERCEL_PROJECT_ID,
+              projectId: process.env.VERCEL_PROJECT_ID,
             }),
           );
           NODE
@@ -86,6 +90,9 @@ jobs:
           const linked = JSON.parse(fs.readFileSync(".vercel/project.json", "utf8"));
           if (linked.projectId !== process.env.MARA_PROOF_VERCEL_PROJECT_ID) {
             throw new Error(`Unsafe Vercel project target: ${linked.projectId}`);
+          }
+          if (linked.orgId !== process.env.VERCEL_ORG_ID) {
+            throw new Error(`Unsafe Vercel org target: ${linked.orgId}`);
           }
           console.log("MARA_CREATOR_ALPHA_ISOLATED_PROJECT PASS");
           NODE
@@ -101,6 +108,7 @@ jobs:
           set -euo pipefail
           test -n "$VERCEL_TOKEN"
           test -n "$VERCEL_AUTOMATION_BYPASS_SECRET"
+          test "$VERCEL_PROJECT_ID" = "$MARA_PROOF_VERCEL_PROJECT_ID"
 
           set -a
           source .vercel/.env.production.local
