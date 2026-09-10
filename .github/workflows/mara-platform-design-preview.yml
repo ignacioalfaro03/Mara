@@ -105,7 +105,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          npx vercel deploy --yes --skip-domain --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN" \
+          npx vercel deploy --yes --scope "$VERCEL_SCOPE" --token "$VERCEL_TOKEN" \
             --env MARA_RELEASE_SHA="${{ github.event.pull_request.head.sha }}" \
             --meta githubCommitSha="${{ github.event.pull_request.head.sha }}" \
             2>&1 | tee /tmp/mara-design-preview.log
