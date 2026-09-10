@@ -54,6 +54,10 @@ alter table public.creator_interest enable row level security;
 revoke all on table public.creator_interest from anon;
 revoke all on table public.creator_interest from authenticated;
 
+-- service_role bypasses RLS but still needs PostgreSQL table privileges.
+-- Upsert requires INSERT + UPDATE; SELECT is kept server-only for pilot review.
+grant select, insert, update on table public.creator_interest to service_role;
+
 create index if not exists creator_interest_status_created_idx
   on public.creator_interest (status, created_at desc);
 
