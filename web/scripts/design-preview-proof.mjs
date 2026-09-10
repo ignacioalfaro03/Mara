@@ -17,12 +17,13 @@ const extraHTTPHeaders = bypass
   : {};
 const browser = await chromium.launch({ headless: true });
 const evidence = [];
+const forbiddenLegacyCopy = ["No tienes que hablar conmigo todo el día", "cantando con una cuchara", "la noche del chocolate", "Dos cucharas"];
 
 async function makeContext(viewport, agePassed = true) {
   const context = await browser.newContext({ viewport, extraHTTPHeaders });
   if (agePassed) {
     await context.addInitScript(() => {
-      try { window.localStorage.setItem("mara_age_gate_passed", "true"); } catch { /* retry naturally on the target origin */ }
+      try { window.localStorage.setItem("mara_age_gate_passed", "true"); } catch { /* best effort */ }
     });
   }
   return context;
@@ -44,6 +45,18 @@ async function capture({ name, route, viewport, agePassed = true, fullPage = tru
   await context.close();
 }
 
+async function assertCopyBoundary(route, requiredCopy = null) {
+  const context = await makeContext({ width: 390, height: 844 }, true);
+  const page = await context.newPage();
+  await page.goto(`${BASE_URL}${route}`, { waitUntil: "networkidle", timeout: 30_000 });
+  const text = await page.locator("body").innerText();
+  for (const forbidden of forbiddenLegacyCopy) {
+    if (text.includes(forbidden)) throw new Error(`Legacy framing leaked on ${route}: ${forbidden}`);
+  }
+  if (requiredCopy && !text.includes(requiredCopy)) throw new Error(`Required redesign copy missing on ${route}: ${requiredCopy}`);
+  await context.close();
+}
+
 await capture({ name: "home-desktop", route: "/", viewport: { width: 1440, height: 900 } });
 await capture({ name: "home-mobile", route: "/", viewport: { width: 390, height: 844 } });
 await capture({ name: "age-gate-mobile", route: "/", viewport: { width: 390, height: 844 }, agePassed: false, fullPage: false });
@@ -56,15 +69,9 @@ await capture({ name: "activity-mobile", route: "/activity", viewport: { width: 
 await capture({ name: "creator-os-mobile", route: "/creator", viewport: { width: 390, height: 844 } });
 await capture({ name: "sofi-cross-world-mobile", route: "/world/sofi", viewport: { width: 390, height: 844 }, fullPage: false });
 
-const homeContext = await makeContext({ width: 390, height: 844 }, true);
-const home = await homeContext.newPage();
-await home.goto(`${BASE_URL}/`, { waitUntil: "networkidle", timeout: 30_000 });
-const homeText = await home.locator("body").innerText();
-for (const forbidden of ["No tienes que hablar conmigo todo el día", "cantando con una cuchara", "la noche del chocolate"]) {
-  if (homeText.includes(forbidden)) throw new Error(`Old product framing leaked onto redesigned home: ${forbidden}`);
-}
-if (!homeText.includes("Lo que quieres puede empezar aquí")) throw new Error("Redesigned platform hero is missing");
-await homeContext.close();
+await assertCopyBoundary("/", "Lo que quieres puede empezar aquí");
+await assertCopyBoundary("/experience", "No necesito saber todo de ti todavía");
+await assertCopyBoundary("/world/sofi", "Pieza casi oscura. Un espejo.");
 
 await fs.writeFile(path.join(OUT, "evidence.json"), JSON.stringify({ baseUrl: BASE_URL, capturedAt: new Date().toISOString(), evidence }, null, 2));
 console.log(`MARA_DESIGN_PREVIEW_PROOF PASS (${evidence.length} screenshots)`);
