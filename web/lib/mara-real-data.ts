@@ -83,14 +83,21 @@ export function formatMoney(minor: number | null | undefined, currency = "CLP") 
 
 export function historyCopy(eventType: string | null) {
   const labels: Record<string, string> = {
+    preference_declared: "Mara guardó algo que decidiste contarle.",
     declared_preference: "Mara guardó algo que decidiste contarle.",
     taste_signal: "Elegiste una opción y Mara aprendió un poco más de tu gusto.",
-    demand_created: "Propusiste algo que te gustaría ver aquí.",
+    want: "Ayudaste a que una idea empezara a crecer.",
     demand_want: "Ayudaste a que una idea empezara a crecer.",
+    pledge: "Mostraste interés serio en una idea.",
     demand_pledge: "Mostraste interés serio en una idea.",
+    commit: "Te comprometiste con una idea si llega a concretarse.",
     demand_commit: "Te comprometiste con una idea si llega a concretarse.",
-    purchase: "Desbloqueaste algo en este World.",
-    fulfillment: "Una compra tuya fue entregada.",
+    demand_created: "Propusiste algo que te gustaría ver aquí.",
+    purchase_completed: "Compraste algo en este World.",
+    purchase: "Compraste algo en este World.",
+    fulfillment_completed: "La creadora entregó una compra tuya.",
+    fulfillment: "La creadora entregó una compra tuya.",
   };
-  return labels[eventType ?? ""] ?? "Algo cambió en tu relación con este World.";
+  const key = eventType?.trim().toLowerCase() ?? "";
+  return labels[key] ?? "Algo cambió en tu relación con este World.";
 }
