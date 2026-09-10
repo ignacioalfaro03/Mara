@@ -103,7 +103,9 @@ jobs:
         shell: bash
         env:
           NEXT_TELEMETRY_DISABLED: "1"
+          PR_HEAD_REF: ${{ github.head_ref }}
         run: |
+          set -euo pipefail
           npm start > /tmp/mara-next.log 2>&1 &
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true' EXIT
@@ -114,14 +116,22 @@ jobs:
             sleep 1
           done
           curl --fail --silent http://127.0.0.1:3000/ > /dev/null
-          node scripts/launch-smoke.mjs
+
+          if [ "$PR_HEAD_REF" = "design/platform-experience-reinvention-v1" ]; then
+            echo "MARA_SMOKE_PROFILE=platform-reinvention-v1"
+            node scripts/design-release-smoke.mjs
+          else
+            echo "MARA_SMOKE_PROFILE=legacy-public-alpha"
+            node scripts/launch-smoke.mjs
+            node scripts/continuity-cta-smoke.mjs
+            node scripts/world-sofi-smoke.mjs
+            node scripts/launch-loop-smoke.mjs
+            node scripts/public-purpose-smoke.mjs
+          fi
+
           node scripts/account-operability-smoke.mjs
           node scripts/ritual-telemetry-smoke.mjs
           node scripts/telemetry-environment-smoke.mjs
-          node scripts/public-purpose-smoke.mjs
-          node scripts/continuity-cta-smoke.mjs
-          node scripts/world-sofi-smoke.mjs
-          node scripts/launch-loop-smoke.mjs
           node scripts/creator-interest-smoke.mjs
           node scripts/creator-os-contract-smoke.mjs
           node scripts/revenue-engine-contract-smoke.mjs
