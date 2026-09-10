@@ -1,0 +1,40 @@
+.requestComposer {
+  display: grid;
+  gap: 16px;
+}
+.requestComposer label { display: grid; gap: 7px; }
+.requestComposer label > span {
+  color: #b5a7ab;
+  font-size: 11px;
+  font-weight: 750;
+}
+.requestComposer input,
+.requestComposer select,
+.requestComposer textarea {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid var(--consumer-line);
+  border-radius: 13px;
+  padding: 11px 12px;
+  background: var(--consumer-surface);
+  color: var(--consumer-text);
+  font: inherit;
+  font-size: 16px;
+  outline: none;
+}
+.requestComposer textarea { resize: vertical; min-height: 132px; line-height: 1.45; }
+.requestComposer input:focus,
+.requestComposer select:focus,
+.requestComposer textarea:focus { border-color: rgba(180,104,122,.55); }
+.requestFinePrint { margin: 0; color: var(--consumer-muted); font-size: 10px; line-height: 1.5; }
+.requestError { margin: 0; color: #e09aaa; font-size: 11px; }
+.requestState {
+  display: grid;
+  gap: 5px;
+  padding: 13px 14px;
+  border: 1px solid var(--consumer-line);
+  border-radius: 14px;
+  background: var(--consumer-surface);
+}
+.requestState strong { font-size: 13px; }
+.requestState p { margin: 0; color: var(--consumer-muted); font-size: 11px; line-height: 1.45; }
