@@ -29,6 +29,13 @@ const context = await browser.newContext({
 try {
   const page = await context.newPage();
   await page.goto(`${baseUrl}/creators`, { waitUntil: "networkidle" });
+
+  const ageGate = page.getByRole("dialog");
+  if (await ageGate.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await ageGate.getByRole("button", { name: "Sí, tengo 18+" }).click();
+    await ageGate.waitFor({ state: "hidden", timeout: 10000 });
+  }
+
   await page.getByRole("heading", { name: "Tu personaje puede ser público. Tú no tienes que serlo." }).waitFor({ timeout: 15000 });
 
   await page.getByLabel("Correo de contacto").fill("mara.qa.creator-interest@example.com");
@@ -36,7 +43,7 @@ try {
   await page.getByLabel("Contenido y colecciones digitales").check();
   await page.getByLabel("Audiencia actual").selectOption("none");
   await page.getByLabel("Experiencia como creadora").selectOption("never");
-  await page.getByText("Soy mayor de 18 años").click();
+  await page.getByLabel(/Soy mayor de 18 años/).check();
 
   await page.getByRole("button", { name: "Quiero conocer el piloto" }).click();
   await page.getByText("Interés registrado.").waitFor({ timeout: 15000 });
