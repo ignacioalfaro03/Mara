@@ -159,8 +159,10 @@ try {
     assert(response.status() === 404, `${path} should remain 404 outside development, got ${response.status()}`);
   }
 
-  const internalQa = await context.request.get(`${baseUrl}/api/internal/qa-user`);
-  assert([401, 404].includes(internalQa.status()), `Internal QA route exposed with status ${internalQa.status()}`);
+  const internalQa = await context.request.post(`${baseUrl}/api/internal/qa-user`, {
+    data: { action: "create", email: "mara.qa.probe@example.com", password: "not-a-real-proof-password" },
+  });
+  assert([401, 404].includes(internalQa.status()), `Internal QA route accepted unauthenticated proof action with status ${internalQa.status()}`);
 
   console.log("MARA_DESIGN_RELEASE_SMOKE PASS");
 } finally {
