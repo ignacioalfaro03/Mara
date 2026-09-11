@@ -2,6 +2,7 @@ import { first, publicRest, serviceRest, userRest } from "@/lib/supabase/server-
 import type { WorldRow, OfferRow } from "@/lib/mara-real-data";
 
 export type CreatorFollowStatus = "following" | "muted" | "blocked";
+export type ProductCapability = "follow" | "content" | "crm" | "messaging" | "requests" | "memberships";
 
 export type CreatorFollowRow = {
   creator_id: string;
@@ -92,7 +93,7 @@ function asRecord(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : {};
 }
 
-export function productCapability(name: "follow" | "content" | "messaging" | "requests" | "memberships") {
+export function productCapability(name: ProductCapability) {
   const key = `MARA_${name.toUpperCase()}_SYSTEM_ENABLED`;
   return process.env[key] === "true";
 }
@@ -148,7 +149,7 @@ export async function readCreatorFollow(accessToken: string, userId: string, cre
 }
 
 export async function readCreatorCustomerPrivateContext(accessToken: string, creatorId: string, userId: string) {
-  if (!productCapability("content")) return null;
+  if (!productCapability("crm")) return null;
   return first(
     await userRest<CreatorCustomerPrivateContextRow[]>(
       accessToken,
@@ -158,7 +159,7 @@ export async function readCreatorCustomerPrivateContext(accessToken: string, cre
 }
 
 export async function readCreatorCustomerNotes(accessToken: string, creatorId: string, userId: string, limit = 30) {
-  if (!productCapability("content")) return [] as CreatorCustomerNoteRow[];
+  if (!productCapability("crm")) return [] as CreatorCustomerNoteRow[];
   const safeLimit = Math.max(1, Math.min(50, Math.floor(limit)));
   const result = await userRest<CreatorCustomerNoteRow[]>(
     accessToken,
