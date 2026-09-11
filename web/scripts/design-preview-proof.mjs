@@ -58,9 +58,12 @@ async function assertCopyBoundary(route, requiredCopy = null) {
 }
 
 await capture({ name: "home-desktop", route: "/", viewport: { width: 1440, height: 900 } });
-await capture({ name: "home-mobile", route: "/", viewport: { width: 390, height: 844 } });
+await capture({ name: "home-mobile-360", route: "/", viewport: { width: 360, height: 800 } });
+await capture({ name: "home-mobile-390", route: "/", viewport: { width: 390, height: 844 } });
+await capture({ name: "home-mobile-430", route: "/", viewport: { width: 430, height: 932 } });
 await capture({ name: "age-gate-mobile", route: "/", viewport: { width: 390, height: 844 }, agePassed: false, fullPage: false });
-await capture({ name: "make-it-happen-mobile", route: "/make-it-happen", viewport: { width: 390, height: 844 } });
+await capture({ name: "make-it-happen-mobile-360", route: "/make-it-happen", viewport: { width: 360, height: 800 } });
+await capture({ name: "make-it-happen-mobile-430", route: "/make-it-happen", viewport: { width: 430, height: 932 } });
 await capture({ name: "creators-mobile", route: "/creators", viewport: { width: 390, height: 844 } });
 await capture({ name: "creator-zero-mobile", route: "/experience", viewport: { width: 390, height: 844 }, fullPage: false });
 await capture({ name: "creator-zero-access-mobile", route: "/shop", viewport: { width: 390, height: 844 } });
