@@ -74,6 +74,10 @@ jobs:
       - name: Verify release safety boundary
         run: npm run release-safety:contract
 
+      - name: Verify product realization security contract
+        if: github.head_ref == 'codex/full-product-realization-v1'
+        run: node scripts/product-realization-security-contract.mjs
+
       - name: Verify DEV labs are blocked in production
         shell: bash
         run: |
