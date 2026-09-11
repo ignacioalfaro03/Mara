@@ -117,7 +117,10 @@ jobs:
           done
           curl --fail --silent http://127.0.0.1:3000/ > /dev/null
 
-          if [ "$PR_HEAD_REF" = "design/platform-experience-reinvention-v1" ]; then
+          if [ "$PR_HEAD_REF" = "codex/full-product-realization-v1" ]; then
+            echo "MARA_SMOKE_PROFILE=full-product-realization-v1"
+            BASE_URL=http://127.0.0.1:3000 node scripts/full-product-realization-smoke.mjs
+          elif [ "$PR_HEAD_REF" = "design/platform-experience-reinvention-v1" ]; then
             echo "MARA_SMOKE_PROFILE=platform-reinvention-v1"
             node scripts/design-release-smoke.mjs
             BASE_URL=http://127.0.0.1:3000 node scripts/design-preview-proof.mjs
@@ -144,5 +147,14 @@ jobs:
         with:
           name: mara-platform-exact-build-visual-proof-${{ github.event.pull_request.head.sha }}
           path: web/artifacts/design-preview
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload full product responsive proof
+        if: always() && github.head_ref == 'codex/full-product-realization-v1'
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: mara-full-product-responsive-proof-${{ github.event.pull_request.head.sha }}
+          path: web/artifacts/full-product-realization
           if-no-files-found: error
           retention-days: 7
