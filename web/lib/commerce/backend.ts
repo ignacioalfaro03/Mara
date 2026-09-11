@@ -6,18 +6,16 @@ export type CommerceOfferRow = Tables<"commerce_offers">;
 export type CommerceGoalRow = Tables<"commerce_goals">;
 export type CommerceCheckoutIntentRow = Tables<"commerce_checkout_intents">;
 
-export function publicHeaders(config: MaraBackendConfig) {
+export function publicHeaders(config: MaraBackendConfig): Record<string, string> {
   return { apikey: config.publishableKey };
 }
 
-export function serviceHeaders(config: MaraServerBackendConfig, contentType = true) {
-  const credentialHeaders = config.serviceRoleKey.startsWith("sb_secret_")
+export function serviceHeaders(config: MaraServerBackendConfig, contentType = true): Record<string, string> {
+  const headers: Record<string, string> = config.serviceRoleKey.startsWith("sb_secret_")
     ? { apikey: config.serviceRoleKey }
     : { apikey: config.publishableKey, Authorization: `Bearer ${config.serviceRoleKey}` };
-  return {
-    ...credentialHeaders,
-    ...(contentType ? { "Content-Type": "application/json" } : {}),
-  };
+  if (contentType) headers["Content-Type"] = "application/json";
+  return headers;
 }
 
 export function toCommerceOffer(row: CommerceOfferRow): CommerceOffer {
