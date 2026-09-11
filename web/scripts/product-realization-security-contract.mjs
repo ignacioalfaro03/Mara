@@ -44,13 +44,21 @@ assert(core.includes("creator_content_media_owner_all"), "Media metadata creator
 assert(hardening.includes("creator_threads_creator_world_fkey"), "Thread creator/world composite FK missing");
 assert(hardening.includes("creator_requests_creator_world_fkey"), "Request creator/world composite FK missing");
 assert(hardening.includes("currency ~ '^[A-Z]{3}$'"), "Strict request currency shape missing");
+assert(hardening.includes("commerce_offers_private_buyer_shape_check"), "Private offer buyer-shape constraint missing");
+assert(hardening.includes("visibility = 'private_user' and buyer_user_id = (select auth.uid())"), "Private buyer RLS boundary missing");
+assert(hardening.includes("visibility = 'public'"), "Public offer policy visibility filter missing");
 
 assert(checkout.includes("getAmountForOffer"), "Checkout no longer derives/validates amount server-side");
 assert(checkout.includes("creator_offer_live_payment_not_authorized"), "Creator live-payment release guard missing");
 assert(checkout.includes("clientRequestId"), "Checkout idempotency key contract missing");
+assert(checkout.includes("verifyRequestCheckout"), "Request-specific checkout verification missing");
+assert(checkout.includes("request_checkout_amount_changed"), "Request agreed-price invariant missing");
+assert(checkout.includes('offer.visibility === "private_user"'), "Private-offer buyer check missing from checkout");
 assert(!requestApi.includes("creator_id: body."), "Consumer request API trusts browser creator_id");
 assert(requestApi.includes("readWorld(worldSlug"), "Consumer request must resolve creator/world server-side");
 assert(creatorRequestApi.includes("ensureRequestOffer"), "Creator request acceptance must create/reuse canonical commerce offer");
+assert(creatorRequestApi.includes('visibility: "private_user"'), "Request offers must be buyer-private");
+assert(creatorRequestApi.includes("buyer_user_id: requestRow.user_id"), "Request offer must bind intended buyer");
 assert(creatorRequestApi.includes("complete_mara_creator_fulfillment"), "Request delivery must use canonical fulfillment RPC");
 assert(messagesApi.includes("senderKind ="), "Message sender identity must be derived server-side");
 assert(messagesApi.includes("only_creator_can_send_offer"), "Only creator may attach offer to message");
