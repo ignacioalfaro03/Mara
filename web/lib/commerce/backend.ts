@@ -11,9 +11,11 @@ export function publicHeaders(config: MaraBackendConfig) {
 }
 
 export function serviceHeaders(config: MaraServerBackendConfig, contentType = true) {
+  const credentialHeaders = config.serviceRoleKey.startsWith("sb_secret_")
+    ? { apikey: config.serviceRoleKey }
+    : { apikey: config.publishableKey, Authorization: `Bearer ${config.serviceRoleKey}` };
   return {
-    apikey: config.serviceRoleKey,
-    Authorization: `Bearer ${config.serviceRoleKey}`,
+    ...credentialHeaders,
     ...(contentType ? { "Content-Type": "application/json" } : {}),
   };
 }
