@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getVerifiedSession } from "@/lib/auth-session";
 import { ProductTelemetry } from "@/components/product-telemetry";
+import { CreatorOperationsPanels } from "@/components/creator-operations-panels";
 import { creatorActionTitle, isCreatorActionAcknowledgeable, normalizeCreatorAction } from "@/lib/creator-actions";
 import { formatMoney, readCreatorDashboard, readOwnCreator, readOwnWorlds } from "@/lib/mara-real-data";
 import styles from "@/app/real-product.module.css";
@@ -17,7 +18,7 @@ export default async function CreatorHomePage({ searchParams }: { searchParams: 
           <section className={styles.hero}>
             <p className={styles.eyebrow}>CREATOR OS</p>
             <h1>Tu negocio vive detrás de tu World.</h1>
-            <p>Entra para leer tus datos reales bajo RLS: demanda, clientes, ofertas y entregas. No mostramos un dashboard sintético.</p>
+            <p>Entra para leer tus datos reales bajo RLS: clientes, ventas, solicitudes, demanda, ofertas y entregas.</p>
             <Link className={styles.button} href="/auth">Entrar</Link>
           </section>
         </div>
@@ -34,8 +35,8 @@ export default async function CreatorHomePage({ searchParams }: { searchParams: 
           <nav className={styles.nav}><Link href="/">MARA</Link><Link className={styles.secondary} href="/auth">Cuenta</Link></nav>
           <section className={styles.hero}>
             <p className={styles.eyebrow}>PRIVATE ALPHA · CREATOR</p>
-            <h1>Primero: un World que pueda hacer negocio.</h1>
-            <p>La activación empieza pequeña: identidad, un World y una primera oferta. No necesitas operar un feed diario ni aprender un sistema gigante antes de probar si alguien realmente quiere pagar.</p>
+            <h1>Primero: algo que puedas vender.</h1>
+            <p>La activación empieza pequeña: identidad pública, un World y una primera oferta. Mara añade inteligencia y operación después, sin obligarte a montar un sistema gigante antes de vender.</p>
           </section>
           <section className={styles.grid}>
             <article className={`${styles.card} ${styles.wide}`}>
@@ -78,40 +79,40 @@ export default async function CreatorHomePage({ searchParams }: { searchParams: 
         <nav className={styles.nav}>
           <Link href="/">MARA</Link>
           <div className={styles.actions}>
-            {defaultWorld ? <Link className={styles.secondary} href={`/world/${defaultWorld.slug}`}>Ver mi World</Link> : null}
+            {defaultWorld ? <Link className={styles.secondary} href={`/app/people/${defaultWorld.slug}`}>Ver perfil público</Link> : null}
             <Link className={styles.secondary} href="/auth">Cuenta</Link>
           </div>
         </nav>
 
         <header className={styles.hero}>
           <p className={styles.eyebrow}>CREATOR OS · {creator.status} · {creator.plan}</p>
-          <h1>Qué quiere tu World. Qué vender. Qué hacer ahora.</h1>
-          <p>Mara reduce el sistema a decisiones: demanda que ya existe, clientes que merecen atención, ofertas activas y entregas pendientes. Menos operación. Más señal útil.</p>
+          <h1>Qué pasó. Quién necesita atención. Qué vender ahora.</h1>
+          <p>Mara reduce el negocio a decisiones: ingresos, clientes, solicitudes, ofertas, entregas y señales de lo que tu audiencia quiere.</p>
         </header>
 
         <section className={styles.grid}>
-          <article className={styles.third}><p className={styles.eyebrow}>SALES</p><p className={styles.metric}>{formatMoney(gmv)}</p><p className={styles.muted}>{dashboard.customers.length} clientes · {repeat} recurrentes</p></article>
-          <article className={styles.third}><p className={styles.eyebrow}>FULFILLMENT</p><p className={styles.metric}>{pending.length}</p><p className={styles.muted}>compras pagadas pendientes de entrega</p></article>
-          <article className={styles.third}><p className={styles.eyebrow}>DEMAND</p><p className={styles.metric}>{dashboard.opportunities.length}</p><p className={styles.muted}>oportunidades agregadas en tus Worlds</p></article>
+          <article className={styles.third}><p className={styles.eyebrow}>INGRESOS</p><p className={styles.metric}>{formatMoney(gmv)}</p><p className={styles.muted}>{dashboard.customers.length} clientes · {repeat} recurrentes</p></article>
+          <article className={styles.third}><p className={styles.eyebrow}>POR ENTREGAR</p><p className={styles.metric}>{pending.length}</p><p className={styles.muted}>compras pagadas pendientes de entrega</p></article>
+          <article className={styles.third}><p className={styles.eyebrow}>INTERÉS</p><p className={styles.metric}>{dashboard.opportunities.length}</p><p className={styles.muted}>oportunidades agregadas en tus Worlds</p></article>
         </section>
 
         <section className={styles.grid}>
           <article className={`${styles.card} ${styles.connection}`}>
-            <p className={styles.eyebrow}>WHAT YOUR WORLD WANTS</p>
+            <p className={styles.eyebrow}>QUÉ QUIEREN</p>
             {bestOpportunity ? (
               <>
                 <h2>{bestOpportunity.title}</h2>
-                <p>{bestOpportunity.want_count ?? 0} WANT · {bestOpportunity.pledge_count ?? 0} PLEDGE · {bestOpportunity.commit_count ?? 0} COMMIT</p>
+                <p>{bestOpportunity.want_count ?? 0} interesados · {bestOpportunity.pledge_count ?? 0} con intención seria · {bestOpportunity.commit_count ?? 0} comprometidos</p>
                 <p className={styles.muted}>Avance {Math.round(bestOpportunity.progress_percent ?? 0)}% · demanda verificada {formatMoney(bestOpportunity.verified_demand_gmv_minor)}</p>
-                <Link className={styles.button} href={`/creator?demand=${bestOpportunity.demand_request_id}`}>Convertir esta demanda en oferta</Link>
+                <Link className={styles.button} href={`/creator?demand=${bestOpportunity.demand_request_id}`}>Convertir en oferta</Link>
               </>
             ) : (
-              <p className={styles.empty}>Todavía no hay una señal suficiente para recomendar una oferta. Comparte tu World y deja que la comunidad te diga qué quiere antes de producir de más.</p>
+              <p className={styles.empty}>Todavía no hay señal suficiente para recomendar una oferta desde demanda. No produzcas de más solo para llenar catálogo.</p>
             )}
           </article>
 
           <article className={styles.card}>
-            <p className={styles.eyebrow}>NEXT BEST ACTION</p>
+            <p className={styles.eyebrow}>QUÉ HACER AHORA</p>
             {topAction ? (
               <>
                 <h2>{creatorActionTitle(topAction.action)}</h2>
@@ -128,22 +129,22 @@ export default async function CreatorHomePage({ searchParams }: { searchParams: 
                 ) : null}
               </>
             ) : (
-              <p className={styles.empty}>Todavía no hay suficiente actividad para recomendarte una acción concreta.</p>
+              <p className={styles.empty}>Todavía no hay suficiente actividad para recomendar una acción concreta.</p>
             )}
           </article>
         </section>
 
-        <h2 className={styles.sectionTitle}>Tu World</h2>
+        <h2 className={styles.sectionTitle}>Tu presencia y tus ofertas</h2>
         <section className={styles.grid}>
           <article className={styles.card}>
-            <p className={styles.eyebrow}>WORLD MANAGER</p>
+            <p className={styles.eyebrow}>PERFIL</p>
             <h2>{worlds.length ? "Tu espacio público y comercial." : "Crea tu primer World."}</h2>
             {worlds.length ? (
               <ul className={styles.list}>
                 {worlds.map((world) => (
                   <li className={styles.item} key={world.id}>
                     <div className={styles.row}>
-                      <div><Link className={styles.customerLink} href={`/world/${world.slug}`}>{world.display_name}</Link><p className={styles.muted}>{world.description || "Sin descripción"}</p></div>
+                      <div><Link className={styles.customerLink} href={`/app/people/${world.slug}`}>{world.display_name}</Link><p className={styles.muted}>{world.description || "Sin descripción"}</p></div>
                       <span className={styles.pill}>{world.status}</span>
                     </div>
                   </li>
@@ -153,22 +154,22 @@ export default async function CreatorHomePage({ searchParams }: { searchParams: 
 
             <form className={styles.form} method="post" action="/api/creator/worlds">
               <input type="hidden" name="returnTo" value="/creator" />
-              <label>Nombre público<input name="displayName" minLength={2} maxLength={80} required placeholder="Mi World" /></label>
-              <label>URL<input name="slug" placeholder="mi-world" /></label>
-              <label>Qué encontrará la gente<textarea name="description" maxLength={1200} placeholder="Identidad, atmósfera y qué puede pasar aquí." /></label>
+              <label>Nombre público<input name="displayName" minLength={2} maxLength={80} required placeholder="Mi espacio" /></label>
+              <label>URL<input name="slug" placeholder="mi-perfil" /></label>
+              <label>Qué encontrará la gente<textarea name="description" maxLength={1200} placeholder="Quién eres, qué compartes y qué pueden conseguir aquí." /></label>
               <label>Visibilidad<select name="visibility"><option value="public">Público</option><option value="private">Privado</option></select></label>
-              <button className={styles.secondary} type="submit">Crear World</button>
+              <button className={styles.secondary} type="submit">Crear perfil</button>
             </form>
           </article>
 
           <article className={styles.card}>
-            <p className={styles.eyebrow}>{selectedDemand ? "DEMAND → OFFER" : "COMMERCE"}</p>
-            <h2>{selectedDemand ? "La señal existe. Ahora hazla comprable." : "Crea una oferta cuando tenga sentido."}</h2>
-            <p className={styles.muted}>{selectedDemand ? "La demanda ya te entrega contexto. Define claramente qué vas a entregar y a qué precio." : "No necesitas llenar tu World de productos antes de saber qué quiere tu comunidad."}</p>
+            <p className={styles.eyebrow}>{selectedDemand ? "INTERÉS → OFERTA" : "OFERTAS"}</p>
+            <h2>{selectedDemand ? "La señal existe. Ahora hazla comprable." : "Pon algo a la venta."}</h2>
+            <p className={styles.muted}>{selectedDemand ? "La audiencia ya te entrega contexto. Define claramente qué recibe y cuánto cuesta." : "Una oferta puede ser contenido, un producto digital, una interacción acotada o una membresía preparada para cuando el cobro recurrente exista."}</p>
             {worlds.length ? (
               <form className={styles.form} method="post" action="/api/creator/offers">
                 <input type="hidden" name="returnTo" value="/creator" />
-                <label>World<select name="worldId" defaultValue={defaultWorld?.id}>{worlds.map((world) => <option value={world.id} key={world.id}>{world.display_name}</option>)}</select></label>
+                <label>Perfil<select name="worldId" defaultValue={defaultWorld?.id}>{worlds.map((world) => <option value={world.id} key={world.id}>{world.display_name}</option>)}</select></label>
                 <label>Título<input name="title" required minLength={2} maxLength={140} defaultValue={selectedDemand?.title ?? ""} /></label>
                 <label>Qué recibe la persona<textarea name="description" required minLength={2} maxLength={1200} defaultValue={selectedDemand ? `Creado desde demanda validada: ${selectedDemand.title}` : ""} /></label>
                 <div className={styles.twoCol}>
@@ -176,20 +177,22 @@ export default async function CreatorHomePage({ searchParams }: { searchParams: 
                   <label>Precio CLP<input name="price" type="number" min="1" step="1" required /></label>
                 </div>
                 <input type="hidden" name="currency" value="CLP" />
-                <label>Fulfillment<input name="fulfillmentConcept" defaultValue="digital_delivery" /></label>
+                <label>Entrega<input name="fulfillmentConcept" defaultValue="digital_delivery" /></label>
                 <label>Estado<select name="status"><option value="active">Activo</option><option value="draft">Borrador</option></select></label>
                 {selectedDemand?.demand_request_id ? <input type="hidden" name="demandRequestId" value={selectedDemand.demand_request_id} /> : null}
                 <button className={styles.button} type="submit">Crear oferta</button>
               </form>
-            ) : <p className={styles.empty}>Primero crea un World. No se crean ofertas huérfanas.</p>}
+            ) : <p className={styles.empty}>Primero crea tu perfil público. No se crean ofertas huérfanas.</p>}
           </article>
         </section>
+
+        <CreatorOperationsPanels accessToken={session.accessToken} creatorId={creator.id} worlds={worlds} offers={dashboard.offers} />
 
         <h2 className={styles.sectionTitle}>Clientes que merecen atención</h2>
         <section className={styles.grid}>
           <article className={`${styles.card} ${styles.wide}`}>
             {dashboard.customers.length === 0 ? (
-              <p className={styles.empty}>Todavía no hay relaciones comerciales reales. Comparte tu World y deja que la actividad empiece antes de perseguir CRM vacío.</p>
+              <p className={styles.empty}>Todavía no hay relaciones comerciales reales. Cuando alguien interactúe o compre, Mara empieza a construir contexto.</p>
             ) : (
               <ul className={styles.list}>
                 {dashboard.customers.map((customer) => {
