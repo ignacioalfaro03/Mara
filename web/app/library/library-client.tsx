@@ -43,13 +43,13 @@ export function LibraryClient() {
           return;
         }
         if (!response.ok) {
-          setError("No pude cargar tu biblioteca ahora.");
+          setError("No pude cargar tu archivo privado ahora.");
           return;
         }
         setPayload((await response.json()) as CommerceMePayload);
       })
       .catch(() => {
-        if (active) setError("No pude conectar con tu biblioteca.");
+        if (active) setError("No pude conectar con tu archivo privado.");
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -67,17 +67,17 @@ export function LibraryClient() {
     [payload],
   );
 
-  if (loading) return <p className={styles.muted}>Cargando tu biblioteca…</p>;
+  if (loading) return <p className={styles.muted}>Abriendo tu archivo…</p>;
 
   if (needsAccount) {
     return (
       <div className={styles.libraryCard}>
-        <p className={styles.eyebrow}>TU BIBLIOTECA</p>
-        <h3>Tu acceso vive en tu cuenta.</h3>
-        <p className={styles.muted}>Entra para recuperar lo que hayas desbloqueado y volver desde cualquier sesión.</p>
+        <p className={styles.eyebrow}>PRIVATE ARCHIVE</p>
+        <h3>Lo tuyo vive con tu cuenta.</h3>
+        <p className={styles.muted}>Entra para recuperar accesos y entregas sin depender de este navegador.</p>
         <div className={styles.buttonStack}>
-          <Link className={styles.primaryButton} href="/auth">Crear cuenta o entrar</Link>
-          <Link className={styles.secondaryButton} href="/shop">Explorar experiencias</Link>
+          <Link className={styles.primaryButton} href="/auth">Entrar o crear cuenta</Link>
+          <Link className={styles.secondaryButton} href="/activity">Volver a actividad</Link>
         </div>
       </div>
     );
@@ -88,10 +88,13 @@ export function LibraryClient() {
   if (!payload || owned.length === 0) {
     return (
       <div className={styles.libraryCard}>
-        <p className={styles.eyebrow}>VACÍA POR AHORA</p>
-        <h3>Tu primera experiencia puede quedar aquí.</h3>
-        <p className={styles.muted}>Solo aparece lo que esté realmente asociado a tu cuenta.</p>
-        <Link className={styles.primaryButton} href="/shop">Ir a la tienda</Link>
+        <p className={styles.eyebrow}>NOTHING HERE YET</p>
+        <h3>Tu archivo todavía está vacío.</h3>
+        <p className={styles.muted}>No vamos a mostrarte contenido ficticio. Cuando un acceso quede realmente asociado a tu cuenta, aparece aquí.</p>
+        <div className={styles.buttonStack}>
+          <Link className={styles.primaryButton} href="/experience">Entrar a Creator Zero</Link>
+          <Link className={styles.secondaryButton} href="/make-it-happen">Haz que pase</Link>
+        </div>
       </div>
     );
   }
@@ -100,10 +103,11 @@ export function LibraryClient() {
     <div className={styles.libraryList}>
       {owned.map(({ entitlement, product }) => (
         <article className={styles.libraryCard} key={entitlement.key}>
-          <p className={styles.eyebrow}>DESBLOQUEADO</p>
+          <div className={styles.cardSequence}>YOURS</div>
+          <p className={styles.eyebrow}>UNLOCKED</p>
           <h3>{product?.title ?? entitlement.key}</h3>
-          <p className={styles.libraryMeta}>Guardado desde {new Date(entitlement.grantedAt).toLocaleDateString("es-CL")}</p>
-          {product ? <Link className={styles.secondaryButton} href={`/shop/${product.slug}`}>Abrir ficha</Link> : null}
+          <p className={styles.libraryMeta}>Tuyo desde {new Date(entitlement.grantedAt).toLocaleDateString("es-CL")}</p>
+          {product ? <Link className={styles.secondaryButton} href={`/shop/${product.slug}`}>Abrir</Link> : null}
         </article>
       ))}
 
@@ -111,9 +115,10 @@ export function LibraryClient() {
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
             <div>
-              <p className={styles.eyebrow}>HISTORIAL</p>
-              <h2>Compras confirmadas</h2>
+              <p className={styles.eyebrow}>TRANSACTIONS</p>
+              <h2>Lo que compraste.</h2>
             </div>
+            <p>Esta parte es deliberadamente clara: monto, fecha y compra confirmada.</p>
           </div>
           <div className={styles.libraryList}>
             {payload.purchases.filter((purchase) => purchase.status === "succeeded").map((purchase) => {

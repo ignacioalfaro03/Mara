@@ -11,6 +11,18 @@ async function parseBody<T>(response: Response): Promise<T> {
   return (await response.json()) as T;
 }
 
+function serverCredentialHeaders(config: NonNullable<ReturnType<typeof getServerBackendConfig>>): Record<string, string> {
+  // Modern sb_secret_* keys authenticate through apikey. Legacy service_role
+  // values are JWTs and also carry the Bearer authorization header.
+  if (config.serviceRoleKey.startsWith("sb_secret_")) {
+    return { apikey: config.serviceRoleKey };
+  }
+  return {
+    apikey: config.publishableKey,
+    Authorization: `Bearer ${config.serviceRoleKey}`,
+  };
+}
+
 export async function userRest<T>(accessToken: string, path: string, init: RestInit = {}): Promise<RestResult<T>> {
   const config = getBackendConfig();
   if (!config) return { ok: false, error: "backend_not_configured", status: 503 };
@@ -55,8 +67,7 @@ export async function serviceRest<T>(path: string, init: RestInit = {}): Promise
   const response = await fetch(`${config.url}/rest/v1/${path}`, {
     ...init,
     headers: {
-      apikey: config.serviceRoleKey,
-      Authorization: `Bearer ${config.serviceRoleKey}`,
+      ...serverCredentialHeaders(config),
       ...(init.body ? { "Content-Type": "application/json" } : {}),
       ...init.headers,
     },

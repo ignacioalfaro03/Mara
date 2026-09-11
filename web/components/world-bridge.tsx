@@ -34,7 +34,6 @@ export function WorldBridge({ eligible, onContinue }: { eligible: boolean; onCon
   function dismiss() {
     setCallbackVisible(false);
     try { window.localStorage.setItem(CALLBACK_SEEN_KEY, "true"); } catch { /* Best effort. */ }
-    // Closing a notice is not engagement with the remembered story.
   }
 
   function discuss() {
@@ -49,9 +48,9 @@ export function WorldBridge({ eligible, onContinue }: { eligible: boolean; onCon
     <aside className={styles.bridge} data-testid="sofi-mara-callback">
       <div className={styles.callback}>
         <div>
-          <strong>Mara</strong>
-          <span>{reply ? SOFI_FOUND_FOOTAGE.maraReply : "Ya viste lo que te mandó Sofi, ¿cierto? Obvio te iba a mostrar su versión primero 🙄"}</span>
-          {!reply ? <button className={styles.discuss} type="button" onClick={discuss}>Cuéntame tu versión</button> : null}
+          <strong>Mara Vera</strong>
+          <span>{reply ? SOFI_FOUND_FOOTAGE.maraReply : "Ya viste el clip de Sofi. Claro que iba a enseñarte su versión primero."}</span>
+          {!reply ? <button className={styles.discuss} type="button" onClick={discuss}>Quiero tu versión</button> : null}
         </div>
         <button className={styles.close} type="button" onClick={dismiss} aria-label="Cerrar callback">×</button>
       </div>
@@ -64,8 +63,8 @@ export function WorldBridge({ eligible, onContinue }: { eligible: boolean; onCon
         onContinue();
         track("experience_started", { surface: "world_sofi_entry", target: SOFI_FOUND_FOOTAGE.eventKey });
       }}>
-        <strong>{discovered ? "Volver a la historia de Sofi" : "Sofi te mandó algo"}</strong>
-        <span>amiga de Mara · la noche del chocolate</span>
+        <strong>{discovered ? "Volver al ángulo de Sofi" : "Sofi dejó otro ángulo"}</strong>
+        <span>otra presencia adulta · misma noche · otro punto de vista</span>
       </a>
     </aside>
   );

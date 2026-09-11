@@ -14,6 +14,11 @@ export type NextBestActionRow = Tables<"creator_next_best_actions">;
 export type ActivityHistoryRow = Tables<"user_activity_history">;
 export type DemandSignalRow = Tables<"demand_signals">;
 
+function boundedLimit(limit: number, fallback: number) {
+  if (!Number.isFinite(limit)) return fallback;
+  return Math.max(1, Math.min(50, Math.floor(limit)));
+}
+
 export async function readOwnCreator(accessToken: string, userId: string) {
   return first(await userRest<CreatorRow[]>(accessToken, `creators?select=*&user_id=eq.${encodeURIComponent(userId)}&limit=1`));
 }
@@ -28,6 +33,13 @@ export async function readWorld(slug: string, accessToken?: string) {
   return first(accessToken ? await userRest<WorldRow[]>(accessToken, path) : await publicRest<WorldRow[]>(path));
 }
 
+export async function readPublicWorlds(limit = 8) {
+  const safeLimit = boundedLimit(limit, 8);
+  const path = `creator_worlds?select=*&visibility=eq.public&status=eq.active&order=updated_at.desc&limit=${safeLimit}`;
+  const result = await publicRest<WorldRow[]>(path);
+  return result.ok ? result.data : [];
+}
+
 export async function readWorldOffers(worldId: string, accessToken?: string, owner = false) {
   const status = owner ? "" : "&status=eq.active";
   const path = `commerce_offers?select=*&world_id=eq.${encodeURIComponent(worldId)}${status}&order=created_at.desc`;
@@ -38,6 +50,13 @@ export async function readWorldOffers(worldId: string, accessToken?: string, own
 export async function readWorldDemand(worldId: string, accessToken?: string) {
   const path = `demand_requests?select=*&world_id=eq.${encodeURIComponent(worldId)}&status=in.(open,validated,unlocked,offered)&order=updated_at.desc`;
   const result = accessToken ? await userRest<DemandRow[]>(accessToken, path) : await publicRest<DemandRow[]>(path);
+  return result.ok ? result.data : [];
+}
+
+export async function readPublicDemand(limit = 12) {
+  const safeLimit = boundedLimit(limit, 12);
+  const path = `demand_requests?select=*&status=in.(open,validated,unlocked,offered)&order=updated_at.desc&limit=${safeLimit}`;
+  const result = await publicRest<DemandRow[]>(path);
   return result.ok ? result.data : [];
 }
 

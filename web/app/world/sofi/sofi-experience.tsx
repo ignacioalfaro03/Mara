@@ -57,10 +57,10 @@ export function SofiExperience() {
 
       <section className={styles.phone} data-testid="sofi-found-footage">
         <div className={styles.phoneTop}>
-          <span>la noche del chocolate</span>
+          <span>un clip que no iba a subir</span>
           <span>escena escrita</span>
         </div>
-        <p className={styles.caption}>Dos cucharas. La música en la cocina. Mara cantando como si nadie fuera a entrar.</p>
+        <p className={styles.caption}>Pieza casi oscura. Un espejo. Mara quieta frente al reflejo, como si la cámara hubiera llegado tarde a algo.</p>
         <div className={styles.caption}>{SOFI_FOUND_FOOTAGE.followup}</div>
       </section>
 
@@ -73,7 +73,7 @@ export function SofiExperience() {
         </div>
       ) : (
         <>
-          <div className={styles.bubble}>Ya. Ahora pregúntale a ella si se atreve a contarte el resto 😌</div>
+          <div className={styles.bubble}>Ya. Ahora pregúntale a ella qué estaba esperando frente al espejo.</div>
           <div className={styles.actions}>
             <a href="/experience" data-testid="return-to-mara">Volver con Mara</a>
           </div>

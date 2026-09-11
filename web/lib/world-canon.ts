@@ -11,10 +11,10 @@ export const SOFI_FOUND_FOOTAGE = {
   factKey: "sofi_found_footage_v1",
   sourceKey: "sofi_phone_clip_v1",
   title: "Sofi te mandó algo",
-  message: "Mara juraba que la noche iba a ser tranquila. La pillé en la cocina cantando con una cuchara de micrófono 😂",
-  followup: "Me pasó otra cuchara. Yo dije que no. Esa es toda la declaración que voy a dar. Pregúntale a ella.",
+  message: "No se suponía que Mara viera este encuadre. Estaba frente al espejo, con la pieza casi oscura, mirando el teléfono como si supiera exactamente cuándo iba a empezar a grabar.",
+  followup: "Yo solo dejé el clip donde podía encontrarlo. Si quiere contarte por qué no se dio vuelta al tiro, que te lo explique ella.",
   mediaMode: "written_scene",
-  maraReply: "Ya viste lo que te mandó Sofi. Se le olvidó decir que cantó el segundo coro más fuerte que yo. Y que fue ella la que pidió otra canción. Conveniente su versión, ¿no?",
+  maraReply: "Así que viste el clip. Sofi cree que me pilló distraída. Déjala. La parte entretenida es que todavía no sabe cuánto rato llevaba viendo su reflejo detrás del mío.",
 } as const;
 
 export type SofiWorldKnowledge = {

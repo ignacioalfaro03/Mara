@@ -1,26 +1,38 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import "./globals.css";
+import "./platform-reinvention.css";
+import "./public-home.css";
 import { AgeGate } from "@/components/age-gate";
 import { PublicPageTracker } from "@/components/public-page-tracker";
+import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 
 function resolveMetadataBase() {
   const explicitSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
   const vercelUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL;
   const siteUrl = explicitSiteUrl ?? (vercelUrl ? `https://${vercelUrl}` : "http://localhost:3000");
-
   return new URL(siteUrl);
 }
 
 export const metadata: Metadata = {
   metadataBase: resolveMetadataBase(),
-  title: "Mara",
-  description: "Mara crea experiencias digitales y prepara una plataforma privada para creadoras adultas que quieren monetizar personajes bajo sus propios límites.",
+  title: "Mara — Creator commerce, made personal",
+  description: "Mara ayuda a creadoras a entender a su audiencia y monetizar contenido, interacciones, solicitudes y experiencias desde un solo lugar.",
   openGraph: {
     title: "Mara",
-    description: "Tu personaje puede ser público. Tú no tienes que serlo.",
-    images: ["/mara/mara-v1-reference.jpg"],
+    description: "Contenido, interacción, comercio, memoria y demanda entre creadoras y sus clientes.",
+    images: [{
+      url: "/mara/mara-v2-reference.webp",
+      width: 384,
+      height: 576,
+      alt: "Mara Vera — identidad de referencia de Mara",
+    }],
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Mara",
+    description: "Creator commerce con contexto, memoria y demanda.",
+    images: ["/mara/mara-v2-reference.webp"],
   },
 };
 
@@ -30,22 +42,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body>
         <PublicPageTracker />
         <AgeGate />
-        <header className="siteHeader">
-          <Link href="/" className="wordmark">MARA</Link>
-          <nav aria-label="Navegación principal">
-            <Link href="/shop">Experiencias</Link>
-            <Link href="/creators">Para creadoras</Link>
-            <Link href="/library">Biblioteca</Link>
-            <Link href="/experience">Probar</Link>
-          </nav>
-        </header>
+        <SiteHeader />
         {children}
-        <footer className="siteFooter">
-          <span>Mara Vera es el primer personaje virtual de Mara. El piloto de creadoras es solo para personas adultas.</span>
-          <div>
-            <Link href="/legal">Privacidad · Términos · Divulgación IA</Link>
-          </div>
-        </footer>
+        <SiteFooter />
       </body>
     </html>
   );

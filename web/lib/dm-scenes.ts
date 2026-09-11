@@ -1,23 +1,24 @@
-// Fixed, public-safe fiction. No model calls, wall-clock promises, or paid media.
-// The existing completed-session count advances this short launch story.
+// Fixed adult fiction for Mara Vera / Creator Zero. No model calls, wall-clock promises, or paid media.
+// Suggestive rather than explicit; consent and user boundaries remain outside the fiction layer.
+// The completed-session count advances this short private sequence.
 export const DM_SCENES = [
   {
-    direct: "Mini escena: Sofi entra a la cocina y me pilla usando una cuchara como micrófono. Yo no bajo la música. Le paso otra cuchara.",
-    slow: "Sofi dice que no canta. Dejo una cuchara frente a ella y subo apenas la música. Espero. Ya se sabe la primera frase.",
-    payoff: "Duró un coro su dignidad. El segundo lo cantó más fuerte que yo. Que después no te venda otra versión.",
-    next: "Si vuelves, te cuento por qué Sofi cortó justo ahí su relato.",
+    direct: "Estoy frente al espejo cuando veo tu mensaje. No giro de inmediato. Termino de acomodarme el pelo, te miro por el reflejo y recién ahí levanto el teléfono. Si querías mi atención, ya la tienes.",
+    slow: "La pieza está casi oscura. Solo dejo encendida la luz del espejo. Me ves de espaldas un segundo más de lo necesario. Sé que estás mirando; por eso todavía no me doy vuelta.",
+    payoff: "Ahora sí te miro directo. Nada más. No necesito mostrarte todo para saber exactamente dónde se te quedó la vista.",
+    next: "La próxima vez te cuento qué dejé fuera del encuadre. Esa parte no era para cualquiera.",
   },
   {
-    direct: "Sofi cortó el relato antes del final: la que pidió repetir la canción fue ella. Yo ya había dejado el micrófono-cuchara.",
-    slow: "Quedaba el último cuadrado de chocolate. Sofi lo puso entre las dos: una canción más, dijo. Mira quién quería alargar la noche.",
-    payoff: "Le dejé el chocolate. La elección de la próxima canción me la quedé yo. Ese fue el trato.",
-    next: "Queda mi elección de canción. Esa parte todavía no te la he contado.",
+    direct: "Dejé el teléfono apoyado junto a la puerta. Estoy con una camisa demasiado grande para la hora y demasiado corta para fingir que fue casualidad. Te hago esperar ahí mientras decido cuánto entra en cuadro.",
+    slow: "Abro la puerta apenas. No para que entres: para que entiendas que podría abrirla más. Me apoyo en el marco, bajo la mirada al teléfono y sonrío como si ya supiera qué ibas a elegir.",
+    payoff: "No abrí más la puerta. Tampoco hacía falta. Te dejé exactamente donde quería: imaginando el resto.",
+    next: "Todavía queda una última noche. En esa no te doy la ventaja de saber qué viene primero.",
   },
   {
-    direct: "Elegí una canción que las dos nos sabemos mal. Inventamos la mitad de la letra. El vecino golpeó la pared justo en nuestro mejor verso.",
-    slow: "Bajé la música. Sofi siguió cantando igual, casi en susurros. Esa versión sí que no quedó grabada.",
-    payoff: "Se terminó el chocolate, lavamos las dos cucharas y dejamos la música bajita. Así terminó esa noche. Bastante mejor que mi plan de portarme seria.",
-    next: "Hasta aquí llega esta historia. Puedes volver a leerla o pasar por donde Sofi.",
+    direct: "Esta vez no hay espejo ni puerta. Solo luz baja, el teléfono cerca y yo sentada al borde de la cama. Te digo que elijas rápido. Después cambio de idea y elijo yo.",
+    slow: "Te hago escoger entre acercarte o esperar. No hay una respuesta correcta. Lo entretenido es ver cuánto te demoras cuando sabes que estoy mirando tu decisión.",
+    payoff: "Me quedo con tu elección. No como una promesa rara, sino como una pista. La próxima vez no tendría sentido tratarte como si nunca hubieras estado aquí.",
+    next: "Hasta aquí llega esta secuencia. Lo siguiente debería existir solo si tú vuelves y todavía quieres que siga.",
   },
 ] as const;
 

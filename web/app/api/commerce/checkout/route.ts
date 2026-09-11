@@ -9,6 +9,16 @@ import { serviceHeaders, toCommerceOffer, type CommerceCheckoutIntentRow, type C
 export const runtime = "nodejs";
 
 type CheckoutBody = { offerSlug?: unknown; amountMinor?: unknown; clientRequestId?: unknown };
+type CheckoutOfferRow = CommerceOfferRow & { visibility?: "public" | "private_user"; buyer_user_id?: string | null };
+type RequestCheckoutRow = {
+  id: string;
+  user_id: string;
+  creator_id: string;
+  world_id: string;
+  offer_id: string | null;
+  counter_amount_minor: number | null;
+  status: string;
+};
 const UUID_LIKE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const SAFE_OFFER_SLUG = /^[a-z0-9][a-z0-9_-]{1,80}$/;
 
@@ -34,6 +44,40 @@ function sameIntent(intent: CommerceCheckoutIntentRow, offer: CommerceOfferRow, 
   return intent.offer_id === offer.id && intent.amount_minor === amountMinor && intent.currency === offer.currency && intent.provider === provider;
 }
 
+function requestIdFromOffer(offer: CommerceOfferRow) {
+  if (!offer.metadata || typeof offer.metadata !== "object" || Array.isArray(offer.metadata)) return null;
+  const value = (offer.metadata as Record<string, unknown>).request_id;
+  return typeof value === "string" && UUID_LIKE.test(value) ? value : null;
+}
+
+async function verifyRequestCheckout(
+  config: NonNullable<ReturnType<typeof getServerBackendConfig>>,
+  headers: HeadersInit,
+  offer: CheckoutOfferRow,
+  userId: string,
+  amountMinor: number,
+) {
+  if (offer.visibility === "private_user" && offer.buyer_user_id !== userId) {
+    return { ok: false as const, response: errorResponse("commerce_offer_not_found", 404) };
+  }
+
+  const requestId = requestIdFromOffer(offer);
+  if (!requestId) return { ok: true as const };
+  const result = await readOne<RequestCheckoutRow>(
+    `${config.url}/rest/v1/creator_requests?select=id,user_id,creator_id,world_id,offer_id,counter_amount_minor,status&id=eq.${encodeURIComponent(requestId)}&offer_id=eq.${encodeURIComponent(offer.id)}&user_id=eq.${encodeURIComponent(userId)}&status=eq.payment_pending&limit=1`,
+    headers,
+  );
+  if (!result.ok) return { ok: false as const, response: errorResponse("request_checkout_read_failed", 502) };
+  if (!result.row) return { ok: false as const, response: errorResponse("request_checkout_not_available", 409) };
+  if (result.row.creator_id !== offer.creator_id || result.row.world_id !== offer.world_id) {
+    return { ok: false as const, response: errorResponse("request_checkout_scope_mismatch", 409) };
+  }
+  if (!result.row.counter_amount_minor || result.row.counter_amount_minor !== amountMinor) {
+    return { ok: false as const, response: errorResponse("request_checkout_amount_changed", 409) };
+  }
+  return { ok: true as const };
+}
+
 export async function POST(request: Request) {
   let body: CheckoutBody;
   try { body = (await request.json()) as CheckoutBody; }
@@ -56,10 +100,14 @@ export async function POST(request: Request) {
   const config = getServerBackendConfig();
   if (!config) return errorResponse("commerce_backend_not_configured", 503);
   const headers = serviceHeaders(config, false);
-  const offerResult = await readOne<CommerceOfferRow>(`${config.url}/rest/v1/commerce_offers?select=*&slug=eq.${encodeURIComponent(offerSlug)}&status=eq.active&limit=1`, headers);
+  const offerResult = await readOne<CheckoutOfferRow>(`${config.url}/rest/v1/commerce_offers?select=*&slug=eq.${encodeURIComponent(offerSlug)}&status=eq.active&limit=1`, headers);
   if (!offerResult.ok) return errorResponse("commerce_offer_read_failed", 502);
   const offer = offerResult.row;
   if (!offer) return errorResponse("commerce_offer_not_found", 404);
+
+  if (offer.visibility === "private_user" && offer.buyer_user_id !== session.user.id) {
+    return errorResponse("commerce_offer_not_found", 404);
+  }
 
   // Private Alpha guard: creator-scoped offers are engineering-proof only until live payment authorization is explicit.
   if (offer.creator_id && payment.provider !== "signed_test") {
@@ -68,6 +116,9 @@ export async function POST(request: Request) {
 
   const amountMinor = getAmountForOffer(toCommerceOffer(offer), safeAmount(body.amountMinor));
   if (amountMinor === null) return errorResponse("invalid_checkout_amount", 400);
+
+  const requestCheckout = await verifyRequestCheckout(config, headers, offer, session.user.id, amountMinor);
+  if (!requestCheckout.ok) return requestCheckout.response;
 
   if (offer.slug === CAPRICHO_OFFER_SLUG) {
     const goalResult = await readOne<CommerceGoalRow>(`${config.url}/rest/v1/commerce_goals?select=*&offer_id=eq.${offer.id}&status=in.(funding,funded)&limit=1`, headers);
@@ -93,7 +144,7 @@ export async function POST(request: Request) {
   const createResponse = await fetch(`${config.url}/rest/v1/commerce_checkout_intents?select=*`, {
     method: "POST",
     headers: { ...serviceHeaders(config), Prefer: "return=representation" },
-    body: JSON.stringify({ id: intentId, user_id: session.user.id, offer_id: offer.id, client_request_id: clientRequestId, amount_minor: amountMinor, currency: offer.currency, provider: payment.provider, provider_checkout_id: providerCheckoutId, provider_checkout_url: checkoutUrl, status: "pending", metadata: { offer_slug: offer.slug, price_mode: offer.price_mode, creator_scoped: Boolean(offer.creator_id) } }),
+    body: JSON.stringify({ id: intentId, user_id: session.user.id, offer_id: offer.id, client_request_id: clientRequestId, amount_minor: amountMinor, currency: offer.currency, provider: payment.provider, provider_checkout_id: providerCheckoutId, provider_checkout_url: checkoutUrl, status: "pending", metadata: { offer_slug: offer.slug, price_mode: offer.price_mode, creator_scoped: Boolean(offer.creator_id), request_scoped: Boolean(requestIdFromOffer(offer)) } }),
     cache: "no-store",
   });
 
