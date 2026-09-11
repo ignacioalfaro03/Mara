@@ -34,25 +34,25 @@ try {
 
   const page = await context.newPage();
   await page.goto(`${baseUrl}/experience`, { waitUntil: "networkidle" });
-  await page.getByRole("button", { name: "Entrar" }).click();
-  await page.getByText(/Esta noche: hamburguesa, papas, bebida y una barra de chocolate/).waitFor();
+  await page.getByRole("button", { name: "Dime" }).click();
+  await page.getByText(/Cierra la puerta\. Baja un poco la luz/).waitFor();
 
   const exposureEvents = await page.evaluate(() => window.__maraSmokeEvents);
-  assert(exposureEvents.some((record) => record.event === "ritual_viewed"), "Ritual exposure did not emit ritual_viewed");
-  assert(!exposureEvents.some((record) => record.event === "ritual_play_intent"), "Ritual exposure incorrectly emitted ritual_play_intent");
+  assert(exposureEvents.some((record) => record.event === "ritual_viewed"), "Creator Zero rule exposure did not emit ritual_viewed");
+  assert(!exposureEvents.some((record) => record.event === "ritual_play_intent"), "Rule exposure incorrectly emitted ritual_play_intent");
   assert(!exposureEvents.some((record) => record.event === "ritual_completed"), "Ritual completion appeared before user completion");
 
   await page.getByRole("button", { name: "Hecho" }).click();
-  await page.getByText(/No me mandes prueba. Te creo/).waitFor();
+  await page.getByText(/Te voy a dejar ver una escena privada/).waitFor();
 
   const completionEvents = await page.evaluate(() => window.__maraSmokeEvents);
   assert(
     completionEvents.some((record) => record.event === "experience_completed" && record.properties?.surface === "dm_ritual"),
-    "Concrete ritual completion did not emit the underlying dm_ritual completion",
+    "Concrete Creator Zero rule completion did not emit the underlying dm_ritual completion",
   );
   assert(
     completionEvents.some((record) => record.event === "ritual_completed" && record.properties?.surface === "dm_ritual"),
-    "Concrete ritual completion did not emit ritual_completed",
+    "Concrete Creator Zero rule completion did not emit ritual_completed",
   );
   assert(!completionEvents.some((record) => record.event === "ritual_play_intent"), "Legacy fake ritual_play_intent leaked after completion");
 

@@ -1,14 +1,15 @@
 .bridge {
   position: relative;
-  width: 100%;
-  margin: 18px 0;
-  border: 1px solid rgba(255, 255, 255, 0.11);
-  border-radius: 17px;
-  padding: 11px 13px;
-  background: rgba(18, 18, 21, 0.96);
-  color: #f7f2ed;
-  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.38);
-  backdrop-filter: blur(14px);
+  width: min(92%, 430px);
+  margin: 22px 0;
+  padding: 15px 16px;
+  border: 1px solid rgba(167, 96, 111, .26);
+  border-radius: 9px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(111,23,40,.18), transparent 46%),
+    #100d0e;
+  color: #f2e9e3;
+  box-shadow: 0 18px 48px rgba(0,0,0,.26);
 }
 
 .bridge strong,
@@ -16,21 +17,38 @@
   display: block;
 }
 
+.bridge strong {
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  font-size: 18px;
+  font-weight: 400;
+}
+
 .bridge span {
-  color: #bcb4af;
-  font-size: 12px;
-  margin-top: 3px;
-  line-height: 1.35;
+  margin-top: 5px;
+  color: rgba(242,233,227,.56);
+  font-size: 11px;
+  line-height: 1.45;
 }
 
 .link {
+  display: block;
   color: inherit;
   text-decoration: none;
 }
 
+.link::before {
+  content: "CROSS-WORLD / MEMORY";
+  display: block;
+  margin-bottom: 11px;
+  color: #865a64;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .16em;
+}
+
 .callback {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   align-items: flex-start;
 }
 
@@ -46,7 +64,7 @@
   margin-left: auto;
   border: 0;
   background: transparent;
-  color: #aaa3a0;
+  color: rgba(242,233,227,.4);
   font-size: 18px;
   cursor: pointer;
   min-width: 44px;
@@ -54,12 +72,22 @@
 }
 
 .discuss {
-  margin-top: 12px;
-  min-height: 44px;
-  padding: 8px 14px;
-  border: 1px solid #625853;
-  border-radius: 22px;
-  color: inherit;
-  background: #302925;
+  min-height: 40px;
+  margin-top: 13px;
+  padding: 0 14px;
+  border: 1px solid rgba(242,233,227,.16);
+  border-radius: 999px;
+  color: #eadfd8;
+  background: transparent;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 760;
   cursor: pointer;
+}
+
+.discuss:hover,
+.discuss:focus-visible,
+.link:focus-visible {
+  border-color: rgba(173,115,128,.6);
+  outline: none;
 }

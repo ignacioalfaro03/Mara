@@ -21,22 +21,31 @@ export default async function StoreProductPage({ params }: { params: Promise<{ s
   return (
     <main className={styles.shell}>
       <div className={styles.container}>
-        <div className={styles.buttonStack} style={{ marginBottom: 24, maxWidth: 220 }}>
-          <Link href="/shop" className={styles.secondaryButton}>← Volver a experiencias</Link>
-        </div>
+        <nav className={styles.contextNav}>
+          <Link href="/shop">← Mara Vera</Link>
+          <div><span>WORLD 00</span><strong>Private access</strong></div>
+        </nav>
 
         <section className={styles.detailGrid}>
           <article className={styles.detailPanel}>
             <p className={styles.eyebrow}>{product.eyebrow}</p>
             <h1>{product.title}</h1>
-            <p>{product.longDescription}</p>
+            <p className={styles.detailLead}>{product.longDescription}</p>
 
-            <ul className={styles.includes} aria-label="Incluye">
-              {product.includes.map((item) => <li key={item}>{item}</li>)}
-            </ul>
+            <div className={styles.privateMarker} aria-hidden="true">
+              <span>PRIVATE</span><span>CREATOR ZERO</span><span>YOUR ACCOUNT</span>
+            </div>
+
+            <div className={styles.includesWrap}>
+              <p className={styles.eyebrow}>LO QUE ABRES</p>
+              <ul className={styles.includes} aria-label="Incluye">
+                {product.includes.map((item, index) => <li key={item}><span>{String(index + 1).padStart(2, "0")}</span>{item}</li>)}
+              </ul>
+            </div>
           </article>
 
           <aside className={styles.purchasePanel}>
+            <p className={styles.eyebrow}>TRANSACTION BOUNDARY</p>
             {product.status === "available" && product.offerSlug && product.entitlementKey ? (
               <StorefrontProductAccess
                 slug={product.slug}
@@ -47,14 +56,18 @@ export default async function StoreProductPage({ params }: { params: Promise<{ s
               />
             ) : (
               <div className={styles.buttonStack}>
-                <p className={styles.eyebrow}>EN PREPARACIÓN</p>
+                <strong className={styles.purchaseHeadline}>Esta parte todavía no.</strong>
                 <span className={styles.price}>{product.priceLabel}</span>
-                <span className={styles.secondaryButton} aria-disabled="true">Todavía no te la puedo abrir</span>
-                <p className={styles.notice}>Cuando esté completa de verdad, aparecerá aquí para desbloquearla.</p>
+                <span className={styles.secondaryButton} aria-disabled="true">Todavía no disponible</span>
+                <p className={styles.notice}>Solo se habilitará cuando el contenido esté realmente listo para entregar.</p>
               </div>
             )}
 
-            <p className={styles.notice}>Desbloqueas una experiencia digital de Mara. Mara sigue siendo un personaje virtual; no estás comprando atención humana ni una relación real.</p>
+            <div className={styles.checkoutTruth}>
+              <strong>Qué estás comprando</strong>
+              <p>Acceso digital de Mara Vera asociado a tu cuenta. No compras atención humana, una relación real ni derechos sobre una persona.</p>
+              <Link href="/legal">Privacidad y términos</Link>
+            </div>
           </aside>
         </section>
 
@@ -62,10 +75,10 @@ export default async function StoreProductPage({ params }: { params: Promise<{ s
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
               <div>
-                <p className={styles.eyebrow}>DESPUÉS</p>
-                <h2>Si quieres seguir, ya sé por dónde.</h2>
+                <p className={styles.eyebrow}>AFTER</p>
+                <h2>Hay una puerta después de esta.</h2>
               </div>
-              <p>Cada experiencia puede llevarte naturalmente a otra, sin obligarte a quedarte conectado.</p>
+              <p>No necesitas seguir. Si lo haces, la siguiente experiencia conserva el contexto de Creator Zero sin convertir el sitio en un catálogo infinito.</p>
             </div>
             <article className={styles.card}>
               <div>
@@ -75,7 +88,7 @@ export default async function StoreProductPage({ params }: { params: Promise<{ s
               </div>
               <div className={styles.cardFooter}>
                 <span className={styles.price}>{next.priceLabel}</span>
-                <Link className={styles.secondaryButton} href={`/shop/${next.slug}`}>Ver siguiente</Link>
+                <Link className={styles.secondaryButton} href={`/shop/${next.slug}`}>Mirar después</Link>
               </div>
             </article>
           </section>

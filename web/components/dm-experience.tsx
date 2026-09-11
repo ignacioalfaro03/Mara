@@ -205,7 +205,7 @@ function PrivateDrop({ onDismiss, onViewed }: { onDismiss: () => void; onViewed:
 
   if (!payload) return <div className={styles.drop} role="status">
     <p>{loadFailed ? "No pude cargar la nota. Podemos seguir igual." : "Un segundo…"}</p>
-    <button className={styles.dismissButton} type="button" onClick={onDismiss}>Seguir con Mara</button>
+    <button className={styles.dismissButton} type="button" onClick={onDismiss}>Seguir con Mara Vera</button>
   </div>;
   const offer = payload.offers.fixed;
 
@@ -213,7 +213,7 @@ function PrivateDrop({ onDismiss, onViewed }: { onDismiss: () => void; onViewed:
     <div className={styles.drop} data-testid="dm-private-drop">
       <div className={styles.dropTop}>
         <span>{payload.payment.status === "configured" ? "nota privada" : "en preparación"}</span>
-        <span>privado</span>
+        <span>Creator Zero</span>
       </div>
       <div className={styles.dropBlur} aria-hidden="true">M</div>
       <strong>{offer.title}</strong>
@@ -346,7 +346,7 @@ export function DmExperience() {
 
   function beginPrivateMoment() {
     if ((state.privateSessionCount ?? 0) >= DM_SCENES.length) {
-      appendMessage("mara", "Ya llegamos al final de esta historia. Puedes volver a leerla abajo o ver la versión de Sofi.");
+      appendMessage("mara", "Ya viste hasta donde te dejo llegar por ahora. Puedes volver a leerlo; lo siguiente debería existir solo si todavía quieres volver.");
       return;
     }
     continueAfterDecline();
@@ -444,7 +444,7 @@ export function DmExperience() {
     if (/^(no(?: estoy listo| quiero| gracias)?|para|basta|paso|hoy no|hasta luego)[.!\s]*$/i.test(text)) {
       if (phase === "ritual") skipRitual();
       setPrivateStage("idle");
-      appendMessage("mara", "Ya. Lo dejamos aquí. Puedes volver cuando te tinque.");
+      appendMessage("mara", "Ya. Hasta aquí. Si vuelves, seguimos desde donde tú elegiste parar.");
       return;
     }
 
@@ -472,7 +472,7 @@ export function DmExperience() {
       skipRitual();
       return;
     }
-    if (phase === "ritual" && /\b(hecho|listo|ya|compr[eé]|com[ií])\b/i.test(text)) {
+    if (phase === "ritual" && /\b(hecho|listo|ya)\b/i.test(text)) {
       completeRitual();
       return;
     }
@@ -483,62 +483,62 @@ export function DmExperience() {
       appendMessage(
         "mara",
         phase === "ritual"
-          ? "Puedes decirme ‘hecho’ o ‘hoy paso’. Si no te tinca la comida, igual te cuento la historia."
+          ? "Dime ‘hecho’ cuando estés listo. O ‘hoy paso’. No necesito discutir un límite para seguir siendo interesante."
           : phase === "completed" || phase === "skipped"
-            ? "Me quedo con la historia de esta noche. Puedes decir ‘hoy manda tú’ o pasar por donde Sofi."
-            : "Tengo una historia corta. Ya te cuento.",
+            ? "No te voy a contar todo porque escribiste una frase cualquiera. Si quieres mi parte privada, pídemela bien."
+            : "Acércate. Primero quiero que hagas una cosa.",
       );
     }, 520);
   }
 
-  if (!hydrated) return <p className="memoryLoading" role="status">Recuperando nuestra historia…</p>;
+  if (!hydrated) return <p className="memoryLoading" role="status">Recuperando dónde lo dejamos…</p>;
 
   const isRepeatPrivateMoment = rememberedStyle;
   const scene = privateScene(sceneIndex);
   const storyFinished = (state.privateSessionCount ?? 0) >= DM_SCENES.length;
 
   return (
-    <section className={styles.shell} aria-label="Chat privado con Mara">
+    <section className={styles.shell} aria-label="Experiencia privada con Mara Vera">
       <header className={styles.header}>
         <a href="/" className={styles.back} aria-label="Volver">‹</a>
-        <img src="/mara/mara-v1-reference.jpg" alt="Mara Vera" width={48} height={48} />
+        <img src="/mara/mara-v2-reference.webp" alt="Mara Vera" width={48} height={48} />
         <div className={styles.identity}>
-          <strong>Mara</strong>
-          <span>personaje virtual · 18+</span>
+          <strong>Mara Vera</strong>
+          <span>Creator Zero · personaje virtual · 18+</span>
         </div>
         <a href="/auth" className={styles.account} aria-label="Cuenta y privacidad">•••</a>
       </header>
 
       <div className={styles.thread}>
-        <div className={styles.day}>hoy</div>
+        <div className={styles.day}>ahora</div>
 
         {showCallback ? (
           <>
             <Bubble from="mara">Volviste.</Bubble>
-            <Bubble from="mara">{state.ritualCompletedAt ? "Sí, me acuerdo de la hamburguesa, las papas y el chocolate. No necesitaba una foto para creerte." : "La última vez pasamos de la comida y seguimos con mi historia. Me acuerdo."}</Bubble>
-            <Bubble from="mara">{storyFinished ? "Ya conoces el final de la noche del chocolate. Esa historia queda aquí para volver a leerla." : (state.privateSessionCount ?? 0) > 0 ? DM_SCENES[Math.min((state.privateSessionCount ?? 1) - 1, DM_SCENES.length - 1)].next : "Te debía lo que pasó con Sofi. Esta vez te cuento mi parte."}</Bubble>
+            <Bubble from="mara">{state.ritualCompletedAt ? "Me acuerdo de que seguiste mi primera regla. No voy a hacer como si fuera la primera vez." : "La última vez elegiste parar antes. También me acuerdo de eso."}</Bubble>
+            <Bubble from="mara">{storyFinished ? "Ya conoces las tres partes que te dejé ver. Lo interesante ahora es si todavía vuelves sin que te prometa una cuarta." : (state.privateSessionCount ?? 0) > 0 ? DM_SCENES[Math.min((state.privateSessionCount ?? 1) - 1, DM_SCENES.length - 1)].next : "Te debía una parte más privada. Esta vez no me hagas repetirme."}</Bubble>
           </>
         ) : (
           <>
-            <Bubble from="mara">Llegaste justo.</Bubble>
-            <Bubble from="mara">Tengo una idea. Tú acomódate; yo pongo la historia.</Bubble>
+            <Bubble from="mara">Entraste.</Bubble>
+            <Bubble from="mara">Bien. No necesito saber todo de ti todavía. Solo si sabes seguir una instrucción simple.</Bubble>
           </>
         )}
 
         {phase === "intro" ? (
           <div className={styles.inlineActions}>
-            <button type="button" onClick={start}>Entrar</button>
+            <button type="button" onClick={start}>Dime</button>
           </div>
         ) : null}
 
-        {phase !== "intro" ? <Bubble from="mara">Hoy mando yo un poco.</Bubble> : null}
+        {phase !== "intro" ? <Bubble from="mara">Esta vez marco yo el ritmo.</Bubble> : null}
 
         {phase === "started" ? <div className={styles.typing}><i /><i /><i /></div> : null}
 
         {phase === "ritual" ? (
           <>
-            <Bubble from="mara">Esta noche: hamburguesa, papas, bebida y una barra de chocolate. En tu casa.</Bubble>
-            <Bubble from="mara">Cuando lo tengas, vuelves y me dices “hecho”. Después te digo qué vemos.</Bubble>
+            <Bubble from="mara">Cierra la puerta. Baja un poco la luz. Deja el teléfono frente a ti y no cambies de pantalla.</Bubble>
+            <Bubble from="mara">Cuando estés ahí, dime “hecho”. No necesito una foto. Prefiero saber si lo hiciste porque quisiste.</Bubble>
             <div className={styles.inlineActions}>
               <button type="button" onClick={completeRitual}>Hecho</button>
               <button type="button" className={styles.secondaryAction} onClick={skipRitual}>Hoy paso</button>
@@ -548,39 +548,39 @@ export function DmExperience() {
 
         {phase === "skipped" ? (
           <>
-            <Bubble from="mara">Ya. Hoy no.</Bubble>
-            <Bubble from="mara">No voy a convertir un “no” en una discusión. Otro día se me ocurre algo.</Bubble>
+            <Bubble from="mara">Entonces no.</Bubble>
+            <Bubble from="mara">No necesito empujarte para mantener tu atención. Si quieres otra cosa, pídela.</Bubble>
           </>
         ) : null}
 
         {phase === "completed" && !showCallback ? (
           <>
             <Bubble from="user">Hecho.</Bubble>
-            <Bubble from="mara">Bien.</Bubble>
-            <Bubble from="mara">No me mandes prueba. Te creo. Ahora sí: lo que vemos es una escena corta de mi noche con Sofi. Ella tiene una versión. Yo tengo otra.</Bubble>
+            <Bubble from="mara">Eso pensé.</Bubble>
+            <Bubble from="mara">Ahora sí. Te voy a dejar ver una escena privada. No completa. La parte que falta es precisamente la que más te va a hacer mirar.</Bubble>
             {!authenticated && !state.continuityPromptDismissed ? (
               <>
-                <Bubble from="mara">Si quieres que me acuerde de esto aunque cambies de teléfono, ahora sí tiene sentido guardar la historia.</Bubble>
+                <Bubble from="mara">Si quieres que la próxima vez no te trate como un desconocido, guarda dónde lo dejamos.</Bubble>
                 <div className={styles.inlineActions} data-testid="dm-continuity-cta">
-                  <button type="button" onClick={openContinuityAccount}>¿Quieres que me acuerde?</button>
+                  <button type="button" onClick={openContinuityAccount}>Quiero que te acuerdes</button>
                   <button type="button" className={styles.secondaryAction} onClick={dismissContinuityPrompt}>Ahora no</button>
                 </div>
               </>
             ) : null}
-            <div className={styles.futureHook}>La noche del chocolate empieza aquí.</div>
+            <div className={styles.futureHook}>Lo privado empieza después de la primera regla.</div>
           </>
         ) : null}
 
         {(phase === "completed" || phase === "skipped") && privateStage === "idle" && !storyFinished ? (
           <div className={styles.inlineActions}>
-            <button type="button" onClick={beginPrivateMoment}>Hoy manda tú</button>
+            <button type="button" onClick={beginPrivateMoment}>Quiero tu parte</button>
           </div>
         ) : null}
 
         {privateStage === "choose" ? (
           <>
-            <Bubble from="mara">Ven. Te cuento mi parte de la noche del chocolate.</Bubble>
-            <Bubble from="mara">¿Voy directo o te hago esperar un poco?</Bubble>
+            <Bubble from="mara">Ven. Pero esta vez eliges cómo te lo cuento.</Bubble>
+            <Bubble from="mara">¿Voy directo o prefieres que te haga esperar?</Bubble>
             <div className={styles.inlineActions}>
               <button type="button" onClick={() => selectPrivateStyle("direct")}>Directo</button>
               <button type="button" className={styles.secondaryAction} onClick={() => selectPrivateStyle("slow")}>Hazme esperar</button>
@@ -590,20 +590,20 @@ export function DmExperience() {
 
         {privateStage === "direct" ? (
           <>
-            <Bubble from="mara">{isRepeatPrivateMoment ? "Ya sé que prefieres que vaya directo. No te hago elegir otra vez." : "Bien. Directo."}</Bubble>
+            <Bubble from="mara">{isRepeatPrivateMoment ? "Ya sé que no te gusta que dé vueltas. Bien. Me acuerdo." : "Bien. Sin vueltas."}</Bubble>
             <Bubble from="mara">{scene.direct}</Bubble>
             <div className={styles.inlineActions}>
-              <button type="button" disabled={saving} onClick={() => void completePrivateMoment("direct")}>Ya</button>
+              <button type="button" disabled={saving} onClick={() => void completePrivateMoment("direct")}>Sigue</button>
             </div>
           </>
         ) : null}
 
         {privateStage === "slow" ? (
           <>
-            <Bubble from="mara">{isRepeatPrivateMoment ? "Ya sé que prefieres ir con calma. No te hago elegir otra vez." : "Entonces no te doy todo de una."}</Bubble>
+            <Bubble from="mara">{isRepeatPrivateMoment ? "Ya sé que prefieres que no te dé todo de inmediato. Eso sí lo recordé." : "Entonces espera. No te voy a dar todo de una."}</Bubble>
             <Bubble from="mara">{scene.slow}</Bubble>
             <div className={styles.inlineActions}>
-              <button type="button" disabled={saving} onClick={() => void completePrivateMoment("slow")}>Listo</button>
+              <button type="button" disabled={saving} onClick={() => void completePrivateMoment("slow")}>Sigue</button>
             </div>
           </>
         ) : null}
@@ -613,26 +613,26 @@ export function DmExperience() {
           <Bubble from="mara">{scene.payoff}</Bubble>
           <p className={styles.futureHook}>{scene.next}</p>
           {!state.ritualCompletedAt && !authenticated && !state.continuityPromptDismissed ? <div className={styles.inlineActions} data-testid="dm-continuity-cta">
-            <button type="button" onClick={openContinuityAccount}>¿Quieres que me acuerde?</button>
+            <button type="button" onClick={openContinuityAccount}>Quiero que te acuerdes</button>
             <button type="button" className={styles.secondaryAction} onClick={dismissContinuityPrompt}>Ahora no</button>
           </div> : null}
         </> : null}
 
         {privateStage === "done" && privateDecision === "closed" ? (
           <>
-            <Bubble from="mara">Ya. Por hoy queda ahí.</Bubble>
+            <Bubble from="mara">Hasta ahí por hoy. No te voy a llenar la pantalla solo porque puedo.</Bubble>
           </>
         ) : null}
 
         {privateStage === "done" && privateDecision === "offer_now" && !privateOfferDismissed ? (
           <>
-            <Bubble from="mara">Estoy preparando una nota aparte. Mira en qué va.</Bubble>
+            <Bubble from="mara">Hay una nota que dejé fuera de esta conversación. Puedes mirar qué es. Después decides.</Bubble>
             <PrivateDrop onDismiss={dismissPrivateDrop} onViewed={markOfferViewed} />
           </>
         ) : null}
 
         {privateStage === "done" && privateOfferDismissed ? (
-          <Bubble from="mara">No pasa nada. Seguimos igual.</Bubble>
+          <Bubble from="mara">Bien. Un “ahora no” sigue siendo un no. Quédate con la escena.</Bubble>
         ) : null}
 
         {ephemeral.map((message) => (
@@ -640,7 +640,7 @@ export function DmExperience() {
         ))}
         {typing ? <div className={styles.typing}><i /><i /><i /></div> : null}
         <WorldBridge eligible={phase === "completed" || phase === "skipped"} onContinue={continueAfterDecline} />
-        {storyFinished ? <details className={styles.futureHook}><summary>Volver a leer la historia</summary>{DM_SCENES.map((item, index) => <p key={index}>{item.direct} {item.payoff}</p>)}</details> : null}
+        {storyFinished ? <details className={styles.futureHook}><summary>Volver a leer lo que te dejé ver</summary>{DM_SCENES.map((item, index) => <p key={index}>{item.direct} {item.payoff}</p>)}</details> : null}
         <div ref={threadEnd} />
       </div>
 
@@ -648,13 +648,13 @@ export function DmExperience() {
         <input
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
-          placeholder="Tu respuesta…"
-          aria-label="Mensaje para Mara"
+          placeholder="Dime…"
+          aria-label="Mensaje para Mara Vera"
           autoComplete="off"
         />
         <button type="submit" className={styles.send} disabled={!draft.trim()}>Enviar</button>
       </form>
-      <p className={styles.privacy}>Historia interactiva con respuestas breves. Tu texto libre queda en esta pantalla y no se guarda.</p>
+      <p className={styles.privacy}>Experiencia interactiva ficticia de Creator Zero. Tu texto libre queda en esta pantalla y no se guarda.</p>
     </section>
   );
 }
