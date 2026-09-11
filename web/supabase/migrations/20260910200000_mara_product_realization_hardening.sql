@@ -35,6 +35,82 @@ alter table public.creator_requests
   add constraint creator_requests_currency_check
   check (currency ~ '^[A-Z]{3}$');
 
+-- Universal offers need a first-class audience boundary. Request-generated offers are
+-- intentionally buyer-scoped; normal creator/catalog offers remain public by default.
+alter table public.commerce_offers
+  add column if not exists visibility text not null default 'public';
+alter table public.commerce_offers
+  add column if not exists buyer_user_id uuid null references auth.users(id) on delete set null;
+
+alter table public.commerce_offers
+  add constraint commerce_offers_visibility_check
+  check (visibility in ('public', 'private_user'));
+alter table public.commerce_offers
+  add constraint commerce_offers_private_buyer_shape_check
+  check (
+    (visibility = 'public' and buyer_user_id is null)
+    or (visibility = 'private_user' and buyer_user_id is not null)
+  );
+
+create index if not exists commerce_offers_private_buyer_idx
+  on public.commerce_offers (buyer_user_id, status, created_at desc)
+  where visibility = 'private_user';
+
+-- Replace the existing offer read policies so private request offers never become
+-- anonymous catalog rows and only the intended buyer/owning creator can read them.
+drop policy if exists commerce_offers_select_public_anon on public.commerce_offers;
+create policy commerce_offers_select_public_anon
+  on public.commerce_offers
+  for select
+  to anon
+  using (
+    status = 'active'
+    and visibility = 'public'
+    and (
+      world_id is null
+      or exists (
+        select 1 from public.creator_worlds w
+        where w.creator_id = commerce_offers.creator_id
+          and w.id = commerce_offers.world_id
+          and w.status = 'active'
+          and w.visibility = 'public'
+      )
+    )
+  );
+
+drop policy if exists commerce_offers_select_authenticated on public.commerce_offers;
+create policy commerce_offers_select_authenticated
+  on public.commerce_offers
+  for select
+  to authenticated
+  using (
+    creator_id in (
+      select c.id from public.creators c where c.user_id = (select auth.uid())
+    )
+    or exists (
+      select 1 from public.commerce_purchases p
+      where p.offer_id = commerce_offers.id
+        and p.user_id = (select auth.uid())
+    )
+    or (
+      status = 'active'
+      and (
+        world_id is null
+        or exists (
+          select 1 from public.creator_worlds w
+          where w.creator_id = commerce_offers.creator_id
+            and w.id = commerce_offers.world_id
+            and w.status = 'active'
+            and w.visibility = 'public'
+        )
+      )
+      and (
+        visibility = 'public'
+        or (visibility = 'private_user' and buyer_user_id = (select auth.uid()))
+      )
+    )
+  );
+
 -- Lifecycle writes remain server-owned. RLS is defense in depth; browser roles do not get DML.
 revoke insert, update, delete on table public.creator_threads from anon, authenticated;
 revoke insert, update, delete on table public.creator_messages from anon, authenticated;
