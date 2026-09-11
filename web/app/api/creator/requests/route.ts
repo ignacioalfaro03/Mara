@@ -48,7 +48,13 @@ async function ensureRequestOffer(requestRow: RequestRow, amountMinor: number) {
     const updated = await serviceRest<OfferRow[]>(`commerce_offers?id=eq.${encodeURIComponent(requestRow.offer_id)}&creator_id=eq.${encodeURIComponent(requestRow.creator_id)}`, {
       method: "PATCH",
       headers: { Prefer: "return=representation" },
-      body: JSON.stringify({ amount_minor: amountMinor, status: "active", updated_at: new Date().toISOString() }),
+      body: JSON.stringify({
+        amount_minor: amountMinor,
+        status: "active",
+        visibility: "private_user",
+        buyer_user_id: requestRow.user_id,
+        updated_at: new Date().toISOString(),
+      }),
     });
     return updated.ok ? updated.data[0] ?? null : null;
   }
@@ -71,6 +77,8 @@ async function ensureRequestOffer(requestRow: RequestRow, amountMinor: number) {
       fulfillment_key: fulfillmentKey,
       offer_family: "personalized_digital",
       status: "active",
+      visibility: "private_user",
+      buyer_user_id: requestRow.user_id,
       metadata: {
         fulfillment_mode: "creator_manual",
         fulfillment_concept: "creator_request",
