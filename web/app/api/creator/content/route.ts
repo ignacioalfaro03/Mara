@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getVerifiedSession, setSessionCookies } from "@/lib/auth-session";
-import { readOwnCreator, readOwnWorlds } from "@/lib/mara-real-data";
+import { readOwnCreator, readOwnWorlds, type OfferRow } from "@/lib/mara-real-data";
 import { emitProductEvent } from "@/lib/product-telemetry";
 import { productCapability, type CreatorContentRow, type CreatorContentType, type CreatorContentVisibility } from "@/lib/product-realization";
 import { safeLocalReturn, userRest } from "@/lib/supabase/server-rest";
@@ -11,6 +11,11 @@ const TYPES = new Set<CreatorContentType>(["text", "photo", "video", "audio", "g
 const VISIBILITIES = new Set<CreatorContentVisibility>(["public", "followers", "members", "paid_unlock", "private", "unlisted"]);
 const STATUSES = new Set(["draft", "scheduled", "published", "archived"]);
 const UUID_LIKE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+function offerIsRequestScoped(offer: OfferRow) {
+  if (!offer.metadata || typeof offer.metadata !== "object" || Array.isArray(offer.metadata)) return false;
+  return typeof (offer.metadata as Record<string, unknown>).request_id === "string";
+}
 
 export async function GET() {
   if (!productCapability("content")) return NextResponse.json({ enabled: false, items: [] });
@@ -54,10 +59,21 @@ export async function POST(request: Request) {
   if (!worldId || title.length > 180 || caption.length > 5000 || (!title && !caption)) {
     return NextResponse.json({ error: "invalid_content" }, { status: 400 });
   }
+  if (visibilityRaw === "members") return NextResponse.json({ error: "membership_content_not_activated" }, { status: 409 });
   if (visibilityRaw === "paid_unlock" && !offerId) return NextResponse.json({ error: "paid_content_requires_offer" }, { status: 400 });
 
   const worlds = await readOwnWorlds(session.accessToken, creator.id);
   if (!worlds.some((world) => world.id === worldId)) return NextResponse.json({ error: "world_not_owned" }, { status: 403 });
+
+  if (offerId) {
+    const offerResult = await userRest<OfferRow[]>(
+      session.accessToken,
+      `commerce_offers?select=*&id=eq.${encodeURIComponent(offerId)}&creator_id=eq.${encodeURIComponent(creator.id)}&world_id=eq.${encodeURIComponent(worldId)}&status=eq.active&limit=1`,
+    );
+    const offer = offerResult.ok ? offerResult.data[0] ?? null : null;
+    if (!offer) return NextResponse.json({ error: "content_offer_not_available" }, { status: 404 });
+    if (offerIsRequestScoped(offer)) return NextResponse.json({ error: "private_request_offer_cannot_be_published" }, { status: 409 });
+  }
 
   const result = await userRest<CreatorContentRow[]>(session.accessToken, "creator_content", {
     method: "POST",
