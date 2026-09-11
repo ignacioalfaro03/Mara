@@ -11,7 +11,7 @@ async function parseBody<T>(response: Response): Promise<T> {
   return (await response.json()) as T;
 }
 
-function serverCredentialHeaders(config: NonNullable<ReturnType<typeof getServerBackendConfig>>) {
+function serverCredentialHeaders(config: NonNullable<ReturnType<typeof getServerBackendConfig>>): Record<string, string> {
   // Modern sb_secret_* keys authenticate through apikey. Legacy service_role
   // values are JWTs and also carry the Bearer authorization header.
   if (config.serviceRoleKey.startsWith("sb_secret_")) {
