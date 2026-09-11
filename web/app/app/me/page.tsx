@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { RequestStatusActions } from "@/components/request-status-actions";
 import { getVerifiedSession } from "@/lib/auth-session";
 import { formatMoney, type OfferRow, type PurchaseRow } from "@/lib/mara-real-data";
 import { productCapability } from "@/lib/product-realization";
@@ -18,6 +19,7 @@ type RequestRow = {
   offer_id: string | null;
   purchase_id: string | null;
   delivered_at: string | null;
+  fulfillment_notes: string | null;
   created_at: string;
 };
 
@@ -29,6 +31,23 @@ type MembershipRow = {
   started_at: string;
   current_period_ends_at: string | null;
 };
+
+function requestStatusCopy(status: string) {
+  const labels: Record<string, string> = {
+    requested: "Enviada",
+    reviewing: "En revisión",
+    countered: "Te propusieron otro precio",
+    payment_pending: "Lista para pagar",
+    paid: "Pagada",
+    in_progress: "En preparación",
+    delivered: "Entregada",
+    completed: "Completada",
+    declined: "Rechazada",
+    cancelled: "Cancelada",
+    refunded: "Reembolsada",
+  };
+  return labels[status] ?? status;
+}
 
 export default async function ConsumerMePage() {
   const session = await getVerifiedSession();
@@ -96,10 +115,11 @@ export default async function ConsumerMePage() {
               return (
                 <div className="requestState" key={request.id}>
                   <strong>{request.description}</strong>
-                  <p>{request.category} · {request.status}</p>
+                  <p>{request.category} · {requestStatusCopy(request.status)}</p>
                   {request.counter_amount_minor ? <p>Precio propuesto: {formatMoney(request.counter_amount_minor, request.currency)}</p> : request.budget_minor ? <p>Tu presupuesto: {formatMoney(request.budget_minor, request.currency)}</p> : null}
+                  {request.status === "countered" && offer ? <RequestStatusActions requestId={request.id} /> : null}
                   {request.status === "payment_pending" && offer ? <Link className="consumerPrimary" href={`/shop/${offer.slug}`}>Revisar y pagar</Link> : null}
-                  {request.status === "countered" && offer ? <p>La creadora propuso otro precio. Puedes aceptarlo desde la solicitud cuando la capa de respuesta esté habilitada.</p> : null}
+                  {request.status === "delivered" && request.fulfillment_notes ? <p>Entrega: {request.fulfillment_notes}</p> : null}
                 </div>
               );
             })}
