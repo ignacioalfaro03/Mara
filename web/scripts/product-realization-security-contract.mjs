@@ -10,6 +10,7 @@ function assert(condition, message) {
 const core = read("supabase/migrations/20260910190000_mara_product_realization_core.sql");
 const comms = read("supabase/migrations/20260910193000_mara_messaging_requests_memberships.sql");
 const hardening = read("supabase/migrations/20260910200000_mara_product_realization_hardening.sql");
+const paidVisibility = read("supabase/migrations/20260910201000_mara_paid_content_visibility_hardening.sql");
 const checkout = read("app/api/commerce/checkout/route.ts");
 const requestApi = read("app/api/requests/route.ts");
 const creatorRequestApi = read("app/api/creator/requests/route.ts");
@@ -47,6 +48,9 @@ assert(hardening.includes("currency ~ '^[A-Z]{3}$'"), "Strict request currency s
 assert(hardening.includes("commerce_offers_private_buyer_shape_check"), "Private offer buyer-shape constraint missing");
 assert(hardening.includes("visibility = 'private_user' and buyer_user_id = (select auth.uid())"), "Private buyer RLS boundary missing");
 assert(hardening.includes("visibility = 'public'"), "Public offer policy visibility filter missing");
+assert(paidVisibility.includes("visibility in ('public', 'paid_unlock')"), "Paid preview discoverability boundary missing");
+assert(paidVisibility.includes("o.visibility = 'public'"), "Paid content must reject private-user offers");
+assert(!paidVisibility.includes("creator_content_media"), "Paid preview policy must not expose private media metadata");
 
 assert(checkout.includes("getAmountForOffer"), "Checkout no longer derives/validates amount server-side");
 assert(checkout.includes("creator_offer_live_payment_not_authorized"), "Creator live-payment release guard missing");
