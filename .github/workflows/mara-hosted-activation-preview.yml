@@ -19,7 +19,7 @@ env:
 
 jobs:
   preview:
-    if: github.event.pull_request.head.ref == 'execution/mara-real-app-wiring-v1' || github.event.pull_request.head.ref == 'codex/launch-execution-control' || github.event.pull_request.head.ref == 'feature/world-sofi-first-slice' || contains(fromJSON('["release/public-alpha-rc","release/public-alpha-launch-readiness","release/mara-creator-alpha-20260909"]'), github.event.pull_request.head.ref)
+    if: github.event.pull_request.head.ref == 'execution/mara-real-app-wiring-v1' || github.event.pull_request.head.ref == 'codex/launch-execution-control' || github.event.pull_request.head.ref == 'feature/world-sofi-first-slice' || github.event.pull_request.head.ref == 'design/platform-experience-reinvention-v1' || contains(fromJSON('["release/public-alpha-rc","release/public-alpha-launch-readiness","release/mara-creator-alpha-20260909"]'), github.event.pull_request.head.ref)
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -261,11 +261,28 @@ jobs:
           NODE
 
       - name: Install hosted browser proof runtime
-        if: steps.preflight.outputs.ready == 'true' && (github.event.pull_request.head.ref == 'execution/mara-real-app-wiring-v1' || github.event.pull_request.head.ref == 'feature/world-sofi-first-slice' || contains(fromJSON('["release/public-alpha-rc","release/public-alpha-launch-readiness","release/mara-creator-alpha-20260909"]'), github.event.pull_request.head.ref))
+        if: steps.preflight.outputs.ready == 'true' && (github.event.pull_request.head.ref == 'execution/mara-real-app-wiring-v1' || github.event.pull_request.head.ref == 'feature/world-sofi-first-slice' || github.event.pull_request.head.ref == 'design/platform-experience-reinvention-v1' || contains(fromJSON('["release/public-alpha-rc","release/public-alpha-launch-readiness","release/mara-creator-alpha-20260909"]'), github.event.pull_request.head.ref))
         working-directory: web
         run: |
           npm install --no-save --no-package-lock --no-audit --no-fund "playwright@${PLAYWRIGHT_VERSION}"
           npx playwright install --with-deps chromium
+
+      - name: Capture Mara redesign visual proof
+        if: steps.preflight.outputs.ready == 'true' && github.event.pull_request.head.ref == 'design/platform-experience-reinvention-v1'
+        working-directory: web
+        env:
+          BASE_URL: ${{ steps.deploy.outputs.deployment_url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: node scripts/design-preview-proof.mjs
+
+      - name: Upload Mara redesign visual proof
+        if: always() && steps.preflight.outputs.ready == 'true' && github.event.pull_request.head.ref == 'design/platform-experience-reinvention-v1'
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: mara-design-preview-${{ github.event.pull_request.head.sha }}
+          path: web/artifacts/design-preview
+          if-no-files-found: error
+          retention-days: 7
 
       - name: Prove identity and cross-device memory on hosted target
         if: steps.preflight.outputs.ready == 'true' && (github.event.pull_request.head.ref == 'execution/mara-real-app-wiring-v1' || contains(fromJSON('["release/public-alpha-rc","release/public-alpha-launch-readiness","release/mara-creator-alpha-20260909"]'), github.event.pull_request.head.ref))
