@@ -117,7 +117,6 @@ export async function completeMercadoPagoSandboxOAuth(input: {
     clientSecret: input.runtime.clientSecret,
     authorizationCode,
     redirectUri: input.runtime.oauthRedirectUri,
-    state,
     pkceVerifier: session.pkce_verifier,
     now: input.now,
   }, input.runtime.transport, input.runtime.vault);
