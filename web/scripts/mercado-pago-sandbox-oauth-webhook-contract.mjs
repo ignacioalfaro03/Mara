@@ -36,8 +36,8 @@ assert.match(connectRoute, /authentication_required/);
 assert.match(connectRoute, /creator_required/);
 assert.match(callbackRoute, /mercado_pago_sandbox_connected/);
 assert.match(webhookRoute, /processMercadoPagoSandboxWebhook/);
-assert.match(webhookRoute, /materialized: false/);
-assert.doesNotMatch(webhookRoute, /commerce_purchases|commerce_payments|commerce_ledger/);
+assert.match(webhookRoute, /fulfilled: false/);
+assert.doesNotMatch(webhookRoute, /commerce_purchases|commerce_entitlements/);
 
 // Webhook binding resolution stays server-only and returns only opaque references.
 assert.match(webhookStore, /mara_mp_sandbox_ensure_webhook_binding/);
@@ -54,6 +54,7 @@ assert.match(oauthSql, /vault\.decrypted_secrets/);
 assert.match(oauthSql, /delete from vault\.secrets/);
 assert.match(oauthSql, /for update/);
 assert.match(oauthSql, /status = 'consumed'/);
+assert.match(oauthSql, /status = 'expired'/);
 assert.match(oauthSql, /grant execute on function public\.mara_mp_sandbox_oauth_begin[\s\S]*to service_role/);
 assert.match(oauthSql, /grant execute on function public\.mara_mp_sandbox_oauth_consume[\s\S]*to service_role/);
 assert.match(oauthSql, /grant execute on function public\.mara_mp_sandbox_bind_account[\s\S]*to service_role/);
