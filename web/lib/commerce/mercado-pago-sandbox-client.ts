@@ -91,17 +91,12 @@ function credentialBundle(payload: OAuthTokenResponse, now: Date): MercadoPagoCr
   };
 }
 
-function formBody(values: Record<string, string>) {
-  return new URLSearchParams(values).toString();
-}
-
 export async function exchangeMercadoPagoSandboxAuthorization(input: {
   creatorId: string;
   clientId: string;
   clientSecret: string;
   authorizationCode: string;
   redirectUri: string;
-  state: string;
   pkceVerifier: string;
   now?: Date;
 }, transport: MercadoPagoSandboxTransport, vault: MercadoPagoSandboxCredentialVault) {
@@ -115,8 +110,8 @@ export async function exchangeMercadoPagoSandboxAuthorization(input: {
   const response = await transport.request<OAuthTokenResponse>({
     method: "POST",
     url: mercadoPagoTestApiEndpoints().oauthToken,
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: formBody({ ...body, state: input.state }),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
   });
   if (!response.ok) throw new Error(`mercado_pago_sandbox_oauth_exchange_failed:${response.status}`);
   assertSandboxCredentialResponse(response.data);
@@ -143,8 +138,8 @@ export async function refreshMercadoPagoSandboxCredential(input: {
   const response = await transport.request<OAuthTokenResponse>({
     method: "POST",
     url: mercadoPagoTestApiEndpoints().oauthToken,
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: formBody(body),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
   });
   if (!response.ok) throw new Error(`mercado_pago_sandbox_oauth_refresh_failed:${response.status}`);
   const credential = credentialBundle(response.data, input.now ?? new Date());
