@@ -57,6 +57,9 @@ begin
   if p_processor_fee_minor < 0 then
     raise exception 'invalid_processor_fee_minor';
   end if;
+  if p_processor_fee_minor > p_amount_minor then
+    raise exception 'processor_fee_exceeds_gross';
+  end if;
   if p_currency !~ '^[A-Z]{3}$' then
     raise exception 'invalid_currency';
   end if;
