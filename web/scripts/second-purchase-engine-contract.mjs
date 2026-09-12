@@ -11,6 +11,10 @@ const compiled = ts.transpileModule(source, {
 const moduleUrl = `data:text/javascript;base64,${Buffer.from(compiled).toString("base64")}`;
 const { buildSecondPurchaseOpportunities } = await import(moduleUrl);
 
+const actionSource = fs.readFileSync(path.join(process.cwd(), "lib/creator-actions.ts"), "utf8");
+assert.match(actionSource, /second_purchase_offer:\s*"Activa una segunda compra relevante\."/);
+assert.doesNotMatch(actionSource, /NON_ACKNOWLEDGEABLE_ACTIONS[^\n]*second_purchase_offer/);
+
 const now = new Date("2026-09-12T12:00:00.000Z");
 const customer = (overrides = {}) => ({
   user_id: "11111111-1111-4111-8111-111111111111",
@@ -20,6 +24,7 @@ const customer = (overrides = {}) => ({
   creator_gmv_minor: 1500000,
   last_purchase_at: "2026-09-01T12:00:00.000Z",
   last_fulfillment_at: "2026-09-02T12:00:00.000Z",
+  last_creator_action_at: null,
   ...overrides,
 });
 
@@ -30,6 +35,25 @@ assert.equal(ready[0].priority, "high");
 assert.equal(ready[0].action, "second_purchase_offer");
 assert.equal(ready[0].daysSinceLastPurchase, 11);
 assert.equal(ready[0].evidence.pendingFulfillment, false);
+
+const cooldown = buildSecondPurchaseOpportunities([
+  customer({ last_creator_action_at: "2026-09-10T12:00:00.000Z" }),
+], [], now);
+assert.equal(cooldown.length, 1);
+assert.equal(cooldown[0].stage, "cooldown");
+assert.equal(cooldown[0].action, "wait");
+assert.equal(cooldown[0].priority, "low");
+
+const expiredCooldown = buildSecondPurchaseOpportunities([
+  customer({ last_creator_action_at: "2026-09-03T12:00:00.000Z" }),
+], [], now);
+assert.equal(expiredCooldown[0].stage, "ready");
+assert.equal(expiredCooldown[0].action, "second_purchase_offer");
+
+const actionBeforePurchaseDoesNotSuppress = buildSecondPurchaseOpportunities([
+  customer({ last_creator_action_at: "2026-08-25T12:00:00.000Z" }),
+], [], now);
+assert.equal(actionBeforePurchaseDoesNotSuppress[0].stage, "ready");
 
 const tooRecent = buildSecondPurchaseOpportunities([
   customer({ last_purchase_at: "2026-09-10T12:00:00.000Z", last_fulfillment_at: "2026-09-11T12:00:00.000Z" }),
