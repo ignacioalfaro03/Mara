@@ -6,11 +6,25 @@ import ts from "typescript";
 
 const sourcePath = path.join(process.cwd(), "lib/commerce/mercado-pago-test.ts");
 const source = fs.readFileSync(sourcePath, "utf8");
+const clientSource = fs.readFileSync(path.join(process.cwd(), "lib/commerce/mercado-pago-sandbox-client.ts"), "utf8");
 
-// Sandbox primitives must remain inert: no credentials, env reads or network calls.
+// Sandbox primitives must remain inert: no embedded credentials, env reads or direct network calls.
 assert.doesNotMatch(source, /process\.env/);
 assert.doesNotMatch(source, /\bfetch\s*\(/);
 assert.doesNotMatch(source, /MARA_PAYMENT_PROVIDER/);
+assert.doesNotMatch(clientSource, /process\.env/);
+assert.doesNotMatch(clientSource, /\bfetch\s*\(/);
+assert.doesNotMatch(clientSource, /MARA_PAYMENT_PROVIDER/);
+assert.match(clientSource, /MercadoPagoSandboxTransport/);
+assert.match(clientSource, /MercadoPagoSandboxCredentialVault/);
+assert.match(clientSource, /exchangeMercadoPagoSandboxAuthorization/);
+assert.match(clientSource, /refreshMercadoPagoSandboxCredential/);
+assert.match(clientSource, /createMercadoPagoSandboxCheckout/);
+assert.match(clientSource, /fetchMercadoPagoSandboxPayment/);
+assert.match(clientSource, /refundMercadoPagoSandboxPayment/);
+assert.match(clientSource, /mercado_pago_sandbox_returned_live_credential/);
+assert.match(clientSource, /Content-Type": "application\/x-www-form-urlencoded"/);
+assert.match(clientSource, /Authorization: `Bearer \$\{credential\.accessToken\}`/);
 
 const compiled = ts.transpileModule(source, {
   compilerOptions: { module: ts.ModuleKind.ES2022, target: ts.ScriptTarget.ES2022 },
