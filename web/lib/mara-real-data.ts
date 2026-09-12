@@ -97,6 +97,13 @@ export async function readUserWorldHistory(accessToken: string, userId: string, 
   return result.ok ? result.data : [];
 }
 
+function rankNextActionPriority(priority: string | null | undefined) {
+  if (priority === "high") return 0;
+  if (priority === "medium") return 1;
+  if (priority === "low") return 2;
+  return 3;
+}
+
 export async function readCreatorDashboard(accessToken: string, creatorId: string) {
   const customerPath = `creator_customer_summary?select=*&creator_id=eq.${encodeURIComponent(creatorId)}&order=last_activity_at.desc`;
   const pendingPurchasePath = `commerce_purchases?select=*&creator_id=eq.${encodeURIComponent(creatorId)}&status=eq.succeeded&fulfilled_at=is.null&order=created_at.asc`;
@@ -110,11 +117,31 @@ export async function readCreatorDashboard(accessToken: string, creatorId: strin
   ]);
 
   const secondPurchaseOpportunities = buildSecondPurchaseOpportunities(customers, pendingPurchases);
+  const derivedUserIds = new Set(secondPurchaseOpportunities.map((item) => item.userId));
+  const derivedNextActions = secondPurchaseOpportunities.map((item) => ({
+    creator_id: creatorId,
+    user_id: item.userId,
+    action: item.action,
+    reason: item.reason,
+    priority: item.priority,
+    evidence: {
+      source: "second_purchase_engine_v1",
+      stage: item.stage,
+      score: item.score,
+      days_since_last_purchase: item.daysSinceLastPurchase,
+      ...item.evidence,
+    },
+  } as NextBestActionRow));
+  const persistedNextActions = nextActions.ok ? nextActions.data : [];
+  const combinedNextActions = [
+    ...derivedNextActions,
+    ...persistedNextActions.filter((item) => !item.user_id || !derivedUserIds.has(item.user_id)),
+  ].sort((a, b) => rankNextActionPriority(a.priority) - rankNextActionPriority(b.priority));
 
   return {
     customers,
     opportunities: opportunities.ok ? opportunities.data : [],
-    nextActions: nextActions.ok ? nextActions.data : [],
+    nextActions: combinedNextActions,
     secondPurchaseOpportunities,
     purchases: pendingPurchases,
     offers: offers.ok ? offers.data : [],
