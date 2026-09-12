@@ -72,8 +72,10 @@ create table if not exists public.commerce_refunds (
 
 create table if not exists public.creator_payouts (
   id uuid primary key default extensions.gen_random_uuid(),
-  creator_id uuid not null references public.creators(id) on delete restrict,
-  payment_account_creator_id uuid not null references public.creator_payment_accounts(creator_id) on delete restrict,
+  -- One creator maps to one provider payment account in V1. Referencing the
+  -- payment account directly makes it impossible to create a payout for creator A
+  -- while accidentally attaching creator B's provider account.
+  creator_id uuid not null references public.creator_payment_accounts(creator_id) on delete restrict,
   provider text not null check (char_length(provider) between 2 and 80),
   provider_payout_id text null check (provider_payout_id is null or char_length(provider_payout_id) between 2 and 255),
   amount_minor bigint not null check (amount_minor > 0),
