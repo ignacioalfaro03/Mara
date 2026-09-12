@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AuctionBidForm } from "@/components/auction-bid-form";
+import { getVerifiedSession } from "@/lib/auth-session";
 import { publicAuctionProjection, type CreatorAuctionRow } from "@/lib/commerce/auction-runtime";
-import { formatMoney, readWorld } from "@/lib/mara-real-data";
+import { formatMoney, readWorld, type OfferRow } from "@/lib/mara-real-data";
 import { productCapability } from "@/lib/product-realization";
 import { serviceRest } from "@/lib/supabase/server-rest";
 import styles from "@/app/real-product.module.css";
@@ -15,14 +16,28 @@ export default async function CreatorAuctionsPage({ params }: { params: Promise<
   if (!profile || profile.status !== "active" || profile.visibility !== "public") notFound();
 
   const enabled = productCapability("auctions");
-  const result = enabled
-    ? await serviceRest<CreatorAuctionRow[]>(
-        `creator_auctions?select=*&world_id=eq.${encodeURIComponent(profile.id)}&status=in.(scheduled,active,ended)&order=ends_at.asc&limit=50`,
-      )
+  const [session, result] = await Promise.all([
+    getVerifiedSession(),
+    enabled
+      ? serviceRest<CreatorAuctionRow[]>(
+          `creator_auctions?select=*&world_id=eq.${encodeURIComponent(profile.id)}&status=in.(scheduled,active,ended)&order=ends_at.asc&limit=50`,
+        )
+      : Promise.resolve(null),
+  ]);
+  const currentUserId = session.ok ? session.user.id : null;
+  const auctionRows = result?.ok ? result.data : [];
+
+  const winnerOfferIds = auctionRows
+    .filter((auction) => currentUserId && auction.winner_user_id === currentUserId && auction.offer_id)
+    .map((auction) => auction.offer_id as string);
+  const winnerOffersResult = winnerOfferIds.length > 0
+    ? await serviceRest<OfferRow[]>(`commerce_offers?select=id,slug,status,buyer_user_id&status=eq.active&id=in.(${winnerOfferIds.map(encodeURIComponent).join(",")})`)
     : null;
-  const auctions = result?.ok
-    ? result.data.map((auction) => publicAuctionProjection(auction))
-    : [];
+  const winnerOfferSlugById = new Map(
+    winnerOffersResult?.ok ? winnerOffersResult.data.map((offer) => [offer.id, offer.slug] as const) : [],
+  );
+
+  const auctions = auctionRows.map((row) => ({ row, public: publicAuctionProjection(row) }));
 
   return (
     <main className={styles.shell}>
@@ -48,8 +63,10 @@ export default async function CreatorAuctionsPage({ params }: { params: Promise<
           </section>
         ) : (
           <section className={styles.grid}>
-            {auctions.map((auction) => {
+            {auctions.map(({ row, public: auction }) => {
               const returnTo = `/c/${slug}/auctions`;
+              const winnerOfferSlug = row.offer_id ? winnerOfferSlugById.get(row.offer_id) : null;
+              const isWinner = Boolean(currentUserId && row.winner_user_id === currentUserId);
               return (
                 <article className={styles.card} key={auction.id}>
                   <p className={styles.eyebrow}>AUCTION · {auction.status.toUpperCase()}</p>
@@ -70,8 +87,14 @@ export default async function CreatorAuctionsPage({ params }: { params: Promise<
                       minimumIncrementMinor={auction.minimumIncrementMinor}
                       returnTo={returnTo}
                     />
+                  ) : auction.status === "ended" && isWinner && winnerOfferSlug ? (
+                    <div className={styles.stack}>
+                      <p className={styles.success}>Ganaste esta subasta.</p>
+                      <Link className={styles.primaryButton} href={`/c/${slug}/offers/${winnerOfferSlug}`}>Completar adjudicación</Link>
+                      <p className={styles.small}>La puja ganadora todavía no es un pago. El checkout actual de creadoras continúa restringido a `signed_test`.</p>
+                    </div>
                   ) : auction.status === "ended" ? (
-                    <p className={styles.empty}>Subasta cerrada. La puja ganadora todavía no equivale a un pago.</p>
+                    <p className={styles.empty}>{row.winner_user_id ? "Subasta cerrada. Si ganaste, inicia sesión con la cuenta que realizó la puja para ver tu adjudicación." : "Subasta cerrada sin ganador."}</p>
                   ) : (
                     <p className={styles.empty}>Todavía no acepta pujas.</p>
                   )}
@@ -85,7 +108,7 @@ export default async function CreatorAuctionsPage({ params }: { params: Promise<
           <article className={`${styles.card} ${styles.wide}`}>
             <p className={styles.eyebrow}>REGLAS</p>
             <h2>Sin pay-per-bid. Sin cobros escondidos.</h2>
-            <p className={styles.muted}>Mara no cobra por pujar. Si existe ganador, la conversión a checkout será un paso separado, explícito y server-authoritative cuando el sistema de pagos esté autorizado.</p>
+            <p className={styles.muted}>Mara no cobra por pujar. Si existe ganador, Mara crea una adjudicación privada por el monto ganador y vuelve a validar ganador, oferta, subasta y monto antes de crear el checkout. Los pagos reales siguen bloqueados.</p>
           </article>
         </section>
       </div>
