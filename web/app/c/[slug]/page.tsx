@@ -27,6 +27,9 @@ export default async function PublicCreatorStorefrontPage({ params }: { params: 
           <p className={styles.eyebrow}>CREATOR STOREFRONT</p>
           <h1>{profile.display_name}</h1>
           <p>{profile.description || "Ofertas disponibles directamente desde este creador."}</p>
+          <div className={styles.actions}>
+            <Link className={styles.secondary} href={`/c/${slug}/request`}>Pedir algo</Link>
+          </div>
         </header>
 
         <h2 className={styles.sectionTitle}>Disponible</h2>
@@ -48,9 +51,18 @@ export default async function PublicCreatorStorefrontPage({ params }: { params: 
 
         <section className={styles.grid}>
           <article className={`${styles.card} ${styles.wide}`}>
+            <p className={styles.eyebrow}>¿NO VES LO QUE BUSCAS?</p>
+            <h2>También puedes proponer una compra.</h2>
+            <p className={styles.muted}>Dile a {profile.display_name} qué te gustaría recibir y cuánto pagarías si quieres. La solicitud no cobra nada por sí sola y la creadora mantiene el control de aceptar, rechazar o contraofertar.</p>
+            <Link className={styles.secondary} href={`/c/${slug}/request`}>Crear solicitud</Link>
+          </article>
+        </section>
+
+        <section className={styles.grid}>
+          <article className={`${styles.card} ${styles.wide}`}>
             <p className={styles.eyebrow}>MARA</p>
             <h2>Compra clara. Relación comercial persistente.</h2>
-            <p className={styles.muted}>Mara registra las compras con tu cuenta para que puedas volver a ellas y para que el creador gestione su relación comercial contigo dentro de los límites de privacidad aplicables.</p>
+            <p className={styles.muted}>Mara registra las compras e interacciones comerciales con tu cuenta para que puedas volver a ellas y para que el creador gestione su relación contigo dentro de los límites de privacidad aplicables.</p>
           </article>
         </section>
       </div>
