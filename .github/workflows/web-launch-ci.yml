@@ -97,6 +97,12 @@ jobs:
       - name: Verify payment-backed fulfillment boundary
         run: npm run payment-backed-fulfillment:contract
 
+      - name: Verify payment refund materialization boundary
+        run: npm run payment-refund-materialization:contract
+
+      - name: Verify payment reconciliation snapshot boundary
+        run: npm run payment-reconciliation-snapshot:contract
+
       - name: Verify second purchase engine behavior
         run: npm run second-purchase:contract
 
