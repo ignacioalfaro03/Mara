@@ -1,37 +1,41 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { track } from "@/lib/analytics";
-import styles from "@/app/storefront.module.css";
 
-const REQUEST_PREFIX = "mara_storefront_checkout_v1:";
+type CheckoutPayload = {
+  checkoutUrl?: string;
+  error?: string;
+  paymentConfigured?: boolean;
+};
+
+type Props = {
+  offerSlug: string;
+  offerType: string;
+  currency: string;
+  returnTo: string;
+};
 
 function requestIdFor(offerSlug: string) {
-  try {
-    const key = `${REQUEST_PREFIX}${offerSlug}`;
-    const existing = window.sessionStorage.getItem(key);
-    if (existing) return existing;
-    const next = crypto.randomUUID();
-    window.sessionStorage.setItem(key, next);
-    return next;
-  } catch {
-    return crypto.randomUUID();
-  }
+  const key = `mara_storefront_checkout_${offerSlug}`;
+  const existing = window.sessionStorage.getItem(key);
+  if (existing) return existing;
+  const next = crypto.randomUUID();
+  window.sessionStorage.setItem(key, next);
+  return next;
 }
 
-export function StorefrontCheckoutButton({ offerSlug, label }: { offerSlug: string; label: string }) {
+export function StorefrontCheckoutButton({ offerSlug, offerType, currency, returnTo }: Props) {
   const [busy, setBusy] = useState(false);
-  const [notice, setNotice] = useState("");
-  const [needsAccount, setNeedsAccount] = useState(false);
+  const [message, setMessage] = useState("");
+  const [authRequired, setAuthRequired] = useState(false);
 
-  async function checkout() {
+  async function beginCheckout() {
     setBusy(true);
-    setNotice("");
-    setNeedsAccount(false);
-
-    track("offer_clicked", { surface: "storefront", offer_slug: offerSlug, offer_type: "fixed_unlock" });
-    track("commerce_checkout_started", { surface: "storefront", offer_slug: offerSlug, offer_type: "fixed_unlock" });
+    setMessage("");
+    setAuthRequired(false);
+    track("offer_clicked", { surface: "fan_web_offer", offer_slug: offerSlug, offer_type: offerType });
+    track("commerce_checkout_started", { surface: "fan_web_offer", offer_slug: offerSlug, offer_type: offerType, currency });
 
     try {
       const response = await fetch("/api/commerce/checkout", {
@@ -44,46 +48,44 @@ export function StorefrontCheckoutButton({ offerSlug, label }: { offerSlug: stri
           clientRequestId: requestIdFor(offerSlug),
         }),
       });
-
-      const result = (await response.json().catch(() => ({}))) as { checkoutUrl?: string; error?: string };
+      const payload = (await response.json().catch(() => ({}))) as CheckoutPayload;
 
       if (response.status === 401) {
-        setNeedsAccount(true);
-        setNotice("Tu compra necesita una cuenta para que el acceso quede guardado y no dependa de este navegador.");
+        setAuthRequired(true);
+        setMessage("Entra o crea una cuenta para continuar con esta compra.");
         return;
       }
-
-      if (!response.ok || !result.checkoutUrl) {
-        const paymentPending = result.error === "payment_provider_not_configured";
-        setNotice(
-          paymentPending
-            ? "El producto está listo en la tienda, pero el cobro real sigue desactivado hasta aprobar el procesador."
-            : "No pude iniciar el checkout. No se registró ninguna compra.",
-        );
-        track("commerce_checkout_blocked", {
-          surface: "storefront",
-          offer_slug: offerSlug,
-          offer_type: "fixed_unlock",
-          reason: result.error ?? "unknown",
-        });
+      if (!response.ok) {
+        if (payload.error === "payment_provider_not_configured" || payload.error === "creator_offer_live_payment_not_authorized") {
+          setMessage("Esta oferta todavía no puede cobrar dinero real. Mara mantiene el checkout cerrado hasta que el proveedor de pagos esté autorizado.");
+          return;
+        }
+        setMessage("No pudimos iniciar el checkout. Inténtalo nuevamente.");
         return;
       }
-
-      window.location.assign(result.checkoutUrl);
+      if (!payload.checkoutUrl) {
+        setMessage("El checkout no devolvió una URL segura de pago.");
+        return;
+      }
+      window.location.assign(payload.checkoutUrl);
     } catch {
-      setNotice("No pude conectar con checkout. No se registró ninguna compra.");
+      setMessage("No pudimos conectar con el checkout. Inténtalo nuevamente.");
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <div className={styles.buttonStack}>
-      <button type="button" className={styles.primaryButton} disabled={busy} onClick={checkout}>
-        {busy ? "Abriendo checkout…" : label}
+    <div>
+      <button type="button" className="storefrontPrimaryButton" onClick={() => void beginCheckout()} disabled={busy}>
+        {busy ? "Preparando checkout…" : "Comprar"}
       </button>
-      {needsAccount ? <Link className={styles.secondaryButton} href="/auth">Crear cuenta o entrar</Link> : null}
-      {notice ? <p className={styles.notice} role="status">{notice}</p> : null}
+      {authRequired ? (
+        <p className="storefrontInlineAction">
+          <a href={`/auth?returnTo=${encodeURIComponent(returnTo)}`}>Entrar o crear cuenta</a>
+        </p>
+      ) : null}
+      {message ? <p className="storefrontStatus" role="status">{message}</p> : null}
     </div>
   );
 }
