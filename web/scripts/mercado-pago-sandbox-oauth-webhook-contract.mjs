@@ -36,7 +36,8 @@ assert.match(connectRoute, /authentication_required/);
 assert.match(connectRoute, /creator_required/);
 assert.match(callbackRoute, /mercado_pago_sandbox_connected/);
 assert.match(webhookRoute, /processMercadoPagoSandboxWebhook/);
-assert.match(webhookRoute, /fulfilled: false/);
+assert.match(webhookRoute, /getPaymentBackedFulfillmentPolicy/);
+assert.match(webhookRoute, /fulfillMaterializedPayment/);
 assert.doesNotMatch(webhookRoute, /commerce_purchases|commerce_entitlements/);
 
 // Webhook binding resolution stays server-only and returns only opaque references.
