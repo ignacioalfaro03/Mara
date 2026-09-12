@@ -13,7 +13,19 @@
 -- - ledger journal is append-only;
 -- - browser roles receive no financial write grants;
 -- - all money uses positive minor-unit bigint amounts;
--- - double-entry journal lines carry debit/credit direction.
+-- - double-entry journal lines carry debit/credit direction;
+-- - creator seller identity + Mara fee are frozen on the checkout intent before
+--   redirecting a buyer to any future live provider.
+
+-- Existing checkout intents predate the Revenue OS payment ledger. The future
+-- activation migration must add immutable financial snapshots for live-provider
+-- checkouts. Nullable columns preserve historical/signed-test compatibility; the
+-- live adapter must require both snapshots before provider checkout creation.
+alter table public.commerce_checkout_intents
+  add column if not exists provider_account_id_snapshot text null
+    check (provider_account_id_snapshot is null or char_length(provider_account_id_snapshot) between 2 and 255),
+  add column if not exists platform_fee_minor bigint null
+    check (platform_fee_minor is null or (platform_fee_minor >= 0 and platform_fee_minor <= amount_minor));
 
 create table if not exists public.creator_payment_accounts (
   creator_id uuid primary key references public.creators(id) on delete cascade,
@@ -27,7 +39,9 @@ create table if not exists public.creator_payment_accounts (
   metadata jsonb not null default '{}'::jsonb check (jsonb_typeof(metadata) = 'object'),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  unique (provider, provider_account_id)
+  unique (provider, provider_account_id),
+  unique (creator_id, provider),
+  unique (creator_id, provider, provider_account_id)
 );
 
 create table if not exists public.commerce_payments (
@@ -35,8 +49,9 @@ create table if not exists public.commerce_payments (
   checkout_intent_id uuid not null references public.commerce_checkout_intents(id) on delete restrict,
   purchase_id uuid null unique references public.commerce_purchases(id) on delete restrict,
   user_id uuid not null references auth.users(id) on delete restrict,
-  creator_id uuid null references public.creators(id) on delete restrict,
+  creator_id uuid not null,
   provider text not null check (char_length(provider) between 2 and 80),
+  provider_account_id text not null check (char_length(provider_account_id) between 2 and 255),
   provider_payment_id text not null check (char_length(provider_payment_id) between 2 and 255),
   amount_minor bigint not null check (amount_minor > 0),
   currency text not null check (currency ~ '^[A-Z]{3}$'),
@@ -49,14 +64,16 @@ create table if not exists public.commerce_payments (
   metadata jsonb not null default '{}'::jsonb check (jsonb_typeof(metadata) = 'object'),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  unique (provider, provider_payment_id)
+  unique (provider, provider_payment_id),
+  foreign key (creator_id, provider, provider_account_id)
+    references public.creator_payment_accounts(creator_id, provider, provider_account_id)
+    on delete restrict
 );
 
 create table if not exists public.commerce_refunds (
   id uuid primary key default extensions.gen_random_uuid(),
   payment_id uuid not null references public.commerce_payments(id) on delete restrict,
   purchase_id uuid not null references public.commerce_purchases(id) on delete restrict,
-  creator_id uuid null references public.creators(id) on delete restrict,
   provider text not null check (char_length(provider) between 2 and 80),
   provider_refund_id text not null check (char_length(provider_refund_id) between 2 and 255),
   amount_minor bigint not null check (amount_minor > 0),
@@ -72,10 +89,7 @@ create table if not exists public.commerce_refunds (
 
 create table if not exists public.creator_payouts (
   id uuid primary key default extensions.gen_random_uuid(),
-  -- One creator maps to one provider payment account in V1. Referencing the
-  -- payment account directly makes it impossible to create a payout for creator A
-  -- while accidentally attaching creator B's provider account.
-  creator_id uuid not null references public.creator_payment_accounts(creator_id) on delete restrict,
+  creator_id uuid not null,
   provider text not null check (char_length(provider) between 2 and 80),
   provider_payout_id text null check (provider_payout_id is null or char_length(provider_payout_id) between 2 and 255),
   amount_minor bigint not null check (amount_minor > 0),
@@ -87,7 +101,10 @@ create table if not exists public.creator_payouts (
   failed_at timestamptz null,
   metadata jsonb not null default '{}'::jsonb check (jsonb_typeof(metadata) = 'object'),
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  foreign key (creator_id, provider)
+    references public.creator_payment_accounts(creator_id, provider)
+    on delete restrict
 );
 
 create unique index if not exists creator_payout_provider_id_uniq
