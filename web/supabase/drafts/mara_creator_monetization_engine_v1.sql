@@ -15,9 +15,9 @@
 --
 -- New in this draft:
 -- - offer mechanism vocabulary
--- - creator auctions + atomic service-only bid RPC
+-- - creator auctions + atomic service-only bid/finalization RPCs
 --
--- Browser clients never receive auction mutation grants.
+-- Browser clients never receive direct auction-table or bid mutation grants.
 
 begin;
 
@@ -38,6 +38,8 @@ where mechanism is null;
 alter table public.commerce_offers
   alter column mechanism set default 'FIXED_PRICE';
 
+alter table public.commerce_offers
+  drop constraint if exists commerce_offers_mechanism_v1_check;
 alter table public.commerce_offers
   add constraint commerce_offers_mechanism_v1_check
   check (mechanism in (
@@ -120,6 +122,8 @@ create index if not exists creator_auction_bids_creator_user_idx
   on public.creator_auction_bids (creator_id, user_id, placed_at desc);
 
 alter table public.creator_auctions
+  drop constraint if exists creator_auctions_winning_bid_fk;
+alter table public.creator_auctions
   add constraint creator_auctions_winning_bid_fk
   foreign key (winning_bid_id) references public.creator_auction_bids(id) on delete set null
   not valid;
@@ -127,35 +131,18 @@ alter table public.creator_auctions
 alter table public.creator_auctions enable row level security;
 alter table public.creator_auction_bids enable row level security;
 
+-- Both tables are server-only. Public pages receive a deliberately sanitized
+-- projection from Next.js server code so bidder/winner user IDs never become a
+-- generic Data API surface.
 revoke all on table public.creator_auctions from anon, authenticated;
 revoke all on table public.creator_auction_bids from anon, authenticated;
-grant select on table public.creator_auctions to anon, authenticated;
 grant all on table public.creator_auctions to service_role;
 grant all on table public.creator_auction_bids to service_role;
 
--- Public reads expose only the auction-level market state. Individual bid rows are
--- service-only so a public client cannot enumerate bidder identities or bid history.
-create policy creator_auctions_public_select_v1
-  on public.creator_auctions
-  for select
-  to anon, authenticated
-  using (
-    status in ('scheduled','active','ended')
-    and exists (
-      select 1
-      from public.creator_worlds w
-      where w.id = creator_auctions.world_id
-        and w.creator_id = creator_auctions.creator_id
-        and w.status = 'active'
-        and w.visibility = 'public'
-    )
-  );
-
--- Atomic bid placement. This function is intentionally in the exposed `public`
--- schema ONLY so PostgREST can call it with the server credential. It is SECURITY
--- INVOKER, not DEFINER, and EXECUTE is revoked from browser roles. The service role
--- is the sole caller and the Next.js route authenticates the user before passing
--- p_user_id. This avoids exposing the private schema through the Data API.
+-- Atomic bid placement. The function lives in public only so PostgREST can expose
+-- it to server code. It is SECURITY INVOKER, and EXECUTE is revoked from browser
+-- roles. The service role is the only caller; the Next.js route authenticates the
+-- end user and forwards that verified user id.
 create or replace function public.place_creator_auction_bid_v1(
   p_auction_id uuid,
   p_creator_id uuid,
@@ -199,6 +186,8 @@ begin
     raise exception 'auction_not_found';
   end if;
 
+  -- Idempotent replay returns the previously accepted bid without incrementing
+  -- bid_count or extending the auction a second time.
   select b.id into v_bid_id
   from public.creator_auction_bids b
   where b.auction_id = p_auction_id
@@ -212,7 +201,7 @@ begin
     return;
   end if;
 
-  if v_auction.status <> 'active' then
+  if v_auction.status not in ('scheduled','active') then
     raise exception 'auction_not_active';
   end if;
 
@@ -269,7 +258,8 @@ begin
   end if;
 
   update public.creator_auctions
-  set current_bid_minor = p_amount_minor,
+  set status = 'active',
+      current_bid_minor = p_amount_minor,
       current_bidder_user_id = p_user_id,
       winning_bid_id = v_bid_id,
       bid_count = bid_count + 1,
@@ -286,6 +276,75 @@ revoke execute on function public.place_creator_auction_bid_v1(uuid, uuid, uuid,
 grant execute on function public.place_creator_auction_bid_v1(uuid, uuid, uuid, bigint, text, timestamptz)
   to service_role;
 
+-- Finalization is also service-only. It converts observed auction state into a
+-- winner signal, but deliberately DOES NOT create checkout, payment or purchase.
+create or replace function public.finalize_creator_auction_v1(
+  p_auction_id uuid,
+  p_creator_id uuid,
+  p_finalized_at timestamptz default now()
+)
+returns table (
+  finalized_status text,
+  winner_user_id uuid,
+  winning_bid_id uuid,
+  winning_amount_minor bigint
+)
+language plpgsql
+security invoker
+set search_path = ''
+as $$
+declare
+  v_auction public.creator_auctions%rowtype;
+  v_bid public.creator_auction_bids%rowtype;
+begin
+  select * into v_auction
+  from public.creator_auctions
+  where id = p_auction_id
+    and creator_id = p_creator_id
+  for update;
+
+  if not found then
+    raise exception 'auction_not_found';
+  end if;
+
+  if v_auction.status = 'cancelled' then
+    raise exception 'auction_cancelled';
+  end if;
+
+  if v_auction.status <> 'ended' and p_finalized_at < v_auction.ends_at then
+    raise exception 'auction_not_ended';
+  end if;
+
+  if v_auction.winning_bid_id is not null then
+    select * into v_bid
+    from public.creator_auction_bids
+    where id = v_auction.winning_bid_id
+      and auction_id = v_auction.id
+    for update;
+  end if;
+
+  if v_bid.id is not null then
+    update public.creator_auction_bids
+    set status = 'won'
+    where id = v_bid.id;
+  end if;
+
+  update public.creator_auctions
+  set status = 'ended',
+      winner_user_id = v_bid.user_id,
+      updated_at = now()
+  where id = v_auction.id;
+
+  return query
+  select 'ended'::text, v_bid.user_id, v_bid.id, v_bid.amount_minor;
+end;
+$$;
+
+revoke execute on function public.finalize_creator_auction_v1(uuid, uuid, timestamptz)
+  from public, anon, authenticated;
+grant execute on function public.finalize_creator_auction_v1(uuid, uuid, timestamptz)
+  to service_role;
+
 -- ---------------------------------------------------------------------------
 -- 3. Taste Engine reuse — no duplicate table
 -- ---------------------------------------------------------------------------
@@ -294,12 +353,6 @@ grant execute on function public.place_creator_auction_bid_v1(uuid, uuid, uuid, 
 -- private-alpha foundation migration. Keep Taste Engine writes on that table.
 -- Current API groups are explicit binary choices (format, personalization,
 -- length, offer style). Do not create a second creator_taste_choices silo.
---
--- The existing table already enforces:
--- - authenticated user ownership;
--- - idempotent client_event_id per user;
--- - creator/world composite scope when signal_scope = 'creator_world';
--- - literal selected/alternative options rather than inferred traits.
 
 -- ---------------------------------------------------------------------------
 -- 4. Explicit reuse notes / no duplicate tables
@@ -309,10 +362,10 @@ comment on column public.commerce_offers.mechanism is
   'Creator Commerce mechanism. WISH reuses commerce_goals/contributions; CUSTOM_REQUEST reuses creator_requests; PAID_INTERACTION reuses creator threads/messages/content plus canonical offers/purchases.';
 
 comment on table public.creator_auctions is
-  'Creator-scoped auction market state. A bid is free and is not a purchase; only the eventual winner may enter canonical checkout.';
+  'Server-only creator auction state. Public UI receives a sanitized server projection; bidder/winner IDs are never a direct browser table surface.';
 
 comment on table public.creator_auction_bids is
-  'Service-only observed willingness-to-pay events. Bid rows are not public customer history and are not settled money.';
+  'Service-only observed willingness-to-pay events. A bid is free, not settled money and not a purchase.';
 
 comment on table public.preference_events is
   'Shared explicit preference-event stream. Creator Taste Engine uses creator_world scope; do not use it for psychographic/vulnerability profiling.';
