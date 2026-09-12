@@ -6,7 +6,7 @@ import type { CreateCheckoutInput, ProviderPaymentSnapshot } from "@/lib/commerc
 // Importing it must never make Mercado Pago executable in production.
 
 const MP_API_BASE = "https://api.mercadopago.com";
-const MP_AUTH_BASE = "https://auth.mercadopago.cl/authorization";
+const MP_AUTH_BASE = "https://auth.mercadopago.com/authorization";
 
 export type MercadoPagoTestOAuthInput = {
   clientId: string;
