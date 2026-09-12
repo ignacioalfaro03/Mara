@@ -9,6 +9,7 @@ const paymentConfig = read("lib/commerce/config.ts");
 const checkout = read("app/api/commerce/checkout/route.ts");
 const ledgerDraft = read("supabase/drafts/mara_payment_ledger_v1.sql");
 const ledgerDoc = read("../docs/architecture/PAYMENTS_LEDGER.md");
+const mercadoPagoAdapter = read("../docs/architecture/MERCADO_PAGO_SPLIT_ADAPTER.md");
 
 // Real-money execution must remain impossible until a dedicated provider adapter is reviewed.
 assert.match(paymentConfig, /provider:\s*"signed_test"/);
@@ -21,6 +22,11 @@ assert.match(checkout, /payment_provider_not_implemented/);
 assert.match(ledgerDoc, /Primary integration candidate for the Chile MVP: \*\*Mercado Pago Split Payments 1:1\*\*/);
 assert.match(ledgerDoc, /NOT PAYMENT READY/);
 assert.match(ledgerDoc, /founder explicitly authorizes real payments/);
+assert.match(mercadoPagoAdapter, /DESIGN ONLY \/ NON-EXECUTABLE/);
+assert.match(mercadoPagoAdapter, /Do not add `mercado_pago_split` to `PaymentRuntime`/);
+assert.match(mercadoPagoAdapter, /OAuth state \+ PKCE/);
+assert.match(mercadoPagoAdapter, /fetches payment directly from provider API/);
+assert.match(mercadoPagoAdapter, /Tokens are never stored in `creator_payment_accounts\.metadata`/);
 
 // Financial truth must be richer than commerce_purchases alone.
 for (const table of [
@@ -35,6 +41,13 @@ for (const table of [
   assert.match(ledgerDraft, new RegExp(`alter table public\\.${table} enable row level security`));
   assert.match(ledgerDraft, new RegExp(`revoke all on table public\\.${table} from anon, authenticated`));
 }
+
+// A payout cannot point at a different creator's payment account.
+assert.match(
+  ledgerDraft,
+  /creator_id uuid not null references public\.creator_payment_accounts\(creator_id\) on delete restrict/,
+);
+assert.doesNotMatch(ledgerDraft, /payment_account_creator_id/);
 
 // Provider identities and transaction idempotency must be unique.
 assert.match(ledgerDraft, /unique \(provider, provider_payment_id\)/);
