@@ -62,6 +62,36 @@ The runtime:
 
 The contract ensures the runtime remains production-blocked, Vault remains draft-only, browser grants remain revoked and the server adapter cannot silently drift toward public secrets or secret-bearing logs.
 
+## Read-only compatibility proof
+
+The connected Supabase project was inspected without DDL or secret mutation.
+
+Confirmed:
+
+- extension `supabase_vault` is installed in schema `vault`;
+- `vault.create_secret(new_secret text, new_name text default null, new_description text default '', new_key_id uuid default null)` returns `uuid`;
+- `vault.update_secret(secret_id uuid, new_secret text default null, new_name text default null, new_description text default null, new_key_id uuid default null)` returns `void`;
+- the draft's three-argument `create_secret` call and four-argument `update_secret` call are compatible with the installed function signatures and defaults.
+
+No Vault secret was created or modified during this proof.
+
+## CI evidence
+
+Web Launch CI run #523 on head `7dbb5355ccbe86068f2454fd7342062cbd38708e` completed successfully.
+
+Verified green in the same run:
+
+- migration-drift contract;
+- payment-readiness contracts;
+- Mercado Pago test-only boundary;
+- Mercado Pago sandbox runtime boundary;
+- second-purchase engine;
+- creator monetization engine;
+- DEV-lab production boundary;
+- TypeScript typecheck;
+- Next.js production build;
+- Revenue OS production mobile smoke.
+
 ## Deliberately not done
 
 - no Supabase DDL;
@@ -79,7 +109,7 @@ The contract ensures the runtime remains production-blocked, Vault remains draft
 
 ## Next executable gate
 
-After this PR and PR #68 are green, the next safe technical outcome is:
+The next safe technical outcome is:
 
 `ISOLATED NON-PROD DATABASE → APPLY REVIEWED VAULT + PAYMENT DRAFTS → SANDBOX CREATOR OAUTH → CHECKOUT PREFERENCE → SIGNED WEBHOOK → PROVIDER RE-FETCH → ACCEPTANCE/HOLD → PAYMENT MATERIALIZATION → RECONCILIATION`
 
