@@ -20,9 +20,9 @@ type ThreadRow = {
 const mechanisms = [
   ["Ventas", "FIXED_PRICE", "Disponible sobre el commerce spine actual", "Productos, contenido y entregables con precio definido por la creadora. Checkout y precio siguen siendo server-authoritative."],
   ["Deseos / Caprichos", "WISH", "Producto creator-scoped sobre goals + contributions", "Metas financiadas por aportes de la audiencia. Cada aporte confirmado se convierte en una señal del mismo cliente dentro del CRM."],
-  ["Subastas", "AUCTION", "Runtime preview preparado; DB Mara preview pendiente", "Pujas gratuitas, incremento mínimo y anti-sniping. El ganador se determina aparte y no se convierte automáticamente en compra."],
+  ["Subastas", "AUCTION", "Motor atómico + adjudicación privada", "Pujas gratuitas, incremento mínimo y anti-sniping. El ganador recibe una oferta privada separada de la puja y el pago."],
   ["Solicitudes", "CUSTOM_REQUEST", "Backbone existente reutilizado", "El usuario propone qué quiere y cuánto pagaría; la creadora puede revisar, aceptar, rechazar o contraofertar sin confundir intención con compra."],
-  ["Chat y media", "PAID_INTERACTION", "Oferta pagada dentro de conversación existente", "La creadora puede enviar una oferta monetizable dentro del chat sin cobrar por el mensaje ni crear un ledger paralelo."],
+  ["Chat y media", "PAID_INTERACTION", "Gratis por defecto; ofertas pagadas opcionales", "La creadora puede dejar el chat gratis y vender sesiones por tiempo, audios, fotos, videos, mensajes o packs con el precio que ella defina."],
   ["Taste Engine", "TASTE_CHOICE", "Persistencia creator-scoped reutilizada", "Elecciones rápidas tipo A/B para entretener y guardar preferencias declaradas, no para perfilar vulnerabilidades."],
 ] as const;
 
@@ -139,16 +139,43 @@ export default async function CreatorMonetizationPage() {
 
         <h2 className={styles.sectionTitle}>Paid Interaction</h2>
         <section className={styles.grid}>
-          <article className={`${styles.card} ${styles.wide}`}>
+          <article className={styles.card}>
+            <p className={styles.eyebrow}>TU MENÚ</p>
+            <h2>Tú decides qué dejas gratis y qué vendes.</h2>
+            <p className={styles.muted}>El chat normal puede seguir gratis. Estas ofertas son productos opcionales: una sesión acotada por tiempo o un entregable personalizado.</p>
+            {!paidInteractionsEnabled ? (
+              <p className={styles.empty}>Paid Interaction permanece cerrado por feature flag en este entorno.</p>
+            ) : worlds.length === 0 ? (
+              <p className={styles.empty}>Primero necesitas un storefront activo.</p>
+            ) : (
+              <form className={styles.form} method="post" action="/api/creator/interaction-offers">
+                <input type="hidden" name="returnTo" value="/creator/monetization" />
+                <input type="hidden" name="currency" value="CLP" />
+                <label>Perfil<select name="worldId" required>{worlds.map((world) => <option key={world.id} value={world.id}>{world.display_name}</option>)}</select></label>
+                <label>Qué vas a cobrar<select name="interactionKind" defaultValue="time_boxed_chat"><option value="time_boxed_chat">Chat por tiempo</option><option value="audio">Audio personalizado</option><option value="photo">Foto personalizada</option><option value="video">Video personalizado</option><option value="message">Mensaje personalizado</option><option value="bundle">Pack personalizado</option></select></label>
+                <label>Título<input name="title" minLength={2} maxLength={140} required placeholder="Ej. 30 minutos conmigo / Audio personalizado" /></label>
+                <label>Qué recibe<textarea name="description" minLength={2} maxLength={1200} required placeholder="Define claramente qué incluye y qué no incluye." /></label>
+                <label>Precio CLP<input name="price" type="number" min="1" max="10000000" step="1" required /></label>
+                <div className={styles.twoCol}>
+                  <label>Minutos si es chat<input name="durationMinutes" type="number" min="5" max="240" step="1" defaultValue="30" /></label>
+                  <label>Horas de entrega si es media<input name="turnaroundHours" type="number" min="1" max="720" step="1" defaultValue="48" /></label>
+                </div>
+                <label>Estado<select name="status"><option value="active">Activo</option><option value="draft">Borrador</option></select></label>
+                <button className={styles.button} type="submit">Crear oferta pagada</button>
+              </form>
+            )}
+          </article>
+
+          <article className={styles.card}>
             <p className={styles.eyebrow}>CHAT → OFERTA</p>
-            <h2>Monetiza una conversación sin cobrar por conversar.</h2>
-            <p className={styles.muted}>El mensaje sigue siendo un mensaje. Cuando existe una oportunidad real, adjuntas una oferta con precio server-authoritative y el cliente decide si compra.</p>
+            <h2>Envía una opción pagada cuando tenga sentido.</h2>
+            <p className={styles.muted}>El mensaje sigue siendo gratis. El cobro ocurre solo si el cliente abre una oferta, ve precio/alcance y completa checkout.</p>
             {!paidInteractionsEnabled ? (
               <p className={styles.empty}>Paid Interaction permanece cerrado por feature flag en este entorno.</p>
             ) : threads.length === 0 ? (
               <p className={styles.empty}>Todavía no hay conversaciones activas donde enviar una oferta.</p>
             ) : paidOffers.length === 0 ? (
-              <p className={styles.empty}>Crea primero una oferta de tipo “Interacción acotada” o “Digital personalizado” en el Creator OS.</p>
+              <p className={styles.empty}>Crea una oferta pagada en el formulario de al lado y luego podrás reutilizarla en conversaciones.</p>
             ) : (
               <form className={styles.form} method="post" action="/api/creator/paid-interactions">
                 <input type="hidden" name="returnTo" value="/creator/monetization" />
@@ -164,9 +191,9 @@ export default async function CreatorMonetizationPage() {
         <h2 className={styles.sectionTitle}>Subastas</h2>
         <section className={styles.grid}>
           <article className={`${styles.card} ${styles.wide}`}>
-            <p className={styles.eyebrow}>AUCTION PREVIEW</p>
-            <h2>{auctionRuntimeReady ? "Crea una subasta de preview." : "Código listo; schema Mara preview todavía no disponible en este entorno."}</h2>
-            <p className={styles.muted}>Pujar es gratis. Mara bloquea autopujas, aplica incremento mínimo y anti-sniping y separa ganador de compra.</p>
+            <p className={styles.eyebrow}>AUCTION</p>
+            <h2>{auctionRuntimeReady ? "Crea una subasta." : "Subastas no están disponibles en este entorno."}</h2>
+            <p className={styles.muted}>Pujar es gratis. Mara bloquea autopujas, aplica incremento mínimo y anti-sniping; al cerrar, el ganador recibe una adjudicación privada separada del pago.</p>
             {auctionRuntimeReady && worlds.length > 0 ? (
               <form className={styles.form} method="post" action="/api/creator/auctions">
                 <input type="hidden" name="action" value="create" />
@@ -183,7 +210,7 @@ export default async function CreatorMonetizationPage() {
                   <label>Duración minutos<input name="durationMinutes" type="number" min="5" max="43200" step="1" defaultValue="60" required /></label>
                 </div>
                 <label>Anti-sniping minutos<input name="antiSnipingMinutes" type="number" min="0" max="60" step="1" defaultValue="2" required /></label>
-                <button className={styles.button} type="submit">Crear subasta de preview</button>
+                <button className={styles.button} type="submit">Crear subasta</button>
               </form>
             ) : null}
           </article>
