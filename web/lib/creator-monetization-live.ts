@@ -112,6 +112,19 @@ function buildWishSignals(creatorId: string, rows: ContributionRow[]): WishSuppo
   }));
 }
 
+function localizedReason(item: MonetizationOpportunity) {
+  switch (item.type) {
+    case "HIGH_INTENT_BIDDER":
+      return "Este cliente perdió una subasta después de pujar al menos el 80% del precio ganador. Hay intención de compra observada: considera una segunda oportunidad relevante.";
+    case "AUCTION_LOSER":
+      return "Este cliente hizo una puja real y perdió la subasta. Mara detectó intención de compra sin asumir que debas venderle inmediatamente.";
+    case "REPEATED_REQUEST":
+      return `${item.evidence.distinctCustomerCount ?? 0} clientes distintos pidieron el mismo tipo de producto. Evalúa convertir esa demanda observada en una oferta clara.`;
+    case "WISH_REPEAT_SUPPORTER":
+      return "Este cliente aportó exitosamente más de una vez. Reconoce la relación antes de hacer una nueva propuesta comercial.";
+  }
+}
+
 export async function readLiveMonetizationOpportunities(
   accessToken: string,
   creatorId: string,
@@ -144,5 +157,6 @@ export async function readLiveMonetizationOpportunities(
     ? buildWishSignals(creatorId, contributionResult.data)
     : [];
 
-  return buildMonetizationOpportunities({ auctionSignals, requestSignals, wishSignals });
+  return buildMonetizationOpportunities({ auctionSignals, requestSignals, wishSignals })
+    .map((item) => ({ ...item, reason: localizedReason(item) }));
 }
