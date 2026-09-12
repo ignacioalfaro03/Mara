@@ -4,7 +4,7 @@ on:
   pull_request:
     paths:
       - "web/**"
-      - "docs/architecture/PAYMENTS_LEDGER.md"
+      - "docs/architecture/**"
       - ".github/workflows/web-launch-ci.yml"
   workflow_dispatch:
 
