@@ -69,6 +69,7 @@ export function buildCaptureJournalPlan(input: {
   assertMinor(input.processorFeeMinor, "processor_fee", true);
   assertCurrency(input.currency);
   if (input.platformFeeMinor > input.grossAmountMinor) throw new Error("platform_fee_exceeds_gross");
+  if (input.processorFeeMinor > input.grossAmountMinor) throw new Error("processor_fee_exceeds_gross");
 
   const creatorGrossShareMinor = input.grossAmountMinor - input.platformFeeMinor;
   const creatorNetEarningMinor = creatorGrossShareMinor
