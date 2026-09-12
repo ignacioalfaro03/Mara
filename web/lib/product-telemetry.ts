@@ -4,6 +4,11 @@ export type ProductEvent =
   | "creator_activated"
   | "creator_world_created"
   | "creator_offer_created"
+  | "creator_wish_created"
+  | "creator_auction_created"
+  | "creator_auction_finalized"
+  | "auction_bid_placed"
+  | "creator_paid_interaction_sent"
   | "creator_opportunity_viewed"
   | "creator_next_action_used"
   | "creator_dashboard_viewed"
@@ -49,6 +54,8 @@ type ProductProperties = {
   offer_slug?: string;
   offer_type?: string;
   currency?: string;
+  extended?: boolean;
+  has_winner?: boolean;
 };
 
 export async function emitProductEvent(request: Request, event: ProductEvent, properties: ProductProperties = {}) {

@@ -2,7 +2,16 @@ import { first, publicRest, serviceRest, userRest } from "@/lib/supabase/server-
 import type { WorldRow, OfferRow } from "@/lib/mara-real-data";
 
 export type CreatorFollowStatus = "following" | "muted" | "blocked";
-export type ProductCapability = "follow" | "content" | "crm" | "messaging" | "requests" | "memberships";
+export type ProductCapability =
+  | "follow"
+  | "content"
+  | "crm"
+  | "messaging"
+  | "requests"
+  | "memberships"
+  | "wishes"
+  | "auctions"
+  | "paid_interactions";
 
 export type CreatorFollowRow = {
   creator_id: string;

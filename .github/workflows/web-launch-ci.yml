@@ -4,6 +4,8 @@ on:
   pull_request:
     paths:
       - "web/**"
+      - "docs/architecture/**"
+      - "docs/product/**"
       - ".github/workflows/web-launch-ci.yml"
   workflow_dispatch:
 
@@ -74,6 +76,18 @@ jobs:
       - name: Verify release safety boundary
         run: npm run release-safety:contract
 
+      - name: Verify payment readiness boundary
+        run: npm run payment-readiness:contract
+
+      - name: Verify Mercado Pago test-only boundary
+        run: npm run mercado-pago-test:contract
+
+      - name: Verify second purchase engine behavior
+        run: npm run second-purchase:contract
+
+      - name: Verify creator monetization engine behavior
+        run: npm run creator-monetization:contract
+
       - name: Verify product realization security contract
         if: github.head_ref == 'codex/full-product-realization-v1'
         run: node scripts/product-realization-security-contract.mjs
@@ -121,7 +135,10 @@ jobs:
           done
           curl --fail --silent http://127.0.0.1:3000/ > /dev/null
 
-          if [ "$PR_HEAD_REF" = "codex/full-product-realization-v1" ]; then
+          if [ "$PR_HEAD_REF" = "strategy/mara-revenue-os-foundation-v1" ]; then
+            echo "MARA_SMOKE_PROFILE=revenue-os-foundation-v1"
+            BASE_URL=http://127.0.0.1:3000 node scripts/revenue-os-foundation-smoke.mjs
+          elif [ "$PR_HEAD_REF" = "codex/full-product-realization-v1" ]; then
             echo "MARA_SMOKE_PROFILE=full-product-realization-v1"
             BASE_URL=http://127.0.0.1:3000 node scripts/full-product-realization-smoke.mjs
           elif [ "$PR_HEAD_REF" = "design/platform-experience-reinvention-v1" ]; then

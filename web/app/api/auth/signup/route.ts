@@ -7,7 +7,6 @@ export const runtime = "nodejs";
 type SignupBody = {
   email?: string;
   password?: string;
-  adultConfirmed?: boolean;
 };
 
 function validEmail(email: string) {
@@ -30,9 +29,6 @@ export async function POST(request: Request) {
   const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
   const password = typeof body.password === "string" ? body.password : "";
 
-  if (body.adultConfirmed !== true) {
-    return NextResponse.json({ error: "adult_confirmation_required" }, { status: 400 });
-  }
   if (!validEmail(email)) {
     return NextResponse.json({ error: "invalid_email" }, { status: 400 });
   }

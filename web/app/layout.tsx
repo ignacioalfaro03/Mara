@@ -15,24 +15,17 @@ function resolveMetadataBase() {
 
 export const metadata: Metadata = {
   metadataBase: resolveMetadataBase(),
-  title: "Mara — Creator commerce, made personal",
-  description: "Mara ayuda a creadoras a entender a su audiencia y monetizar contenido, interacciones, solicitudes y experiencias desde un solo lugar.",
+  title: "Mara — Creator Revenue OS",
+  description: "Mara ayuda a creadores a convertir audiencia en clientes recurrentes con commerce, CRM, oportunidades e inteligencia de revenue.",
   openGraph: {
-    title: "Mara",
-    description: "Contenido, interacción, comercio, memoria y demanda entre creadoras y sus clientes.",
-    images: [{
-      url: "/mara/mara-v2-reference.webp",
-      width: 384,
-      height: 576,
-      alt: "Mara Vera — identidad de referencia de Mara",
-    }],
+    title: "Mara — Creator Revenue OS",
+    description: "Audience → Customers → Intelligence → Revenue.",
     type: "website",
   },
   twitter: {
-    card: "summary_large_image",
-    title: "Mara",
-    description: "Creator commerce con contexto, memoria y demanda.",
-    images: ["/mara/mara-v2-reference.webp"],
+    card: "summary",
+    title: "Mara — Creator Revenue OS",
+    description: "Convierte seguidores en clientes recurrentes y encuentra tu siguiente oportunidad de revenue.",
   },
 };
 

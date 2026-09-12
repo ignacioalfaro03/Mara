@@ -31,7 +31,7 @@ type OfferRow = {
 };
 
 function money(amountMinor: number | null, currency: string) {
-  if (amountMinor === null) return "Ver";
+  if (amountMinor === null) return "Ver oferta";
   return new Intl.NumberFormat("es-CL", { style: "currency", currency, maximumFractionDigits: currency === "CLP" ? 0 : 2 }).format(amountMinor / 100);
 }
 
@@ -122,8 +122,8 @@ export function CreatorConversation({
       <header className="chatHeader">
         <Link className="chatBack" href="/app/messages" aria-label="Volver a mensajes">‹</Link>
         {portrait ? <img src={portrait} alt={displayName} width="44" height="44" /> : <div className="feedAvatar" aria-hidden="true" />}
-        <div className="chatIdentity"><strong>{displayName}</strong><span>Conversación privada · 18+</span></div>
-        <Link className="chatMore" href={`/app/people/${worldSlug}`} aria-label="Ver perfil">•••</Link>
+        <div className="chatIdentity"><strong>{displayName}</strong><span>Conversación privada</span></div>
+        <Link className="chatMore" href={`/c/${worldSlug}`} aria-label="Ver perfil">•••</Link>
       </header>
 
       <div className="chatThread">
@@ -140,7 +140,8 @@ export function CreatorConversation({
                   <span className="consumerKicker">OFERTA</span>
                   <strong>{offer.title}</strong>
                   <p>{offer.description}</p>
-                  <Link className="unlockButton" href={`/shop/${offer.slug}`}>Ver · {money(offer.amount_minor, offer.currency)}</Link>
+                  <Link className="unlockButton" href={`/c/${worldSlug}/offers/${offer.slug}`}>Ver · {money(offer.amount_minor, offer.currency)}</Link>
+                  <small>Ver la oferta no genera un cobro. La compra ocurre solo en checkout.</small>
                 </div>
               ) : null}
             </div>

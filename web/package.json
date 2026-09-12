@@ -10,7 +10,11 @@
     "alpha:report": "node scripts/alpha-signal-report.mjs",
     "alpha:report:selftest": "node scripts/alpha-signal-report.mjs --self-test",
     "real-app-wiring:contract": "node scripts/real-app-wiring-contract-smoke.mjs",
-    "release-safety:contract": "node scripts/release-safety-contract.mjs"
+    "release-safety:contract": "node scripts/release-safety-contract.mjs",
+    "payment-readiness:contract": "node scripts/payment-readiness-contract.mjs && node scripts/payment-reconciliation-contract.mjs && node scripts/payment-oauth-boundary-contract.mjs && node scripts/payment-webhook-acceptance-contract.mjs && node scripts/payment-ledger-plan-contract.mjs && node scripts/payment-materialization-draft-contract.mjs",
+    "mercado-pago-test:contract": "node scripts/mercado-pago-test-contract.mjs",
+    "second-purchase:contract": "node scripts/second-purchase-engine-contract.mjs",
+    "creator-monetization:contract": "node scripts/creator-monetization-engine-contract.mjs && node scripts/creator-monetization-surface-contract.mjs && node scripts/creator-opportunity-wiring-contract.mjs && node scripts/paid-interaction-pricing-contract.mjs && node scripts/paid-interaction-session-contract.mjs"
   },
   "dependencies": {
     "next": "16.3.3",

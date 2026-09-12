@@ -27,7 +27,15 @@ const SAFE_EVENT = /^[a-z0-9][a-z0-9_]{1,63}$/;
 const SAFE_CONTEXT = /^[A-Za-z0-9][A-Za-z0-9_.-]{0,39}$/;
 const SAFE_SURFACE = /^\/|\/[A-Za-z0-9][A-Za-z0-9_:/.-]{0,118}$|^[A-Za-z0-9][A-Za-z0-9_:/.-]{0,119}$/;
 
+// Binary choices are deliberately explicit and versioned. They are declared
+// preferences, not psychographic or vulnerability inferences.
 const ALLOWED_GROUPS: Record<string, readonly string[]> = {
+  // Current Creator Revenue OS Taste Engine groups.
+  creator_format_v1: ["audio", "video"],
+  creator_personalization_v1: ["personalized", "premade"],
+  creator_length_v1: ["short", "longer"],
+  creator_offer_style_v1: ["one_off", "membership"],
+  // Legacy groups retained only for backwards compatibility with older surfaces.
   pose_pair_launch_v1: ["pose_a", "pose_b"],
   world_format_v1: ["image", "audio"],
   world_personalization_v1: ["personalized", "premade"],
@@ -112,6 +120,9 @@ export async function POST(request: Request) {
 
   if (!dbResponse.ok && dbResponse.status !== 409) return NextResponse.json({ error: "preference_persist_failed" }, { status: 502 });
 
+  // Keep the one legacy projection only for its legacy launch choice. Current
+  // creator Taste Engine events are stored in preference_events and do not write
+  // into relationship_state.
   if (body.choiceGroup === "pose_pair_launch_v1") {
     await fetch(`${config.url}/rest/v1/relationship_state?user_id=eq.${encodeURIComponent(session.user.id)}`, {
       method: "PATCH",
@@ -130,7 +141,7 @@ export async function POST(request: Request) {
   }
 
   const response = body.returnTo
-    ? NextResponse.redirect(new URL(safeLocalReturn(body.returnTo, "/experience"), request.url), 303)
+    ? NextResponse.redirect(new URL(safeLocalReturn(body.returnTo, "/"), request.url), 303)
     : new NextResponse(null, { status: 204 });
   if (session.refreshedSession) setSessionCookies(response, session.refreshedSession);
   return response;

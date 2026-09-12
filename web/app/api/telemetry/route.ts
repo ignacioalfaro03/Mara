@@ -71,6 +71,11 @@ const ALLOWED_EVENTS = new Set([
   "creator_activated",
   "creator_world_created",
   "creator_offer_created",
+  "creator_wish_created",
+  "creator_auction_created",
+  "creator_auction_finalized",
+  "auction_bid_placed",
+  "creator_paid_interaction_sent",
   "creator_opportunity_viewed",
   "creator_next_action_used",
   "creator_dashboard_viewed",
@@ -111,6 +116,8 @@ const ALLOWED_PROPERTY_KEYS = new Set([
   "amount_bucket",
   "currency",
   "provider_status",
+  "extended",
+  "has_winner",
 ]);
 
 const TOKEN_PROPERTY_KEYS = new Set([
