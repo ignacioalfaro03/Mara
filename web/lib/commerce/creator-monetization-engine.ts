@@ -170,6 +170,8 @@ export function minimumAcceptedBidMinor(auction: Pick<AuctionSnapshot, "starting
 /**
  * Pure bid decision only. The persistence layer MUST re-evaluate equivalent rules
  * against locked/current state inside one transaction/RPC to prevent race conditions.
+ * A scheduled auction becomes bid-eligible once its startsAt is reached; the atomic
+ * RPC promotes it to active while accepting the first valid bid.
  */
 export function validateAuctionBid(
   auction: AuctionSnapshot,
@@ -192,7 +194,7 @@ export function validateAuctionBid(
     return { ok: false, code: "INVALID_TIMESTAMP", minimumAcceptedBidMinor: minimum };
   }
 
-  if (auction.status !== "active") {
+  if (auction.status !== "active" && auction.status !== "scheduled") {
     return { ok: false, code: "AUCTION_NOT_ACTIVE", minimumAcceptedBidMinor: minimum };
   }
 
