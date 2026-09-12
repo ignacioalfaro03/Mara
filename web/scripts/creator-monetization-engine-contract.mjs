@@ -53,6 +53,23 @@ assert.equal(firstBid.minimumAcceptedBidMinor, 2_000_000);
 assert.equal(firstBid.shouldExtend, false);
 assert.equal(firstBid.nextEndsAt, "2026-09-12T12:00:00.000Z");
 
+const scheduledAfterStart = validateAuctionBid(
+  auction({ status: "scheduled" }),
+  attempt({ placedAt: "2026-09-12T10:01:00.000Z" }),
+);
+assert.equal(scheduledAfterStart.ok, true, "scheduled auction must become bid-eligible once startsAt is reached");
+
+const scheduledBeforeStart = validateAuctionBid(
+  auction({ status: "scheduled" }),
+  attempt({ placedAt: "2026-09-12T09:59:59.000Z" }),
+);
+assert.equal(scheduledBeforeStart.ok, false);
+assert.equal(scheduledBeforeStart.code, "AUCTION_NOT_STARTED");
+
+const cancelled = validateAuctionBid(auction({ status: "cancelled" }), attempt());
+assert.equal(cancelled.ok, false);
+assert.equal(cancelled.code, "AUCTION_NOT_ACTIVE");
+
 const tooLow = validateAuctionBid(
   auction({ currentBidMinor: 3_000_000 }),
   attempt({ amountMinor: 3_499_999 }),
@@ -112,40 +129,13 @@ const taste = normalizeTasteChoice({
   occurredAt: "2026-09-12T12:00:00.000Z",
 });
 assert.equal(taste.type, "TASTE_CHOICE");
-assert.throws(() => normalizeTasteChoice({
-  ...taste,
-  selectedOptionId: "option-c",
-}));
+assert.throws(() => normalizeTasteChoice({ ...taste, selectedOptionId: "option-c" }));
 
 const auctionOpportunities = buildMonetizationOpportunities({
   auctionSignals: [
-    {
-      creatorId: "creator-1",
-      auctionId: "auction-a",
-      userId: "user-high",
-      bidAmountMinor: 8_500_000,
-      winningBidMinor: 10_000_000,
-      won: false,
-      occurredAt: "2026-09-12T12:00:00.000Z",
-    },
-    {
-      creatorId: "creator-1",
-      auctionId: "auction-a",
-      userId: "user-medium",
-      bidAmountMinor: 4_000_000,
-      winningBidMinor: 10_000_000,
-      won: false,
-      occurredAt: "2026-09-12T12:00:00.000Z",
-    },
-    {
-      creatorId: "creator-1",
-      auctionId: "auction-a",
-      userId: "winner",
-      bidAmountMinor: 10_000_000,
-      winningBidMinor: 10_000_000,
-      won: true,
-      occurredAt: "2026-09-12T12:00:00.000Z",
-    },
+    { creatorId: "creator-1", auctionId: "auction-a", userId: "user-high", bidAmountMinor: 8_500_000, winningBidMinor: 10_000_000, won: false, occurredAt: "2026-09-12T12:00:00.000Z" },
+    { creatorId: "creator-1", auctionId: "auction-a", userId: "user-medium", bidAmountMinor: 4_000_000, winningBidMinor: 10_000_000, won: false, occurredAt: "2026-09-12T12:00:00.000Z" },
+    { creatorId: "creator-1", auctionId: "auction-a", userId: "winner", bidAmountMinor: 10_000_000, winningBidMinor: 10_000_000, won: true, occurredAt: "2026-09-12T12:00:00.000Z" },
   ],
 });
 assert.equal(auctionOpportunities.length, 2);
