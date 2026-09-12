@@ -79,6 +79,13 @@ try {
   await page.getByText("MARA · CREATOR REVENUE OS").waitFor();
   await assertNoHorizontalOverflow(page, "/creator");
 
+  const monetization = await page.goto(`${baseUrl}/creator/monetization`, { waitUntil: "networkidle" });
+  assert(monetization?.status() === 200, `/creator/monetization returned ${monetization?.status()}`);
+  await page.getByText("Decide qué cobras. Mara organiza el negocio detrás.").waitFor();
+  await page.getByText("MARA · MONETIZACIÓN").waitFor();
+  assert((await page.getByText(/Mara Vera/i).count()) === 0, "Monetization hub must not restore legacy Mara Vera positioning");
+  await assertNoHorizontalOverflow(page, "/creator/monetization");
+
   const title = await page.title();
   assert(title.includes("Mara"), `Unexpected document title: ${title}`);
 
