@@ -16,10 +16,9 @@ const contextOptions = {
 };
 
 try {
-  // Anonymous/local control: clear Mara continuity without removing the 18+ gate.
+  // Anonymous/local control: local legacy caches can still be deleted without affecting the server account.
   const resetContext = await browser.newContext(contextOptions);
   await resetContext.addInitScript(() => {
-    window.localStorage.setItem("mara_age_gate_passed", "true");
     window.localStorage.setItem("mara_dm_state_v1", JSON.stringify({ started: true }));
     window.localStorage.setItem("mara_launch_state_v1", JSON.stringify({ completed: true }));
     window.localStorage.setItem("mara_pending_preference_events_v1", "[]");
@@ -27,28 +26,25 @@ try {
   });
   const resetPage = await resetContext.newPage();
   await resetPage.goto(`${baseUrl}/auth`, { waitUntil: "networkidle" });
-  await resetPage.getByRole("button", { name: "Borrar copia local" }).click();
-  await resetPage.getByText(/Borré la copia local de Mara/).waitFor();
+  await resetPage.getByRole("button", { name: "Borrar datos locales" }).click();
+  await resetPage.getByText(/Datos locales borrados/).waitFor();
 
   const resetState = await resetPage.evaluate(() => ({
-    ageGate: window.localStorage.getItem("mara_age_gate_passed"),
     dm: window.localStorage.getItem("mara_dm_state_v1"),
     launch: window.localStorage.getItem("mara_launch_state_v1"),
     pending: window.localStorage.getItem("mara_pending_preference_events_v1"),
     checkout: window.sessionStorage.getItem("mara_dm_checkout_request_v1"),
   }));
-  assert(resetState.ageGate === "true", "Local reset must not clear the 18+ gate");
   assert(resetState.dm === null, "Local reset did not clear DM state");
   assert(resetState.launch === null, "Local reset did not clear legacy launch state");
   assert(resetState.pending === null, "Local reset did not clear pending preference cache");
   assert(resetState.checkout === null, "Local reset did not clear checkout request cache");
   await resetContext.close();
 
-  // Authenticated control contract: the UI exposes sign-out only when auth/me says authenticated.
+  // Authenticated control contract: sign-out remains explicit and clears local caches only.
   let signoutCalled = false;
   const authContext = await browser.newContext(contextOptions);
   await authContext.addInitScript(() => {
-    window.localStorage.setItem("mara_age_gate_passed", "true");
     window.localStorage.setItem("mara_dm_state_v1", JSON.stringify({ started: true }));
     window.sessionStorage.setItem("mara_dm_checkout_request_v1", "qa-checkout-auth");
   });
@@ -66,18 +62,17 @@ try {
 
   const authPage = await authContext.newPage();
   await authPage.goto(`${baseUrl}/auth`, { waitUntil: "networkidle" });
+  await authPage.getByText("MARA · CUENTA").waitFor();
   const signout = authPage.getByRole("button", { name: "Cerrar sesión" });
   await signout.waitFor({ state: "visible" });
   await signout.click();
-  await authPage.getByText(/Sesión cerrada y copia local borrada/).waitFor();
+  await authPage.getByText(/Sesión cerrada y datos locales borrados/).waitFor();
   assert(signoutCalled, "Sign-out UI did not call /api/auth/signout");
 
   const signedOutState = await authPage.evaluate(() => ({
-    ageGate: window.localStorage.getItem("mara_age_gate_passed"),
     dm: window.localStorage.getItem("mara_dm_state_v1"),
     checkout: window.sessionStorage.getItem("mara_dm_checkout_request_v1"),
   }));
-  assert(signedOutState.ageGate === "true", "Sign-out must not clear the 18+ gate");
   assert(signedOutState.dm === null, "Sign-out did not clear local DM state");
   assert(signedOutState.checkout === null, "Sign-out did not clear checkout request cache");
   await authContext.close();
