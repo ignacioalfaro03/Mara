@@ -26,9 +26,12 @@ async function readAllUserPages<T>(accessToken: string, basePath: string, pageSi
   for (;;) {
     const separator = basePath.includes("?") ? "&" : "?";
     const result = await userRest<T[]>(accessToken, `${basePath}${separator}limit=${pageSize}&offset=${offset}`);
-    if (!result.ok) return { rows, complete: false };
+    if (!result.ok) {
+      // Financial/operational dashboards must never silently present partial totals.
+      throw new Error(`mara_complete_page_read_failed:${result.status}`);
+    }
     rows.push(...result.data);
-    if (result.data.length < pageSize) return { rows, complete: true };
+    if (result.data.length < pageSize) return rows;
     offset += pageSize;
   }
 }
@@ -97,7 +100,7 @@ export async function readCreatorDashboard(accessToken: string, creatorId: strin
   const customerPath = `creator_customer_summary?select=*&creator_id=eq.${encodeURIComponent(creatorId)}&order=last_activity_at.desc`;
   const pendingPurchasePath = `commerce_purchases?select=*&creator_id=eq.${encodeURIComponent(creatorId)}&status=eq.succeeded&fulfilled_at=is.null&order=created_at.asc`;
 
-  const [customerPages, opportunities, nextActions, pendingPurchasePages, offers] = await Promise.all([
+  const [customers, opportunities, nextActions, pendingPurchases, offers] = await Promise.all([
     readAllUserPages<CustomerSummaryRow>(accessToken, customerPath),
     userRest<DemandOpportunityRow[]>(accessToken, `creator_demand_opportunities?select=*&creator_id=eq.${encodeURIComponent(creatorId)}&order=progress_percent.desc&limit=30`),
     userRest<NextBestActionRow[]>(accessToken, `creator_next_best_actions?select=*&creator_id=eq.${encodeURIComponent(creatorId)}&order=priority.asc&limit=50`),
@@ -106,12 +109,10 @@ export async function readCreatorDashboard(accessToken: string, creatorId: strin
   ]);
 
   return {
-    customers: customerPages.rows,
-    customerMetricsComplete: customerPages.complete,
+    customers,
     opportunities: opportunities.ok ? opportunities.data : [],
     nextActions: nextActions.ok ? nextActions.data : [],
-    purchases: pendingPurchasePages.rows,
-    pendingFulfillmentComplete: pendingPurchasePages.complete,
+    purchases: pendingPurchases,
     offers: offers.ok ? offers.data : [],
   };
 }
