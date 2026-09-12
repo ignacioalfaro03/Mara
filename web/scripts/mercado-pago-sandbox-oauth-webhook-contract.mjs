@@ -60,6 +60,13 @@ assert.match(oauthSql, /grant execute on function public\.mara_mp_sandbox_bind_a
 assert.doesNotMatch(oauthSql, /grant execute .* to anon/);
 assert.doesNotMatch(oauthSql, /grant execute .* to authenticated/);
 
+const credentialReferenceTable = oauthSql.match(
+  /insert into public\.creator_payment_credential_references \(([\s\S]*?)\n  \) values/,
+)?.[1];
+assert.ok(credentialReferenceTable, "credential reference write block missing");
+assert.doesNotMatch(credentialReferenceTable, /access[_]?token|refresh[_]?token/i);
+assert.match(credentialReferenceTable, /credential_reference/);
+
 // Webhook SQL: random opaque binding + server-authoritative expectation.
 assert.match(webhookSql, /binding_id uuid primary key default extensions\.gen_random_uuid\(\)/);
 assert.match(webhookSql, /private\.mara_payment_webhook_bindings/);
@@ -67,7 +74,13 @@ assert.match(webhookSql, /mara_mp_sandbox_resolve_webhook_binding/);
 assert.match(webhookSql, /mara_mp_sandbox_checkout_expectation/);
 assert.match(webhookSql, /provider_account_id_snapshot/);
 assert.match(webhookSql, /revoke all on table private\.mara_payment_webhook_bindings from public, anon, authenticated/);
-assert.doesNotMatch(webhookSql, /access_token|refresh_token/i);
+
+const webhookBindingTable = webhookSql.match(
+  /create table if not exists private\.mara_payment_webhook_bindings \(([\s\S]*?)\n\);/,
+)?.[1];
+assert.ok(webhookBindingTable, "webhook binding table block missing");
+assert.doesNotMatch(webhookBindingTable, /access[_]?token|refresh[_]?token|credential_reference/i);
+assert.match(webhookBindingTable, /binding_id uuid primary key/);
 
 // These are review-only drafts until an isolated non-production database exists.
 assert.equal(migrationFiles.some((file) => file.includes("mp_sandbox_oauth_rpc")), false);
