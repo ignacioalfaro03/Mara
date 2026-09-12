@@ -42,6 +42,12 @@ assert.match(mercadoPagoAdapter, /OAuth state \+ PKCE/);
 assert.match(mercadoPagoAdapter, /fetches payment directly from provider API/);
 assert.match(mercadoPagoAdapter, /Tokens are never stored in `creator_payment_accounts\.metadata`/);
 
+// Future live checkout economics must be frozen before redirecting to a provider.
+assert.match(ledgerDraft, /alter table public\.commerce_checkout_intents/);
+assert.match(ledgerDraft, /provider_account_id_snapshot text null/);
+assert.match(ledgerDraft, /platform_fee_minor bigint null/);
+assert.match(ledgerDraft, /platform_fee_minor >= 0 and platform_fee_minor <= amount_minor/);
+
 // Financial truth must be richer than commerce_purchases alone.
 for (const table of [
   "creator_payment_accounts",
@@ -56,10 +62,17 @@ for (const table of [
   assert.match(ledgerDraft, new RegExp(`revoke all on table public\\.${table} from anon, authenticated`));
 }
 
-// A payout cannot point at a different creator's payment account.
+// Payments and payouts must be cryptographically/provider-account scoped to the
+// same creator represented in Mara; never accept an arbitrary seller account ID.
+assert.match(ledgerDraft, /unique \(creator_id, provider, provider_account_id\)/);
 assert.match(
   ledgerDraft,
-  /creator_id uuid not null references public\.creator_payment_accounts\(creator_id\) on delete restrict/,
+  /foreign key \(creator_id, provider, provider_account_id\)\s+references public\.creator_payment_accounts\(creator_id, provider, provider_account_id\)/,
+);
+assert.match(ledgerDraft, /unique \(creator_id, provider\)/);
+assert.match(
+  ledgerDraft,
+  /foreign key \(creator_id, provider\)\s+references public\.creator_payment_accounts\(creator_id, provider\)/,
 );
 assert.doesNotMatch(ledgerDraft, /payment_account_creator_id/);
 
