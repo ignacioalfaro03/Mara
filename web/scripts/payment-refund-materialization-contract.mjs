@@ -7,6 +7,7 @@ const read = (p) => fs.readFileSync(path.join(root, p), "utf8");
 
 const runtime = read("lib/commerce/mercado-pago-sandbox-refund.ts");
 const providerClient = read("lib/commerce/mercado-pago-sandbox-client.ts");
+const providerPrimitives = read("lib/commerce/mercado-pago-test.ts");
 const sql = read("supabase/drafts/mara_payment_refund_materialization_v1.sql");
 const ledger = read("supabase/drafts/mara_payment_ledger_v1.sql");
 const migrations = fs.readdirSync(path.join(root, "supabase/migrations"));
@@ -23,7 +24,9 @@ assert.doesNotMatch(runtime, /NEXT_PUBLIC_/);
 assert.doesNotMatch(runtime, /console\.(log|info|warn|error)/);
 
 // Provider refund uses credential reference + idempotency; provider response amount is authoritative.
-assert.match(providerClient, /X-Idempotency-Key/);
+assert.match(providerClient, /buildMercadoPagoTestRefundRequest/);
+assert.match(providerClient, /\.\.\.refund\.headers/);
+assert.match(providerPrimitives, /"X-Idempotency-Key": input\.idempotencyKey/);
 assert.match(runtime, /providerRefund\.amountMinor/);
 assert.match(runtime, /providerRefund\.providerRefundId/);
 assert.match(runtime, /refund_api:\$\{providerRefund\.providerRefundId\}/);
