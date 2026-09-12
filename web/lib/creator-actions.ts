@@ -1,6 +1,7 @@
 const ACTION_TITLES: Record<string, string> = {
   fulfill: "Fulfill this first.",
   post_purchase_followup: "Cuida esta primera compra.",
+  second_purchase_offer: "Activa una segunda compra relevante.",
   related_offer: "Hay una compra siguiente relevante.",
   complete_collection: "Hay una compra siguiente relevante.",
   offer_membership: "Puede tener sentido ofrecer recurrencia.",
@@ -11,7 +12,10 @@ const ACTION_TITLES: Record<string, string> = {
   no_action: "No hay una acción comercial clara.",
 };
 
-const NON_ACKNOWLEDGEABLE_ACTIONS = new Set(["fulfill", "wait", "no_action"]);
+// Derived Revenue OS recommendations that are not persisted by the current
+// creator action acknowledgement RPC must remain display-only until the DB
+// contract is explicitly extended.
+const NON_ACKNOWLEDGEABLE_ACTIONS = new Set(["fulfill", "second_purchase_offer", "wait", "no_action"]);
 
 export function normalizeCreatorAction(action: string | null | undefined) {
   const normalized = action?.trim().toLowerCase();
