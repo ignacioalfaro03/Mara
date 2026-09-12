@@ -30,9 +30,9 @@ assert.match(webhook, /providerSnapshot: ProviderPaymentSnapshot \| null/);
 assert.match(webhook, /providerSnapshot: provider/);
 assert.match(route, /getMercadoPagoSandboxMaterializationPolicy/);
 assert.match(route, /materializeAcceptedMercadoPagoSandboxPayment/);
-assert.match(route, /fulfilled: false/);
+assert.match(route, /paymentId = outcome\.materialized \? outcome\.paymentId : null/);
 assert.match(route, /xRequestId/);
-assert.doesNotMatch(route, /commerce_purchases|commerce_entitlements/);
+assert.doesNotMatch(materialization, /commerce_purchases|commerce_entitlements/);
 
 // SQL remains draft-only and enforces frozen economics + provider idempotency.
 assert.match(sql, /DRAFT ONLY/);
