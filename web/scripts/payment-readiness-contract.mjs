@@ -6,6 +6,7 @@ const root = process.cwd();
 const read = (relativePath) => fs.readFileSync(path.join(root, relativePath), "utf8");
 
 const paymentConfig = read("lib/commerce/config.ts");
+const providerContract = read("lib/commerce/payment-provider-contract.ts");
 const checkout = read("app/api/commerce/checkout/route.ts");
 const ledgerDraft = read("supabase/drafts/mara_payment_ledger_v1.sql");
 const ledgerDoc = read("../docs/architecture/PAYMENTS_LEDGER.md");
@@ -17,6 +18,19 @@ assert.doesNotMatch(paymentConfig, /provider:\s*"mercado_pago_split"/);
 assert.doesNotMatch(paymentConfig, /provider:\s*"stripe_connect"/);
 assert.match(checkout, /creator_offer_live_payment_not_authorized/);
 assert.match(checkout, /payment_provider_not_implemented/);
+
+// Provider-neutral TypeScript contract may exist, but it must remain inert.
+assert.match(providerContract, /export interface CreatorPaymentProvider/);
+assert.match(providerContract, /createSellerAuthorization/);
+assert.match(providerContract, /exchangeAuthorizationCode/);
+assert.match(providerContract, /createCheckout/);
+assert.match(providerContract, /verifyWebhook/);
+assert.match(providerContract, /fetchPayment/);
+assert.match(providerContract, /refundPayment/);
+assert.match(providerContract, /credentialReference/);
+assert.doesNotMatch(providerContract, /\bfetch\s*\(/);
+assert.doesNotMatch(providerContract, /process\.env/);
+assert.doesNotMatch(providerContract, /api\.mercadopago|api\.stripe|mercadopago\.com/i);
 
 // The Chile provider direction is explicit but non-executable.
 assert.match(ledgerDoc, /Primary integration candidate for the Chile MVP: \*\*Mercado Pago Split Payments 1:1\*\*/);
