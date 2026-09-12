@@ -5,6 +5,7 @@ on:
     paths:
       - "web/**"
       - "docs/architecture/**"
+      - "docs/product/**"
       - ".github/workflows/web-launch-ci.yml"
   workflow_dispatch:
 
@@ -83,6 +84,9 @@ jobs:
 
       - name: Verify second purchase engine behavior
         run: npm run second-purchase:contract
+
+      - name: Verify creator monetization engine behavior
+        run: npm run creator-monetization:contract
 
       - name: Verify product realization security contract
         if: github.head_ref == 'codex/full-product-realization-v1'
