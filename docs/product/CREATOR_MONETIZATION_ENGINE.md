@@ -125,18 +125,34 @@ Reuse `creator_threads`, `creator_messages`, `creator_content`, `commerce_offers
 Creator-controlled monetization modes may include:
 
 - free chat;
-- paid chat access;
 - paid session/time block;
-- paid message;
 - paid audio;
 - paid photo;
 - paid video;
-- paid attachment;
+- paid personalized message;
+- paid bundle/attachment;
 - custom request.
 
-The creator controls the paywall. Mara must clearly show the buyer what is being bought, the amount, the billing boundary and what will be delivered.
+**Free is the default interaction boundary.** A normal message is not itself a charge. The creator may optionally publish a bounded paid-interaction offer with a creator-defined price. Sending that offer in chat only surfaces a commercial option; payment still requires an explicit checkout.
 
-Do not implement open-ended metering that can create unclear or unbounded charges.
+Initial reusable paid-interaction products are:
+
+- `time_boxed_chat` — explicit duration, initially 5–240 minutes;
+- `audio` — personalized media with defined turnaround;
+- `photo` — personalized media with defined turnaround;
+- `video` — personalized media with defined turnaround;
+- `message` — personalized written deliverable;
+- `bundle` — a clearly defined bundle of deliverables.
+
+A paid timed chat follows the lifecycle:
+
+`PURCHASED -> EXPLICIT START -> ACTIVE WINDOW -> ENDED`
+
+Refunded/cancelled sessions deny access. Time begins only when the session is explicitly started; purchase alone must not silently consume the buyer's clock. Session timing is server-authoritative and should be materialized only after the canonical purchase exists.
+
+The creator controls the paywall. Mara must clearly show the buyer what is being bought, the amount, the billing boundary, duration/turnaround where relevant, and what will be delivered.
+
+Do not implement open-ended metering that can create unclear or unbounded charges. Do not implement invisible per-message charging.
 
 ## 8. Taste Engine
 
@@ -246,7 +262,10 @@ Target event vocabulary:
 - `REQUEST_COUNTERED`
 - `REQUEST_REJECTED`
 - `CHAT_STARTED`
-- `PAID_MESSAGE_PURCHASED`
+- `PAID_INTERACTION_OFFER_CREATED`
+- `PAID_INTERACTION_OFFER_SENT`
+- `PAID_SESSION_STARTED`
+- `PAID_SESSION_ENDED`
 - `MEDIA_UNLOCKED`
 - `TASTE_CHOICE`
 - `OPPORTUNITY_GENERATED`
@@ -278,6 +297,10 @@ Sensitive inventory/categories must be gateable by:
 Current verdict remains **NOT PAYMENT READY**.
 
 No new monetization surface may bypass the existing payment architecture, ledger plan, provider authorization/KYC, webhook verification, reconciliation, refund/chargeback model or founder production authorization.
+
+A provider webhook is not payment truth by itself. Before any financial materialization, Mara must verify the provider signature, re-fetch the provider payment with the connected seller credential, match the provider account/collector, external checkout reference, amount and currency against a frozen server-side checkout snapshot, and hold any mismatch.
+
+Platform fee and processor fee are separate economic facts. The platform-vs-creator processor-fee bearer must be explicit; it may not be hidden in an accounting default. Neither platform fee nor processor fee may exceed gross payment economics, and creator-borne processor fees may not exceed the creator gross share.
 
 `REQUEST`, `BID`, `WISH` and `CHAT` are product events. They do not become settled revenue until the canonical payment/purchase flow says so.
 
