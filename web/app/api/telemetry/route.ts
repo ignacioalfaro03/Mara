@@ -116,6 +116,8 @@ const ALLOWED_PROPERTY_KEYS = new Set([
   "amount_bucket",
   "currency",
   "provider_status",
+  "extended",
+  "has_winner",
 ]);
 
 const TOKEN_PROPERTY_KEYS = new Set([
