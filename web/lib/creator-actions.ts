@@ -12,10 +12,7 @@ const ACTION_TITLES: Record<string, string> = {
   no_action: "No hay una acción comercial clara.",
 };
 
-// Derived Revenue OS recommendations that are not persisted by the current
-// creator action acknowledgement RPC must remain display-only until the DB
-// contract is explicitly extended.
-const NON_ACKNOWLEDGEABLE_ACTIONS = new Set(["fulfill", "second_purchase_offer", "wait", "no_action"]);
+const NON_ACKNOWLEDGEABLE_ACTIONS = new Set(["fulfill", "wait", "no_action"]);
 
 export function normalizeCreatorAction(action: string | null | undefined) {
   const normalized = action?.trim().toLowerCase();
