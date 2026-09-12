@@ -5,6 +5,7 @@ import {
   type MercadoPagoSandboxTransport,
 } from "@/lib/commerce/mercado-pago-sandbox-client";
 import { verifyMercadoPagoWebhookSignature } from "@/lib/commerce/mercado-pago-test";
+import type { ProviderPaymentSnapshot } from "@/lib/commerce/payment-provider-contract";
 
 export type MercadoPagoSandboxAccountBinding = {
   bindingId: string;
@@ -29,6 +30,7 @@ export type MercadoPagoSandboxWebhookResult =
       providerPaymentId: string | null;
       checkoutIntentId: string | null;
       issues: Array<{ code: string; expected: string | number | null; observed: string | number | null }>;
+      providerSnapshot: ProviderPaymentSnapshot | null;
     };
 
 function readPaymentId(rawBody: string, url: string) {
@@ -68,7 +70,15 @@ export async function processMercadoPagoSandboxWebhook(input: {
 
   const providerPaymentId = readPaymentId(input.rawBody, input.requestUrl);
   if (!providerPaymentId) {
-    return { ok: true, status: 200, disposition: "ignored", providerPaymentId: null, checkoutIntentId: null, issues: [] };
+    return {
+      ok: true,
+      status: 200,
+      disposition: "ignored",
+      providerPaymentId: null,
+      checkoutIntentId: null,
+      issues: [],
+      providerSnapshot: null,
+    };
   }
 
   const authentic = verifyMercadoPagoWebhookSignature({
@@ -97,6 +107,7 @@ export async function processMercadoPagoSandboxWebhook(input: {
       providerPaymentId,
       checkoutIntentId: null,
       issues: [{ code: "EXTERNAL_REFERENCE_MISSING", expected: "checkout_intent_id", observed: null }],
+      providerSnapshot: provider,
     };
   }
 
@@ -109,6 +120,7 @@ export async function processMercadoPagoSandboxWebhook(input: {
       providerPaymentId,
       checkoutIntentId,
       issues: [{ code: "CHECKOUT_EXPECTATION_NOT_FOUND", expected: checkoutIntentId, observed: null }],
+      providerSnapshot: provider,
     };
   }
   if (expected.creatorId !== binding.creatorId || expected.providerAccountId !== binding.providerAccountId) {
@@ -119,6 +131,7 @@ export async function processMercadoPagoSandboxWebhook(input: {
       providerPaymentId,
       checkoutIntentId,
       issues: [{ code: "ACCOUNT_BINDING_SCOPE_MISMATCH", expected: expected.providerAccountId, observed: binding.providerAccountId }],
+      providerSnapshot: provider,
     };
   }
 
@@ -130,5 +143,6 @@ export async function processMercadoPagoSandboxWebhook(input: {
     providerPaymentId,
     checkoutIntentId,
     issues: decision.issues,
+    providerSnapshot: provider,
   };
 }

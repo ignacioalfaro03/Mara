@@ -16,6 +16,7 @@
     "mercado-pago-test:contract": "node scripts/mercado-pago-test-contract.mjs",
     "mercado-pago-sandbox-runtime:contract": "node scripts/mercado-pago-sandbox-runtime-contract.mjs",
     "mercado-pago-sandbox-oauth-webhook:contract": "node scripts/mercado-pago-sandbox-oauth-webhook-contract.mjs",
+    "mercado-pago-sandbox-materialization:contract": "node scripts/mercado-pago-sandbox-materialization-contract.mjs",
     "second-purchase:contract": "node scripts/second-purchase-engine-contract.mjs",
     "creator-monetization:contract": "node scripts/creator-monetization-engine-contract.mjs && node scripts/creator-monetization-surface-contract.mjs && node scripts/creator-opportunity-wiring-contract.mjs && node scripts/paid-interaction-pricing-contract.mjs && node scripts/paid-interaction-session-contract.mjs"
   },
