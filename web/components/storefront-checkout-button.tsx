@@ -100,7 +100,11 @@ export function StorefrontCheckoutButton({
           setMessage("Esta oferta todavía no puede cobrar dinero real. Mara mantiene el checkout cerrado hasta que el proveedor de pagos esté autorizado.");
           return;
         }
-        if (payload.error === "invalid_checkout_amount" || payload.error === "capricho_goal_no_longer_accepting") {
+        if (
+          payload.error === "invalid_checkout_amount" ||
+          payload.error === "capricho_goal_no_longer_accepting" ||
+          payload.error === "commerce_goal_no_longer_accepting"
+        ) {
           setMessage("Ese monto ya no está disponible para esta meta. Actualiza el monto e inténtalo nuevamente.");
           return;
         }
