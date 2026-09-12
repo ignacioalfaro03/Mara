@@ -85,6 +85,9 @@ jobs:
       - name: Verify Mercado Pago test-only boundary
         run: npm run mercado-pago-test:contract
 
+      - name: Verify Mercado Pago sandbox runtime boundary
+        run: npm run mercado-pago-sandbox-runtime:contract
+
       - name: Verify second purchase engine behavior
         run: npm run second-purchase:contract
 
