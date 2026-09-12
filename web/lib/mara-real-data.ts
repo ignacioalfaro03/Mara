@@ -19,6 +19,20 @@ function boundedLimit(limit: number, fallback: number) {
   return Math.max(1, Math.min(50, Math.floor(limit)));
 }
 
+async function readAllUserPages<T>(accessToken: string, basePath: string, pageSize = 500) {
+  const rows: T[] = [];
+  let offset = 0;
+
+  for (;;) {
+    const separator = basePath.includes("?") ? "&" : "?";
+    const result = await userRest<T[]>(accessToken, `${basePath}${separator}limit=${pageSize}&offset=${offset}`);
+    if (!result.ok) return { rows, complete: false };
+    rows.push(...result.data);
+    if (result.data.length < pageSize) return { rows, complete: true };
+    offset += pageSize;
+  }
+}
+
 export async function readOwnCreator(accessToken: string, userId: string) {
   return first(await userRest<CreatorRow[]>(accessToken, `creators?select=*&user_id=eq.${encodeURIComponent(userId)}&limit=1`));
 }
@@ -80,18 +94,24 @@ export async function readUserWorldHistory(accessToken: string, userId: string, 
 }
 
 export async function readCreatorDashboard(accessToken: string, creatorId: string) {
-  const [customers, opportunities, nextActions, purchases, offers] = await Promise.all([
-    userRest<CustomerSummaryRow[]>(accessToken, `creator_customer_summary?select=*&creator_id=eq.${encodeURIComponent(creatorId)}&order=last_activity_at.desc&limit=50`),
+  const customerPath = `creator_customer_summary?select=*&creator_id=eq.${encodeURIComponent(creatorId)}&order=last_activity_at.desc`;
+  const pendingPurchasePath = `commerce_purchases?select=*&creator_id=eq.${encodeURIComponent(creatorId)}&status=eq.succeeded&fulfilled_at=is.null&order=created_at.asc`;
+
+  const [customerPages, opportunities, nextActions, pendingPurchasePages, offers] = await Promise.all([
+    readAllUserPages<CustomerSummaryRow>(accessToken, customerPath),
     userRest<DemandOpportunityRow[]>(accessToken, `creator_demand_opportunities?select=*&creator_id=eq.${encodeURIComponent(creatorId)}&order=progress_percent.desc&limit=30`),
     userRest<NextBestActionRow[]>(accessToken, `creator_next_best_actions?select=*&creator_id=eq.${encodeURIComponent(creatorId)}&order=priority.asc&limit=50`),
-    userRest<PurchaseRow[]>(accessToken, `commerce_purchases?select=*&creator_id=eq.${encodeURIComponent(creatorId)}&status=eq.succeeded&order=created_at.desc&limit=50`),
+    readAllUserPages<PurchaseRow>(accessToken, pendingPurchasePath),
     userRest<OfferRow[]>(accessToken, `commerce_offers?select=*&creator_id=eq.${encodeURIComponent(creatorId)}&order=created_at.desc&limit=50`),
   ]);
+
   return {
-    customers: customers.ok ? customers.data : [],
+    customers: customerPages.rows,
+    customerMetricsComplete: customerPages.complete,
     opportunities: opportunities.ok ? opportunities.data : [],
     nextActions: nextActions.ok ? nextActions.data : [],
-    purchases: purchases.ok ? purchases.data : [],
+    purchases: pendingPurchasePages.rows,
+    pendingFulfillmentComplete: pendingPurchasePages.complete,
     offers: offers.ok ? offers.data : [],
   };
 }
@@ -112,11 +132,11 @@ export function historyCopy(eventType: string | null) {
     commit: "Te comprometiste con una idea si llega a concretarse.",
     demand_commit: "Te comprometiste con una idea si llega a concretarse.",
     demand_created: "Propusiste algo que te gustaría ver aquí.",
-    purchase_completed: "Compraste algo en este World.",
-    purchase: "Compraste algo en este World.",
-    fulfillment_completed: "La creadora entregó una compra tuya.",
-    fulfillment: "La creadora entregó una compra tuya.",
+    purchase_completed: "Compraste algo a este creador.",
+    purchase: "Compraste algo a este creador.",
+    fulfillment_completed: "El creador entregó una compra tuya.",
+    fulfillment: "El creador entregó una compra tuya.",
   };
   const key = eventType?.trim().toLowerCase() ?? "";
-  return labels[key] ?? "Algo cambió en tu relación con este World.";
+  return labels[key] ?? "Hubo actividad nueva en tu relación con este creador.";
 }
