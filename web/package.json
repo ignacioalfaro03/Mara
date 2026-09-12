@@ -11,6 +11,7 @@
     "alpha:report:selftest": "node scripts/alpha-signal-report.mjs --self-test",
     "real-app-wiring:contract": "node scripts/real-app-wiring-contract-smoke.mjs",
     "release-safety:contract": "node scripts/release-safety-contract.mjs",
+    "supabase-migration-drift:contract": "node scripts/supabase-migration-drift-contract.mjs",
     "payment-readiness:contract": "node scripts/payment-readiness-contract.mjs && node scripts/payment-reconciliation-contract.mjs && node scripts/payment-oauth-boundary-contract.mjs && node scripts/payment-webhook-acceptance-contract.mjs && node scripts/payment-ledger-plan-contract.mjs && node scripts/payment-materialization-draft-contract.mjs",
     "mercado-pago-test:contract": "node scripts/mercado-pago-test-contract.mjs",
     "second-purchase:contract": "node scripts/second-purchase-engine-contract.mjs",

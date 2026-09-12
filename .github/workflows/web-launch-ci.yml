@@ -76,6 +76,9 @@ jobs:
       - name: Verify release safety boundary
         run: npm run release-safety:contract
 
+      - name: Verify Supabase migration drift boundary
+        run: npm run supabase-migration-drift:contract
+
       - name: Verify payment readiness boundary
         run: npm run payment-readiness:contract
 
@@ -135,7 +138,7 @@ jobs:
           done
           curl --fail --silent http://127.0.0.1:3000/ > /dev/null
 
-          if [ "$PR_HEAD_REF" = "strategy/mara-revenue-os-foundation-v1" ]; then
+          if [ -f ../docs/foundation/MARA_FOUNDATIONAL_THESIS.md ] && grep -q 'MARA IS THE REVENUE OS FOR CREATORS' ../docs/foundation/MARA_FOUNDATIONAL_THESIS.md; then
             echo "MARA_SMOKE_PROFILE=revenue-os-foundation-v1"
             BASE_URL=http://127.0.0.1:3000 node scripts/revenue-os-foundation-smoke.mjs
           elif [ "$PR_HEAD_REF" = "codex/full-product-realization-v1" ]; then
