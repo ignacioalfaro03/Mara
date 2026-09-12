@@ -95,6 +95,15 @@ export function buildMercadoPagoTestAuthorizationUrl(input: MercadoPagoTestOAuth
   return url.toString();
 }
 
+export function buildMercadoPagoSandboxNotificationUrl(baseUrl: string, paymentAccountBindingId: string) {
+  assertNonEmpty(baseUrl, "notification_base_url");
+  assertNonEmpty(paymentAccountBindingId, "payment_account_binding_id");
+  const url = new URL(baseUrl);
+  if (url.protocol !== "https:") throw new Error("mercado_pago_notification_url_must_use_https");
+  url.searchParams.set("mara_account", paymentAccountBindingId);
+  return url.toString();
+}
+
 export function buildMercadoPagoTestOAuthExchangeBody(input: MercadoPagoTestOAuthExchangeInput) {
   for (const [field, value] of Object.entries(input)) assertNonEmpty(value, field);
   return {
@@ -209,6 +218,13 @@ export function normalizeMercadoPagoPayment(
   const providerPaymentId = payload.id === null || payload.id === undefined ? "" : String(payload.id);
   if (!providerPaymentId) throw new Error("mercado_pago_payment_missing_id");
   if (!payload.currency_id) throw new Error("mercado_pago_payment_missing_currency");
+
+  const collectorId = payload.collector_id === null || payload.collector_id === undefined
+    ? null
+    : String(payload.collector_id);
+  if (collectorId && collectorId !== providerAccountId) {
+    throw new Error("mercado_pago_payment_collector_mismatch");
+  }
 
   const statusMap: Record<string, ProviderPaymentSnapshot["status"]> = {
     pending: "pending",
