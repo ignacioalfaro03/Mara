@@ -100,6 +100,9 @@ jobs:
       - name: Verify payment refund materialization boundary
         run: npm run payment-refund-materialization:contract
 
+      - name: Verify payment reconciliation snapshot boundary
+        run: npm run payment-reconciliation-snapshot:contract
+
       - name: Verify second purchase engine behavior
         run: npm run second-purchase:contract
 
