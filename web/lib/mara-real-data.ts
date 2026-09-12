@@ -1,6 +1,7 @@
 import type { Tables } from "@/lib/supabase/database.types";
 import { first, publicRest, userRest } from "@/lib/supabase/server-rest";
 import { buildSecondPurchaseOpportunities } from "@/lib/second-purchase-engine";
+import { readLiveMonetizationOpportunities } from "@/lib/creator-monetization-live";
 
 export type CreatorRow = Tables<"creators">;
 export type WorldRow = Tables<"creator_worlds">;
@@ -116,9 +117,13 @@ export async function readCreatorDashboard(accessToken: string, creatorId: strin
     userRest<OfferRow[]>(accessToken, `commerce_offers?select=*&creator_id=eq.${encodeURIComponent(creatorId)}&order=created_at.desc&limit=50`),
   ]);
 
-  const secondPurchaseOpportunities = buildSecondPurchaseOpportunities(customers, pendingPurchases);
-  const derivedUserIds = new Set(secondPurchaseOpportunities.map((item) => item.userId));
-  const derivedNextActions = secondPurchaseOpportunities.map((item) => ({
+  const creatorOffers = offers.ok ? offers.data : [];
+  const [secondPurchaseOpportunities, monetizationOpportunities] = await Promise.all([
+    Promise.resolve(buildSecondPurchaseOpportunities(customers, pendingPurchases)),
+    readLiveMonetizationOpportunities(accessToken, creatorId, creatorOffers.map((offer) => offer.id)),
+  ]);
+
+  const secondPurchaseNextActions = secondPurchaseOpportunities.map((item) => ({
     creator_id: creatorId,
     user_id: item.userId,
     action: item.action,
@@ -132,9 +137,32 @@ export async function readCreatorDashboard(accessToken: string, creatorId: strin
       ...item.evidence,
     },
   } as NextBestActionRow));
+
+  const monetizationNextActions = monetizationOpportunities.map((item) => ({
+    creator_id: creatorId,
+    user_id: item.userId,
+    action: item.action,
+    reason: item.reason,
+    priority: item.priority,
+    evidence: {
+      source: item.source,
+      opportunity_type: item.type,
+      ...item.evidence,
+    },
+  } as NextBestActionRow));
+
+  // Derived, evidence-backed actions outrank stale persisted suggestions for the
+  // same customer. Different current signals may coexist; Mara should not erase a
+  // valid auction/request/wish signal merely because a second-purchase signal also exists.
+  const derivedUserIds = new Set(
+    [...secondPurchaseNextActions, ...monetizationNextActions]
+      .map((item) => item.user_id)
+      .filter((value): value is string => Boolean(value)),
+  );
   const persistedNextActions = nextActions.ok ? nextActions.data : [];
   const combinedNextActions = [
-    ...derivedNextActions,
+    ...secondPurchaseNextActions,
+    ...monetizationNextActions,
     ...persistedNextActions.filter((item) => !item.user_id || !derivedUserIds.has(item.user_id)),
   ].sort((a, b) => rankNextActionPriority(a.priority) - rankNextActionPriority(b.priority));
 
@@ -143,8 +171,9 @@ export async function readCreatorDashboard(accessToken: string, creatorId: strin
     opportunities: opportunities.ok ? opportunities.data : [],
     nextActions: combinedNextActions,
     secondPurchaseOpportunities,
+    monetizationOpportunities,
     purchases: pendingPurchases,
-    offers: offers.ok ? offers.data : [],
+    offers: creatorOffers,
   };
 }
 
