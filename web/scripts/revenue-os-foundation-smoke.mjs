@@ -64,6 +64,14 @@ try {
   assert((await page.getByText("TU WORLD ES UN NEGOCIO", { exact: false }).count()) === 0, "Creator acquisition must not use deprecated World-first positioning");
   await assertNoHorizontalOverflow(page, "/creators");
 
+  const account = await page.goto(`${baseUrl}/auth?returnTo=${encodeURIComponent("/c/test/offers/test")}`, { waitUntil: "networkidle" });
+  assert(account?.status() === 200, `/auth returned ${account?.status()}`);
+  await page.getByText("MARA · CUENTA").waitFor();
+  assert((await page.getByText("Tu historia con Mara", { exact: false }).count()) === 0, "Account flow must not restore legacy companion positioning");
+  assert((await page.getByText("memoria", { exact: false }).count()) === 0, "Account flow must not sell legacy memory/companion product");
+  assert((await page.getByText(/Soy mayor de 18 años/i).count()) === 0, "General Revenue OS account signup must not be globally adult-gated");
+  await assertNoHorizontalOverflow(page, "/auth");
+
   const creatorOs = await page.goto(`${baseUrl}/creator`, { waitUntil: "networkidle" });
   assert(creatorOs?.status() === 200, `/creator returned ${creatorOs?.status()}`);
   await passAgeGate(page);
