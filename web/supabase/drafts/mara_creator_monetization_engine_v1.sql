@@ -2,7 +2,7 @@
 -- DRAFT ONLY / DO NOT APPLY DIRECTLY.
 --
 -- This file is intentionally staged under supabase/drafts, not migrations.
--- It must be reconciled against the current preview database, reviewed for RLS,
+-- It must be reconciled against the current Mara preview database, reviewed for RLS,
 -- tested with Supabase CLI/advisors and explicitly authorized before becoming a migration.
 --
 -- Reuse, do not duplicate:
@@ -15,9 +15,9 @@
 --
 -- New in this draft:
 -- - offer mechanism vocabulary
--- - creator auctions + atomic bid write path
+-- - creator auctions + atomic service-only bid RPC
 --
--- Browser clients do not get direct financial/auction mutation grants in this draft.
+-- Browser clients never receive auction mutation grants.
 
 begin;
 
@@ -31,7 +31,7 @@ alter table public.commerce_offers
 update public.commerce_offers
 set mechanism = case
   when type = 'open_contribution' then 'WISH'
-  else 'FIXED_PRICE'
+  else coalesce(nullif(metadata->>'mechanism', ''), 'FIXED_PRICE')
 end
 where mechanism is null;
 
@@ -60,7 +60,7 @@ alter table public.commerce_offers
 create table if not exists public.creator_auctions (
   id uuid primary key default gen_random_uuid(),
   creator_id uuid not null references public.creators(id) on delete cascade,
-  world_id uuid not null references public.creator_worlds(id) on delete cascade,
+  world_id uuid not null,
   offer_id uuid null references public.commerce_offers(id) on delete set null,
   title text not null check (char_length(title) between 2 and 180),
   description text not null default '' check (char_length(description) <= 4000),
@@ -69,6 +69,7 @@ create table if not exists public.creator_auctions (
   minimum_increment_minor bigint not null check (minimum_increment_minor > 0),
   current_bid_minor bigint null check (current_bid_minor is null or current_bid_minor > 0),
   current_bidder_user_id uuid null references auth.users(id) on delete set null,
+  bid_count integer not null default 0 check (bid_count >= 0),
   starts_at timestamptz not null,
   ends_at timestamptz not null,
   anti_sniping_window_seconds integer not null default 120
@@ -84,7 +85,10 @@ create table if not exists public.creator_auctions (
   updated_at timestamptz not null default now(),
   metadata jsonb not null default '{}'::jsonb check (jsonb_typeof(metadata) = 'object'),
   constraint creator_auctions_time_order check (ends_at > starts_at),
-  constraint creator_auctions_world_creator_guard check (creator_id is not null and world_id is not null)
+  constraint creator_auctions_creator_world_fk
+    foreign key (creator_id, world_id)
+    references public.creator_worlds (creator_id, id)
+    on delete cascade
 );
 
 create index if not exists creator_auctions_creator_status_idx
@@ -125,14 +129,34 @@ alter table public.creator_auction_bids enable row level security;
 
 revoke all on table public.creator_auctions from anon, authenticated;
 revoke all on table public.creator_auction_bids from anon, authenticated;
+grant select on table public.creator_auctions to anon, authenticated;
 grant all on table public.creator_auctions to service_role;
 grant all on table public.creator_auction_bids to service_role;
 
--- Public/browser read policy should be added only after category visibility and
--- creator/world publication semantics are reviewed against current storefront RLS.
+-- Public reads expose only the auction-level market state. Individual bid rows are
+-- service-only so a public client cannot enumerate bidder identities or bid history.
+create policy creator_auctions_public_select_v1
+  on public.creator_auctions
+  for select
+  to anon, authenticated
+  using (
+    status in ('scheduled','active','ended')
+    and exists (
+      select 1
+      from public.creator_worlds w
+      where w.id = creator_auctions.world_id
+        and w.creator_id = creator_auctions.creator_id
+        and w.status = 'active'
+        and w.visibility = 'public'
+    )
+  );
 
--- Atomic bid placement. Service/server owned only.
-create or replace function private.place_creator_auction_bid_v1(
+-- Atomic bid placement. This function is intentionally in the exposed `public`
+-- schema ONLY so PostgREST can call it with the server credential. It is SECURITY
+-- INVOKER, not DEFINER, and EXECUTE is revoked from browser roles. The service role
+-- is the sole caller and the Next.js route authenticates the user before passing
+-- p_user_id. This avoids exposing the private schema through the Data API.
+create or replace function public.place_creator_auction_bid_v1(
   p_auction_id uuid,
   p_creator_id uuid,
   p_user_id uuid,
@@ -147,7 +171,7 @@ returns table (
   extended boolean
 )
 language plpgsql
-security definer
+security invoker
 set search_path = ''
 as $$
 declare
@@ -175,7 +199,6 @@ begin
     raise exception 'auction_not_found';
   end if;
 
-  -- Idempotent replay returns the existing accepted bid without mutating price/end time.
   select b.id into v_bid_id
   from public.creator_auction_bids b
   where b.auction_id = p_auction_id
@@ -249,6 +272,7 @@ begin
   set current_bid_minor = p_amount_minor,
       current_bidder_user_id = p_user_id,
       winning_bid_id = v_bid_id,
+      bid_count = bid_count + 1,
       ends_at = v_next_ends_at,
       updated_at = now()
   where id = p_auction_id;
@@ -257,9 +281,9 @@ begin
 end;
 $$;
 
-revoke all on function private.place_creator_auction_bid_v1(uuid, uuid, uuid, bigint, text, timestamptz)
+revoke execute on function public.place_creator_auction_bid_v1(uuid, uuid, uuid, bigint, text, timestamptz)
   from public, anon, authenticated;
-grant execute on function private.place_creator_auction_bid_v1(uuid, uuid, uuid, bigint, text, timestamptz)
+grant execute on function public.place_creator_auction_bid_v1(uuid, uuid, uuid, bigint, text, timestamptz)
   to service_role;
 
 -- ---------------------------------------------------------------------------
@@ -276,9 +300,6 @@ grant execute on function private.place_creator_auction_bid_v1(uuid, uuid, uuid,
 -- - idempotent client_event_id per user;
 -- - creator/world composite scope when signal_scope = 'creator_world';
 -- - literal selected/alternative options rather than inferred traits.
---
--- If future Taste interactions require >2 presented options, evolve the existing
--- preference event contract additively rather than creating a parallel identity.
 
 -- ---------------------------------------------------------------------------
 -- 4. Explicit reuse notes / no duplicate tables
@@ -288,10 +309,10 @@ comment on column public.commerce_offers.mechanism is
   'Creator Commerce mechanism. WISH reuses commerce_goals/contributions; CUSTOM_REQUEST reuses creator_requests; PAID_INTERACTION reuses creator threads/messages/content plus canonical offers/purchases.';
 
 comment on table public.creator_auctions is
-  'Creator-scoped auction state. Bid acceptance must be atomic; only the eventual winner enters canonical checkout/payment/purchase.';
+  'Creator-scoped auction market state. A bid is free and is not a purchase; only the eventual winner may enter canonical checkout.';
 
 comment on table public.creator_auction_bids is
-  'Observed creator-scoped willingness-to-pay signal. A bid is not a settled payment or purchase.';
+  'Service-only observed willingness-to-pay events. Bid rows are not public customer history and are not settled money.';
 
 comment on table public.preference_events is
   'Shared explicit preference-event stream. Creator Taste Engine uses creator_world scope; do not use it for psychographic/vulnerability profiling.';
@@ -299,4 +320,4 @@ comment on table public.preference_events is
 rollback;
 
 -- DRAFT ends with ROLLBACK by design. Do not remove until promoted through the
--- reviewed migration process.
+-- reviewed Mara preview migration process.
