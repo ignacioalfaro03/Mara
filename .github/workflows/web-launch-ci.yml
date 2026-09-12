@@ -78,6 +78,12 @@ jobs:
       - name: Verify payment readiness boundary
         run: npm run payment-readiness:contract
 
+      - name: Verify Mercado Pago test-only boundary
+        run: npm run mercado-pago-test:contract
+
+      - name: Verify second purchase engine behavior
+        run: npm run second-purchase:contract
+
       - name: Verify product realization security contract
         if: github.head_ref == 'codex/full-product-realization-v1'
         run: node scripts/product-realization-security-contract.mjs
