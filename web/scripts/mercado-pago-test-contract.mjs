@@ -43,6 +43,19 @@ assert.equal(authUrl.searchParams.get("response_type"), "code");
 assert.equal(authUrl.searchParams.get("state"), "state-123");
 assert.equal(authUrl.searchParams.get("code_challenge_method"), "S256");
 
+const notificationUrl = new URL(sandbox.buildMercadoPagoSandboxNotificationUrl(
+  "https://example.test/api/commerce/webhooks/mercado-pago-sandbox",
+  "binding-public-123",
+));
+assert.equal(notificationUrl.protocol, "https:");
+assert.equal(notificationUrl.searchParams.get("mara_account"), "binding-public-123");
+assert.equal(notificationUrl.searchParams.has("access_token"), false);
+assert.equal(notificationUrl.searchParams.has("refresh_token"), false);
+assert.throws(() => sandbox.buildMercadoPagoSandboxNotificationUrl(
+  "http://example.test/api/commerce/webhooks/mercado-pago-sandbox",
+  "binding-public-123",
+), /notification_url_must_use_https/);
+
 const oauthExchange = sandbox.buildMercadoPagoTestOAuthExchangeBody({
   clientId: "123456",
   clientSecret: "sandbox-client-secret",
@@ -75,10 +88,11 @@ const preference = sandbox.buildMercadoPagoTestPreference({
   successUrl: "https://example.test/success",
   pendingUrl: "https://example.test/pending",
   failureUrl: "https://example.test/failure",
-}, "Oferta prueba", "https://example.test/api/payments/mercado-pago/webhook");
+}, "Oferta prueba", notificationUrl.toString());
 assert.equal(preference.items[0].unit_price, 1250);
 assert.equal(preference.marketplace_fee, 187.5);
 assert.equal(preference.external_reference, "11111111-1111-4111-8111-111111111111");
+assert.equal(preference.notification_url, notificationUrl.toString());
 
 const refund = sandbox.buildMercadoPagoTestRefundRequest({
   providerPaymentId: "991",
@@ -123,6 +137,7 @@ const payment = sandbox.normalizeMercadoPagoPayment({
   transaction_amount_refunded: 250,
   currency_id: "CLP",
   fee_details: [{ type: "mercadopago_fee", amount: 65 }],
+  collector_id: "seller-test-1",
   date_created: "2026-09-12T12:00:00Z",
   date_last_updated: "2026-09-12T12:05:00Z",
 }, "seller-test-1");
@@ -131,6 +146,14 @@ assert.equal(payment.amountMinor, 125000);
 assert.equal(payment.refundedAmountMinor, 25000);
 assert.equal(payment.processorFeeMinor, 6500);
 assert.equal(payment.status, "partially_refunded");
+assert.throws(() => sandbox.normalizeMercadoPagoPayment({
+  id: 992,
+  status: "approved",
+  external_reference: "11111111-1111-4111-8111-111111111111",
+  transaction_amount: 1250,
+  currency_id: "CLP",
+  collector_id: "different-seller",
+}, "seller-test-1"), /mercado_pago_payment_collector_mismatch/);
 
 const endpoints = sandbox.mercadoPagoTestApiEndpoints();
 assert.equal(endpoints.createPreference, "https://api.mercadopago.com/checkout/preferences");
