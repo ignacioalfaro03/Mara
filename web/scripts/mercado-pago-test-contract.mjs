@@ -29,6 +29,26 @@ assert.equal(authUrl.searchParams.get("response_type"), "code");
 assert.equal(authUrl.searchParams.get("state"), "state-123");
 assert.equal(authUrl.searchParams.get("code_challenge_method"), "S256");
 
+const oauthExchange = sandbox.buildMercadoPagoTestOAuthExchangeBody({
+  clientId: "123456",
+  clientSecret: "sandbox-client-secret",
+  authorizationCode: "TG-test-code",
+  redirectUri: "https://example.test/api/payments/mercado-pago/oauth/callback",
+  pkceVerifier: "pkce-verifier-abcdefghijklmnopqrstuvwxyz-1234567890",
+});
+assert.equal(oauthExchange.grant_type, "authorization_code");
+assert.equal(oauthExchange.test_token, "true");
+assert.equal(oauthExchange.code_verifier, "pkce-verifier-abcdefghijklmnopqrstuvwxyz-1234567890");
+
+const oauthRefresh = sandbox.buildMercadoPagoTestOAuthRefreshBody({
+  clientId: "123456",
+  clientSecret: "sandbox-client-secret",
+  refreshCredential: "TG-test-refresh",
+});
+assert.equal(oauthRefresh.grant_type, "refresh_token");
+assert.equal(oauthRefresh.test_token, "true");
+assert.equal(oauthRefresh.refresh_token, "TG-test-refresh");
+
 const preference = sandbox.buildMercadoPagoTestPreference({
   checkoutIntentId: "11111111-1111-4111-8111-111111111111",
   creatorId: "22222222-2222-4222-8222-222222222222",
@@ -45,6 +65,22 @@ const preference = sandbox.buildMercadoPagoTestPreference({
 assert.equal(preference.items[0].unit_price, 1250);
 assert.equal(preference.marketplace_fee, 187.5);
 assert.equal(preference.external_reference, "11111111-1111-4111-8111-111111111111");
+
+const refund = sandbox.buildMercadoPagoTestRefundRequest({
+  providerPaymentId: "991",
+  amountMinor: 25_000,
+  idempotencyKey: "refund-idempotency-123",
+});
+assert.equal(refund.url, "https://api.mercadopago.com/v1/payments/991/refunds");
+assert.equal(refund.method, "POST");
+assert.equal(refund.headers["X-Idempotency-Key"], "refund-idempotency-123");
+assert.deepEqual(refund.body, { amount: 250 });
+const fullRefund = sandbox.buildMercadoPagoTestRefundRequest({
+  providerPaymentId: "991",
+  amountMinor: null,
+  idempotencyKey: "refund-idempotency-full",
+});
+assert.deepEqual(fullRefund.body, {});
 
 const dataId = "PAYMENTABC123";
 const requestId = "request-123";
@@ -86,5 +122,6 @@ const endpoints = sandbox.mercadoPagoTestApiEndpoints();
 assert.equal(endpoints.createPreference, "https://api.mercadopago.com/checkout/preferences");
 assert.equal(endpoints.oauthToken, "https://api.mercadopago.com/oauth/token");
 assert.equal(endpoints.payment("991"), "https://api.mercadopago.com/v1/payments/991");
+assert.equal(endpoints.refunds("991"), "https://api.mercadopago.com/v1/payments/991/refunds");
 
 console.log("MARA_MERCADO_PAGO_TEST_CONTRACT PASS");
