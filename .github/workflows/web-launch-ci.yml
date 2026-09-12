@@ -125,6 +125,7 @@ jobs:
         env:
           NEXT_TELEMETRY_DISABLED: "1"
           PR_HEAD_REF: ${{ github.head_ref }}
+          PR_BASE_REF: ${{ github.base_ref }}
         run: |
           set -euo pipefail
           npm start > /tmp/mara-next.log 2>&1 &
@@ -138,7 +139,7 @@ jobs:
           done
           curl --fail --silent http://127.0.0.1:3000/ > /dev/null
 
-          if [ "$PR_HEAD_REF" = "strategy/mara-revenue-os-foundation-v1" ]; then
+          if [ "$PR_HEAD_REF" = "strategy/mara-revenue-os-foundation-v1" ] || [ "$PR_BASE_REF" = "strategy/mara-revenue-os-foundation-v1" ]; then
             echo "MARA_SMOKE_PROFILE=revenue-os-foundation-v1"
             BASE_URL=http://127.0.0.1:3000 node scripts/revenue-os-foundation-smoke.mjs
           elif [ "$PR_HEAD_REF" = "codex/full-product-realization-v1" ]; then
