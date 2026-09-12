@@ -88,6 +88,9 @@ jobs:
       - name: Verify Mercado Pago sandbox runtime boundary
         run: npm run mercado-pago-sandbox-runtime:contract
 
+      - name: Verify Mercado Pago sandbox OAuth and webhook harness
+        run: npm run mercado-pago-sandbox-oauth-webhook:contract
+
       - name: Verify second purchase engine behavior
         run: npm run second-purchase:contract
 

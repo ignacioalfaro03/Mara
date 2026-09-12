@@ -23,7 +23,8 @@ assert.match(clientSource, /createMercadoPagoSandboxCheckout/);
 assert.match(clientSource, /fetchMercadoPagoSandboxPayment/);
 assert.match(clientSource, /refundMercadoPagoSandboxPayment/);
 assert.match(clientSource, /mercado_pago_sandbox_returned_live_credential/);
-assert.match(clientSource, /Content-Type": "application\/x-www-form-urlencoded"/);
+assert.match(clientSource, /Content-Type": "application\/json"/);
+assert.doesNotMatch(clientSource, /application\/x-www-form-urlencoded/);
 assert.match(clientSource, /Authorization: `Bearer \$\{credential\.accessToken\}`/);
 
 const compiled = ts.transpileModule(source, {
@@ -38,7 +39,7 @@ const authUrl = new URL(sandbox.buildMercadoPagoTestAuthorizationUrl({
   state: "state-123",
   pkceChallenge: "challenge-123",
 }));
-assert.equal(authUrl.origin, "https://auth.mercadopago.cl");
+assert.equal(authUrl.origin, "https://auth.mercadopago.com");
 assert.equal(authUrl.searchParams.get("response_type"), "code");
 assert.equal(authUrl.searchParams.get("state"), "state-123");
 assert.equal(authUrl.searchParams.get("code_challenge_method"), "S256");
