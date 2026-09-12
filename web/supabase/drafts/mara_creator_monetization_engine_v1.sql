@@ -10,12 +10,12 @@
 -- - commerce_goals + commerce_contributions = WISH/GOAL implementation
 -- - creator_requests = CUSTOM_REQUEST implementation
 -- - creator_threads + creator_messages + creator_content = PAID_INTERACTION implementation
+-- - preference_events = creator-scoped Taste Engine event persistence
 -- - payment ledger draft = future settled-money authority
 --
 -- New in this draft:
 -- - offer mechanism vocabulary
 -- - creator auctions + atomic bid write path
--- - creator-scoped Taste Engine choices
 --
 -- Browser clients do not get direct financial/auction mutation grants in this draft.
 
@@ -263,42 +263,22 @@ grant execute on function private.place_creator_auction_bid_v1(uuid, uuid, uuid,
   to service_role;
 
 -- ---------------------------------------------------------------------------
--- 3. Taste Engine — explicit preference choices only
+-- 3. Taste Engine reuse — no duplicate table
 -- ---------------------------------------------------------------------------
 
-create table if not exists public.creator_taste_choices (
-  id uuid primary key default gen_random_uuid(),
-  creator_id uuid null references public.creators(id) on delete cascade,
-  user_id uuid not null references auth.users(id) on delete cascade,
-  prompt_id text not null check (char_length(prompt_id) between 1 and 120),
-  selected_option_id text not null check (char_length(selected_option_id) between 1 and 120),
-  presented_option_ids jsonb not null check (jsonb_typeof(presented_option_ids) = 'array'),
-  source text not null check (char_length(source) between 1 and 80),
-  version text not null check (char_length(version) between 1 and 80),
-  occurred_at timestamptz not null default now(),
-  cleared_at timestamptz null,
-  metadata jsonb not null default '{}'::jsonb check (jsonb_typeof(metadata) = 'object')
-);
-
-create index if not exists creator_taste_choices_user_creator_idx
-  on public.creator_taste_choices (user_id, creator_id, occurred_at desc);
-create index if not exists creator_taste_choices_creator_prompt_idx
-  on public.creator_taste_choices (creator_id, prompt_id, occurred_at desc)
-  where cleared_at is null;
-
-alter table public.creator_taste_choices enable row level security;
-revoke all on table public.creator_taste_choices from anon, authenticated;
-grant select on table public.creator_taste_choices to authenticated;
-grant all on table public.creator_taste_choices to service_role;
-
-create policy creator_taste_choices_select_own
-  on public.creator_taste_choices
-  for select
-  to authenticated
-  using ((select auth.uid()) = user_id);
-
--- Writes remain server-owned initially so prompt/version/source cannot be forged into
--- creator intelligence. A narrow RPC can be added after the event contract is frozen.
+-- `preference_events` already supports creator/world scoping via the live
+-- private-alpha foundation migration. Keep Taste Engine writes on that table.
+-- Current API groups are explicit binary choices (format, personalization,
+-- length, offer style). Do not create a second creator_taste_choices silo.
+--
+-- The existing table already enforces:
+-- - authenticated user ownership;
+-- - idempotent client_event_id per user;
+-- - creator/world composite scope when signal_scope = 'creator_world';
+-- - literal selected/alternative options rather than inferred traits.
+--
+-- If future Taste interactions require >2 presented options, evolve the existing
+-- preference event contract additively rather than creating a parallel identity.
 
 -- ---------------------------------------------------------------------------
 -- 4. Explicit reuse notes / no duplicate tables
@@ -313,8 +293,8 @@ comment on table public.creator_auctions is
 comment on table public.creator_auction_bids is
   'Observed creator-scoped willingness-to-pay signal. A bid is not a settled payment or purchase.';
 
-comment on table public.creator_taste_choices is
-  'Explicit fast preference choices for experience/recommendation context. Not psychographic/vulnerability profiling.';
+comment on table public.preference_events is
+  'Shared explicit preference-event stream. Creator Taste Engine uses creator_world scope; do not use it for psychographic/vulnerability profiling.';
 
 rollback;
 
