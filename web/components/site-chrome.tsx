@@ -14,8 +14,8 @@ export function SiteHeader() {
     <header className="siteHeader">
       <Link href="/" className="wordmark" aria-label="Mara">MARA</Link>
       <nav aria-label="Navegación pública">
-        <Link href="/app">Entrar</Link>
-        <Link href="/creators">Para creadoras</Link>
+        <Link href="/creators">Para creadores</Link>
+        <Link href="/creator">Creator OS</Link>
         <Link href="/auth">Cuenta</Link>
       </nav>
     </header>
@@ -27,10 +27,10 @@ export function SiteFooter() {
   if (isAppSurface(pathname)) return null;
   return (
     <footer className="siteFooter">
-      <span>Mara conecta creadoras y clientes para vender contenido, interacciones, solicitudes y experiencias con controles de privacidad y comercio claros.</span>
+      <span>Mara ayuda a creadores a convertir audiencia en clientes recurrentes mediante commerce, CRM, oportunidades e inteligencia de revenue.</span>
       <div className="footerLinks">
-        <Link href="/creators">Crear en Mara</Link>
-        <Link href="/legal">Privacidad · Términos · Divulgación IA</Link>
+        <Link href="/creators">Vender con Mara</Link>
+        <Link href="/legal">Privacidad · Términos</Link>
       </div>
     </footer>
   );
