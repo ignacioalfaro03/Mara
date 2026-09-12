@@ -6,17 +6,17 @@ import styles from "./creator.module.css";
 type SubmitState = "idle" | "submitting" | "success" | "error";
 
 const PRODUCTS = [
-  ["digital_content", "Contenido y colecciones digitales"],
-  ["audio", "Audios y notas de voz"],
-  ["personalized", "Productos personalizados"],
-  ["chat", "Chat privado en ventanas definidas"],
-  ["scheduled_sessions", "Sesiones agendadas de 15/30/60 min"],
+  ["digital_content", "Contenido y productos digitales"],
+  ["audio", "Audios, notas de voz y formatos privados"],
+  ["personalized", "Productos o entregables personalizados"],
+  ["chat", "Acceso o mensajería privada acotada"],
+  ["scheduled_sessions", "Sesiones o servicios agendados"],
   ["membership", "Membresía / acceso recurrente"],
 ] as const;
 
 export default function CreatorsPage() {
   const [email, setEmail] = useState("");
-  const [exposureLevel, setExposureLevel] = useState("character_only");
+  const [exposureLevel, setExposureLevel] = useState("not_sure");
   const [audienceSize, setAudienceSize] = useState("not_sure");
   const [currentCreatorStatus, setCurrentCreatorStatus] = useState("never");
   const [productInterests, setProductInterests] = useState<string[]>([]);
@@ -66,80 +66,80 @@ export default function CreatorsPage() {
     <main className={styles.page}>
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
-          <p className={styles.eyebrow}>MARA · PRIVATE CREATOR PILOT</p>
-          <h1>Tu audiencia ya quiere cosas. Deja de adivinarlas.</h1>
+          <p className={styles.eyebrow}>MARA · CREATOR REVENUE OS</p>
+          <h1>Gana más con la audiencia que ya tienes.</h1>
           <p className={styles.lede}>
-            Mara te ayuda a construir un World, entender qué quiere tu comunidad y convertir esa demanda en ofertas — sin obligarte a convertir tu identidad real en el producto.
+            Mara reúne tus ofertas, ventas y clientes para mostrarte qué está funcionando, quién puede volver a comprar y cuál es la siguiente mejor acción para hacer crecer tus ingresos.
           </p>
-          <a className={styles.heroAction} href="#pilot">Quiero conocer el piloto</a>
+          <a className={styles.heroAction} href="#pilot">Quiero probar Mara</a>
         </div>
-        <aside className={styles.heroProof} aria-label="La promesa de Mara para creadoras">
+        <aside className={styles.heroProof} aria-label="La ecuación de Mara">
           <p className={styles.kicker}>LA ECUACIÓN</p>
-          <strong>Más señal.<br />Más control.<br />Menos exposición.</strong>
-          <p>Tu personaje puede ser público. Tú decides cuánto de ti también lo es.</p>
+          <strong>Audiencia.<br />Clientes.<br />Revenue.</strong>
+          <p>Tu audiencia vive en redes. Mara te ayuda a convertirla en un negocio que puedes entender y operar.</p>
         </aside>
       </section>
 
       <section className={styles.promiseSection}>
         <div className={styles.sectionIntro}>
-          <p className={styles.kicker}>TU WORLD ES UN NEGOCIO, NO UN PERFIL</p>
-          <h2>Mara conecta lo que muestras con lo que la gente realmente quiere.</h2>
+          <p className={styles.kicker}>NO NECESITAS OTRA RED SOCIAL</p>
+          <h2>Necesitas saber qué vender, a quién y qué hacer después.</h2>
         </div>
         <div className={styles.promiseGrid}>
           <article>
             <span>01</span>
-            <strong>Define tu identidad y tus límites</strong>
-            <p>Personaje, voz, contenido real selectivo o interacción acotada. Tú eliges hasta dónde llegar.</p>
+            <strong>Publica una oferta</strong>
+            <p>Crea algo claro que puedas vender y comparte tu link desde Instagram, TikTok, YouTube, X, WhatsApp o donde ya tengas audiencia.</p>
           </article>
           <article>
             <span>02</span>
-            <strong>Deja que tu comunidad te diga qué quiere</strong>
-            <p>WANT, PLEDGE y COMMIT separan curiosidad de intención real para que no produzcas a ciegas.</p>
+            <strong>Convierte seguidores en clientes</strong>
+            <p>La compra deja de ser una transacción aislada: pasa a formar parte de una relación comercial que puedes seguir.</p>
           </article>
           <article>
             <span>03</span>
-            <strong>Convierte la señal en una oferta</strong>
-            <p>Mara organiza demanda, contexto comercial, clientes, fulfillment e historial para que sepas qué hacer después.</p>
+            <strong>Entiende a tus compradores</strong>
+            <p>GMV, recurrencia, historial, preferencias declaradas y contexto permitido quedan organizados en un CRM creador-cliente.</p>
           </article>
           <article>
             <span>04</span>
-            <strong>Haz que el negocio recuerde</strong>
-            <p>Compras, preferencias y recurrencia forman contexto para vender mejor sin vivir pegada a un chat.</p>
+            <strong>Actúa sobre oportunidades</strong>
+            <p>Mara prioriza acciones: entregar, recuperar, reactivar, volver a vender o no hacer nada cuando todavía no existe una señal suficiente.</p>
           </article>
         </div>
       </section>
 
       <section className={styles.businessStrip}>
-        <div><span>PRIVACY</span><strong>Tú controlas la exposición.</strong></div>
-        <div><span>DEMAND</span><strong>La audiencia deja señales útiles.</strong></div>
-        <div><span>COMMERCE</span><strong>Lo que tiene sentido se vuelve oferta.</strong></div>
-        <div><span>MEMORY</span><strong>La relación comercial no parte de cero.</strong></div>
+        <div><span>COMMERCE</span><strong>Vende desde tu propio link.</strong></div>
+        <div><span>CRM</span><strong>Cada comprador se vuelve cliente.</strong></div>
+        <div><span>INTELLIGENCE</span><strong>Detecta la siguiente oportunidad.</strong></div>
+        <div><span>REPEAT</span><strong>Optimiza para que vuelvan a comprar.</strong></div>
       </section>
 
       <section className={styles.split} id="pilot">
         <div className={styles.exposureCard}>
-          <p className={styles.kicker}>NO HAY UNA SOLA FORMA DE SER CREADORA</p>
-          <h2>Monetiza hasta donde tú quieras exponerte.</h2>
+          <p className={styles.kicker}>CREATOR BUSINESS, NO VANITY METRICS</p>
+          <h2>Mara está diseñada para operar ingresos, no para perseguir likes.</h2>
           <ol>
-            <li><b>Solo personaje.</b><span> Identidad pública virtual, escritura y productos digitales.</span></li>
-            <li><b>Voz.</b><span> Audios o interacción de voz cuando tú lo autorices.</span></li>
-            <li><b>Contenido real selectivo.</b><span> Tú decides exactamente qué se vincula a tu World.</span></li>
-            <li><b>Interacción directa acotada.</b><span> Ventanas y formatos definidos por ti, cuando estén operativamente habilitados.</span></li>
+            <li><b>Trae tu audiencia.</b><span> No tienes que reconstruirla dentro de Mara para empezar.</span></li>
+            <li><b>Vende algo real.</b><span> Contenido, servicios, personalizados, membresías u otros formatos permitidos que puedas cumplir.</span></li>
+            <li><b>Construye CRM con cada compra.</b><span> Historial, recurrencia y contexto comercial dejan de vivir dispersos.</span></li>
+            <li><b>Deja que Mara priorice.</b><span> La capa de inteligencia existe para convertir datos en acciones, no para llenar dashboards.</span></li>
           </ol>
           <div className={styles.callout}>
-            <span>LO IMPORTANTE</span>
-            <p>La meta no es que publiques más. Es que ganes mejor por el tiempo que decides dedicar y sin aumentar innecesariamente tu exposición pública.</p>
+            <span>NORTH STAR</span>
+            <p>GMV por creador activo. Mara funciona si te ayuda a convertir mejor, aumentar recompra y hacer crecer tus ingresos sin multiplicar tu carga operativa.</p>
           </div>
           <p className={styles.note}>
-            Mara ofrece pseudonimato público y exposición controlada, no anonimato regulatorio. Verificación de mayoría de edad, identidad, consentimiento y elegibilidad de pagos siguen siendo parte de la infraestructura privada cuando corresponda.
+            El piloto inicial mantiene control de acceso y mayoría de edad mientras cerramos infraestructura de pagos, compliance y operación. La tesis de producto es creator-commerce general y no depende de una identidad virtual ni de una categoría de contenido específica.
           </p>
         </div>
 
         <form className={styles.form} onSubmit={submit}>
           <div className={styles.formHead}>
             <p className={styles.kicker}>PILOTO PRIVADO</p>
-            <h2>Cuéntanos qué negocio te gustaría poder operar.</h2>
-            <p>No te estamos vendiendo un curso ni prometiendo ingresos. Queremos probar Mara con pocas creadoras adultas y aprender qué genera valor real.</p>
+            <h2>Cuéntanos cómo monetizas — o quieres monetizar — tu audiencia.</h2>
+            <p>No te estamos vendiendo un curso ni prometiendo ingresos. Queremos probar Mara con pocos creadores y medir si realmente aumenta la capacidad de vender y recomprar.</p>
           </div>
 
           {submitState === "success" ? (
@@ -155,13 +155,13 @@ export default function CreatorsPage() {
               </label>
 
               <label>
-                ¿Hasta dónde te gustaría exponerte?
+                ¿Cómo prefieres presentarte frente a tu audiencia?
                 <select value={exposureLevel} onChange={(event) => setExposureLevel(event.target.value)}>
-                  <option value="character_only">Solo personaje / avatar</option>
-                  <option value="voice">Personaje + mi voz</option>
-                  <option value="selective_real_content">Contenido real selectivo</option>
-                  <option value="direct_interaction">Interacción directa agendada</option>
-                  <option value="not_sure">Todavía no lo sé</option>
+                  <option value="not_sure">Todavía no lo sé / depende del producto</option>
+                  <option value="selective_real_content">Con mi marca o identidad pública</option>
+                  <option value="character_only">Con una persona, marca o avatar separado</option>
+                  <option value="voice">Principalmente mediante voz / formatos sin exposición constante</option>
+                  <option value="direct_interaction">Con interacción directa o servicios agendados</option>
                 </select>
               </label>
 
@@ -182,7 +182,7 @@ export default function CreatorsPage() {
                   Audiencia actual
                   <select value={audienceSize} onChange={(event) => setAudienceSize(event.target.value)}>
                     <option value="not_sure">Prefiero no decir / no sé</option>
-                    <option value="none">No tengo audiencia</option>
+                    <option value="none">Todavía no tengo audiencia</option>
                     <option value="under_5k">Menos de 5 mil</option>
                     <option value="5k_25k">5 mil–25 mil</option>
                     <option value="25k_plus">Más de 25 mil</option>
@@ -190,11 +190,11 @@ export default function CreatorsPage() {
                 </label>
 
                 <label>
-                  Experiencia como creadora
+                  Experiencia monetizando
                   <select value={currentCreatorStatus} onChange={(event) => setCurrentCreatorStatus(event.target.value)}>
-                    <option value="never">Nunca he vendido contenido/experiencias</option>
-                    <option value="private_creator">He vendido de forma privada</option>
-                    <option value="public_creator">Ya tengo una marca pública</option>
+                    <option value="never">Nunca he vendido a mi audiencia</option>
+                    <option value="private_creator">He vendido de forma puntual o privada</option>
+                    <option value="public_creator">Ya monetizo una marca/audiencia pública</option>
                     <option value="not_sure">Prefiero no decir</option>
                   </select>
                 </label>
@@ -210,14 +210,14 @@ export default function CreatorsPage() {
                 <span>Soy mayor de 18 años y autorizo que Mara use estos datos únicamente para contactarme respecto del piloto privado.</span>
               </label>
 
-              <button type="submit" disabled={!canSubmit}>{submitState === "submitting" ? "Enviando…" : "Quiero entrar al piloto"}</button>
+              <button type="submit" disabled={!canSubmit}>{submitState === "submitting" ? "Enviando…" : "Quiero probar Mara"}</button>
 
               {submitState === "error" ? (
                 <p className={styles.error} role="alert">No pudimos registrar tu solicitud. El piloto puede no estar habilitado en este entorno o hubo un problema temporal.</p>
               ) : null}
 
               <p className={styles.finePrint}>
-                Solicitar acceso no garantiza aceptación ni ingresos. Los pagos a creadoras siguen desactivados hasta contar con proveedor, verificación y requisitos operativos compatibles con el modelo real de Mara.
+                Solicitar acceso no garantiza aceptación ni ingresos. Los pagos y payouts reales siguen desactivados hasta contar con proveedor, verificación y requisitos operativos compatibles con el modelo de Mara.
               </p>
             </>
           )}
