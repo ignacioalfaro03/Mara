@@ -15,15 +15,16 @@ export default async function PublicCreatorOfferPage({ params }: { params: Promi
   const offers = await readWorldOffers(profile.id);
   const offer = offers.find((candidate) => candidate.slug === offerSlug);
   if (!offer) notFound();
+  const returnTo = `/c/${slug}/offers/${offerSlug}`;
 
   return (
     <main className={styles.shell}>
       <div className={styles.container}>
-        <ProductTelemetry event="offer_viewed" surface={`/c/${slug}/offers/${offerSlug}`} target={offer.slug} placement="creator_storefront" />
+        <ProductTelemetry event="offer_viewed" surface={returnTo} target={offer.slug} placement="creator_storefront" />
 
         <nav className={styles.nav}>
           <Link href={`/c/${slug}`}>← {profile.display_name}</Link>
-          <Link className={styles.secondary} href="/auth">Cuenta</Link>
+          <Link className={styles.secondary} href={`/auth?returnTo=${encodeURIComponent(returnTo)}`}>Cuenta</Link>
         </nav>
 
         <header className={styles.hero}>
@@ -37,7 +38,7 @@ export default async function PublicCreatorOfferPage({ params }: { params: Promi
             <p className={styles.eyebrow}>PRECIO</p>
             <p className={styles.metric}>{formatMoney(offer.amount_minor, offer.currency)}</p>
             <p className={styles.muted}>El checkout usa el precio registrado en servidor. El navegador no define el monto final.</p>
-            <StorefrontCheckoutButton offerSlug={offer.slug} label={`Comprar · ${formatMoney(offer.amount_minor, offer.currency)}`} />
+            <StorefrontCheckoutButton offerSlug={offer.slug} offerType={offer.type} currency={offer.currency} returnTo={returnTo} />
           </article>
 
           <article className={styles.card}>
@@ -50,7 +51,7 @@ export default async function PublicCreatorOfferPage({ params }: { params: Promi
 
         <section className={styles.grid}>
           <article className={`${styles.card} ${styles.wide}`}>
-            <p className={styles.eyebrow}>COMMERCE CLARITY</p>
+            <p className={styles.eyebrow}>COMPRA CLARA</p>
             <p className={styles.muted}>Antes de completar una compra, Mara mantiene explícitos el creador, la oferta, el precio y el estado del checkout. Los pagos reales permanecen cerrados mientras el proveedor no esté autorizado para el modelo operativo vigente.</p>
           </article>
         </section>
