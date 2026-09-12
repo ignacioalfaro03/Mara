@@ -4,8 +4,12 @@ import { serviceHeaders } from "@/lib/commerce/backend";
 import {
   exchangeMercadoPagoSandboxAuthorization,
 } from "@/lib/commerce/mercado-pago-sandbox-client";
-import { buildMercadoPagoTestAuthorizationUrl } from "@/lib/commerce/mercado-pago-test";
+import {
+  buildMercadoPagoSandboxNotificationUrl,
+  buildMercadoPagoTestAuthorizationUrl,
+} from "@/lib/commerce/mercado-pago-test";
 import type { MercadoPagoSandboxExecutionRuntime } from "@/lib/commerce/mercado-pago-sandbox-runtime";
+import { createMercadoPagoSandboxWebhookStore } from "@/lib/commerce/mercado-pago-sandbox-webhook-store";
 
 const PKCE_VERIFIER_BYTES = 48;
 const STATE_BYTES = 32;
@@ -125,9 +129,18 @@ export async function completeMercadoPagoSandboxOAuth(input: {
     p_credential_expires_at: exchanged.expiresAt,
   });
 
+  const store = createMercadoPagoSandboxWebhookStore(input.backend);
+  const webhookBindingId = await store.ensureBinding(session.creator_id);
+  const notificationUrl = buildMercadoPagoSandboxNotificationUrl(
+    input.runtime.webhookBaseUrl,
+    webhookBindingId,
+  );
+
   return {
     creatorId: session.creator_id,
     providerAccountId: exchanged.providerAccountId,
     credentialExpiresAt: exchanged.expiresAt,
+    webhookBindingId,
+    notificationUrl,
   };
 }
