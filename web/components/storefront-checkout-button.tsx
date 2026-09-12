@@ -11,9 +11,10 @@ type CheckoutPayload = {
 
 type Props = {
   offerSlug: string;
-  offerType: string;
-  currency: string;
-  returnTo: string;
+  offerType?: string;
+  currency?: string;
+  returnTo?: string;
+  label?: string;
 };
 
 function requestIdFor(offerSlug: string) {
@@ -25,7 +26,13 @@ function requestIdFor(offerSlug: string) {
   return next;
 }
 
-export function StorefrontCheckoutButton({ offerSlug, offerType, currency, returnTo }: Props) {
+export function StorefrontCheckoutButton({
+  offerSlug,
+  offerType = "legacy_offer",
+  currency = "CLP",
+  returnTo,
+  label = "Comprar",
+}: Props) {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [authRequired, setAuthRequired] = useState(false);
@@ -75,14 +82,16 @@ export function StorefrontCheckoutButton({ offerSlug, offerType, currency, retur
     }
   }
 
+  const authReturnTo = returnTo ?? "/";
+
   return (
     <div>
       <button type="button" className="storefrontPrimaryButton" onClick={() => void beginCheckout()} disabled={busy}>
-        {busy ? "Preparando checkout…" : "Comprar"}
+        {busy ? "Preparando checkout…" : label}
       </button>
       {authRequired ? (
         <p className="storefrontInlineAction">
-          <a href={`/auth?returnTo=${encodeURIComponent(returnTo)}`}>Entrar o crear cuenta</a>
+          <a href={`/auth?returnTo=${encodeURIComponent(authReturnTo)}`}>Entrar o crear cuenta</a>
         </p>
       ) : null}
       {message ? <p className="storefrontStatus" role="status">{message}</p> : null}
