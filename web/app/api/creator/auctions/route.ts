@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { getVerifiedSession, setSessionCookies } from "@/lib/auth-session";
-import { readOwnCreator, type WorldRow } from "@/lib/mara-real-data";
+import { readOwnCreator, type OfferRow, type WorldRow } from "@/lib/mara-real-data";
 import { emitProductEvent } from "@/lib/product-telemetry";
 import { productCapability } from "@/lib/product-realization";
-import { safeLocalReturn, serviceRest, userRest } from "@/lib/supabase/server-rest";
+import { safeLocalReturn, serviceRest, slugify, userRest } from "@/lib/supabase/server-rest";
 import type { CreatorAuctionRow } from "@/lib/commerce/auction-runtime";
 
 export const runtime = "nodejs";
@@ -21,6 +21,70 @@ type FinalizeRow = {
 function withSession(response: NextResponse, refreshedSession: Parameters<typeof setSessionCookies>[1] | null | undefined) {
   if (refreshedSession) setSessionCookies(response, refreshedSession);
   return response;
+}
+
+async function ensureAuctionWinnerOffer(
+  auction: CreatorAuctionRow,
+  winnerUserId: string,
+  winningBidId: string | null,
+  winningAmountMinor: number,
+) {
+  const fulfillmentKey = `auction_${auction.id.replaceAll("-", "")}`.slice(0, 100);
+  const metadata = {
+    mechanism: "AUCTION",
+    fulfillment_mode: "creator_manual",
+    fulfillment_concept: "auction_award",
+    auction_id: auction.id,
+    winning_bid_id: winningBidId,
+    signed_test_handoff_v1: true,
+  };
+
+  if (auction.offer_id) {
+    const updated = await serviceRest<OfferRow[]>(
+      `commerce_offers?id=eq.${encodeURIComponent(auction.offer_id)}&creator_id=eq.${encodeURIComponent(auction.creator_id)}&world_id=eq.${encodeURIComponent(auction.world_id)}`,
+      {
+        method: "PATCH",
+        headers: { Prefer: "return=representation" },
+        body: JSON.stringify({
+          amount_minor: winningAmountMinor,
+          currency: auction.currency,
+          status: "active",
+          visibility: "private_user",
+          buyer_user_id: winnerUserId,
+          mechanism: "AUCTION",
+          metadata,
+          updated_at: new Date().toISOString(),
+        }),
+      },
+    );
+    return updated.ok ? updated.data[0] ?? null : null;
+  }
+
+  const slug = `${slugify(`auction-${auction.id.slice(0, 8)}`, 55)}-${crypto.randomUUID().slice(0, 8)}`;
+  const created = await serviceRest<OfferRow[]>("commerce_offers", {
+    method: "POST",
+    headers: { Prefer: "return=representation" },
+    body: JSON.stringify({
+      creator_id: auction.creator_id,
+      world_id: auction.world_id,
+      demand_request_id: null,
+      slug,
+      type: "fixed_unlock",
+      title: `Adjudicación · ${auction.title}`.slice(0, 140),
+      description: "Oferta privada para completar la adjudicación de la subasta ganada.",
+      price_mode: "fixed",
+      amount_minor: winningAmountMinor,
+      currency: auction.currency,
+      fulfillment_key: fulfillmentKey,
+      offer_family: "digital_product",
+      status: "active",
+      visibility: "private_user",
+      buyer_user_id: winnerUserId,
+      mechanism: "AUCTION",
+      metadata,
+    }),
+  });
+  return created.ok ? created.data[0] ?? null : null;
 }
 
 export async function POST(request: Request) {
@@ -50,21 +114,54 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "auction_not_ended" }, { status: 409 });
     }
 
-    const finalized = await serviceRest<FinalizeRow[]>("rpc/finalize_creator_auction_v1", {
-      method: "POST",
-      body: JSON.stringify({
-        p_auction_id: auction.id,
-        p_creator_id: creator.id,
-        p_finalized_at: new Date().toISOString(),
-      }),
-    });
-    if (!finalized.ok || !finalized.data[0]) return NextResponse.json({ error: "auction_finalize_failed" }, { status: 502 });
+    let finalizedRow: FinalizeRow;
+    if (auction.status === "ended") {
+      finalizedRow = {
+        finalized_status: "ended",
+        winner_user_id: auction.winner_user_id,
+        winning_bid_id: auction.winning_bid_id,
+        winning_amount_minor: auction.current_bid_minor,
+      };
+    } else {
+      const finalized = await serviceRest<FinalizeRow[]>("rpc/finalize_creator_auction_v1", {
+        method: "POST",
+        body: JSON.stringify({
+          p_auction_id: auction.id,
+          p_creator_id: creator.id,
+          p_finalized_at: new Date().toISOString(),
+        }),
+      });
+      if (!finalized.ok || !finalized.data[0]) return NextResponse.json({ error: "auction_finalize_failed" }, { status: 502 });
+      finalizedRow = finalized.data[0];
+    }
+
+    if (finalizedRow.winner_user_id && finalizedRow.winning_amount_minor && finalizedRow.winning_amount_minor > 0) {
+      const winnerOffer = await ensureAuctionWinnerOffer(
+        auction,
+        finalizedRow.winner_user_id,
+        finalizedRow.winning_bid_id,
+        Number(finalizedRow.winning_amount_minor),
+      );
+      if (!winnerOffer) return NextResponse.json({ error: "auction_winner_offer_create_failed" }, { status: 502 });
+
+      if (auction.offer_id !== winnerOffer.id) {
+        const attached = await serviceRest<CreatorAuctionRow[]>(
+          `creator_auctions?id=eq.${encodeURIComponent(auction.id)}&creator_id=eq.${encodeURIComponent(creator.id)}`,
+          {
+            method: "PATCH",
+            headers: { Prefer: "return=representation" },
+            body: JSON.stringify({ offer_id: winnerOffer.id, updated_at: new Date().toISOString() }),
+          },
+        );
+        if (!attached.ok || !attached.data[0]) return NextResponse.json({ error: "auction_winner_offer_attach_failed" }, { status: 502 });
+      }
+    }
 
     await emitProductEvent(request, "creator_auction_finalized", {
       surface: "/creator/monetization",
       target: auction.id,
       currency: auction.currency,
-      has_winner: Boolean(finalized.data[0].winner_user_id),
+      has_winner: Boolean(finalizedRow.winner_user_id),
     });
     return withSession(NextResponse.redirect(new URL(returnTo, request.url), 303), session.refreshedSession);
   }
