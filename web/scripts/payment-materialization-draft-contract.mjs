@@ -18,6 +18,7 @@ assert.match(sql, /payment_capture:/);
 assert.match(sql, /processor_fee:/);
 assert.match(sql, /assert_mara_ledger_transaction_balanced/);
 assert.match(sql, /processor_fee_bearer_required/);
+assert.match(sql, /processor_fee_exceeds_gross/);
 assert.match(sql, /processor_fee_exceeds_creator_share/);
 assert.match(sql, /revoke all on function public\.materialize_mara_payment_capture_v1[\s\S]*from public, anon, authenticated/i);
 assert.match(sql, /grant execute on function public\.materialize_mara_payment_capture_v1[\s\S]*to service_role/i);
