@@ -52,8 +52,18 @@ assert.throws(() => ledger.buildCaptureJournalPlan({
   currency: "CLP",
 }), /platform_fee_exceeds_gross/);
 
+assert.throws(() => ledger.buildCaptureJournalPlan({
+  paymentId: "pay-5",
+  grossAmountMinor: 1000,
+  platformFeeMinor: 100,
+  processorFeeMinor: 1001,
+  processorFeeBearer: "platform",
+  currency: "CLP",
+}), /processor_fee_exceeds_gross/);
+
 assert.match(source, /No hidden default is allowed/);
 assert.match(source, /processorFeeBearer/);
+assert.match(source, /processor_fee_exceeds_gross/);
 assert.match(source, /assertBalancedTransaction/);
 
 console.log("MARA_PAYMENT_LEDGER_PLAN_CONTRACT PASS");
