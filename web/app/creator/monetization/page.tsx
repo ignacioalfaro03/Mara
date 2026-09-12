@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { getVerifiedSession } from "@/lib/auth-session";
+import { publicAuctionProjection, type CreatorAuctionRow } from "@/lib/commerce/auction-runtime";
 import { formatMoney, readCreatorDashboard, readOwnCreator, readOwnWorlds } from "@/lib/mara-real-data";
 import { productCapability } from "@/lib/product-realization";
-import { userRest } from "@/lib/supabase/server-rest";
+import { serviceRest, userRest } from "@/lib/supabase/server-rest";
 import styles from "@/app/real-product.module.css";
 
 export const dynamic = "force-dynamic";
@@ -19,7 +20,7 @@ type ThreadRow = {
 const mechanisms = [
   ["Ventas", "FIXED_PRICE", "Disponible sobre el commerce spine actual", "Productos, contenido y entregables con precio definido por la creadora. Checkout y precio siguen siendo server-authoritative."],
   ["Deseos / Caprichos", "WISH", "Producto creator-scoped sobre goals + contributions", "Metas financiadas por aportes de la audiencia. Cada aporte confirmado se convierte en una señal del mismo cliente dentro del CRM."],
-  ["Subastas", "AUCTION", "Domain engine + preview contract preparados", "Pujas gratuitas, incremento mínimo y anti-sniping. Solo el ganador deberá pasar a checkout cuando pagos reales sean autorizados."],
+  ["Subastas", "AUCTION", "Runtime preview preparado; DB Mara preview pendiente", "Pujas gratuitas, incremento mínimo y anti-sniping. El ganador se determina aparte y no se convierte automáticamente en compra."],
   ["Solicitudes", "CUSTOM_REQUEST", "Backbone existente reutilizado", "El usuario propone qué quiere y cuánto pagaría; la creadora puede revisar, aceptar, rechazar o contraofertar sin confundir intención con compra."],
   ["Chat y media", "PAID_INTERACTION", "Oferta pagada dentro de conversación existente", "La creadora puede enviar una oferta monetizable dentro del chat sin cobrar por el mensaje ni crear un ledger paralelo."],
   ["Taste Engine", "TASTE_CHOICE", "Persistencia creator-scoped reutilizada", "Elecciones rápidas tipo A/B para entretener y guardar preferencias declaradas, no para perfilar vulnerabilidades."],
@@ -66,10 +67,17 @@ export default async function CreatorMonetizationPage() {
   const wishesEnabled = productCapability("wishes");
   const paidInteractionsEnabled = productCapability("paid_interactions") && productCapability("messaging");
   const auctionsEnabled = productCapability("auctions");
-  const threadResult = paidInteractionsEnabled
-    ? await userRest<ThreadRow[]>(session.accessToken, `creator_threads?select=*&creator_id=eq.${encodeURIComponent(creator.id)}&status=eq.active&order=last_message_at.desc.nullslast&limit=50`)
-    : null;
+  const [threadResult, auctionResult] = await Promise.all([
+    paidInteractionsEnabled
+      ? userRest<ThreadRow[]>(session.accessToken, `creator_threads?select=*&creator_id=eq.${encodeURIComponent(creator.id)}&status=eq.active&order=last_message_at.desc.nullslast&limit=50`)
+      : Promise.resolve(null),
+    auctionsEnabled
+      ? serviceRest<CreatorAuctionRow[]>(`creator_auctions?select=*&creator_id=eq.${encodeURIComponent(creator.id)}&order=created_at.desc&limit=50`)
+      : Promise.resolve(null),
+  ]);
   const threads = threadResult?.ok ? threadResult.data : [];
+  const auctionRuntimeReady = Boolean(auctionsEnabled && auctionResult?.ok);
+  const auctions = auctionResult?.ok ? auctionResult.data.map((row) => ({ row, public: publicAuctionProjection(row) })) : [];
   const customerAlias = new Map(dashboard.customers.map((customer) => [customer.user_id, customer.alias || "Cliente"]));
   const paidOffers = dashboard.offers.filter((offer) => offer.status === "active" && ["bounded_interaction", "personalized_digital"].includes(offer.offer_family ?? ""));
   const planLabel = creator.plan === "pro" ? "PLUS" : "FREE";
@@ -157,9 +165,47 @@ export default async function CreatorMonetizationPage() {
         <section className={styles.grid}>
           <article className={`${styles.card} ${styles.wide}`}>
             <p className={styles.eyebrow}>AUCTION PREVIEW</p>
-            <h2>{auctionsEnabled ? "El runtime está habilitado para probar el schema de preview." : "Runtime listo; schema de preview todavía no conectado."}</h2>
-            <p className={styles.muted}>Puja gratis, incremento mínimo y anti-sniping. Una puja no es una compra y nunca paga por participar. El schema debe aplicarse y auditarse en Mara preview antes de habilitar esta superficie.</p>
+            <h2>{auctionRuntimeReady ? "Crea una subasta de preview." : "Código listo; schema Mara preview todavía no disponible en este entorno."}</h2>
+            <p className={styles.muted}>Pujar es gratis. Mara bloquea autopujas, aplica incremento mínimo y anti-sniping y separa ganador de compra.</p>
+            {auctionRuntimeReady && worlds.length > 0 ? (
+              <form className={styles.form} method="post" action="/api/creator/auctions">
+                <input type="hidden" name="action" value="create" />
+                <input type="hidden" name="returnTo" value="/creator/monetization" />
+                <label>Perfil<select name="worldId" required>{worlds.map((world) => <option key={world.id} value={world.id}>{world.display_name}</option>)}</select></label>
+                <label>Título<input name="title" minLength={2} maxLength={180} required placeholder="Ej. Pieza única / cupo exclusivo" /></label>
+                <label>Descripción<textarea name="description" maxLength={4000} placeholder="Qué gana exactamente quien termine con la puja más alta." /></label>
+                <div className={styles.twoCol}>
+                  <label>Puja inicial CLP<input name="startingBid" type="number" min="1" step="1" required /></label>
+                  <label>Incremento mínimo CLP<input name="minimumIncrement" type="number" min="1" step="1" required /></label>
+                </div>
+                <div className={styles.twoCol}>
+                  <label>Comienza en minutos<input name="startsInMinutes" type="number" min="0" max="43200" step="1" defaultValue="0" required /></label>
+                  <label>Duración minutos<input name="durationMinutes" type="number" min="5" max="43200" step="1" defaultValue="60" required /></label>
+                </div>
+                <label>Anti-sniping minutos<input name="antiSnipingMinutes" type="number" min="0" max="60" step="1" defaultValue="2" required /></label>
+                <button className={styles.button} type="submit">Crear subasta de preview</button>
+              </form>
+            ) : null}
           </article>
+
+          {auctionRuntimeReady ? auctions.map(({ row, public: auction }) => (
+            <article className={styles.card} key={row.id}>
+              <p className={styles.eyebrow}>AUCTION · {auction.status.toUpperCase()}</p>
+              <h2>{auction.title}</h2>
+              <p className={styles.metric}>{formatMoney(auction.currentBidMinor ?? auction.startingBidMinor, auction.currency)}</p>
+              <p className={styles.muted}>{auction.bidCount} pujas · mínimo siguiente {formatMoney(auction.minimumNextBidMinor, auction.currency)}</p>
+              <p className={styles.small}>Cierre: {new Date(auction.endsAt).toLocaleString("es-CL")}</p>
+              {auction.status === "ended" && row.status !== "cancelled" ? (
+                <form method="post" action="/api/creator/auctions">
+                  <input type="hidden" name="action" value="finalize" />
+                  <input type="hidden" name="auctionId" value={row.id} />
+                  <input type="hidden" name="returnTo" value="/creator/monetization" />
+                  <button className={styles.secondary} type="submit">Finalizar resultado</button>
+                </form>
+              ) : null}
+              {worlds.find((world) => world.id === row.world_id) ? <p><Link className={styles.secondary} href={`/c/${worlds.find((world) => world.id === row.world_id)!.slug}/auctions`}>Ver como fan</Link></p> : null}
+            </article>
+          )) : null}
         </section>
 
         <section className={styles.grid}>
