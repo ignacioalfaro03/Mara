@@ -7,9 +7,11 @@ function assert(condition, message) {
 const pageResponse = await fetch(`${baseUrl}/creators`, { redirect: "manual" });
 assert(pageResponse.status === 200, `/creators returned ${pageResponse.status}`);
 const pageHtml = await pageResponse.text();
-assert(pageHtml.includes("Tu personaje puede ser público"), "creator privacy positioning missing");
-assert(pageHtml.includes("Tu audiencia ya quiere cosas") || pageHtml.includes("Deja de adivinarlas"), "creator business positioning missing");
-assert(pageHtml.includes("Quiero entrar al piloto") || pageHtml.includes("Quiero conocer el piloto"), "creator pilot CTA missing");
+assert(pageHtml.includes("Gana más con la audiencia que ya tienes"), "creator Revenue OS positioning missing");
+assert(pageHtml.includes("GMV por creador activo"), "creator North Star positioning missing");
+assert(pageHtml.includes("No te estamos vendiendo un curso ni prometiendo ingresos"), "creator no-income-promise guardrail missing");
+assert(pageHtml.includes("Quiero probar Mara"), "creator pilot CTA missing");
+assert(pageHtml.includes("autorizo que Mara use estos datos únicamente para contactarme respecto del piloto privado"), "creator consent/privacy copy missing");
 
 const invalidConsent = await fetch(`${baseUrl}/api/creator-interest`, {
   method: "POST",
