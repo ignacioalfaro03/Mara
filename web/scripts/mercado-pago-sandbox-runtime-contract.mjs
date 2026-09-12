@@ -54,7 +54,14 @@ assert.match(sql, /grant execute on function public\.mara_mp_sandbox_vault_read\
 assert.match(sql, /grant execute on function public\.mara_mp_sandbox_vault_replace\(text, jsonb\) to service_role/);
 assert.doesNotMatch(sql, /grant execute .* to anon/);
 assert.doesNotMatch(sql, /grant execute .* to authenticated/);
-assert.doesNotMatch(sql, /access_token\s+text|refresh_token\s+text/i);
+
+const registryTable = sql.match(
+  /create table if not exists private\.mara_payment_vault_registry \(([\s\S]*?)\n\);/,
+)?.[1];
+assert.ok(registryTable, "vault registry table block missing");
+assert.doesNotMatch(registryTable, /access[_]?token|refresh[_]?token/i);
+assert.match(registryTable, /secret_id uuid primary key/);
+assert.match(registryTable, /provider_account_id text/);
 
 const migrationFiles = fs.readdirSync(migrationsDir);
 assert.equal(migrationFiles.includes("mara_mp_sandbox_vault_bridge_v1.sql"), false);
