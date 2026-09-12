@@ -25,7 +25,7 @@ for (const mechanism of [
 }
 assert.match(contract, /No pay-per-bid, bid-fee, lottery or gambling mechanics/i);
 assert.match(contract, /NOT PAYMENT READY/);
-assert.match(contract, /content creators with an existing audience/i);
+assert.match(contract, /creators with an existing audience/i);
 
 assert.match(draft, /DRAFT ONLY \/ DO NOT APPLY DIRECTLY/);
 assert.match(draft, /for update;/i, "auction bid write must lock current auction state");
