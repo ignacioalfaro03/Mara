@@ -54,6 +54,8 @@ type ProductProperties = {
   offer_slug?: string;
   offer_type?: string;
   currency?: string;
+  extended?: boolean;
+  has_winner?: boolean;
 };
 
 export async function emitProductEvent(request: Request, event: ProductEvent, properties: ProductProperties = {}) {
