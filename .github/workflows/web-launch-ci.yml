@@ -76,6 +76,9 @@ jobs:
       - name: Verify release safety boundary
         run: npm run release-safety:contract
 
+      - name: Verify Supabase migration drift boundary
+        run: npm run supabase-migration-drift:contract
+
       - name: Verify payment readiness boundary
         run: npm run payment-readiness:contract
 
