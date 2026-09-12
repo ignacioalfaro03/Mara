@@ -103,6 +103,9 @@ jobs:
       - name: Verify payment reconciliation snapshot boundary
         run: npm run payment-reconciliation-snapshot:contract
 
+      - name: Verify full refund product reversal boundary
+        run: npm run full-refund-product-reversal:contract
+
       - name: Verify second purchase engine behavior
         run: npm run second-purchase:contract
 
