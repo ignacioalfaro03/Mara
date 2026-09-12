@@ -122,18 +122,20 @@ begin
   if v_session.status <> 'pending' then
     raise exception 'mara_mp_oauth_session_not_pending';
   end if;
-  if v_session.expires_at <= now() then
-    update public.creator_payment_oauth_sessions
-    set status = 'expired', updated_at = now()
-    where id = v_session.id;
-    raise exception 'mara_mp_oauth_session_expired';
-  end if;
 
   begin
     v_secret_id := v_session.pkce_verifier_reference::uuid;
   exception when others then
     raise exception 'mara_mp_oauth_pkce_reference_invalid';
   end;
+
+  if v_session.expires_at <= now() then
+    delete from vault.secrets where id = v_secret_id;
+    update public.creator_payment_oauth_sessions
+    set status = 'expired', updated_at = now()
+    where id = v_session.id;
+    return;
+  end if;
 
   select d.decrypted_secret
   into v_pkce_verifier
@@ -246,9 +248,9 @@ grant execute on function public.mara_mp_sandbox_bind_account(uuid, text, text, 
 -- Activation proof required in isolated non-production:
 -- 1. anon/authenticated cannot execute any RPC above;
 -- 2. state is stored only as SHA-256 hash;
--- 3. PKCE verifier exists only in Vault and is deleted on successful consume;
+-- 3. PKCE verifier exists only in Vault and is deleted on successful or expired consume;
 -- 4. consume is single-use under concurrent callbacks;
--- 5. expired session cannot be consumed;
+-- 5. expired session is persisted as expired, deletes temporary PKCE material and returns no session row;
 -- 6. binding writes opaque credential reference only, never raw provider tokens;
 -- 7. account binding can be rotated idempotently;
 -- 8. production Mercado Pago runtime remains hard-disabled.
