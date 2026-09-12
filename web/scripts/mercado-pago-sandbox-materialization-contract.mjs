@@ -15,8 +15,10 @@ const migrations = fs.readdirSync(path.join(root, "supabase/migrations"));
 // Materialization must remain explicitly non-production and separately enabled.
 assert.match(materialization, /process\.env\.VERCEL_ENV === "production"/);
 assert.match(materialization, /MARA_MP_SANDBOX_MATERIALIZATION_ENABLED !== "true"/);
-assert.match(materialization, /MARA_MP_SANDBOX_PROCESSOR_FEE_BEARER/);
-assert.match(materialization, /feeBearer !== "creator" && feeBearer !== "platform"/);
+assert.match(materialization, /processorFeeBearer: "creator"/);
+assert.match(materialization, /return \{ enabled: true, processorFeeBearer: "creator" \}/);
+assert.doesNotMatch(materialization, /MARA_MP_SANDBOX_PROCESSOR_FEE_BEARER/);
+assert.doesNotMatch(materialization, /processorFeeBearer: "platform"/);
 assert.match(materialization, /materialize_mara_payment_capture_v1/);
 assert.match(materialization, /disposition !== "materialize_succeeded"/);
 assert.match(materialization, /provider\.status !== "succeeded"/);
@@ -30,9 +32,9 @@ assert.match(webhook, /providerSnapshot: ProviderPaymentSnapshot \| null/);
 assert.match(webhook, /providerSnapshot: provider/);
 assert.match(route, /getMercadoPagoSandboxMaterializationPolicy/);
 assert.match(route, /materializeAcceptedMercadoPagoSandboxPayment/);
-assert.match(route, /fulfilled: false/);
+assert.match(route, /paymentId = outcome\.materialized \? outcome\.paymentId : null/);
 assert.match(route, /xRequestId/);
-assert.doesNotMatch(route, /commerce_purchases|commerce_entitlements/);
+assert.doesNotMatch(materialization, /commerce_purchases|commerce_entitlements/);
 
 // SQL remains draft-only and enforces frozen economics + provider idempotency.
 assert.match(sql, /DRAFT ONLY/);

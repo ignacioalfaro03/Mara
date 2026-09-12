@@ -94,6 +94,9 @@ jobs:
       - name: Verify Mercado Pago sandbox payment materialization boundary
         run: npm run mercado-pago-sandbox-materialization:contract
 
+      - name: Verify payment-backed fulfillment boundary
+        run: npm run payment-backed-fulfillment:contract
+
       - name: Verify second purchase engine behavior
         run: npm run second-purchase:contract
 

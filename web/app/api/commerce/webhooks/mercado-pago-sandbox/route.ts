@@ -7,6 +7,10 @@ import {
 import { getMercadoPagoSandboxExecutionRuntime } from "@/lib/commerce/mercado-pago-sandbox-runtime";
 import { processMercadoPagoSandboxWebhook } from "@/lib/commerce/mercado-pago-sandbox-webhook";
 import { createMercadoPagoSandboxWebhookStore } from "@/lib/commerce/mercado-pago-sandbox-webhook-store";
+import {
+  fulfillMaterializedPayment,
+  getPaymentBackedFulfillmentPolicy,
+} from "@/lib/commerce/payment-backed-fulfillment";
 
 export const runtime = "nodejs";
 
@@ -43,23 +47,41 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: result.error }, { status: result.status });
     }
 
-    const policy = getMercadoPagoSandboxMaterializationPolicy();
+    const materializationPolicy = getMercadoPagoSandboxMaterializationPolicy();
     let materialized = false;
-    let materializationReason: string | null = policy.enabled ? null : policy.reason;
+    let paymentId: string | null = null;
+    let materializationReason: string | null = materializationPolicy.enabled ? null : materializationPolicy.reason;
 
-    if (policy.enabled && result.disposition === "materialize_succeeded") {
+    if (materializationPolicy.enabled && result.disposition === "materialize_succeeded") {
       const outcome = await materializeAcceptedMercadoPagoSandboxPayment({
         backend,
         webhookResult: result,
         providerEventId: xRequestId,
-        policy,
+        policy: materializationPolicy,
       });
       materialized = outcome.materialized;
       materializationReason = outcome.materialized ? null : outcome.reason;
+      paymentId = outcome.materialized ? outcome.paymentId : null;
     }
 
-    // Financial capture materialization may run only after provider re-fetch and
-    // acceptance. Product purchase/entitlement/fulfillment remains a separate gate.
+    const fulfillmentPolicy = getPaymentBackedFulfillmentPolicy();
+    let fulfilled = false;
+    let fulfillmentReason: string | null = fulfillmentPolicy.enabled ? null : fulfillmentPolicy.reason;
+
+    if (fulfillmentPolicy.enabled) {
+      if (!materialized || !paymentId) {
+        fulfillmentReason = "materialized_payment_required";
+      } else {
+        const outcome = await fulfillMaterializedPayment({
+          backend,
+          paymentId,
+          policy: fulfillmentPolicy,
+        });
+        fulfilled = outcome.fulfilled;
+        fulfillmentReason = outcome.fulfilled ? null : "fulfillment_not_completed";
+      }
+    }
+
     return NextResponse.json({
       accepted: true,
       disposition: result.disposition,
@@ -68,11 +90,12 @@ export async function POST(request: Request) {
       issues: result.issues,
       materialized,
       materializationReason,
-      fulfilled: false,
+      fulfilled,
+      fulfillmentReason,
     });
   } catch {
-    // Once materialization is explicitly enabled, returning 503 causes provider
-    // retry rather than acknowledging a financial write that may have failed.
+    // Once either financial write or product fulfillment is explicitly enabled,
+    // HTTP 503 lets provider retry converge through the idempotent database path.
     return NextResponse.json({ error: "mercado_pago_sandbox_webhook_processing_failed" }, { status: 503 });
   }
 }
