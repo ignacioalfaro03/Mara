@@ -6,6 +6,8 @@
 >
 > Effective 2026-09-12, Mara is **the Revenue OS for creators**.
 >
+> [`docs/product/CREATOR_MONETIZATION_ENGINE.md`](./docs/product/CREATOR_MONETIZATION_ENGINE.md) is the authoritative implementation contract for creator monetization under that thesis.
+>
 > Older founder constitutions, Mara Vera character documents, demand-network theses, Creator World strategy, chatbot/relationship strategy and consumer-app-first work are **historical evidence only**. If they conflict with the foundational thesis, the foundational thesis wins.
 >
 > Founder boundary: **NO MERGE unless Ignacio explicitly writes `mergea`.** No production deployment, real-payment activation, payout activation or external spend is implied by branch work.
@@ -17,6 +19,8 @@
 # MARA IS THE REVENUE OS FOR CREATORS.
 
 Mara helps creators turn an audience they already have into customers, repeat customers and measurable revenue.
+
+Primary product-design ICP: **content creators with an existing audience**, especially creators who already receive purchases, DMs, custom requests, support and high-intent engagement but still manage monetization manually.
 
 Canonical loop:
 
@@ -33,6 +37,7 @@ The creator brings the audience. Mara helps monetize it better.
 The creator experience is the operating system of the business:
 
 - Home / Today;
+- Monetization;
 - Opportunities;
 - Customers / CRM;
 - Offers;
@@ -49,13 +54,29 @@ The product must answer:
 4. What action has the highest expected commercial value?
 5. Is Mara increasing my revenue?
 
+## Creator Commerce Engine
+
+Mara should support multiple monetization mechanisms while preserving one creator-scoped customer relationship:
+
+- fixed-price sales;
+- wishes/goals/contributions;
+- auctions;
+- custom requests and counteroffers;
+- limited drops;
+- memberships;
+- paid interactions/chat/media where permitted.
+
+The creator controls the paywall: what is free, what is paid and how much it costs within platform/compliance limits.
+
+`AUCTION`, `WISH`, `CUSTOM_REQUEST` and `PAID_INTERACTION` are product/commercial events. They do not bypass canonical checkout/payment/purchase truth.
+
 ## Fan side — mobile web first
 
 Fans arrive from social links, creator links or QR codes.
 
 Canonical fan path:
 
-`SOCIAL / LINK → CREATOR STOREFRONT → OFFER → CHECKOUT → PURCHASE → DELIVERY`
+`SOCIAL / LINK → CREATOR STOREFRONT → MONETIZABLE INTERACTION → CHECKOUT → PURCHASE → DELIVERY`
 
 Do not require a native fan app before purchase.
 
@@ -79,7 +100,10 @@ Supporting metrics:
 - GMV retention;
 - creator net earnings;
 - Mara take rate;
-- contribution margin.
+- contribution margin;
+- auction bidder → later buyer conversion;
+- request → purchase conversion;
+- wish-support recurrence.
 
 Strategic proof metric:
 
@@ -99,6 +123,8 @@ The first magic moment is a sale becoming a real customer relationship.
 
 The second — and more important — magic moment is Mara identifying a useful opportunity that leads to another purchase.
 
+Additional monetization surfaces strengthen this loop; they do not replace it.
+
 ---
 
 # Reuse existing infrastructure
@@ -112,12 +138,17 @@ Do not rebuild working primitives. Preserve and adapt:
 - checkout intents;
 - purchases;
 - entitlements and fulfillment;
+- commerce goals/contributions for wishes;
+- creator requests for custom requests;
+- creator threads/messages/content for chat/media;
 - creator-customer relationship data;
 - CRM summaries;
 - deterministic Next Best Action;
 - telemetry;
 - RLS / tenant isolation;
 - CI/CD and hosted proof.
+
+New schema should be additive and only introduced where a real gap exists, such as auctions or explicit Taste Engine events.
 
 ---
 
@@ -155,6 +186,16 @@ Every new feature should materially support at least one:
 
 If it does not, defer it.
 
+Revenue Intelligence must use observable evidence. Do not introduce hidden vulnerability scoring, psychographic exploitation, fake urgency or invented conversion probabilities.
+
+---
+
+# Payment boundary
+
+Current verdict remains **NOT PAYMENT READY**.
+
+New monetization mechanisms may be modeled and tested, but real payment activation still requires the canonical provider/OAuth/KYC, secure credential storage, webhook verification, ledger, reconciliation, refunds/chargebacks, payout operations, compliance and explicit founder authorization gates.
+
 ---
 
 # MVP validation
@@ -170,11 +211,18 @@ Prove sequentially:
 7. creator uses it;
 8. a second purchase occurs.
 
+Then validate additional mechanisms without losing the core loop:
+
+- first real wish contribution;
+- first auction with multiple legitimate bidders;
+- first losing bidder converted later;
+- first repeated-request pattern converted into an offer.
+
 Initial business evidence targets:
 
 - 5 activated creators;
 - 5 published offers;
-- 10 real transactions;
+- 10 real transactions once payments are authorized;
 - at least one repeat buyer;
 - first real platform revenue;
 - first creator with measurable Mara Revenue Lift.
@@ -186,7 +234,7 @@ Initial business evidence targets:
 Current authority order:
 
 1. [`docs/foundation/MARA_FOUNDATIONAL_THESIS.md`](./docs/foundation/MARA_FOUNDATIONAL_THESIS.md)
-2. implementation contracts explicitly created under this thesis;
+2. [`docs/product/CREATOR_MONETIZATION_ENGINE.md`](./docs/product/CREATOR_MONETIZATION_ENGINE.md) and other implementation contracts explicitly created under the thesis;
 3. current code and tests where compatible;
 4. older strategy/product documents as historical evidence only.
 
