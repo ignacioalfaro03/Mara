@@ -1,5 +1,6 @@
 import type { Tables } from "@/lib/supabase/database.types";
 import { first, publicRest, userRest } from "@/lib/supabase/server-rest";
+import { buildSecondPurchaseOpportunities } from "@/lib/second-purchase-engine";
 
 export type CreatorRow = Tables<"creators">;
 export type WorldRow = Tables<"creator_worlds">;
@@ -108,10 +109,13 @@ export async function readCreatorDashboard(accessToken: string, creatorId: strin
     userRest<OfferRow[]>(accessToken, `commerce_offers?select=*&creator_id=eq.${encodeURIComponent(creatorId)}&order=created_at.desc&limit=50`),
   ]);
 
+  const secondPurchaseOpportunities = buildSecondPurchaseOpportunities(customers, pendingPurchases);
+
   return {
     customers,
     opportunities: opportunities.ok ? opportunities.data : [],
     nextActions: nextActions.ok ? nextActions.data : [],
+    secondPurchaseOpportunities,
     purchases: pendingPurchases,
     offers: offers.ok ? offers.data : [],
   };
