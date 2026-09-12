@@ -44,7 +44,7 @@ export default async function PublicCreatorOfferPage({ params }: { params: Promi
             <p className={styles.eyebrow}>QUÉ RECIBES</p>
             <h2>{offer.title}</h2>
             <p>{offer.description}</p>
-            <p className={styles.muted}>Entrega: {offer.fulfillment_concept?.replaceAll("_", " ") || "definida por el creador"}.</p>
+            <p className={styles.muted}>Entrega: {offer.fulfillment_key?.replaceAll("_", " ") || "definida por el creador"}.</p>
           </article>
         </section>
 
