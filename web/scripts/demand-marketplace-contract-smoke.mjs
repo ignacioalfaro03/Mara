@@ -24,11 +24,16 @@ assert(page.includes('process.env.NODE_ENV !== "development"'), "Demand Marketpl
 assert(page.includes("notFound()"), "Demand Marketplace Lab must fail closed outside development");
 assert(foundation.includes("MARA IS THE REVENUE OS FOR CREATORS"), "Revenue OS foundation must remain authoritative");
 assert(
-  foundation.includes("Demand can survive only as one optional input to Opportunity Engine"),
-  "Demand must remain an optional Opportunity Engine input, not company thesis",
+  foundation.includes("CREATOR → OFFER → FAN → CHECKOUT → PAYMENT → CUSTOMER → CRM → OPPORTUNITY → SECOND PURCHASE"),
+  "Canonical Revenue OS business loop must remain authoritative",
+);
+assert(
+  foundation.includes("generic discovery marketplace") && foundation.includes("complex IRL marketplace"),
+  "Marketplace-first strategies must remain outside the near-term foundation",
 );
 assert(amendment.includes("DEPRECATED / HISTORICAL"), "Private Demand Network founder amendment must remain deprecated");
 assert(amendment.includes("NOT PRODUCT AUTHORITY"), "Private Demand Network must not regain product authority");
+assert(amendment.includes("optional, evidence-driven input to creator opportunities"), "Demand may survive only as an optional opportunity input");
 
 // Preserve the isolated synthetic lab's safety and modeling contracts. These
 // checks protect reusable demand primitives without endorsing the old strategy.
