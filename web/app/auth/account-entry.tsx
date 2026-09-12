@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { clearMaraLocalDeviceState } from "@/lib/local-device-state";
 import { track } from "@/lib/analytics";
 import styles from "./auth.module.css";
@@ -33,12 +33,10 @@ export function AccountEntry() {
   const [controlBusy, setControlBusy] = useState(false);
   const [authState, setAuthState] = useState<AuthState>("checking");
   const [message, setMessage] = useState("");
-  const returnTo = useMemo(() => {
-    if (typeof window === "undefined") return null;
-    return safeReturnPath(new URLSearchParams(window.location.search).get("returnTo"));
-  }, []);
+  const [returnTo, setReturnTo] = useState<string | null>(null);
 
   useEffect(() => {
+    setReturnTo(safeReturnPath(new URLSearchParams(window.location.search).get("returnTo")));
     let active = true;
     void fetch("/api/auth/me", { cache: "no-store", credentials: "same-origin", signal: AbortSignal.timeout(5000) })
       .then(async (response) => {
