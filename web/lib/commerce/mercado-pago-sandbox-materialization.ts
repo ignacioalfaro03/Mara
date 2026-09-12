@@ -2,11 +2,9 @@ import type { MaraServerBackendConfig } from "@/lib/backend-config";
 import { serviceHeaders } from "@/lib/commerce/backend";
 import type { MercadoPagoSandboxWebhookResult } from "@/lib/commerce/mercado-pago-sandbox-webhook";
 
-export type SandboxProcessorFeeBearer = "creator" | "platform";
-
 export type MercadoPagoSandboxMaterializationPolicy =
-  | { enabled: false; reason: "production_blocked" | "materialization_disabled" | "fee_bearer_not_configured" }
-  | { enabled: true; processorFeeBearer: SandboxProcessorFeeBearer };
+  | { enabled: false; reason: "production_blocked" | "materialization_disabled" }
+  | { enabled: true; processorFeeBearer: "creator" };
 
 export function getMercadoPagoSandboxMaterializationPolicy(): MercadoPagoSandboxMaterializationPolicy {
   if (process.env.VERCEL_ENV === "production") {
@@ -16,12 +14,10 @@ export function getMercadoPagoSandboxMaterializationPolicy(): MercadoPagoSandbox
     return { enabled: false, reason: "materialization_disabled" };
   }
 
-  const feeBearer = process.env.MARA_MP_SANDBOX_PROCESSOR_FEE_BEARER?.trim();
-  if (feeBearer !== "creator" && feeBearer !== "platform") {
-    return { enabled: false, reason: "fee_bearer_not_configured" };
-  }
-
-  return { enabled: true, processorFeeBearer: feeBearer };
+  // Mercado Pago Split Payments 1:1 deducts the Mercado Pago processing fee from
+  // the seller before deducting the marketplace fee. For Mara's creator/seller
+  // model this means the processor fee bearer is provider-defined as the creator.
+  return { enabled: true, processorFeeBearer: "creator" };
 }
 
 async function materializeCaptureRpc(input: {
@@ -32,7 +28,7 @@ async function materializeCaptureRpc(input: {
   amountMinor: number;
   currency: string;
   processorFeeMinor: number;
-  processorFeeBearer: SandboxProcessorFeeBearer;
+  processorFeeBearer: "creator";
   providerEventId: string;
 }) {
   const response = await fetch(`${input.backend.url}/rest/v1/rpc/materialize_mara_payment_capture_v1`, {
