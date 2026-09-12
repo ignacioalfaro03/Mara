@@ -67,7 +67,7 @@ begin
     raise exception 'invalid_provider_event_id';
   end if;
 
-  select ci.*,
+  select ci,
          o.creator_id
   into v_intent,
        v_creator_id
