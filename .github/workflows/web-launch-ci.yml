@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "web/**"
+      - "docs/architecture/PAYMENTS_LEDGER.md"
       - ".github/workflows/web-launch-ci.yml"
   workflow_dispatch:
 
@@ -73,6 +74,9 @@ jobs:
 
       - name: Verify release safety boundary
         run: npm run release-safety:contract
+
+      - name: Verify payment readiness boundary
+        run: npm run payment-readiness:contract
 
       - name: Verify product realization security contract
         if: github.head_ref == 'codex/full-product-realization-v1'
