@@ -4,7 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 function isAppSurface(pathname: string) {
-  return pathname === "/app" || pathname.startsWith("/app/") || pathname === "/creator" || pathname.startsWith("/creator/") || pathname === "/experience" || pathname.startsWith("/experience/");
+  return pathname === "/app"
+    || pathname.startsWith("/app/")
+    || pathname === "/creator"
+    || pathname.startsWith("/creator/")
+    || pathname === "/c"
+    || pathname.startsWith("/c/")
+    || pathname === "/experience"
+    || pathname.startsWith("/experience/");
 }
 
 export function SiteHeader() {
