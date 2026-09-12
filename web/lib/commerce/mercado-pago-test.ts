@@ -15,6 +15,20 @@ export type MercadoPagoTestOAuthInput = {
   pkceChallenge: string;
 };
 
+export type MercadoPagoTestOAuthExchangeInput = {
+  clientId: string;
+  clientSecret: string;
+  authorizationCode: string;
+  redirectUri: string;
+  pkceVerifier: string;
+};
+
+export type MercadoPagoTestOAuthRefreshInput = {
+  clientId: string;
+  clientSecret: string;
+  refreshCredential: string;
+};
+
 export type MercadoPagoPreferenceRequest = {
   items: Array<{
     id: string;
@@ -81,6 +95,30 @@ export function buildMercadoPagoTestAuthorizationUrl(input: MercadoPagoTestOAuth
   return url.toString();
 }
 
+export function buildMercadoPagoTestOAuthExchangeBody(input: MercadoPagoTestOAuthExchangeInput) {
+  for (const [field, value] of Object.entries(input)) assertNonEmpty(value, field);
+  return {
+    client_id: input.clientId,
+    client_secret: input.clientSecret,
+    code: input.authorizationCode,
+    grant_type: "authorization_code" as const,
+    redirect_uri: input.redirectUri,
+    code_verifier: input.pkceVerifier,
+    test_token: "true" as const,
+  };
+}
+
+export function buildMercadoPagoTestOAuthRefreshBody(input: MercadoPagoTestOAuthRefreshInput) {
+  for (const [field, value] of Object.entries(input)) assertNonEmpty(value, field);
+  return {
+    client_id: input.clientId,
+    client_secret: input.clientSecret,
+    grant_type: "refresh_token" as const,
+    refresh_token: input.refreshCredential,
+    test_token: "true" as const,
+  };
+}
+
 export function buildMercadoPagoTestPreference(
   input: CreateCheckoutInput,
   offerTitle: string,
@@ -109,6 +147,24 @@ export function buildMercadoPagoTestPreference(
       failure: input.failureUrl,
     },
     auto_return: "approved",
+  };
+}
+
+export function buildMercadoPagoTestRefundRequest(input: {
+  providerPaymentId: string;
+  amountMinor: number | null;
+  idempotencyKey: string;
+}) {
+  assertNonEmpty(input.providerPaymentId, "provider_payment_id");
+  assertNonEmpty(input.idempotencyKey, "idempotency_key");
+  if (input.amountMinor !== null && (!Number.isSafeInteger(input.amountMinor) || input.amountMinor <= 0)) {
+    throw new Error("invalid_refund_minor_units");
+  }
+  return {
+    url: `${MP_API_BASE}/v1/payments/${encodeURIComponent(input.providerPaymentId)}/refunds`,
+    method: "POST" as const,
+    headers: { "X-Idempotency-Key": input.idempotencyKey },
+    body: input.amountMinor === null ? {} : { amount: minorToMajor(input.amountMinor) },
   };
 }
 
@@ -195,5 +251,6 @@ export function mercadoPagoTestApiEndpoints() {
     createPreference: `${MP_API_BASE}/checkout/preferences`,
     oauthToken: `${MP_API_BASE}/oauth/token`,
     payment: (paymentId: string) => `${MP_API_BASE}/v1/payments/${encodeURIComponent(paymentId)}`,
+    refunds: (paymentId: string) => `${MP_API_BASE}/v1/payments/${encodeURIComponent(paymentId)}/refunds`,
   };
 }
