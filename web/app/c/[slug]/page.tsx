@@ -29,6 +29,7 @@ export default async function PublicCreatorStorefrontPage({ params }: { params: 
           <p>{profile.description || "Ofertas disponibles directamente desde este creador."}</p>
           <div className={styles.actions}>
             <Link className={styles.secondary} href={`/c/${slug}/request`}>Pedir algo</Link>
+            <Link className={styles.secondary} href={`/c/${slug}/taste`}>Esto o esto</Link>
           </div>
         </header>
 
@@ -55,6 +56,13 @@ export default async function PublicCreatorStorefrontPage({ params }: { params: 
             <h2>También puedes proponer una compra.</h2>
             <p className={styles.muted}>Dile a {profile.display_name} qué te gustaría recibir y cuánto pagarías si quieres. La solicitud no cobra nada por sí sola y la creadora mantiene el control de aceptar, rechazar o contraofertar.</p>
             <Link className={styles.secondary} href={`/c/${slug}/request`}>Crear solicitud</Link>
+          </article>
+
+          <article className={`${styles.card} ${styles.wide}`}>
+            <p className={styles.eyebrow}>TASTE ENGINE</p>
+            <h2>Cuatro elecciones rápidas. Cero formulario eterno.</h2>
+            <p className={styles.muted}>Elige entre formatos y estilos de oferta para que Mara entienda preferencias que tú declaras dentro de esta relación con la creadora.</p>
+            <Link className={styles.secondary} href={`/c/${slug}/taste`}>Jugar “esto o esto”</Link>
           </article>
         </section>
 
