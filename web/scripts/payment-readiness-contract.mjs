@@ -53,6 +53,6 @@ assert.match(ledgerDraft, /<> coalesce\(sum\(amount_minor\) filter \(where direc
 // A draft is not an activated migration.
 assert.match(ledgerDraft, /DRAFT ONLY/);
 assert.match(ledgerDraft, /DO NOT APPLY DIRECTLY/);
-assert.match(ledgerDoc, /intentionally \*\*not\*\* in `supabase\/migrations`/);
+assert.match(ledgerDoc, /deliberately \*\*not\*\* in `supabase\/migrations`/);
 
 console.log("MARA_PAYMENT_READINESS_CONTRACT PASS");
