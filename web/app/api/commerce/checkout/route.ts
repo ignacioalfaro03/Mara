@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { NextResponse } from "next/server";
 import { getServerBackendConfig } from "@/lib/backend-config";
 import { getVerifiedSession, setSessionCookies } from "@/lib/auth-session";
-import { CAPRICHO_OFFER_SLUG, getAmountForOffer } from "@/lib/commerce/catalog";
+import { getAmountForOffer } from "@/lib/commerce/catalog";
 import { getAppBaseUrl, getPaymentRuntime, signTestCheckout } from "@/lib/commerce/config";
 import { serviceHeaders, toCommerceOffer, type CommerceCheckoutIntentRow, type CommerceGoalRow, type CommerceOfferRow } from "@/lib/commerce/backend";
 
@@ -120,11 +120,16 @@ export async function POST(request: Request) {
   const requestCheckout = await verifyRequestCheckout(config, headers, offer, session.user.id, amountMinor);
   if (!requestCheckout.ok) return requestCheckout.response;
 
-  if (offer.slug === CAPRICHO_OFFER_SLUG) {
-    const goalResult = await readOne<CommerceGoalRow>(`${config.url}/rest/v1/commerce_goals?select=*&offer_id=eq.${offer.id}&status=in.(funding,funded)&limit=1`, headers);
+  // Every open contribution is goal-backed. Capacity is checked immediately before
+  // creating the intent so creator Wishes cannot intentionally start above the remaining goal.
+  // Final fulfillment still locks and rechecks the goal inside Postgres.
+  if (offer.type === "open_contribution") {
+    const goalResult = await readOne<CommerceGoalRow>(`${config.url}/rest/v1/commerce_goals?select=*&offer_id=eq.${encodeURIComponent(offer.id)}&status=in.(funding,funded)&limit=1`, headers);
     if (!goalResult.ok || !goalResult.row) return errorResponse(goalResult.ok ? "commerce_goal_not_found" : "commerce_goal_read_failed", goalResult.ok ? 409 : 502);
     const remainingMinor = Math.max(0, goalResult.row.target_amount_minor - (goalResult.row.funded_amount_minor ?? 0));
-    if (goalResult.row.status === "funded" || amountMinor > remainingMinor) return errorResponse("capricho_goal_no_longer_accepting", 409, { remainingMinor });
+    if (goalResult.row.status === "funded" || amountMinor > remainingMinor) {
+      return errorResponse("commerce_goal_no_longer_accepting", 409, { remainingMinor });
+    }
   }
 
   const existing = await readExistingIntent(config, session.user.id, clientRequestId);
@@ -144,7 +149,7 @@ export async function POST(request: Request) {
   const createResponse = await fetch(`${config.url}/rest/v1/commerce_checkout_intents?select=*`, {
     method: "POST",
     headers: { ...serviceHeaders(config), Prefer: "return=representation" },
-    body: JSON.stringify({ id: intentId, user_id: session.user.id, offer_id: offer.id, client_request_id: clientRequestId, amount_minor: amountMinor, currency: offer.currency, provider: payment.provider, provider_checkout_id: providerCheckoutId, provider_checkout_url: checkoutUrl, status: "pending", metadata: { offer_slug: offer.slug, price_mode: offer.price_mode, creator_scoped: Boolean(offer.creator_id), request_scoped: Boolean(requestIdFromOffer(offer)) } }),
+    body: JSON.stringify({ id: intentId, user_id: session.user.id, offer_id: offer.id, client_request_id: clientRequestId, amount_minor: amountMinor, currency: offer.currency, provider: payment.provider, provider_checkout_id: providerCheckoutId, provider_checkout_url: checkoutUrl, status: "pending", metadata: { offer_slug: offer.slug, price_mode: offer.price_mode, creator_scoped: Boolean(offer.creator_id), request_scoped: Boolean(requestIdFromOffer(offer)), open_contribution: offer.type === "open_contribution" } }),
     cache: "no-store",
   });
 
