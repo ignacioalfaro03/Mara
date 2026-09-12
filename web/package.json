@@ -19,6 +19,7 @@
     "mercado-pago-sandbox-materialization:contract": "node scripts/mercado-pago-sandbox-materialization-contract.mjs",
     "payment-backed-fulfillment:contract": "node scripts/payment-backed-fulfillment-contract.mjs",
     "payment-refund-materialization:contract": "node scripts/payment-refund-materialization-contract.mjs",
+    "payment-reconciliation-snapshot:contract": "node scripts/payment-reconciliation-snapshot-contract.mjs",
     "second-purchase:contract": "node scripts/second-purchase-engine-contract.mjs",
     "creator-monetization:contract": "node scripts/creator-monetization-engine-contract.mjs && node scripts/creator-monetization-surface-contract.mjs && node scripts/creator-opportunity-wiring-contract.mjs && node scripts/paid-interaction-pricing-contract.mjs && node scripts/paid-interaction-session-contract.mjs"
   },
