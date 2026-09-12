@@ -14,7 +14,7 @@
     "payment-readiness:contract": "node scripts/payment-readiness-contract.mjs",
     "mercado-pago-test:contract": "node scripts/mercado-pago-test-contract.mjs",
     "second-purchase:contract": "node scripts/second-purchase-engine-contract.mjs",
-    "creator-monetization:contract": "node scripts/creator-monetization-engine-contract.mjs"
+    "creator-monetization:contract": "node scripts/creator-monetization-engine-contract.mjs && node scripts/creator-monetization-surface-contract.mjs"
   },
   "dependencies": {
     "next": "16.3.3",
