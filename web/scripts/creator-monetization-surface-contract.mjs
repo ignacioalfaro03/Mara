@@ -11,7 +11,10 @@ const preferencesApi = read("app/api/preferences/route.ts");
 const tastePage = read("app/c/[slug]/taste/page.tsx");
 const requestPage = read("app/c/[slug]/request/page.tsx");
 const storefront = read("app/c/[slug]/page.tsx");
+const offerPage = read("app/c/[slug]/offers/[offerSlug]/page.tsx");
+const auctionPage = read("app/c/[slug]/auctions/page.tsx");
 const creatorHub = read("app/creator/monetization/page.tsx");
+const checkoutApi = read("app/api/commerce/checkout/route.ts");
 const wishApi = read("app/api/creator/wishes/route.ts");
 const auctionBidApi = read("app/api/commerce/auctions/bid/route.ts");
 const auctionCreatorApi = read("app/api/creator/auctions/route.ts");
@@ -95,6 +98,27 @@ assert.match(auctionBidApi, /place_creator_auction_bid_v1/);
 assert.match(auctionBidApi, /serviceRest/);
 assert.match(auctionCreatorApi, /productCapability\("auctions"\)/);
 assert.match(auctionCreatorApi, /creator_auctions/);
+
+// Winner handoff is explicit and private: finalization may create a private offer,
+// but a bid itself still never becomes payment/purchase. Checkout re-verifies the
+// authoritative auction before creating a signed-test intent.
+assert.match(auctionCreatorApi, /ensureAuctionWinnerOffer/);
+assert.match(auctionCreatorApi, /visibility:\s*"private_user"/);
+assert.match(auctionCreatorApi, /buyer_user_id:\s*winnerUserId/);
+assert.match(auctionCreatorApi, /auction_id:\s*auction\.id/);
+assert.match(auctionCreatorApi, /signed_test_handoff_v1:\s*true/);
+assert.match(auctionCreatorApi, /auction_winner_offer_create_failed/);
+assert.match(checkoutApi, /verifyAuctionCheckout/);
+assert.match(checkoutApi, /auction\.status !== "ended"/);
+assert.match(checkoutApi, /auction\.winner_user_id !== userId/);
+assert.match(checkoutApi, /auction\.current_bid_minor\) !== amountMinor/);
+assert.match(checkoutApi, /auction_scoped:\s*Boolean\(auctionIdFromOffer\(offer\)\)/);
+assert.match(offerPage, /getVerifiedSession/);
+assert.match(offerPage, /readWorldOffers\(profile\.id, session\.ok \? session\.accessToken : undefined\)/);
+assert.match(offerPage, /ADJUDICACIÓN PRIVADA/);
+assert.match(auctionPage, /Ganaste esta subasta\./);
+assert.match(auctionPage, /Completar adjudicación/);
+assert.match(auctionPage, /pagos reales siguen bloqueados/i);
 
 // Paid interaction sends a canonical offer into an existing authorized thread.
 // Chat itself does not become an implicit per-message charge.
