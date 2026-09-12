@@ -39,8 +39,8 @@ const mechanisms = [
   {
     name: "Taste Engine",
     code: "TASTE_CHOICE",
-    status: "Contrato y persistencia draft preparados",
-    body: "Elecciones rápidas tipo A/B o swipe para entretener y guardar preferencias declaradas, no para perfilar vulnerabilidades.",
+    status: "Persistencia creator-scoped reutilizada",
+    body: "Elecciones rápidas tipo A/B para entretener y guardar preferencias declaradas, no para perfilar vulnerabilidades.",
   },
 ] as const;
 
@@ -78,6 +78,8 @@ export default async function CreatorMonetizationPage() {
     );
   }
 
+  const planLabel = creator.plan === "pro" ? "PLUS" : "FREE";
+
   return (
     <main className={styles.shell}>
       <div className={styles.container}>
@@ -90,7 +92,7 @@ export default async function CreatorMonetizationPage() {
         </nav>
 
         <header className={styles.hero}>
-          <p className={styles.eyebrow}>CREATOR COMMERCE ENGINE · {creator.plan}</p>
+          <p className={styles.eyebrow}>CREATOR COMMERCE ENGINE · MARA {planLabel}</p>
           <h1>Una audiencia. Muchas formas de monetizar. Un solo cliente.</h1>
           <p>Ventas, deseos, subastas, solicitudes, chat y preferencias deben alimentar la misma relación comercial. La creadora decide qué es gratis y qué cobra; Mara convierte la actividad en CRM y siguientes acciones.</p>
         </header>
@@ -104,6 +106,19 @@ export default async function CreatorMonetizationPage() {
               <p className={styles.muted}>{mechanism.status}</p>
             </article>
           ))}
+        </section>
+
+        <section className={styles.grid}>
+          <article className={styles.card}>
+            <p className={styles.eyebrow}>MARA FREE</p>
+            <h2>Empieza a vender sin pagar por adelantado.</h2>
+            <p className={styles.muted}>Storefront, ventas base, CRM básico, deseos, solicitudes, fulfillment y métricas esenciales deben permitir comprobar valor antes de exigir una suscripción.</p>
+          </article>
+          <article className={styles.card}>
+            <p className={styles.eyebrow}>MARA PLUS</p>
+            <h2>Paga por más inteligencia y menos trabajo manual.</h2>
+            <p className={styles.muted}>Revenue Intelligence avanzado, segmentación, automatización, analytics, lifecycle y herramientas comerciales superiores. El precio definitivo sigue pendiente de validación.</p>
+          </article>
         </section>
 
         <section className={styles.grid}>
