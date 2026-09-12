@@ -1,4 +1,4 @@
-export type SecondPurchaseStage = "care" | "ready" | "win_back";
+export type SecondPurchaseStage = "care" | "ready" | "win_back" | "cooldown";
 export type SecondPurchasePriority = "high" | "medium" | "low";
 
 export type SecondPurchaseCustomer = {
@@ -9,6 +9,7 @@ export type SecondPurchaseCustomer = {
   creator_gmv_minor?: number | null;
   last_purchase_at?: string | null;
   last_fulfillment_at?: string | null;
+  last_creator_action_at?: string | null;
 };
 
 export type PendingPurchase = {
@@ -23,7 +24,7 @@ export type SecondPurchaseOpportunity = {
   score: number;
   daysSinceLastPurchase: number;
   firstPurchaseGmvMinor: number;
-  action: "post_purchase_followup" | "second_purchase_offer" | "reactivate_with_value";
+  action: "post_purchase_followup" | "second_purchase_offer" | "reactivate_with_value" | "wait";
   title: string;
   reason: string;
   evidence: {
@@ -31,11 +32,13 @@ export type SecondPurchaseOpportunity = {
     fulfilledPurchaseCount: number;
     lastPurchaseAt: string;
     lastFulfillmentAt: string | null;
+    lastCreatorActionAt: string | null;
     pendingFulfillment: false;
   };
 };
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+const ACTION_COOLDOWN_DAYS = 7;
 
 function daysSince(iso: string, nowMs: number) {
   const time = Date.parse(iso);
@@ -51,6 +54,7 @@ function daysSince(iso: string, nowMs: number) {
  * - exactly one succeeded purchase;
  * - at least one fulfilled purchase;
  * - no currently pending fulfillment for that creator/customer;
+ * - respect a creator-action cooldown after the purchase;
  * - deterministic evidence only; no psychographic inference or fake urgency.
  */
 export function buildSecondPurchaseOpportunities(
@@ -73,8 +77,18 @@ export function buildSecondPurchaseOpportunities(
     if (pendingUsers.has(customer.user_id)) continue;
     if (!customer.last_purchase_at) continue;
 
+    const purchaseMs = Date.parse(customer.last_purchase_at);
     const days = daysSince(customer.last_purchase_at, nowMs);
-    if (days === null) continue;
+    if (days === null || !Number.isFinite(purchaseMs)) continue;
+
+    const actionMs = customer.last_creator_action_at ? Date.parse(customer.last_creator_action_at) : Number.NaN;
+    const daysSinceLastAction = Number.isFinite(actionMs)
+      ? Math.max(0, Math.floor((nowMs - actionMs) / DAY_MS))
+      : null;
+    const inActionCooldown = Number.isFinite(actionMs)
+      && actionMs >= purchaseMs
+      && daysSinceLastAction !== null
+      && daysSinceLastAction < ACTION_COOLDOWN_DAYS;
 
     let stage: SecondPurchaseStage;
     let priority: SecondPurchasePriority;
@@ -83,7 +97,14 @@ export function buildSecondPurchaseOpportunities(
     let title: string;
     let reason: string;
 
-    if (days <= 3) {
+    if (inActionCooldown) {
+      stage = "cooldown";
+      priority = "low";
+      score = 20;
+      action = "wait";
+      title = "Ya actuaste con este cliente. Dale espacio.";
+      reason = "Hubo una acción comercial reciente después de la primera compra. Mara aplica un cooldown de 7 días para evitar presión repetitiva.";
+    } else if (days <= 3) {
       stage = "care";
       priority = "low";
       score = 40 + days;
@@ -129,6 +150,7 @@ export function buildSecondPurchaseOpportunities(
         fulfilledPurchaseCount: customer.fulfilled_purchase_count ?? 0,
         lastPurchaseAt: customer.last_purchase_at,
         lastFulfillmentAt: customer.last_fulfillment_at ?? null,
+        lastCreatorActionAt: customer.last_creator_action_at ?? null,
         pendingFulfillment: false,
       },
     });
