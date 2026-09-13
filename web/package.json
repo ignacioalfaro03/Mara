@@ -22,6 +22,7 @@
     "payment-reconciliation-snapshot:contract": "node scripts/payment-reconciliation-snapshot-contract.mjs",
     "full-refund-product-reversal:contract": "node scripts/full-refund-product-reversal-contract.mjs",
     "payment-chargeback-dispute-control:contract": "node scripts/payment-chargeback-dispute-control-contract.mjs",
+    "provider-settlement-reconciliation:contract": "node scripts/provider-settlement-reconciliation-contract.mjs",
     "second-purchase:contract": "node scripts/second-purchase-engine-contract.mjs",
     "creator-monetization:contract": "node scripts/creator-monetization-engine-contract.mjs && node scripts/creator-monetization-surface-contract.mjs && node scripts/creator-opportunity-wiring-contract.mjs && node scripts/paid-interaction-pricing-contract.mjs && node scripts/paid-interaction-session-contract.mjs"
   },
