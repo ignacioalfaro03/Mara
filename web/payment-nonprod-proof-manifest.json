@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "name": "mara-payment-nonprod-proof-v1",
+  "status": "UNPROVEN",
+  "environment": {
+    "class": "isolated-non-production",
+    "productionAllowed": false,
+    "connectedProductionProjectAllowed": false,
+    "projectRef": null
+  },
+  "provenance": {
+    "gitCommit": null,
+    "activationLockCommit": null,
+    "ciRunId": null,
+    "executedAt": null
+  },
+  "proofs": [
+    {"id":"migration_history_reconciled","status":"UNPROVEN","evidence":null},
+    {"id":"reviewed_migrations_applied","status":"UNPROVEN","evidence":null},
+    {"id":"security_advisors_clean","status":"UNPROVEN","evidence":null},
+    {"id":"creator_oauth_connected","status":"UNPROVEN","evidence":null},
+    {"id":"checkout_created","status":"UNPROVEN","evidence":null},
+    {"id":"provider_payment_succeeded","status":"UNPROVEN","evidence":null},
+    {"id":"signed_webhook_verified","status":"UNPROVEN","evidence":null},
+    {"id":"provider_payment_refetched","status":"UNPROVEN","evidence":null},
+    {"id":"capture_materialized","status":"UNPROVEN","evidence":null},
+    {"id":"capture_ledger_balanced","status":"UNPROVEN","evidence":null},
+    {"id":"purchase_fulfilled","status":"UNPROVEN","evidence":null},
+    {"id":"partial_refund_product_retained","status":"UNPROVEN","evidence":null},
+    {"id":"full_refund_materialized","status":"UNPROVEN","evidence":null},
+    {"id":"full_refund_product_reversed","status":"UNPROVEN","evidence":null},
+    {"id":"lost_full_chargeback_materialized","status":"UNPROVEN","evidence":null},
+    {"id":"chargeback_product_reversed","status":"UNPROVEN","evidence":null},
+    {"id":"account_money_batch_completed","status":"UNPROVEN","evidence":null},
+    {"id":"provider_reconciliation_zero_critical","status":"UNPROVEN","evidence":null}
+  ],
+  "requiredEvidenceFields": [
+    "kind",
+    "source",
+    "reference",
+    "observedAt"
+  ],
+  "goPolicy": {
+    "allProofsRequired": true,
+    "zeroCriticalReconciliationIssuesRequired": true,
+    "sameEnvironmentRequired": true,
+    "sameActivationContentRequired": true,
+    "founderGoLiveAuthorizationRequired": true,
+    "automaticPromotionAllowed": false
+  }
+}
