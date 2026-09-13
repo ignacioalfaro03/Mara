@@ -1,17 +1,38 @@
 -- MARA PROVIDER SETTLEMENT RECONCILIATION V1 — DRAFT ONLY.
 --
 -- DO NOT APPLY DIRECTLY TO THE CONNECTED PRODUCTION DATABASE.
--- This draft creates a provider-report evidence layer and a read-only reconciliation
--- snapshot. It does not auto-heal payments, refunds, chargebacks, payouts or ledger.
+-- Creates a provider-report evidence layer and read-only reconciliation snapshot.
+-- It does not auto-heal payments, refunds, chargebacks, payouts or ledger.
 --
 -- Mercado Pago Account Money fields used by V1:
 -- SOURCE_ID, EXTERNAL_REFERENCE, TRANSACTION_TYPE, TRANSACTION_AMOUNT,
 -- TRANSACTION_CURRENCY, SELLER_AMOUNT, FEE_AMOUNT, SETTLEMENT_NET_AMOUNT,
 -- REAL_AMOUNT, TRANSACTION_DATE, SETTLEMENT_DATE, METADATA.
 --
--- V1 is intentionally scoped to Mercado Pago Chile / CLP. CLP has zero minor
--- decimal exponent in Mara, so provider decimal report amounts must be integral
--- pesos before they are compared with bigint minor-unit ledger values.
+-- Important provider fact: FEE_AMOUNT may aggregate processing, shipping,
+-- financing and coupon fees. V1 therefore treats it as total provider-fee evidence,
+-- not as a guaranteed 1:1 processor-fee field.
+--
+-- V1 is intentionally scoped to Mercado Pago Chile / CLP. Mara stores CLP in
+-- integral peso minor units, so report values must be integral before comparison.
+
+create table if not exists public.commerce_provider_report_batches (
+  id uuid primary key default extensions.gen_random_uuid(),
+  provider text not null check (char_length(provider) between 2 and 80),
+  report_scope text not null check (char_length(report_scope) between 2 and 80),
+  report_batch_key text not null check (char_length(report_batch_key) between 8 and 255),
+  coverage_start timestamptz not null,
+  coverage_end timestamptz not null,
+  status text not null default 'importing' check (status in ('importing','complete','failed')),
+  expected_row_count integer null check (expected_row_count is null or expected_row_count >= 0),
+  imported_row_count integer null check (imported_row_count is null or imported_row_count >= 0),
+  completed_at timestamptz null,
+  metadata jsonb not null default '{}'::jsonb check (jsonb_typeof(metadata) = 'object'),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (provider, report_scope, report_batch_key),
+  check (coverage_end > coverage_start)
+);
 
 create table if not exists public.commerce_provider_report_rows (
   id uuid primary key default extensions.gen_random_uuid(),
@@ -22,8 +43,8 @@ create table if not exists public.commerce_provider_report_rows (
   source_id text null check (source_id is null or char_length(source_id) <= 255),
   external_reference text null check (external_reference is null or char_length(external_reference) <= 255),
   transaction_type text not null check (transaction_type in (
-    'SETTLEMENT', 'REFUND', 'CHARGEBACK', 'DISPUTE',
-    'WITHDRAWAL', 'WITHDRAWAL_CANCEL', 'PAYOUT', 'OTHER'
+    'SETTLEMENT','REFUND','CHARGEBACK','DISPUTE',
+    'WITHDRAWAL','WITHDRAWAL_CANCEL','PAYOUT','OTHER'
   )),
   transaction_amount numeric(20,2) null,
   transaction_currency text null check (transaction_currency is null or transaction_currency ~ '^[A-Z]{3}$'),
@@ -37,20 +58,28 @@ create table if not exists public.commerce_provider_report_rows (
   metadata_raw jsonb not null default '{}'::jsonb check (jsonb_typeof(metadata_raw) = 'object'),
   row_raw jsonb not null default '{}'::jsonb check (jsonb_typeof(row_raw) = 'object'),
   imported_at timestamptz not null default now(),
-  unique (provider, report_scope, report_row_key)
+  unique (provider, report_scope, report_row_key),
+  foreign key (provider, report_scope, report_batch_key)
+    references public.commerce_provider_report_batches(provider, report_scope, report_batch_key)
+    on delete restrict
 );
 
 create index if not exists commerce_provider_report_rows_source_idx
   on public.commerce_provider_report_rows (provider, source_id, transaction_type);
 create index if not exists commerce_provider_report_rows_batch_idx
   on public.commerce_provider_report_rows (provider, report_batch_key, imported_at desc);
+create index if not exists commerce_provider_report_batches_coverage_idx
+  on public.commerce_provider_report_batches (provider, report_scope, status, coverage_start, coverage_end);
 
+alter table public.commerce_provider_report_batches enable row level security;
 alter table public.commerce_provider_report_rows enable row level security;
+revoke all on table public.commerce_provider_report_batches from anon, authenticated;
 revoke all on table public.commerce_provider_report_rows from anon, authenticated;
+grant all on table public.commerce_provider_report_batches to service_role;
 grant all on table public.commerce_provider_report_rows to service_role;
 
--- Provider evidence is append-only. A corrected provider export is imported as a
--- new uniquely-keyed row/batch rather than rewriting historical evidence.
+-- Evidence rows are immutable. Corrected provider exports must use a new batch/row
+-- identity rather than rewriting historical provider evidence.
 create or replace function private.reject_mara_provider_report_row_mutation()
 returns trigger
 language plpgsql
@@ -68,6 +97,66 @@ drop trigger if exists commerce_provider_report_rows_append_only on public.comme
 create trigger commerce_provider_report_rows_append_only
 before update or delete on public.commerce_provider_report_rows
 for each row execute function private.reject_mara_provider_report_row_mutation();
+
+create or replace function public.begin_mara_mp_account_money_batch_v1(
+  p_report_batch_key text,
+  p_coverage_start timestamptz,
+  p_coverage_end timestamptz,
+  p_expected_row_count integer,
+  p_metadata jsonb
+)
+returns uuid
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_id uuid;
+  v_existing public.commerce_provider_report_batches%rowtype;
+begin
+  if p_report_batch_key is null or char_length(trim(p_report_batch_key)) < 8 then
+    raise exception 'provider_report_batch_key_invalid';
+  end if;
+  if p_coverage_start is null or p_coverage_end is null or p_coverage_end <= p_coverage_start then
+    raise exception 'provider_report_coverage_invalid';
+  end if;
+  if p_expected_row_count is not null and p_expected_row_count < 0 then
+    raise exception 'provider_report_expected_row_count_invalid';
+  end if;
+
+  select * into v_existing
+  from public.commerce_provider_report_batches b
+  where b.provider = 'mercado_pago_sandbox'
+    and b.report_scope = 'account_money'
+    and b.report_batch_key = trim(p_report_batch_key)
+  limit 1;
+
+  if found then
+    if v_existing.coverage_start <> p_coverage_start
+       or v_existing.coverage_end <> p_coverage_end
+       or coalesce(v_existing.expected_row_count, -1) <> coalesce(p_expected_row_count, -1) then
+      raise exception 'provider_report_batch_idempotency_conflict';
+    end if;
+    return v_existing.id;
+  end if;
+
+  insert into public.commerce_provider_report_batches (
+    provider, report_scope, report_batch_key, coverage_start, coverage_end,
+    status, expected_row_count, metadata
+  ) values (
+    'mercado_pago_sandbox', 'account_money', trim(p_report_batch_key),
+    p_coverage_start, p_coverage_end, 'importing', p_expected_row_count,
+    coalesce(p_metadata, '{}'::jsonb)
+  ) returning id into v_id;
+
+  return v_id;
+end;
+$$;
+
+revoke all on function public.begin_mara_mp_account_money_batch_v1(text,timestamptz,timestamptz,integer,jsonb)
+  from public, anon, authenticated;
+grant execute on function public.begin_mara_mp_account_money_batch_v1(text,timestamptz,timestamptz,integer,jsonb)
+  to service_role;
 
 create or replace function public.ingest_mara_mp_account_money_row_v1(
   p_report_batch_key text,
@@ -95,6 +184,7 @@ as $$
 declare
   v_id uuid;
   v_existing public.commerce_provider_report_rows%rowtype;
+  v_batch public.commerce_provider_report_batches%rowtype;
   v_type text;
 begin
   if p_report_batch_key is null or char_length(trim(p_report_batch_key)) < 8 then
@@ -104,12 +194,21 @@ begin
     raise exception 'provider_report_row_key_invalid';
   end if;
 
+  select * into v_batch
+  from public.commerce_provider_report_batches b
+  where b.provider = 'mercado_pago_sandbox'
+    and b.report_scope = 'account_money'
+    and b.report_batch_key = trim(p_report_batch_key)
+  for update;
+
+  if not found then raise exception 'provider_report_batch_not_found'; end if;
+  if v_batch.status <> 'importing' then raise exception 'provider_report_batch_not_importing'; end if;
+
   v_type := upper(coalesce(trim(p_transaction_type), ''));
   if v_type not in ('SETTLEMENT','REFUND','CHARGEBACK','DISPUTE','WITHDRAWAL','WITHDRAWAL_CANCEL','PAYOUT') then
     v_type := 'OTHER';
   end if;
 
-  -- V1 is Chile-only. Do not silently normalize other currencies into CLP minor units.
   if p_transaction_currency is not null and upper(trim(p_transaction_currency)) <> 'CLP' then
     raise exception 'provider_report_v1_currency_not_supported';
   end if;
@@ -154,13 +253,61 @@ end;
 $$;
 
 revoke all on function public.ingest_mara_mp_account_money_row_v1(
-  text, text, text, text, text, numeric, text, numeric, numeric, numeric,
-  text, numeric, timestamptz, timestamptz, jsonb, jsonb
+  text,text,text,text,text,numeric,text,numeric,numeric,numeric,text,numeric,timestamptz,timestamptz,jsonb,jsonb
 ) from public, anon, authenticated;
 grant execute on function public.ingest_mara_mp_account_money_row_v1(
-  text, text, text, text, text, numeric, text, numeric, numeric, numeric,
-  text, numeric, timestamptz, timestamptz, jsonb, jsonb
+  text,text,text,text,text,numeric,text,numeric,numeric,numeric,text,numeric,timestamptz,timestamptz,jsonb,jsonb
 ) to service_role;
+
+create or replace function public.complete_mara_mp_account_money_batch_v1(
+  p_report_batch_key text,
+  p_imported_row_count integer
+)
+returns uuid
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_batch public.commerce_provider_report_batches%rowtype;
+  v_actual integer;
+begin
+  select * into v_batch
+  from public.commerce_provider_report_batches b
+  where b.provider = 'mercado_pago_sandbox'
+    and b.report_scope = 'account_money'
+    and b.report_batch_key = trim(p_report_batch_key)
+  for update;
+
+  if not found then raise exception 'provider_report_batch_not_found'; end if;
+  if v_batch.status = 'complete' then return v_batch.id; end if;
+  if v_batch.status <> 'importing' then raise exception 'provider_report_batch_not_completable'; end if;
+
+  select count(*)::integer into v_actual
+  from public.commerce_provider_report_rows r
+  where r.provider = v_batch.provider
+    and r.report_scope = v_batch.report_scope
+    and r.report_batch_key = v_batch.report_batch_key;
+
+  if p_imported_row_count is null or p_imported_row_count <> v_actual then
+    raise exception 'provider_report_imported_row_count_mismatch';
+  end if;
+  if v_batch.expected_row_count is not null and v_batch.expected_row_count <> v_actual then
+    raise exception 'provider_report_expected_row_count_mismatch';
+  end if;
+
+  update public.commerce_provider_report_batches
+  set status = 'complete', imported_row_count = v_actual, completed_at = now(), updated_at = now()
+  where id = v_batch.id;
+
+  return v_batch.id;
+end;
+$$;
+
+revoke all on function public.complete_mara_mp_account_money_batch_v1(text,integer)
+  from public, anon, authenticated;
+grant execute on function public.complete_mara_mp_account_money_batch_v1(text,integer)
+  to service_role;
 
 create or replace function public.mara_provider_settlement_reconciliation_v1()
 returns table (
@@ -175,29 +322,42 @@ security definer
 set search_path = ''
 stable
 as $$
-  -- Every captured MP sandbox payment should eventually be evidenced by at least one
-  -- SETTLEMENT row whose SOURCE_ID matches the provider payment id.
+  -- Missing settlement evidence is only actionable when a completed provider batch
+  -- explicitly covers the payment capture time. An incomplete/partial report never
+  -- creates a false release-gate failure.
   select
     'PROVIDER_SETTLEMENT_EVIDENCE_MISSING'::text,
     'critical'::text,
     'payment'::text,
     p.id::text,
-    jsonb_build_object('provider_payment_id', p.provider_payment_id, 'amount_minor', p.amount_minor, 'currency', p.currency)
+    jsonb_build_object('provider_payment_id', p.provider_payment_id, 'captured_at', p.captured_at)
   from public.commerce_payments p
   where p.provider = 'mercado_pago_sandbox'
     and p.status in ('succeeded','partially_refunded','refunded','chargeback')
+    and p.captured_at is not null
+    and exists (
+      select 1 from public.commerce_provider_report_batches b
+      where b.provider = p.provider
+        and b.report_scope = 'account_money'
+        and b.status = 'complete'
+        and p.captured_at >= b.coverage_start
+        and p.captured_at < b.coverage_end
+    )
     and not exists (
-      select 1
-      from public.commerce_provider_report_rows r
+      select 1 from public.commerce_provider_report_rows r
+      join public.commerce_provider_report_batches b
+        on b.provider = r.provider
+       and b.report_scope = r.report_scope
+       and b.report_batch_key = r.report_batch_key
       where r.provider = p.provider
         and r.report_scope = 'account_money'
+        and b.status = 'complete'
         and r.transaction_type = 'SETTLEMENT'
         and r.source_id = p.provider_payment_id
     )
 
   union all
 
-  -- CLP report amounts must be integral pesos before comparison with Mara minor units.
   select
     'PROVIDER_SETTLEMENT_NON_INTEGRAL_CLP'::text,
     'critical'::text,
@@ -205,7 +365,10 @@ as $$
     r.id::text,
     jsonb_build_object('source_id', r.source_id, 'transaction_amount', r.transaction_amount)
   from public.commerce_provider_report_rows r
+  join public.commerce_provider_report_batches b
+    on b.provider = r.provider and b.report_scope = r.report_scope and b.report_batch_key = r.report_batch_key
   where r.provider = 'mercado_pago_sandbox'
+    and b.status = 'complete'
     and r.transaction_type in ('SETTLEMENT','REFUND','CHARGEBACK','DISPUTE')
     and r.transaction_currency = 'CLP'
     and r.transaction_amount is not null
@@ -213,7 +376,6 @@ as $$
 
   union all
 
-  -- Gross capture truth must match provider SETTLEMENT evidence.
   select
     'PROVIDER_SETTLEMENT_CAPTURE_MISMATCH'::text,
     'critical'::text,
@@ -228,11 +390,12 @@ as $$
     )
   from public.commerce_payments p
   join public.commerce_provider_report_rows r
-    on r.provider = p.provider
-   and r.report_scope = 'account_money'
-   and r.transaction_type = 'SETTLEMENT'
-   and r.source_id = p.provider_payment_id
+    on r.provider = p.provider and r.report_scope = 'account_money'
+   and r.transaction_type = 'SETTLEMENT' and r.source_id = p.provider_payment_id
+  join public.commerce_provider_report_batches b
+    on b.provider = r.provider and b.report_scope = r.report_scope and b.report_batch_key = r.report_batch_key
   where p.provider = 'mercado_pago_sandbox'
+    and b.status = 'complete'
     and (
       r.transaction_currency <> p.currency
       or r.transaction_amount is null
@@ -242,36 +405,31 @@ as $$
 
   union all
 
-  -- Provider fee evidence should agree with the fee frozen into the payment snapshot.
-  -- FEE_AMOUNT is provider evidence, not inferred from percentages.
+  -- FEE_AMOUNT is a total fee bucket and may include more than processing fees.
+  -- Surface evidence for review; do not falsely assert 1:1 processor-fee equality.
   select
-    'PROVIDER_PROCESSOR_FEE_MISMATCH'::text,
-    'critical'::text,
+    'PROVIDER_TOTAL_FEE_EVIDENCE_REVIEW'::text,
+    'warning'::text,
     'payment'::text,
     p.id::text,
     jsonb_build_object(
       'provider_payment_id', p.provider_payment_id,
-      'mara_processor_fee_minor', (p.metadata ->> 'processor_fee_minor'),
-      'provider_fee_amount', r.fee_amount
+      'mara_processor_fee_minor', p.metadata ->> 'processor_fee_minor',
+      'provider_total_fee_amount', r.fee_amount,
+      'note', 'FEE_AMOUNT may aggregate processing, shipping, financing and coupon fees'
     )
   from public.commerce_payments p
   join public.commerce_provider_report_rows r
-    on r.provider = p.provider
-   and r.report_scope = 'account_money'
-   and r.transaction_type = 'SETTLEMENT'
-   and r.source_id = p.provider_payment_id
+    on r.provider = p.provider and r.report_scope = 'account_money'
+   and r.transaction_type = 'SETTLEMENT' and r.source_id = p.provider_payment_id
+  join public.commerce_provider_report_batches b
+    on b.provider = r.provider and b.report_scope = r.report_scope and b.report_batch_key = r.report_batch_key
   where p.provider = 'mercado_pago_sandbox'
+    and b.status = 'complete'
     and r.fee_amount is not null
-    and (
-      r.fee_amount <> round(r.fee_amount)
-      or (p.metadata ->> 'processor_fee_minor') is null
-      or round(r.fee_amount)::bigint <> (p.metadata ->> 'processor_fee_minor')::bigint
-    )
 
   union all
 
-  -- Rows that materially affect money but cannot yet be correlated to a Mara payment
-  -- are critical release-gate evidence gaps, not candidates for auto-healing.
   select
     'PROVIDER_MONEY_MOVEMENT_UNMATCHED'::text,
     'critical'::text,
@@ -286,19 +444,18 @@ as $$
       'real_amount', r.real_amount
     )
   from public.commerce_provider_report_rows r
+  join public.commerce_provider_report_batches b
+    on b.provider = r.provider and b.report_scope = r.report_scope and b.report_batch_key = r.report_batch_key
   where r.provider = 'mercado_pago_sandbox'
+    and b.status = 'complete'
     and r.transaction_type in ('SETTLEMENT','REFUND','CHARGEBACK','DISPUTE')
     and not exists (
       select 1 from public.commerce_payments p
-      where p.provider = r.provider
-        and p.provider_payment_id = r.source_id
+      where p.provider = r.provider and p.provider_payment_id = r.source_id
     )
 
   union all
 
-  -- Account Money may show provider net impact differing from gross capture because
-  -- of fees/refunds/disputes/chargebacks. V1 surfaces it as warning evidence rather
-  -- than inventing an accounting adjustment.
   select
     'PROVIDER_NET_IMPACT_REVIEW'::text,
     'warning'::text,
@@ -313,7 +470,10 @@ as $$
       'real_amount', r.real_amount
     )
   from public.commerce_provider_report_rows r
+  join public.commerce_provider_report_batches b
+    on b.provider = r.provider and b.report_scope = r.report_scope and b.report_batch_key = r.report_batch_key
   where r.provider = 'mercado_pago_sandbox'
+    and b.status = 'complete'
     and r.transaction_type in ('SETTLEMENT','REFUND','CHARGEBACK','DISPUTE')
     and (r.settlement_net_amount is not null or r.real_amount is not null);
 $$;
@@ -322,12 +482,13 @@ revoke all on function public.mara_provider_settlement_reconciliation_v1() from 
 grant execute on function public.mara_provider_settlement_reconciliation_v1() to service_role;
 
 -- Required isolated non-production proof:
--- 1. provider report evidence is append-only;
--- 2. browser roles cannot read/write evidence or execute import/reconciliation RPCs;
--- 3. report rows are idempotent by provider/report scope/report row key;
--- 4. unsupported currencies fail closed;
--- 5. capture amount/currency mismatches fail the release gate;
--- 6. processor fee comparison uses provider FEE_AMOUNT evidence, not inferred fee rates;
--- 7. unmatched money-impact rows fail the release gate;
--- 8. reconciliation is read-only and never auto-heals ledger/product/payment state;
--- 9. no payout automation is enabled by this draft.
+-- 1. evidence rows are append-only;
+-- 2. only completed report batches can produce release-gate reconciliation findings;
+-- 3. batch completion proves imported row count and optional expected row count;
+-- 4. browser roles cannot read/write evidence or execute import/reconciliation RPCs;
+-- 5. unsupported currencies fail closed;
+-- 6. capture amount/currency mismatches fail the release gate;
+-- 7. FEE_AMOUNT is treated conservatively as aggregate provider-fee evidence;
+-- 8. unmatched money-impact rows in complete batches fail the release gate;
+-- 9. reconciliation is read-only and never auto-heals ledger/product/payment state;
+-- 10. no payout automation is enabled by this draft.
