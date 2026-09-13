@@ -26,6 +26,7 @@
     "chargeback-product-reversal:contract": "node scripts/chargeback-product-reversal-contract.mjs",
     "payment-activation-readiness:contract": "node scripts/payment-activation-readiness-contract.mjs",
     "payment-lifecycle-model:contract": "node scripts/payment-lifecycle-model-contract.mjs",
+    "payment-activation-lock:contract": "node scripts/payment-activation-lock-contract.mjs",
     "second-purchase:contract": "node scripts/second-purchase-engine-contract.mjs",
     "creator-monetization:contract": "node scripts/creator-monetization-engine-contract.mjs && node scripts/creator-monetization-surface-contract.mjs && node scripts/creator-opportunity-wiring-contract.mjs && node scripts/paid-interaction-pricing-contract.mjs && node scripts/paid-interaction-session-contract.mjs"
   },
