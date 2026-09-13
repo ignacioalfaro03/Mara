@@ -124,6 +124,9 @@ jobs:
       - name: Verify isolated payment E2E harness safety
         run: npm run payment-isolated-e2e-harness:contract
 
+      - name: Verify Mercado Pago Account Money dry-run validator
+        run: npm run mercado-pago-account-money-dry-run:contract
+
       - name: Verify second purchase engine behavior
         run: npm run second-purchase:contract
 
