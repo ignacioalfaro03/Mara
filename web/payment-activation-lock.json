@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "name": "mara-payment-activation-content-lock-v1",
+  "lockedFromCommit": "c38fe79042cf8e987798286e0b96b89d73117c77",
+  "algorithm": "git-blob-sha1",
+  "activation": [
+    {"path":"supabase/drafts/mara_payment_ledger_v1.sql","blobSha":"0844fb5255d1d186c1f45b97d92b1d6895112dcb"},
+    {"path":"supabase/drafts/mara_mp_sandbox_vault_bridge_v1.sql","blobSha":"74d2204465b8ecfcb38ed1fcd334bb0999546b93"},
+    {"path":"supabase/drafts/mara_mp_sandbox_oauth_rpc_v1.sql","blobSha":"c670adda000875c681ba5804d00842518799b4ca"},
+    {"path":"supabase/drafts/mara_mp_sandbox_webhook_binding_v1.sql","blobSha":"3fc524ac3521d1bf3385e4c94656b5453157b30f"},
+    {"path":"supabase/drafts/mara_payment_capture_materialization_v1.sql","blobSha":"a02817e70cc233533cb02b6bf789d318dabc7a08"},
+    {"path":"supabase/drafts/mara_payment_backed_fulfillment_v1.sql","blobSha":"bae1292ca45593e581ffea14b2a1a2fe1f9fbcf1"},
+    {"path":"supabase/drafts/mara_payment_refund_materialization_v1.sql","blobSha":"f955d709c2267fd9e5820bef728bca697a74b3b7"},
+    {"path":"supabase/drafts/mara_payment_reconciliation_snapshot_v1.sql","blobSha":"50e24e78d5cdce6c1d84b29572e80b2fbd997eba"},
+    {"path":"supabase/drafts/mara_full_refund_product_reversal_v1.sql","blobSha":"6e69fd97e499be0a5db3e316729709eb36cb0a1b"},
+    {"path":"supabase/drafts/mara_payment_chargeback_dispute_control_v1.sql","blobSha":"f73a120e6bb489ca32f225ce060ec03460428250"},
+    {"path":"supabase/drafts/mara_provider_settlement_reconciliation_v1.sql","blobSha":"4a0c0a9b90903f2f764b6927972dc08a3f7a4f7c"},
+    {"path":"supabase/drafts/mara_chargeback_product_reversal_v1.sql","blobSha":"8b337eba9e8e7df8f88ad89f7f3c6f0fe843507c"}
+  ],
+  "controlEvidence": [
+    {"path":"supabase/migration-reconciliation.snapshot.json","blobSha":"fa0fd182a1f567df371968527c23b1077845fd1c"}
+  ],
+  "policy": {
+    "silentDriftAllowed": false,
+    "lockUpdateRequiresReview": true,
+    "productionActivationAllowed": false,
+    "mergeWithoutFounderCommandAllowed": false
+  }
+}

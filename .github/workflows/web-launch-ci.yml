@@ -121,6 +121,9 @@ jobs:
       - name: Verify payment lifecycle model
         run: npm run payment-lifecycle-model:contract
 
+      - name: Verify payment activation content lock
+        run: npm run payment-activation-lock:contract
+
       - name: Verify second purchase engine behavior
         run: npm run second-purchase:contract
 
