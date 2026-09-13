@@ -127,6 +127,20 @@ jobs:
       - name: Verify Mercado Pago Account Money dry-run parser
         run: npm run mercado-pago-account-money-dryrun:contract
 
+      - name: Verify payment release evidence bundle
+        run: npm run payment-release-evidence-bundle:contract
+
+      - name: Generate payment release evidence bundle
+        run: node scripts/payment-release-evidence-bundle.mjs --output artifacts/payment-release-evidence/payment-release-evidence.json
+
+      - name: Upload payment release evidence bundle
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: mara-payment-release-evidence-${{ github.event.pull_request.head.sha || github.sha }}
+          path: web/artifacts/payment-release-evidence/payment-release-evidence.json
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Verify second purchase engine behavior
         run: npm run second-purchase:contract
 
