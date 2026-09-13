@@ -115,6 +115,9 @@ jobs:
       - name: Verify chargeback product reversal boundary
         run: npm run chargeback-product-reversal:contract
 
+      - name: Verify payment activation readiness boundary
+        run: npm run payment-activation-readiness:contract
+
       - name: Verify second purchase engine behavior
         run: npm run second-purchase:contract
 
