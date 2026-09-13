@@ -112,6 +112,9 @@ jobs:
       - name: Verify provider settlement reconciliation boundary
         run: npm run provider-settlement-reconciliation:contract
 
+      - name: Verify chargeback product reversal boundary
+        run: npm run chargeback-product-reversal:contract
+
       - name: Verify second purchase engine behavior
         run: npm run second-purchase:contract
 
