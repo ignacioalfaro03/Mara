@@ -130,6 +130,9 @@ jobs:
       - name: Verify payment release evidence bundle
         run: npm run payment-release-evidence-bundle:contract
 
+      - name: Verify payment migration promotion plan
+        run: npm run payment-migration-promotion-plan:contract
+
       - name: Generate payment release evidence bundle
         run: node scripts/payment-release-evidence-bundle.mjs --output artifacts/payment-release-evidence/payment-release-evidence.json
 
