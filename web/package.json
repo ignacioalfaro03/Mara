@@ -28,6 +28,7 @@
     "payment-lifecycle-model:contract": "node scripts/payment-lifecycle-model-contract.mjs",
     "payment-isolated-e2e-harness:contract": "node scripts/payment-isolated-e2e-harness.mjs --self-test",
     "mercado-pago-account-money-dryrun:contract": "node scripts/mercado-pago-account-money-dryrun.mjs --self-test",
+    "payment-release-evidence-bundle:contract": "node scripts/payment-release-evidence-bundle.mjs --self-test",
     "second-purchase:contract": "node scripts/second-purchase-engine-contract.mjs",
     "creator-monetization:contract": "node scripts/creator-monetization-engine-contract.mjs && node scripts/creator-monetization-surface-contract.mjs && node scripts/creator-opportunity-wiring-contract.mjs && node scripts/paid-interaction-pricing-contract.mjs && node scripts/paid-interaction-session-contract.mjs"
   },
