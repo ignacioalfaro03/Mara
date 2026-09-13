@@ -1,0 +1,114 @@
+{
+  "version": 1,
+  "name": "mara-payment-stack-activation-v1",
+  "status": "NO_GO",
+  "environmentPolicy": {
+    "allowed": "isolated-non-production-only",
+    "productionActivationAllowed": false,
+    "connectedProductionMutationAllowed": false
+  },
+  "activationOrder": [
+    "supabase/drafts/mara_payment_ledger_v1.sql",
+    "supabase/drafts/mara_mp_sandbox_vault_bridge_v1.sql",
+    "supabase/drafts/mara_mp_sandbox_oauth_rpc_v1.sql",
+    "supabase/drafts/mara_mp_sandbox_webhook_binding_v1.sql",
+    "supabase/drafts/mara_payment_capture_materialization_v1.sql",
+    "supabase/drafts/mara_payment_backed_fulfillment_v1.sql",
+    "supabase/drafts/mara_payment_refund_materialization_v1.sql",
+    "supabase/drafts/mara_payment_reconciliation_snapshot_v1.sql",
+    "supabase/drafts/mara_full_refund_product_reversal_v1.sql",
+    "supabase/drafts/mara_payment_chargeback_dispute_control_v1.sql",
+    "supabase/drafts/mara_provider_settlement_reconciliation_v1.sql",
+    "supabase/drafts/mara_chargeback_product_reversal_v1.sql"
+  ],
+  "requiredContracts": [
+    "supabase-migration-drift:contract",
+    "payment-readiness:contract",
+    "mercado-pago-test:contract",
+    "mercado-pago-sandbox-runtime:contract",
+    "mercado-pago-sandbox-oauth-webhook:contract",
+    "mercado-pago-sandbox-materialization:contract",
+    "payment-backed-fulfillment:contract",
+    "payment-refund-materialization:contract",
+    "payment-reconciliation-snapshot:contract",
+    "full-refund-product-reversal:contract",
+    "payment-chargeback-dispute-control:contract",
+    "provider-settlement-reconciliation:contract",
+    "chargeback-product-reversal:contract"
+  ],
+  "hardBlockers": [
+    {
+      "id": "migration_history_reconciled",
+      "required": true,
+      "satisfied": false,
+      "reason": "Connected Supabase migration history is not yet reconciled with repository migrations."
+    },
+    {
+      "id": "isolated_nonprod_database",
+      "required": true,
+      "satisfied": false,
+      "reason": "No authorized isolated non-production Supabase database/branch exists yet."
+    },
+    {
+      "id": "reviewed_drafts_converted_to_migrations",
+      "required": true,
+      "satisfied": false,
+      "reason": "Payment SQL remains draft-only and must be converted to reviewed migrations only in the isolated environment."
+    },
+    {
+      "id": "mercado_pago_sandbox_credentials",
+      "required": true,
+      "satisfied": false,
+      "reason": "Real Mercado Pago sandbox OAuth/application credentials have not been configured in an isolated environment."
+    },
+    {
+      "id": "provider_e2e_capture_refund_chargeback",
+      "required": true,
+      "satisfied": false,
+      "reason": "No isolated provider E2E proof exists yet for capture, fulfillment, refund, chargeback and product reversal."
+    },
+    {
+      "id": "provider_settlement_report_reconciled",
+      "required": true,
+      "satisfied": false,
+      "reason": "No completed real sandbox Account Money report has been imported and reconciled to zero unexplained critical variance."
+    },
+    {
+      "id": "security_advisors_clean",
+      "required": true,
+      "satisfied": false,
+      "reason": "Supabase security/performance advisors must be run after isolated activation."
+    },
+    {
+      "id": "explicit_founder_go_live_authorization",
+      "required": true,
+      "satisfied": false,
+      "reason": "Production activation requires a separate explicit founder authorization."
+    }
+  ],
+  "requiredProofSequence": [
+    "oauth_connect_creator",
+    "create_checkout",
+    "provider_payment_succeeds",
+    "signed_webhook_received",
+    "provider_payment_refetched",
+    "payment_capture_materialized",
+    "ledger_balanced",
+    "purchase_fulfilled",
+    "partial_refund_does_not_revoke_product",
+    "full_refund_materialized",
+    "full_refund_product_reversal",
+    "clean_full_chargeback_materialized",
+    "chargeback_product_reversal",
+    "completed_account_money_batch_imported",
+    "provider_reconciliation_has_zero_critical_issues"
+  ],
+  "forbiddenBeforeGo": [
+    "production_ddl",
+    "production_payment_activation",
+    "automatic_creator_payouts",
+    "migration_history_repair_without_review",
+    "automatic_ledger_auto_heal",
+    "merge_without_founder_command"
+  ]
+}
