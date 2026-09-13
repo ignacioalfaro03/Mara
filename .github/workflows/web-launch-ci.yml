@@ -124,6 +124,9 @@ jobs:
       - name: Verify payment activation content lock
         run: npm run payment-activation-lock:contract
 
+      - name: Verify nonprod payment proof policy
+        run: npm run payment-nonprod-proof:contract
+
       - name: Verify second purchase engine behavior
         run: npm run second-purchase:contract
 
