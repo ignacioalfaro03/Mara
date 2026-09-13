@@ -106,6 +106,9 @@ jobs:
       - name: Verify full refund product reversal boundary
         run: npm run full-refund-product-reversal:contract
 
+      - name: Verify payment chargeback and dispute control boundary
+        run: npm run payment-chargeback-dispute-control:contract
+
       - name: Verify second purchase engine behavior
         run: npm run second-purchase:contract
 
