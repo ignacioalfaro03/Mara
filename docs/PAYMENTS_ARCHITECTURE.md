@@ -13,3 +13,6 @@ Browser clients may read only their allowed commercial/creator projections. They
 
 ## Money
 All amounts are integer minor units plus ISO-style three-letter currency. No floating-point money.
+
+## Execution hardening (2026-09-20)
+Creator purchases now post an idempotent sale journal transaction from canonical purchase truth. Creator-specific economics override global currency policy; the policy snapshot is frozen into transaction metadata. Missing creator economics fails closed. Eligible pending funds are released by a service-role batch RPC using row locks and deterministic release event keys.

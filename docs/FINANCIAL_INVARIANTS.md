@@ -15,3 +15,8 @@ These are launch-critical, not dashboard metrics.
 
 ## Remaining before real money
 Partial-refund posting, dispute webhook adapters, provider fee truth, pending->available release worker, actual payout adapter and provider reconciliation ingestion are intentionally not fabricated before provider selection/eligibility.
+
+11. Creator sale posting requires an explicit effective economics policy and freezes its terms.
+12. Pending release uses deterministic event keys and SKIP LOCKED so retries cannot release a sale twice.
+13. Payout requests acquire a creator/currency transaction lock and reserve available funds immediately.
+14. Refunds are append-only reversals and cumulative successful refunds cannot exceed captured amount.
