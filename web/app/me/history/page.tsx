@@ -36,7 +36,7 @@ export default async function UserHistoryPage() {
 
       <h2 className={styles.sectionTitle}>History</h2>
       <section className={styles.grid}><article className={`${styles.card} ${styles.wide}`}>
-        {history.length === 0 ? <p className={styles.empty}>Todavía no hay eventos reales para mostrar. Entra a un Creator World y deja una señal, una demanda o una compra de prueba.</p> : <ul className={styles.list}>{history.map((event, index) => <li className={styles.item} key={`${event.event_type}-${event.object_id}-${event.event_at}-${index}`}><div className={styles.row}><div><strong>{historyCopy(event.event_type)}</strong><p className={styles.muted}>{event.event_at ? new Date(event.event_at).toLocaleString("es-CL") : ""}</p></div><span className={styles.pill}>{event.event_type?.replaceAll("_", " ") ?? "activity"}</span></div></li>)}</ul>}
+        {history.length === 0 ? <p className={styles.empty}>Todavía no hay eventos reales para mostrar. Entra al sitio de una creadora y deja una señal, una demanda o una compra de prueba.</p> : <ul className={styles.list}>{history.map((event, index) => <li className={styles.item} key={`${event.event_type}-${event.object_id}-${event.event_at}-${index}`}><div className={styles.row}><div><strong>{historyCopy(event.event_type)}</strong><p className={styles.muted}>{event.event_at ? new Date(event.event_at).toLocaleString("es-CL") : ""}</p></div><span className={styles.pill}>{event.event_type?.replaceAll("_", " ") ?? "activity"}</span></div></li>)}</ul>}
       </article></section>
     </div></main>
   );

@@ -47,7 +47,7 @@ async function cleanupQaCreatorScope(config: NonNullable<ReturnType<typeof getSe
   const creatorId = creators[0]?.id;
   if (!creatorId || !UUID.test(creatorId)) return true;
 
-  // Creator Worlds intentionally SET NULL on commerce offers to preserve real
+  // Legacy creator-site storage intentionally SET NULL on commerce offers to preserve real
   // purchase history. QA cleanup must delete the test offer first so a deleted
   // proof creator cannot leave an active global offer behind.
   const offers = await fetch(`${config.url}/rest/v1/commerce_offers?creator_id=eq.${encodeURIComponent(creatorId)}`, {

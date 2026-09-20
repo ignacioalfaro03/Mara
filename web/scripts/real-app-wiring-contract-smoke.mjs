@@ -38,13 +38,19 @@ const testCheckout = read("app/api/commerce/test-checkout/route.ts");
 const creatorAction = read("app/api/creator/customers/action/route.ts");
 const creatorActions = read("lib/creator-actions.ts");
 const creatorHome = read("app/creator/page.tsx");
-const worldPage = read("app/world/[slug]/page.tsx");
+const creatorSitePage = read("components/creator-site-page.tsx");
+const legacyWorldRoute = read("app/world/[slug]/page.tsx");
 const historyPage = read("app/me/history/page.tsx");
 
 for (const event of [
   "creator_onboarding_started",
   "creator_activated",
   "creator_world_created",
+  "creator_site_created",
+  "creator_site_updated",
+  "creator_site_published",
+  "creator_site_link_copied",
+  "creator_site_viewed",
   "creator_offer_created",
   "creator_opportunity_viewed",
   "creator_next_action_used",
@@ -68,7 +74,7 @@ for (const event of [
 
 assert.match(creatorActivation, /emitProductEvent\(request, "creator_onboarding_started"/);
 assert.match(creatorActivation, /emitProductEvent\(request, "creator_activated"/);
-assert.match(creatorWorlds, /emitProductEvent\(request, "creator_world_created"/);
+assert.match(creatorWorlds, /emitProductEvent\(request, "creator_site_created"/);
 assert.match(offers, /emitProductEvent\(request, "creator_offer_created"/);
 assert.match(preferences, /emitProductEvent\(request, "taste_signal_created"/);
 assert.match(weakness, /emitProductEvent\(request, "weakness_saved"/);
@@ -91,9 +97,10 @@ assert.match(creatorHome, /event="fulfillment_viewed"/);
 assert.match(creatorHome, /creatorActionTitle/);
 assert.match(creatorHome, /normalizeCreatorAction/);
 assert.doesNotMatch(creatorHome, /topAction\.action === "FULFILL"/);
-assert.match(worldPage, /event="world_viewed"/);
-assert.match(worldPage, /event="offer_viewed"/);
-assert.match(worldPage, /event="returning_user"/);
+assert.match(creatorSitePage, /event="creator_site_viewed"/);
+assert.match(creatorSitePage, /event="offer_viewed"/);
+assert.match(creatorSitePage, /event="returning_user"/);
+assert.match(legacyWorldRoute, /permanentRedirect/);
 assert.match(historyPage, /event="history_viewed"/);
 assert.match(historyPage, /event="returning_user"/);
 

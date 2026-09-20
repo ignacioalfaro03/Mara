@@ -11,7 +11,9 @@
     "alpha:report:selftest": "node scripts/alpha-signal-report.mjs --self-test",
     "real-app-wiring:contract": "node scripts/real-app-wiring-contract-smoke.mjs",
     "release-safety:contract": "node scripts/release-safety-contract.mjs",
-    "founder-thesis:contract": "node scripts/founder-thesis-contract.mjs"
+    "founder-thesis:contract": "node scripts/founder-thesis-contract.mjs",
+    "creator-site:contract": "node scripts/creator-site-contract-smoke.mjs",
+    "launch:smoke": "node scripts/launch-smoke-suite.mjs"
   },
   "dependencies": {
     "next": "16.3.3",

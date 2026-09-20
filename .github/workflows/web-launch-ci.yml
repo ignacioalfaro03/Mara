@@ -74,6 +74,9 @@ jobs:
       - name: Verify founder thesis contract
         run: npm run founder-thesis:contract
 
+      - name: Verify Creator Site contract
+        run: npm run creator-site:contract
+
       - name: Verify release safety boundary
         run: npm run release-safety:contract
 
@@ -117,15 +120,4 @@ jobs:
             sleep 1
           done
           curl --fail --silent http://127.0.0.1:3000/ > /dev/null
-          node scripts/launch-smoke.mjs
-          node scripts/account-operability-smoke.mjs
-          node scripts/ritual-telemetry-smoke.mjs
-          node scripts/telemetry-environment-smoke.mjs
-          node scripts/public-purpose-smoke.mjs
-          node scripts/continuity-cta-smoke.mjs
-          node scripts/world-sofi-smoke.mjs
-          node scripts/launch-loop-smoke.mjs
-          node scripts/creator-interest-smoke.mjs
-          node scripts/creator-os-contract-smoke.mjs
-          node scripts/revenue-engine-contract-smoke.mjs
-          node scripts/demand-marketplace-contract-smoke.mjs
+          npm run launch:smoke
