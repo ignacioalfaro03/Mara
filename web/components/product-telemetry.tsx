@@ -14,6 +14,16 @@ type Props = {
   currency?: string;
 };
 
+function entrySource() {
+  try {
+    const raw = new URLSearchParams(window.location.search).get("src")?.trim().toLowerCase();
+    if (raw === "ig" || raw === "tt" || raw === "x") return raw;
+    return raw ? "other" : "direct";
+  } catch {
+    return "direct";
+  }
+}
+
 export function ProductTelemetry({ event, surface, target, placement, offerSlug, offerType, preferenceGroup, currency }: Props) {
   useEffect(() => {
     void fetch("/api/telemetry", {
@@ -24,6 +34,7 @@ export function ProductTelemetry({ event, surface, target, placement, offerSlug,
         timestamp: new Date().toISOString(),
         properties: {
           surface,
+          entry_source: entrySource(),
           ...(target ? { target } : {}),
           ...(placement ? { placement } : {}),
           ...(offerSlug ? { offer_slug: offerSlug } : {}),

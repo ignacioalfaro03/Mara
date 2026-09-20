@@ -92,16 +92,16 @@ export default function CreatorsPage() {
 
       <section className={styles.split}>
         <div className={styles.exposureCard}>
-          <p className={styles.kicker}>TU IDENTIDAD, TUS REGLAS</p>
-          <h2>Ser pública es el caso principal. La privacidad sigue siendo una opción.</h2>
+          <p className={styles.kicker}>POR QUÉ MARA</p>
+          <h2>No es otra página de links.</h2>
           <ol>
-            <li><b>Marca pública.</b> Usa tu nombre, imagen y audiencia existente como identidad principal.</li>
-            <li><b>Marca pública con límites.</b> Decide qué productos, formatos o interacciones sí ofreces.</li>
-            <li><b>Identidad protegida.</b> Opera con pseudónimo, avatar o exposición limitada si eso te conviene.</li>
-            <li><b>Interacción directa.</b> Solo cuando quieras habilitarla y bajo reglas claras.</li>
+            <li><b>Concentra la acción.</b> Tu audiencia llega a un sitio tuyo, no a una lista que la manda a cinco plataformas distintas.</li>
+            <li><b>Aprende demanda.</b> Mara registra qué quiere tu audiencia y separa curiosidad, interés serio y compromiso.</li>
+            <li><b>Convierte intención.</b> Una oportunidad puede transformarse en oferta, compra y fulfillment sin perder el contexto que la originó.</li>
+            <li><b>Acumula memoria.</b> Cada compra, preferencia y resultado puede mejorar la próxima acción en vez de empezar de cero.</li>
           </ol>
           <p className={styles.note}>
-            La privacidad es configurable, no la tesis completa. El Alpha actual mantiene requisitos de mayoría de edad y cualquier monetización real seguirá sujeta a verificación, consentimiento y elegibilidad del proveedor de pagos.
+            Tu identidad puede ser pública, selectiva o protegida. La privacidad es configurable; no define por sí sola el producto. El Alpha actual sigue sujeto a mayoría de edad y a elegibilidad legal/de pagos antes de monetización real.
           </p>
         </div>
 

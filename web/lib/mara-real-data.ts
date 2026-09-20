@@ -93,11 +93,11 @@ export function historyCopy(eventType: string | null) {
     commit: "Te comprometiste con una idea si llega a concretarse.",
     demand_commit: "Te comprometiste con una idea si llega a concretarse.",
     demand_created: "Propusiste algo que te gustaría ver aquí.",
-    purchase_completed: "Compraste algo en este World.",
-    purchase: "Compraste algo en este World.",
+    purchase_completed: "Compraste algo en este sitio.",
+    purchase: "Compraste algo en este sitio.",
     fulfillment_completed: "La creadora entregó una compra tuya.",
     fulfillment: "La creadora entregó una compra tuya.",
   };
   const key = eventType?.trim().toLowerCase() ?? "";
-  return labels[key] ?? "Algo cambió en tu relación con este World.";
+  return labels[key] ?? "Algo cambió en tu relación con este sitio.";
 }

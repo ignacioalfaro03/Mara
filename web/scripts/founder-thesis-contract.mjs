@@ -13,6 +13,7 @@ const home = readWeb("app/page.tsx");
 const layout = readWeb("app/layout.tsx");
 const creator = readWeb("app/creator/page.tsx");
 const creatorRoute = readWeb("app/[creator]/page.tsx");
+const creatorSitePage = readWeb("components/creator-site-page.tsx");
 const legacyRoute = readWeb("app/world/[slug]/page.tsx");
 
 assert.match(readme, /MARA_FOUNDER_CONSTITUTION_V3/);
@@ -30,12 +31,15 @@ assert.match(layout, /Creator OS/);
 for (const forbidden of ["Ver World", "Crear World", "Tus Worlds", "Crea tu primer World"]) {
   assert.doesNotMatch(creator, new RegExp(forbidden));
 }
-assert.match(creator, /Ver sitio/);
-assert.match(creator, /Crear sitio/);
+assert.match(creator, /Crear borrador/);
+assert.match(creator, /Publicar sitio/);
+assert.match(creator, /CreatorSiteActions/);
 
 assert.match(creatorRoute, /alternates:/);
 assert.match(creatorRoute, /canonical/);
 assert.match(creatorRoute, /CreatorSitePage/);
-assert.match(legacyRoute, /SITIO EN MARA/);
+assert.match(creatorSitePage, /SITIO EN MARA/);
+assert.match(legacyRoute, /permanentRedirect/);
+assert.doesNotMatch(legacyRoute, /SITIO EN MARA/);
 
 console.log("MARA_FOUNDER_THESIS_CONTRACT PASS");

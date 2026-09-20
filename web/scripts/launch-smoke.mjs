@@ -100,6 +100,11 @@ try {
   await page.getByRole("heading", { name: "Convierte tu audiencia en un negocio mejor." }).waitFor();
   await page.getByRole("link", { name: "Crear mi sitio en Mara" }).waitFor();
   await page.getByText("MARA.COM/TU-NOMBRE").waitFor();
+  const homeMain = page.getByRole("main");
+  for (const ctaName of ["Crear mi sitio en Mara", "Entrar"]) {
+    const cta = await homeMain.getByRole("link", { name: ctaName, exact: true }).boundingBox();
+    assert(cta && cta.y >= 0 && cta.y + cta.height <= contextOptions.viewport.height, `Home CTA "${ctaName}" is outside the first mobile viewport`);
+  }
   await assertNoHorizontalOverflow(page, "/");
 
   for (const path of publicPaths.slice(1)) {
