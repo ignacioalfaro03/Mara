@@ -18,7 +18,7 @@ import styles from "@/app/real-product.module.css";
 
 export const dynamic = "force-dynamic";
 
-export default async function CreatorWorldPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function CreatorSitePage({ params, canonicalPath }: { params: Promise<{ slug: string }>; canonicalPath?: string }) {
   const { slug } = await params;
   const session = await getVerifiedSession();
   const accessToken = session.ok ? session.accessToken : undefined;
@@ -36,7 +36,7 @@ export default async function CreatorWorldPage({ params }: { params: Promise<{ s
   const metricByDemand = new Map(metrics.map((item) => [item.demand_request_id, item]));
   const weakness = session.ok && userId ? await readWeakness(session.accessToken, userId, world) : null;
   const history = session.ok && userId ? await readUserWorldHistory(session.accessToken, userId, world.id) : [];
-  const returnTo = `/world/${world.slug}`;
+  const returnTo = canonicalPath ?? `/${world.slug}`;
 
   return (
     <main className={styles.shell}>
@@ -52,9 +52,9 @@ export default async function CreatorWorldPage({ params }: { params: Promise<{ s
         </nav>
 
         <header className={styles.hero}>
-          <p className={styles.eyebrow}>CREATOR WORLD · {world.visibility}</p>
+          <p className={styles.eyebrow}>SITIO EN MARA · {world.visibility}</p>
           <h1>{world.display_name}</h1>
-          <p>{world.description || "Un espacio vivo que aprende de lo que te interesa y conecta demanda, ofertas e historia sin sentirse como un catálogo."}</p>
+          <p>{world.description || "El sitio de esta creadora en Mara: ofertas, demanda e historia reunidas en un solo lugar."}</p>
         </header>
 
         {history.length > 0 ? (
@@ -107,7 +107,7 @@ export default async function CreatorWorldPage({ params }: { params: Promise<{ s
           <article className={styles.card}>
             <p className={styles.eyebrow}>MY WEAKNESS</p>
             <h2>Díselo solo si quieres.</h2>
-            <p className={styles.muted}>Es texto declarado por ti, no una inferencia psicológica. En este World tú decides si la creadora puede verlo.</p>
+            <p className={styles.muted}>Es texto declarado por ti, no una inferencia psicológica. En este sitio tú decides si la creadora puede verlo.</p>
             {session.ok ? (
               <form className={styles.form} method="post" action="/api/weakness">
                 <input type="hidden" name="scope" value="creator_world" />
@@ -115,7 +115,7 @@ export default async function CreatorWorldPage({ params }: { params: Promise<{ s
                 <input type="hidden" name="worldId" value={world.id} />
                 <input type="hidden" name="returnTo" value={returnTo} />
                 <textarea name="valueText" maxLength={1000} defaultValue={weakness?.value_text ?? ""} placeholder="Algo que te encanta, te tienta o te cuesta ignorar…" />
-                <label><span><input style={{ width: "auto" }} type="checkbox" name="creatorVisible" defaultChecked={weakness?.creator_visible ?? false} /> Compartir esta debilidad con la creadora de este World</span></label>
+                <label><span><input style={{ width: "auto" }} type="checkbox" name="creatorVisible" defaultChecked={weakness?.creator_visible ?? false} /> Compartir esta debilidad con la creadora de este sitio</span></label>
                 <div className={styles.actions}>
                   <button className={styles.button} name="action" value="save" type="submit">Guardar</button>
                   {weakness ? <button className={styles.secondary} name="action" value="delete" type="submit">Eliminar</button> : null}
@@ -198,7 +198,7 @@ export default async function CreatorWorldPage({ params }: { params: Promise<{ s
 
         <h2 className={styles.sectionTitle}>Puedes desbloquear</h2>
         <section className={styles.grid}>
-          {offers.filter((offer) => offer.status === "active" || owner).length === 0 ? <p className={`${styles.empty} ${styles.wide}`}>Todavía no hay una oferta activa. Este World puede empezar por escuchar antes de vender.</p> : offers.filter((offer) => offer.status === "active" || owner).map((offer) => (
+          {offers.filter((offer) => offer.status === "active" || owner).length === 0 ? <p className={`${styles.empty} ${styles.wide}`}>Todavía no hay una oferta activa. Este sitio puede empezar por escuchar antes de vender.</p> : offers.filter((offer) => offer.status === "active" || owner).map((offer) => (
             <article className={styles.card} key={offer.id}>
               {offer.status === "active" ? <ProductTelemetry event="offer_viewed" surface={returnTo} target="creator_offer" offerSlug={offer.slug} offerType={offer.offer_family} currency={offer.currency} /> : null}
               <div className={styles.row}><p className={styles.eyebrow}>{offer.offer_family}</p><span className={styles.pill}>{offer.status}</span></div>

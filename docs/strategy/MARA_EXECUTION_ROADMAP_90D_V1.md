@@ -1,5 +1,7 @@
 # MARA — 90-DAY EXECUTION ROADMAP V1
 
+> **SUPERSEDED 2026-09-20 by `MARA_EXECUTION_ROADMAP_90D_V2.md`. Historical context only.**
+
 Status: **CURRENT EXECUTION SEQUENCE**  
 Parent authority: `MARA_FOUNDER_CONSTITUTION_V2.md`  
 Product map: `docs/strategy/MARA_PRODUCT_ARCHITECTURE_V1.md`  

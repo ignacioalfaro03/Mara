@@ -15,11 +15,10 @@ function resolveMetadataBase() {
 export const metadata: Metadata = {
   metadataBase: resolveMetadataBase(),
   title: "Mara",
-  description: "Mara crea experiencias digitales y prepara una plataforma privada para creadoras adultas que quieren monetizar personajes bajo sus propios límites.",
+  description: "Mara ayuda a creadoras e influencers a operar su propio sitio, entender la demanda de su audiencia y convertirla en comercio cumplido.",
   openGraph: {
     title: "Mara",
-    description: "Tu personaje puede ser público. Tú no tienes que serlo.",
-    images: ["/mara/mara-v1-reference.jpg"],
+    description: "Tu sitio en Mara. Tu audiencia, tu oferta y la inteligencia para operar un negocio mejor.",
     type: "website",
   },
 };
@@ -33,15 +32,15 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <header className="siteHeader">
           <Link href="/" className="wordmark">MARA</Link>
           <nav aria-label="Navegación principal">
-            <Link href="/shop">Experiencias</Link>
             <Link href="/creators">Para creadoras</Link>
-            <Link href="/library">Biblioteca</Link>
-            <Link href="/experience">Probar</Link>
+            <Link href="/creator">Creator OS</Link>
+            <Link href="/me/history">Mi actividad</Link>
+            <Link href="/auth">Entrar</Link>
           </nav>
         </header>
         {children}
         <footer className="siteFooter">
-          <span>Mara Vera es el primer personaje virtual de Mara. El piloto de creadoras es solo para personas adultas.</span>
+          <span>Mara es infraestructura web para creadoras, audiencia, demanda, comercio y continuidad. El Alpha actual mantiene sus límites de acceso vigentes.</span>
           <div>
             <Link href="/legal">Privacidad · Términos · Divulgación IA</Link>
           </div>

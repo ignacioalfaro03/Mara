@@ -31,13 +31,14 @@ try {
   const anonymousPremiumAsset = await context.request.get(`${baseUrl}/api/commerce/content/night-note`);
   assert(anonymousPremiumAsset.status() === 401, `premium asset must require auth, got ${anonymousPremiumAsset.status()}`);
 
-  // Latest founder contract: Home sells the evergreen catalog first; DM remains a free sample.
+  // Founder contract V3: Home sells the Creator Site thesis. Legacy commerce remains regression evidence only.
   await page.goto(`${baseUrl}/`, { waitUntil: "networkidle" });
   await passAgeGate(page);
-  await page.getByText(/No tienes que hablar conmigo todo el día/).waitFor();
-  await page.getByText(/experiencias, audios y colecciones/).waitFor();
-  await page.getByRole("link", { name: "Explorar experiencias" }).click();
-  await page.waitForURL(/\/shop$/);
+  await page.getByRole("heading", { name: "Convierte tu audiencia en un negocio mejor." }).waitFor();
+  await page.getByRole("link", { name: "Crear mi sitio en Mara" }).waitFor();
+  await page.getByText("MARA.COM/TU-NOMBRE").waitFor();
+
+  await page.goto(`${baseUrl}/shop`, { waitUntil: "networkidle" });
   await page.getByText(/Empieza por algo pequeño/).waitFor();
   await page.getByText("La nota de esta noche").waitFor();
   await page.getByText("US$4.99").waitFor();
@@ -53,10 +54,8 @@ try {
   await page.getByText(/Tu acceso vive en tu cuenta/).waitFor();
   await page.getByRole("link", { name: "Crear cuenta o entrar" }).waitFor();
 
-  // Free Mara interaction still exists, but it is no longer the primary commercial home CTA.
-  await page.goto(`${baseUrl}/`, { waitUntil: "networkidle" });
-  await page.getByRole("link", { name: "Probar a Mara gratis" }).click();
-  await page.waitForURL(/\/experience/);
+  // Legacy Mara Vera interaction remains isolated as prototype evidence and is not linked from the canonical Home.
+  await page.goto(`${baseUrl}/experience`, { waitUntil: "networkidle" });
   await page.getByText("Tengo una idea. Tú acomódate; yo pongo la historia.").waitFor();
   await page.getByRole("button", { name: "Entrar" }).click();
   await page.getByText("Hoy mando yo un poco.").waitFor();

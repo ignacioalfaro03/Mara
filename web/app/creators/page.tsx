@@ -16,9 +16,9 @@ const PRODUCTS = [
 
 export default function CreatorsPage() {
   const [email, setEmail] = useState("");
-  const [exposureLevel, setExposureLevel] = useState("character_only");
+  const [exposureLevel, setExposureLevel] = useState("selective_real_content");
   const [audienceSize, setAudienceSize] = useState("not_sure");
-  const [currentCreatorStatus, setCurrentCreatorStatus] = useState("never");
+  const [currentCreatorStatus, setCurrentCreatorStatus] = useState("public_creator");
   const [productInterests, setProductInterests] = useState<string[]>([]);
   const [adultConsent, setAdultConsent] = useState(false);
   const [website, setWebsite] = useState("");
@@ -66,48 +66,48 @@ export default function CreatorsPage() {
   return (
     <main className={styles.page}>
       <section className={styles.hero}>
-        <p className={styles.eyebrow}>MARA · PRIVATE CREATOR PILOT</p>
-        <h1>Tu personaje puede ser público. Tú no tienes que serlo.</h1>
+        <p className={styles.eyebrow}>MARA · CREATOR SITES PILOT</p>
+        <h1>Tu audiencia ya existe. Dale un lugar propio.</h1>
         <p className={styles.lede}>
-          Estamos preparando un piloto para mujeres adultas que quieren monetizar una identidad digital sin convertir su nombre, cara o vida pública en el producto.
+          Mara está construyendo sitios propios para creadoras e influencers que quieren entender, monetizar y retener mejor a su audiencia. Si ya eres reconocida, ese es el caso principal. Si prefieres operar con identidad protegida, Mara también debe soportarlo.
         </p>
         <div className={styles.promiseGrid}>
           <article>
             <span>01</span>
-            <strong>Crea un personaje</strong>
-            <p>Nombre, identidad visual, personalidad y límites definidos por ti.</p>
+            <strong>Tu sitio en Mara</strong>
+            <p>Un destino propio para enviar a tu audiencia desde tus redes y concentrar lo que ofreces.</p>
           </article>
           <article>
             <span>02</span>
-            <strong>Elige qué vendes</strong>
-            <p>Contenido, audio, experiencias, personalización o tiempo agendado. Nada es obligatorio.</p>
+            <strong>Descubre qué quieren</strong>
+            <p>Mara convierte señales de tu audiencia en demanda útil para decidir qué ofrecer y cuándo.</p>
           </article>
           <article>
             <span>03</span>
-            <strong>Mantén control de tu exposición</strong>
-            <p>Tu identidad legal puede requerir verificación privada; no tiene por qué convertirse en tu identidad pública.</p>
+            <strong>Opera un negocio mejor</strong>
+            <p>Ofertas, clientes, fulfillment y próximas acciones viven detrás de tu sitio en un Creator OS.</p>
           </article>
         </div>
       </section>
 
       <section className={styles.split}>
         <div className={styles.exposureCard}>
-          <p className={styles.kicker}>TU NIVEL, TUS LÍMITES</p>
-          <h2>No existe una sola forma de ser creadora en Mara.</h2>
+          <p className={styles.kicker}>TU IDENTIDAD, TUS REGLAS</p>
+          <h2>Ser pública es el caso principal. La privacidad sigue siendo una opción.</h2>
           <ol>
-            <li><b>Solo personaje.</b> Productos digitales sin exposición personal pública.</li>
-            <li><b>Voz.</b> Audios o interacción de voz, solo si quieres.</li>
-            <li><b>Contenido real selectivo.</b> Tú decides exactamente qué aparece.</li>
-            <li><b>Interacción directa.</b> Ventanas pagadas y agendadas, bajo tus reglas.</li>
+            <li><b>Marca pública.</b> Usa tu nombre, imagen y audiencia existente como identidad principal.</li>
+            <li><b>Marca pública con límites.</b> Decide qué productos, formatos o interacciones sí ofreces.</li>
+            <li><b>Identidad protegida.</b> Opera con pseudónimo, avatar o exposición limitada si eso te conviene.</li>
+            <li><b>Interacción directa.</b> Solo cuando quieras habilitarla y bajo reglas claras.</li>
           </ol>
           <p className={styles.note}>
-            Mara busca ofrecer pseudonimato público, no anonimato regulatorio. El piloto será solo para personas adultas verificadas y sujeto a requisitos legales, de consentimiento y de pagos antes de activar monetización real.
+            La privacidad es configurable, no la tesis completa. El Alpha actual mantiene requisitos de mayoría de edad y cualquier monetización real seguirá sujeta a verificación, consentimiento y elegibilidad del proveedor de pagos.
           </p>
         </div>
 
         <form className={styles.form} onSubmit={submit}>
           <p className={styles.kicker}>SOLICITAR ACCESO AL PILOTO</p>
-          <h2>Cuéntanos qué versión te serviría.</h2>
+          <h2>Cuéntanos cómo monetizas hoy y qué debería hacer mejor tu sitio.</h2>
 
           {submitState === "success" ? (
             <div className={styles.success} role="status">
@@ -131,10 +131,10 @@ export default function CreatorsPage() {
               <label>
                 ¿Hasta dónde te gustaría exponerte?
                 <select value={exposureLevel} onChange={(event) => setExposureLevel(event.target.value)}>
-                  <option value="character_only">Solo personaje / avatar</option>
-                  <option value="voice">Personaje + mi voz</option>
-                  <option value="selective_real_content">Contenido real selectivo</option>
-                  <option value="direct_interaction">Interacción directa agendada</option>
+                  <option value="selective_real_content">Uso mi identidad / marca pública</option>
+                  <option value="direct_interaction">Marca pública + interacción directa</option>
+                  <option value="voice">Identidad protegida + voz</option>
+                  <option value="character_only">Pseudónimo / avatar</option>
                   <option value="not_sure">Todavía no lo sé</option>
                 </select>
               </label>
