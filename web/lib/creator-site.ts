@@ -12,6 +12,7 @@ const SAFE_HEX = /^#[0-9a-f]{6}$/i;
 type JsonRecord = Record<string, Json | undefined>;
 
 export type CreatorSiteConfig = {
+  theme: "clean" | "bold" | "dark";
   avatarUrl: string | null;
   coverUrl: string | null;
   accent: string;
@@ -60,7 +61,9 @@ export function creatorSiteConfig(site: WorldRow): CreatorSiteConfig {
   const settings = record(site.settings);
   const socialsRaw = record((settings.socials ?? {}) as Json);
   const modulesRaw = record((settings.modules ?? {}) as Json);
+  const theme = settings.theme === "bold" || settings.theme === "dark" ? settings.theme : "clean";
   return {
+    theme,
     avatarUrl: safeExternalUrl(persona.avatar_url),
     coverUrl: safeExternalUrl(persona.cover_url),
     accent: safeAccent(settings.accent),
@@ -95,6 +98,7 @@ export function creatorSitePersona(input: { avatarUrl: unknown; coverUrl: unknow
 }
 
 export function creatorSiteSettings(input: {
+  theme: unknown;
   accent: unknown;
   primaryCtaLabel: unknown;
   primaryCtaUrl: unknown;
@@ -108,7 +112,9 @@ export function creatorSiteSettings(input: {
 }): Json {
   const primaryCtaLabel =
     typeof input.primaryCtaLabel === "string" ? input.primaryCtaLabel.trim().slice(0, 60) : "";
+  const theme = input.theme === "bold" || input.theme === "dark" ? input.theme : "clean";
   return {
+    theme,
     accent: safeAccent(input.accent),
     primary_cta_label: primaryCtaLabel || "Ver lo que ofrece",
     primary_cta_url: safeExternalUrl(input.primaryCtaUrl),

@@ -59,6 +59,7 @@ export async function POST(
     coverUrl: form.get("coverUrl"),
   });
   const settings = creatorSiteSettings({
+    theme: form.get("theme"),
     accent: form.get("accent"),
     primaryCtaLabel: form.get("primaryCtaLabel"),
     primaryCtaUrl: form.get("primaryCtaUrl"),
