@@ -43,11 +43,8 @@ assert(legacyRoute.includes("permanentRedirect"), "legacy /world route must redi
 assert(legacyRoute.includes("`/${slug}`"), "legacy /world route must target canonical /<creator> path");
 assert(telemetry.includes('"creator_site_link_copied"'), "Creator Site share telemetry not allowed");
 
-const baseUrl = process.env.BASE_URL || "http://127.0.0.1:3000";
-const creatorResponse = await fetch(`${baseUrl}/creator`, { redirect: "manual" });
-assert.equal(creatorResponse.status, 200, "reserved /creator route must not be captured by /[creator]");
-const creatorHtml = await creatorResponse.text();
-assert(creatorHtml.includes("CREATOR OS"), "reserved /creator route rendered wrong surface");
+// Runtime route precedence is exercised by launch-smoke after the production server starts.
+// Keep this pre-build contract deterministic and filesystem-only.
 
 
 console.log("MARA_CREATOR_SITE_CONTRACT PASS");
