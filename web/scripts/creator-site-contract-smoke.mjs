@@ -30,7 +30,8 @@ assert(updateRoute.includes('action === "publish" ? "active"'), "publish transit
 assert(updateRoute.includes('"creator_site_published"'), "publish telemetry missing");
 
 assert(creatorHome.includes("Publicar sitio"), "Creator OS publish action missing");
-assert(creatorHome.includes("Avatar URL"), "Creator Site identity editor missing");
+assert(creatorHome.includes("Foto de perfil"), "Creator Site identity editor missing");
+assert(creatorHome.includes('name="theme"'), "Creator Site visual preset control missing");
 assert(creatorHome.includes("moduleDemand"), "Creator Site module controls missing");
 
 assert(publicRoute.includes("robots: { index: false, follow: false }"), "non-public Creator Site metadata must fail closed");

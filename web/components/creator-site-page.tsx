@@ -51,7 +51,7 @@ export default async function CreatorSitePage({ params, canonicalPath }: { param
     : null;
 
   return (
-    <main className={styles.shell}>
+    <main className={`${styles.shell} ${siteConfig.theme === "bold" ? styles.themeBold : siteConfig.theme === "dark" ? styles.themeDark : styles.themeClean}`}>
       <ProductTelemetry event="creator_site_viewed" surface={returnTo} target={owner ? "owner" : "visitor"} />
       {structuredData ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} /> : null}
       {history.length > 0 ? <ProductTelemetry event="returning_user" surface={returnTo} target="world_history" /> : null}
@@ -159,10 +159,10 @@ export default async function CreatorSitePage({ params, canonicalPath }: { param
         <section className={styles.grid}>
           <article className={`${styles.card} ${styles.wide}`}>
             <div className={styles.row}>
-              <div><p className={styles.eyebrow}>WHAT PEOPLE WANT</p><h2>Ideas que pueden convertirse en algo real.</h2></div>
+              <div><p className={styles.eyebrow}>LO QUE QUIERE LA AUDIENCIA</p><h2>Ideas que pueden convertirse en algo real.</h2></div>
               <span className={styles.pill}>{demands.length} activas</span>
             </div>
-            {demands.length === 0 ? <p className={styles.empty}>Todavía no hay demanda. La primera señal real puede nacer aquí.</p> : (
+            {demands.length === 0 ? <p className={styles.empty}>Todavía nadie ha pedido algo. Si tienes una idea, puedes ser la primera persona en proponerla.</p> : (
               <ul className={styles.list}>
                 {demands.map((demand) => {
                   const metric = metricByDemand.get(demand.id);
@@ -185,12 +185,12 @@ export default async function CreatorSitePage({ params, canonicalPath }: { param
                           <input type="hidden" name="demandId" value={demand.id} />
                           <input type="hidden" name="returnTo" value={returnTo} />
                           <div className={styles.twoCol}>
-                            <label>Tu señal<select name="level" defaultValue="want"><option value="want">Quiero esto</option><option value="pledge">Me interesa seriamente</option><option value="commit">Me comprometo si se concreta</option></select></label>
+                            <label>¿Qué tan en serio te interesa?<select name="level" defaultValue="want"><option value="want">Me gustaría</option><option value="pledge">Lo compraría si el precio me sirve</option><option value="commit">Me comprometería si se hace</option></select></label>
                             <label>Privacidad<select name="privacyMode" defaultValue={demand.privacy_mode}><option value="public">Pública</option><option value="pseudonymous">Pseudónima</option><option value="private">Privada</option></select></label>
                           </div>
-                          <label>Cuánto pagarías, opcional<input name="wtp" type="number" min="1" step="1" placeholder="Ej: 10000" /></label>
+                          <label>¿Cuánto pagarías aproximadamente? <span className={styles.small}>(opcional)</span><input name="wtp" type="number" min="1" step="1" placeholder="Ej: 10000" /></label>
                           <input type="hidden" name="currency" value="CLP" />
-                          <button className={styles.secondary} type="submit">Actualizar mi interés</button>
+                          <button className={styles.secondary} type="submit">Guardar mi señal</button>
                         </form>
                       ) : null}
                     </li>
@@ -204,7 +204,7 @@ export default async function CreatorSitePage({ params, canonicalPath }: { param
         {session.ok ? (
           <section className={styles.grid}>
             <article className={`${styles.card} ${styles.wide}`}>
-              <p className={styles.eyebrow}>PIDE ALGO</p>
+              <p className={styles.eyebrow}>PROPÓN ALGO</p>
               <h2>¿Qué te gustaría que existiera aquí?</h2>
               <form className={styles.form} method="post" action="/api/demand">
                 <input type="hidden" name="worldId" value={world.id} />

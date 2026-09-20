@@ -15,6 +15,7 @@ const scripts = [
   "revenue-engine-contract-smoke.mjs",
   "demand-marketplace-contract-smoke.mjs",
   "creator-site-contract-smoke.mjs",
+  "mobile-viewport-smoke.mjs",
 ];
 
 for (const script of scripts) {

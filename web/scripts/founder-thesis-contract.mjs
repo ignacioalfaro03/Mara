@@ -31,7 +31,7 @@ assert.match(layout, /Creator OS/);
 for (const forbidden of ["Ver World", "Crear World", "Tus Worlds", "Crea tu primer World"]) {
   assert.doesNotMatch(creator, new RegExp(forbidden));
 }
-assert.match(creator, /Crear borrador/);
+assert.match(creator, /Crear mi sitio/);
 assert.match(creator, /Publicar sitio/);
 assert.match(creator, /CreatorSiteActions/);
 
