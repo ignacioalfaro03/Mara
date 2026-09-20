@@ -71,6 +71,9 @@ jobs:
       - name: Verify Real App Wiring contract
         run: npm run real-app-wiring:contract
 
+      - name: Verify founder thesis contract
+        run: npm run founder-thesis:contract
+
       - name: Verify release safety boundary
         run: npm run release-safety:contract
 

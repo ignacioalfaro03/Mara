@@ -7,7 +7,8 @@ function assert(condition, message) {
 const pageResponse = await fetch(`${baseUrl}/creators`, { redirect: "manual" });
 assert(pageResponse.status === 200, `/creators returned ${pageResponse.status}`);
 const pageHtml = await pageResponse.text();
-assert(pageHtml.includes("Tu personaje puede ser público"), "creator pilot positioning missing");
+assert(pageHtml.includes("Tu audiencia ya existe. Dale un lugar propio."), "creator-site pilot positioning missing");
+assert(pageHtml.includes("Si ya eres reconocida, ese es el caso principal."), "existing-audience creator ICP missing");
 assert(pageHtml.includes("Solicitar acceso al piloto") || pageHtml.includes("SOLICITAR ACCESO AL PILOTO"), "creator pilot CTA missing");
 
 const invalidConsent = await fetch(`${baseUrl}/api/creator-interest`, {

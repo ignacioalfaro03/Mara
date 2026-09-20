@@ -1,5 +1,7 @@
 # MARA — FOUNDER CONSTITUTION V2
 
+> **SUPERSEDED 2026-09-20 by `MARA_FOUNDER_CONSTITUTION_V3.md`. Historical context only; V3 wins on every conflict.**
+
 Status: **SOLE HIGHEST-PRIORITY COMPANY AUTHORITY**  
 Effective: **2026-09-08**  
 Founder boundary: **NO MERGE unless Ignacio explicitly writes `mergea`.**

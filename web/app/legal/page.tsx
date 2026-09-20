@@ -3,14 +3,14 @@ export default function LegalPage() {
     <main className="pageShell legalPage">
       <section className="editorialHeader">
         <p className="eyebrow">TRANSPARENCIA</p>
-        <h1>Mara es ficción. Los límites, no.</h1>
-        <p className="lede">Lo importante, sin letra chica.</p>
+        <h1>La creadora es real. Las reglas también.</h1>
+        <p className="lede">Identidad, privacidad, pagos y límites explicados con claridad.</p>
       </section>
 
       <section className="legalSections">
         <article>
-          <h2>Quién es Mara</h2>
-          <p>Mara Vera es el primer personaje virtual ficticio de Mara y es generado con inteligencia artificial. No es una persona humana real.</p>
+          <h2>Qué es Mara</h2>
+          <p>Mara es la infraestructura web donde creadoras e influencers pueden operar su propio sitio, ofrecer productos o experiencias y entender mejor la demanda de su audiencia.</p>
         </article>
         <article>
           <h2>Solo adultos</h2>
@@ -29,8 +29,8 @@ export default function LegalPage() {
           <p>El formulario para creadoras guarda únicamente un correo de contacto, preferencias comerciales acotadas, nivel de exposición elegido y la constancia de mayoría de edad/consentimiento para contacto. Esa información se usa para evaluar y contactar candidatas al piloto; no crea una cuenta pública, no activa pagos y no se muestra a clientes.</p>
         </article>
         <article>
-          <h2>Pseudonimato de creadoras</h2>
-          <p>Mara busca permitir que una creadora use un personaje frente al público. Eso no significa anonimato regulatorio: un piloto comercial podrá exigir verificación privada de identidad y edad, documentación de consentimiento, requisitos tributarios y de pago, y otras verificaciones legales aplicables.</p>
+          <h2>Identidad y privacidad de creadoras</h2>
+          <p>Una creadora puede operar públicamente con su identidad conocida o con una identidad protegida cuando el producto lo permita. Eso no reemplaza las verificaciones privadas de identidad, edad, derechos, requisitos tributarios o de pago que correspondan.</p>
         </article>
         <article>
           <h2>Pagos</h2>

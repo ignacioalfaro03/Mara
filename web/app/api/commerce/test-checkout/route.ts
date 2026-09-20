@@ -73,7 +73,7 @@ export async function GET(request: Request) {
   return html(`<!doctype html>
 <html lang="es">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Checkout de prueba · Mara Vera</title>
+<title>Checkout de prueba · Mara</title>
 <body style="margin:0;background:#0a0a0a;color:#f4f1eb;font-family:Arial,Helvetica,sans-serif">
   <main style="min-height:100svh;display:grid;place-items:center;padding:24px">
     <section style="width:min(520px,100%);border:1px solid #2a2927;background:#111;padding:32px">

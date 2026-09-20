@@ -26,10 +26,8 @@ try {
   const page = await context.newPage();
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await visit(page, "/");
-  const cta = await page.getByRole("link", { name: "Probar a Mara gratis" }).boundingBox();
-  assert(cta && cta.y + cta.height <= 844, "Mobile landing free-sample CTA is below the first viewport");
-  await page.getByRole("link", { name: "Probar a Mara gratis" }).click();
+  // Legacy relationship prototype remains isolated evidence; V3 Home no longer routes into it.
+  await visit(page, "/experience");
   await start(page);
   // Negative language must not be mistaken for 'ya/listo' completion.
   await page.getByLabel("Mensaje para Mara").fill("no estoy listo");

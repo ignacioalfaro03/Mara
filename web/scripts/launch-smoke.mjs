@@ -69,7 +69,7 @@ try {
   assert(health.status() === 200, `/api/health returned ${health.status()}`);
   const healthBody = await health.json();
   assert(healthBody?.status === "ok", `/api/health status is ${healthBody?.status}`);
-  assert(healthBody?.service === "mara-vera-web", `/api/health service is ${healthBody?.service}`);
+  assert(healthBody?.service === "mara-web", `/api/health service is ${healthBody?.service}`);
   assert(healthBody?.release === "public-alpha", `/api/health release is ${healthBody?.release}`);
 
   const memoryHealth = await context.request.get(`${baseUrl}/api/health-memory`);
@@ -97,8 +97,9 @@ try {
   const home = await page.goto(`${baseUrl}/?src=ig&campaign=must-not-leak`, { waitUntil: "networkidle" });
   assert(home?.status() === 200, `Home returned ${home?.status()}`);
   await passAgeGate(page);
-  await page.getByText("No tienes que hablar conmigo todo el día.").waitFor();
-  await assertMaraImageLoaded(page, "home");
+  await page.getByRole("heading", { name: "Convierte tu audiencia en un negocio mejor." }).waitFor();
+  await page.getByRole("link", { name: "Crear mi sitio en Mara" }).waitFor();
+  await page.getByText("MARA.COM/TU-NOMBRE").waitFor();
   await assertNoHorizontalOverflow(page, "/");
 
   for (const path of publicPaths.slice(1)) {

@@ -1,6 +1,8 @@
-# Mara Vera Web MVP
+# Mara Web
 
-Owned first-party web for brand, conversion, analytics, compliance and the P0 First Living Experience.
+Canonical product thesis: creator-owned sites inside Mara, backed by demand intelligence, commerce, fulfillment and audience memory.
+
+> **Legacy Mara Vera / P0 experience sections below are retained only as prototype evidence. They do not define the current product. See `../MARA_FOUNDER_CONSTITUTION_V3.md`.**
 
 ## Local development
 
