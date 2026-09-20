@@ -5,10 +5,20 @@ const baseUrl = process.env.BASE_URL || "http://127.0.0.1:3000";
 const browser = await chromium.launch({ headless: true });
 const options = { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, locale: "es-CL" };
 const json = (route, data, status = 200) => route.fulfill({ status, contentType: "application/json", body: JSON.stringify(data) });
+async function passAgeGate(page) {
+  const alreadyPassed = await page
+    .evaluate(() => window.localStorage.getItem("mara_age_gate_passed") === "true")
+    .catch(() => false);
+  if (alreadyPassed) return;
+
+  const gate = page.getByRole("button", { name: "Sí, tengo 18+" });
+  await gate.waitFor({ state: "visible", timeout: 5000 });
+  await gate.click();
+  await page.getByRole("dialog").waitFor({ state: "detached", timeout: 5000 }).catch(() => undefined);
+}
 async function visit(page, path) {
   await page.goto(baseUrl + path, { waitUntil: "networkidle" });
-  const gate = page.getByRole("button", { name: "Sí, tengo 18+" });
-  if (await gate.isVisible()) await gate.click();
+  await passAgeGate(page);
 }
 async function start(page) {
   await page.getByRole("button", { name: "Entrar", exact: true }).click();
@@ -27,8 +37,10 @@ try {
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await visit(page, "/");
-  const cta = await page.getByRole("link", { name: "Probar a Mara gratis" }).boundingBox();
-  assert(cta && cta.y + cta.height <= 844, "Mobile landing free-sample CTA is below the first viewport");
+  for (const ctaName of ["Explorar experiencias", "Probar a Mara gratis"]) {
+    const cta = await page.getByRole("link", { name: ctaName }).boundingBox();
+    assert(cta && cta.y >= 0 && cta.y + cta.height <= options.viewport.height, `Mobile landing CTA "${ctaName}" is outside the first viewport`);
+  }
   await page.getByRole("link", { name: "Probar a Mara gratis" }).click();
   await start(page);
   // Negative language must not be mistaken for 'ya/listo' completion.
@@ -58,7 +70,11 @@ try {
   await page.getByLabel('Mensaje para Mara').fill('sigamos con la historia');
   await page.getByRole('button', {name:'Enviar', exact:true}).click();
   assert.equal((await events(page, 'commercial_post_offer_continued')).length, 1, 'Actual subsequent action must count once');
-  await page.getByTestId("sofi-world-door").getByRole("link").click();
+  await Promise.all([
+    page.waitForURL(/\/world\/sofi$/, { timeout: 10000 }),
+    page.getByTestId("sofi-world-door").getByRole("link").click(),
+  ]);
+  await page.getByTestId("sofi-world-slice").waitFor();
   await page.getByRole("button", { name: "Ya lo vi" }).click();
   await page.getByTestId("return-to-mara").click();
   await page.getByRole("button", { name: "Cuéntame tu versión" }).click();
