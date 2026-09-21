@@ -1,4 +1,4 @@
-# Mara Real App Wiring — Private Alpha E2E Proof
+# Mara Real App Wiring â€” Private Alpha E2E Proof
 
 Date: 2026-09-08
 Supabase project: Mara_vera
@@ -20,14 +20,14 @@ PR: #62
 
 Creator B was used as the negative isolation persona.
 
-## Bug 1 found during E2E — PURCHASE was collapsing into FULFILLMENT
+## Bug 1 found during E2E â€” PURCHASE was collapsing into FULFILLMENT
 
 Before this run, every creator offer was represented as `fixed_unlock`, and `fulfill_mara_commerce_checkout` wrote `fulfilled_at = now()` immediately. For `personalized_digital` and `bounded_interaction`, this incorrectly collapsed PURCHASE and FULFILLMENT into one event, prevented the `FULFILL` Next Best Action from becoming reachable, and could grant entitlement before the creator delivered.
 
 ### Fix applied
 
 Migration: `mara_creator_manual_fulfillment_contract`
-Repository migration: `supabase/migrations/20260908160000_mara_creator_manual_fulfillment_contract.sql`
+Repository migration: `supabase/migrations/20260908153434_mara_creator_manual_fulfillment_contract.sql`
 
 The contract now:
 
@@ -108,14 +108,14 @@ Under Customer A authenticated context:
 - creator CRM rows visible: **0**
 - own active entitlement rows for the QA purchase: **1**
 
-## Bug 2 found during QA cleanup — demand metric cascade delete
+## Bug 2 found during QA cleanup â€” demand metric cascade delete
 
 The first fixture cleanup attempt exposed a referential-integrity defect: deleting a `demand_request` cascades into `demand_signals`, whose DELETE trigger attempted to recreate `demand_request_metrics` after the parent request no longer existed. The transaction failed safely and rolled back.
 
 ### Fix applied
 
 Migration: `mara_demand_metrics_delete_cascade_guard`
-Repository migration: `supabase/migrations/20260908165500_mara_demand_metrics_delete_cascade_guard.sql`
+Repository migration: `supabase/migrations/20260908155015_mara_demand_metrics_delete_cascade_guard.sql`
 
 `private.refresh_mara_demand_request_metrics()` now exits without recreating metrics when the parent demand request no longer exists.
 

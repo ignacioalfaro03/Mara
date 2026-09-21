@@ -7,7 +7,7 @@ const read = (relativePath) => fs.readFileSync(path.join(root, relativePath), "u
 
 const offers = read("app/api/creator/offers/route.ts");
 const fulfillment = read("app/api/creator/fulfillment/route.ts");
-const migration = read("supabase/migrations/20260908160000_mara_creator_manual_fulfillment_contract.sql");
+const migration = read("supabase/migrations/20260908153434_mara_creator_manual_fulfillment_contract.sql");
 const types = read("lib/supabase/database.types.ts");
 
 assert.match(offers, /MANUAL_FULFILLMENT_FAMILIES/);
