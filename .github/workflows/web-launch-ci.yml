@@ -77,6 +77,9 @@ jobs:
       - name: Verify release safety boundary
         run: npm run release-safety:contract
 
+      - name: Verify Flow provider contract
+        run: node scripts/flow-provider-contract.mjs
+
       - name: Verify migration history contract
         run: node scripts/migration-history-contract.mjs
 
