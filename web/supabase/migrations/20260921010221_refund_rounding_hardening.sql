@@ -13,6 +13,7 @@ begin
  if not found then raise exception 'purchase_not_found'; end if;
  select id into v_sale from public.commerce_financial_transactions where purchase_id=p_purchase_id and event_type='sale' limit 1;
  if v_purchase.creator_id is null or v_sale is null then return null; end if;
+ perform pg_advisory_xact_lock(hashtextextended(v_purchase.creator_id::text||':'||v_purchase.currency,0));
  v_key:='refund:'||v_purchase.provider||':'||p_provider_refund_id;
  select id into v_tx from public.commerce_financial_transactions where event_key=v_key;
  if found then return v_tx; end if;
@@ -70,4 +71,3 @@ begin
  perform private.assert_mara_financial_transaction_balanced(v_tx); return v_tx;
 end $$;
 revoke all on function private.post_mara_refund(uuid,text,bigint) from public,anon,authenticated;
-
