@@ -1,15 +1,11 @@
-﻿-- Connect canonical purchase truth to the financial subledger.
+-- Connect canonical purchase truth to the financial subledger.
 -- Fail closed for creator sales without an explicit economics policy.
 
 alter table public.commerce_financial_entries drop constraint if exists commerce_financial_entries_account_code_check;
 alter table public.commerce_financial_entries add constraint commerce_financial_entries_account_code_check
   check (account_code in ('processor_clearing','platform_revenue','creator_pending','creator_available','creator_held','creator_payout_reserved','creator_paid','creator_recovery','refunds','chargebacks','processor_fees','tax_payable'));
 
-alter table public.commerce_payout_items alter column purchase_id drop not null;
-alter table public.commerce_payout_items add column earning_transaction_id uuid references public.commerce_financial_transactions(id) on delete restrict;
-alter table public.commerce_payout_items add constraint commerce_payout_items_source_check
-  check (purchase_id is not null or earning_transaction_id is not null);
-create unique index commerce_payout_items_earning_once_idx on public.commerce_payout_items(earning_transaction_id) where earning_transaction_id is not null;
+-- Payout items remain purchase-backed; payout reservation is represented in the journal.
 
 create or replace function private.post_mara_creator_sale(p_purchase_id uuid)
 returns uuid language plpgsql security definer set search_path='' as $$

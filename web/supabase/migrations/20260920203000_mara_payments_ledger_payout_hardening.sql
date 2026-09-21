@@ -1,4 +1,4 @@
-﻿-- Mara payments hardening: balanced financial subledger + creator liabilities.
+-- Mara payments hardening: balanced financial subledger + creator liabilities.
 -- Does NOT activate a real provider or payouts. Money remains integer minor units.
 
 create table public.commerce_economics_policies (
