@@ -77,6 +77,15 @@ jobs:
       - name: Verify release safety boundary
         run: npm run release-safety:contract
 
+      - name: Verify payments ledger contract
+        run: node scripts/payments-ledger-contract.mjs
+
+      - name: Verify payment execution contract
+        run: node scripts/payment-execution-contract.mjs
+
+      - name: Verify payout and reconciliation contract
+        run: node scripts/payout-reconciliation-contract.mjs
+
       - name: Verify DEV labs are blocked in production
         shell: bash
         run: |
