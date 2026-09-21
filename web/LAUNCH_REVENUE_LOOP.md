@@ -1,4 +1,4 @@
-# Mara Vera — Launch Revenue Loop
+# Mara Vera â€” Launch Revenue Loop
 
 Status: product commerce layer implemented; real payment activation pending provider approval.
 
@@ -12,7 +12,7 @@ Payment success is never accepted from a browser query string. The browser can r
 
 ## Supabase
 
-Apply `supabase/migrations/20260903_launch_revenue_loop.sql` only to the dedicated Mara Supabase project.
+Apply `supabase/migrations/20260903220025_launch_revenue_loop.sql` only to the dedicated Mara Supabase project.
 
 Tables:
 

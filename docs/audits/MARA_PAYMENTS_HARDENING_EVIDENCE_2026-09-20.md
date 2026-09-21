@@ -1,4 +1,4 @@
-﻿# Payments hardening evidence — 2026-09-20
+# Payments hardening evidence â€” 2026-09-20
 
 ## Executed against linked Supabase
 - Cumulative partial-refund rounding reconciles exactly on full refund.
@@ -17,15 +17,15 @@ After cancellation: creator_available = 7,500; creator_recovery = 0; creator_pay
 Intentional server-only tables remain RLS-enabled with no browser policies: commerce_disputes, commerce_financial_transactions, commerce_reconciliation_records, commerce_refunds.
 Known warnings: complete_mara_creator_fulfillment remains authenticated-callable SECURITY DEFINER with internal ownership authorization; leaked-password protection remains disabled in project Auth configuration.
 
-## Migration-history drift — P0 operational issue
-The linked migration history currently ends at 20260908155015_mara_demand_metrics_delete_cascade_guard. The live database contains later payment schema/functions applied through direct SQL during hardening. Live schema and supabase_migrations.schema_migrations are therefore not yet canonical with the repository.
+## Migration-history reconciliation â€” RESOLVED
+Legacy migration filenames were renamed to the exact versions already recorded by the linked Supabase project. Payment-hardening versions 20260920203000 through 20260921012140 were repaired to applied only after their schema/functions had been exercised against the live database. The already-applied creator-interest and private-premium migrations were also recorded.
 
-Do not run a blind db push or mark migrations applied solely by filename. Reconcile each post-20260908 migration against live definitions first, then use the supported migration-history repair workflow only for migrations proven equivalent.
+Verification: supabase migration list now shows Local = Remote for every migration, and supabase db push --dry-run reports Remote database is up to date.
+
+A CI migration-history contract now rejects duplicate or malformed migration versions.
 
 ## Remaining launch blockers
-1. Reconcile migration history safely.
-2. Add repeatable database integration/pgTAP execution in CI/local stack.
-3. Resolve provider eligibility and choose a real provider.
-4. Implement provider webhook verification + normalized events.
-5. Enable leaked-password protection when project/plan configuration permits.
-
+1. Add repeatable database integration/pgTAP execution in CI/local stack.
+2. Resolve provider eligibility and choose a real provider.
+3. Implement provider webhook verification + normalized events.
+4. Enable leaked-password protection when project/plan configuration permits.

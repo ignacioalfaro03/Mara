@@ -1,4 +1,4 @@
-# Mara Vera — Identity + Preference Memory
+# Mara Vera â€” Identity + Preference Memory
 
 Status: implementation branch for Issue #5. No production database has been created or connected yet.
 
@@ -37,7 +37,7 @@ Canonical group: `pose_pair_launch_v1`.
 
 The UX asks:
 
-> `¿Cuál te gusta más?`
+> `Â¿CuÃ¡l te gusta mÃ¡s?`
 
 Two adult, provocative but non-explicit images of the same canonical Mara may be presented. Option IDs remain deterministic (`pose_a`, `pose_b`) even if creative assets are refreshed within a controlled experiment version.
 
@@ -58,7 +58,7 @@ Never expose a Supabase secret/service-role key to the browser.
 
 Apply:
 
-`supabase/migrations/20260903_identity_preference_memory.sql`
+`supabase/migrations/20260903184054_identity_preference_memory.sql`
 
 Then run Supabase security/performance advisors and verify:
 
