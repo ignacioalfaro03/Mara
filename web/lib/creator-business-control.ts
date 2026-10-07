@@ -70,6 +70,8 @@ export type MonthlyRevenueMetrics = {
   currency: string;
   complete: boolean;
   revenueMinor: number;
+  knownCustomerRevenueMinor: number;
+  unknownCustomerRevenueMinor: number;
   transactions: number;
   activeCustomers: number;
   newCustomers: number;
@@ -439,11 +441,16 @@ export function buildMonthlyRevenueRamp(
     const periodObservations = valid.filter((item) => periodKey(localDateParts(item.date, timeZone)) === targetPeriod);
     const revenueMinor = periodObservations.reduce((sum, item) => sum + item.amountMinor, 0);
     const byCustomer = new Map<string, number>();
+    let unknownCustomerRevenueMinor = 0;
 
     for (const item of periodObservations) {
-      if (!item.customerKey) continue;
+      if (!item.customerKey) {
+        unknownCustomerRevenueMinor += item.amountMinor;
+        continue;
+      }
       byCustomer.set(item.customerKey, (byCustomer.get(item.customerKey) ?? 0) + item.amountMinor);
     }
+    const knownCustomerRevenueMinor = revenueMinor - unknownCustomerRevenueMinor;
 
     let newCustomers = 0;
     let repeatCustomers = 0;
@@ -476,6 +483,8 @@ export function buildMonthlyRevenueRamp(
       currency: normalizedCurrency,
       complete: offset < 0,
       revenueMinor,
+      knownCustomerRevenueMinor,
+      unknownCustomerRevenueMinor,
       transactions: periodObservations.length,
       activeCustomers,
       newCustomers,
@@ -485,7 +494,7 @@ export function buildMonthlyRevenueRamp(
       repeatRevenueMinor,
       reactivatedRevenueMinor,
       averageTransactionMinor: periodObservations.length ? Math.round(revenueMinor / periodObservations.length) : 0,
-      arpuMinor: activeCustomers ? Math.round(revenueMinor / activeCustomers) : 0,
+      arpuMinor: activeCustomers ? Math.round(knownCustomerRevenueMinor / activeCustomers) : 0,
       repeatCustomerRate: percent(repeatCustomers, activeCustomers),
     });
   }
