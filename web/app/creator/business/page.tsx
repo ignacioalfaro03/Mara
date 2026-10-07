@@ -165,6 +165,7 @@ export default async function CreatorBusinessPage() {
                     <li className={styles.item}>Expansión: +{formatMoney(health.bridge.expansionRevenueMinor, health.currency)}</li>
                     <li className={styles.item}>Contracción: -{formatMoney(health.bridge.contractionRevenueMinor, health.currency)}</li>
                     <li className={styles.item}>Revenue no repetido: -{formatMoney(health.bridge.lostRevenueMinor, health.currency)}</li>
+                    {health.bridge.unassignedDeltaMinor !== 0 ? <li className={styles.item}>Sin identidad atribuible: {health.bridge.unassignedDeltaMinor > 0 ? "+" : ""}{formatMoney(health.bridge.unassignedDeltaMinor, health.currency)}</li> : null}
                   </ul>
                 </>
               ) : <p className={styles.empty}>No existe un periodo comparable todavía.</p>}
