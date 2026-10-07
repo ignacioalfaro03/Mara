@@ -81,12 +81,15 @@ export async function readCreatorBusinessSettings(accessToken: string, creatorId
 }
 
 export async function readCreatorBusinessRevenue(accessToken: string, creatorId: string, asOf = new Date()) {
-  const floor = new Date(Date.UTC(asOf.getUTCFullYear(), asOf.getUTCMonth(), 1));
-  floor.setUTCDate(floor.getUTCDate() - 2);
-  const path = `commerce_purchases?select=id,amount_minor,currency,created_at,user_id,refunded_at,status&creator_id=eq.${encodeURIComponent(creatorId)}&status=eq.succeeded&refunded_at=is.null&created_at=gte.${encodeURIComponent(floor.toISOString())}&order=created_at.asc&limit=1000`;
+  const limit = 5000;
+  const path = `commerce_purchases?select=id,amount_minor,currency,created_at,user_id,refunded_at,status&creator_id=eq.${encodeURIComponent(creatorId)}&status=eq.succeeded&refunded_at=is.null&created_at=lte.${encodeURIComponent(asOf.toISOString())}&order=created_at.asc&limit=${limit}`;
   const result = await userRest<CreatorBusinessRevenueRow[]>(accessToken, path);
   const purchases = result.ok ? result.data : [];
-  return { purchases, truncated: purchases.length >= 1000 };
+  return {
+    purchases,
+    truncated: purchases.length >= limit,
+    historyMode: "FULL_AVAILABLE_PURCHASE_HISTORY_V1" as const,
+  };
 }
 
 export async function readCreatorDashboard(accessToken: string, creatorId: string) {
