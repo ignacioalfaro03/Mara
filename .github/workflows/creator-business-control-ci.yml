@@ -4,15 +4,19 @@ on:
   pull_request:
     paths:
       - "web/lib/creator-business-control.ts"
+      - "web/lib/creator-business-import.ts"
       - "web/lib/mara-real-data.ts"
       - "web/app/creator/business/**"
       - "web/app/api/creator/business-settings/**"
       - "web/scripts/creator-business-control-contract.mjs"
       - "web/supabase/prepared/creator_business_control_foundation.sql"
+      - "web/supabase/prepared/creator_business_external_import_foundation.sql"
       - "web/package.json"
       - "web/package-lock.json"
       - "docs/strategy/MARA_CREATOR_BUSINESS_OS_V1.md"
       - "docs/audits/MARA_CREATOR_BUSINESS_OS_GAP_2026-10-06.md"
+      - "docs/audits/MARA_CREATOR_BUSINESS_OS_P1_2026-10-07.md"
+      - "docs/architecture/CREATOR_BUSINESS_DATA_MODEL_V1.md"
       - ".github/workflows/creator-business-control-ci.yml"
   workflow_dispatch:
 
@@ -43,6 +47,9 @@ jobs:
 
       - name: Creator Business Control contract
         run: npm run creator-business-control:contract
+
+      - name: Creator Business P1 contract
+        run: npm run creator-business-p1:contract
 
       - name: Typecheck
         run: npm run typecheck
