@@ -46,7 +46,7 @@ export default async function CreatorHomePage({ searchParams }: { searchParams: 
     <main className={styles.shell}><div className={styles.container}>
       {bestOpportunity ? <ProductTelemetry event="creator_opportunity_viewed" surface="/creator" target="best_opportunity" placement="creator_home" /> : null}
       {pending.length > 0 ? <ProductTelemetry event="fulfillment_viewed" surface="/creator" target="pending_fulfillment" placement="creator_home" /> : null}
-      <nav className={styles.nav}><Link href="/">MARA</Link><div className={styles.actions}>{defaultWorld ? <Link className={styles.secondary} href={`/${defaultWorld.slug}`}>Ver sitio</Link> : null}<Link className={styles.secondary} href="/auth">Cuenta</Link></div></nav>
+      <nav className={styles.nav}><Link href="/">MARA</Link><div className={styles.actions}>{defaultWorld ? <Link className={styles.secondary} href={`/${defaultWorld.slug}`}>Ver sitio</Link> : null}{process.env.MARA_CREATOR_BUSINESS_CONTROL_ENABLED === "true" ? <Link className={styles.secondary} href="/creator/business">Negocio</Link> : null}<Link className={styles.secondary} href="/auth">Cuenta</Link></div></nav>
       <header className={styles.hero}><p className={styles.eyebrow}>CREATOR OS · {creator.status} · {creator.plan}</p><h1>Lo importante hoy.</h1><p>Mara reduce datos a decisiones: qué quiere tu audiencia, quién merece atención, qué vendiste y qué conviene hacer después.</p></header>
 
       <section className={styles.grid}>
