@@ -188,7 +188,7 @@ export type CreatorBusinessHealthSnapshot = {
 type LocalDateParts = { year: number; month: number; day: number };
 
 function integer(value: number, label: string) {
-  if (!Number.isFinite(value) || value < 0) throw new Error(\`\${label}_invalid\`);
+  if (!Number.isFinite(value) || value < 0) throw new Error(`${label}_invalid`);
   return Math.round(value);
 }
 
@@ -213,7 +213,7 @@ function monthDays(year: number, month: number) {
 }
 
 function periodKey(parts: Pick<LocalDateParts, "year" | "month">) {
-  return \`\${parts.year}-\${String(parts.month).padStart(2, "0")}\`;
+  return `${parts.year}-${String(parts.month).padStart(2, "0")}`;
 }
 
 function parsePeriod(period: string) {
@@ -681,8 +681,8 @@ export function buildCustomerHealth(
     const revenueAtRiskMinor = state === "AT_RISK" || state === "DORMANT" ? averageTransactionMinor : 0;
     const reason =
       state === "REACTIVATED"
-        ? \`Volvió después de una pausa de \${lastObservedInterval} días; su cadencia histórica estimada es \${cadenceDays} días.\`
-        : \`Han pasado \${daysSinceLastPurchase} días desde la última compra versus una cadencia histórica estimada de \${cadenceDays} días.\`;
+        ? `Volvió después de una pausa de ${lastObservedInterval} días; su cadencia histórica estimada es ${cadenceDays} días.`
+        : `Han pasado ${daysSinceLastPurchase} días desde la última compra versus una cadencia histórica estimada de ${cadenceDays} días.`;
 
     customers.push({
       customerKey,
@@ -814,7 +814,7 @@ function buildMainAction(
         title: normalized === "wait" || normalized === "no_action"
           ? "No fuerces una venta ahora."
           : "Usa la próxima acción de Creator OS.",
-        reason: \`\${existing.reason} Contexto económico: \${highestRisk.reason}\`,
+        reason: `${existing.reason} Contexto económico: ${highestRisk.reason}`,
         customerKey: highestRisk.customerKey,
         economicContextMinor: highestRisk.revenueAtRiskMinor,
         confidence: highestRisk.confidence,
