@@ -201,7 +201,7 @@ assert(!engineSource.includes("user_declared_preferences"), "business intelligen
 
 const importSql = read("supabase/prepared/creator_business_external_import_foundation.sql");
 for (const table of ["creator_external_sources", "creator_import_batches", "creator_external_revenue_events"]) {
-  assert(importSql.includes(\`alter table public.\${table} enable row level security\`), \`RLS missing for \${table}\`);
+  assert(importSql.includes(`alter table public.${table} enable row level security`), `RLS missing for ${table}`);
 }
 assert(!/grant\s+.+\s+to\s+anon/i.test(importSql), "external business data must not grant anon access");
 assert(importSql.includes("unique (creator_id, source, source_record_id)"), "database dedupe contract missing");
