@@ -13,6 +13,19 @@ export type DemandOpportunityRow = Tables<"creator_demand_opportunities">;
 export type NextBestActionRow = Tables<"creator_next_best_actions">;
 export type ActivityHistoryRow = Tables<"user_activity_history">;
 export type DemandSignalRow = Tables<"demand_signals">;
+export type CreatorBusinessSettingsRow = {
+  creator_id: string;
+  currency: string;
+  monthly_revenue_goal_minor: number;
+  monthly_fixed_costs_minor: number;
+  variable_cost_rate_bps: number;
+  time_zone: string;
+  updated_at: string;
+};
+export type CreatorBusinessRevenueRow = Pick<
+  PurchaseRow,
+  "id" | "amount_minor" | "currency" | "created_at" | "user_id" | "refunded_at" | "status" | "provider_payment_id"
+>;
 
 export async function readOwnCreator(accessToken: string, userId: string) {
   return first(await userRest<CreatorRow[]>(accessToken, `creators?select=*&user_id=eq.${encodeURIComponent(userId)}&limit=1`));
@@ -57,6 +70,41 @@ export async function readWeakness(accessToken: string, userId: string, world?: 
 
 export async function readUserWorldHistory(accessToken: string, userId: string, worldId: string) {
   const result = await userRest<ActivityHistoryRow[]>(accessToken, `user_activity_history?select=*&user_id=eq.${encodeURIComponent(userId)}&world_id=eq.${encodeURIComponent(worldId)}&order=event_at.desc&limit=12`);
+  return result.ok ? result.data : [];
+}
+
+export async function readCreatorBusinessSettings(accessToken: string, creatorId: string) {
+  return first(await userRest<CreatorBusinessSettingsRow[]>(
+    accessToken,
+    `creator_business_settings?select=*&creator_id=eq.${encodeURIComponent(creatorId)}&limit=1`,
+  ));
+}
+
+export async function readCreatorBusinessRevenue(accessToken: string, creatorId: string, asOf = new Date()) {
+  const limit = 5000;
+  const path = `commerce_purchases?select=id,amount_minor,currency,created_at,user_id,refunded_at,status,provider_payment_id&creator_id=eq.${encodeURIComponent(creatorId)}&status=eq.succeeded&refunded_at=is.null&created_at=lte.${encodeURIComponent(asOf.toISOString())}&order=created_at.asc&limit=${limit}`;
+  const result = await userRest<CreatorBusinessRevenueRow[]>(accessToken, path);
+  const purchases = result.ok ? result.data : [];
+  return {
+    purchases,
+    truncated: purchases.length >= limit,
+    historyMode: "FULL_AVAILABLE_PURCHASE_HISTORY_V1" as const,
+  };
+}
+
+export async function readCreatorBusinessCustomers(accessToken: string, creatorId: string) {
+  const result = await userRest<CustomerSummaryRow[]>(
+    accessToken,
+    `creator_customer_summary?select=*&creator_id=eq.${encodeURIComponent(creatorId)}&order=creator_gmv_minor.desc&limit=200`,
+  );
+  return result.ok ? result.data : [];
+}
+
+export async function readCreatorBusinessActions(accessToken: string, creatorId: string) {
+  const result = await userRest<NextBestActionRow[]>(
+    accessToken,
+    `creator_next_best_actions?select=*&creator_id=eq.${encodeURIComponent(creatorId)}&order=priority.asc&limit=100`,
+  );
   return result.ok ? result.data : [];
 }
 
