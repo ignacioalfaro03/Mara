@@ -80,6 +80,9 @@ jobs:
       - name: Verify Creator Business Control contract
         run: npm run creator-business-control:contract
 
+      - name: Verify Creator Business P1 contract
+        run: npm run creator-business-p1:contract
+
       - name: Verify DEV labs are blocked in production
         shell: bash
         run: |
