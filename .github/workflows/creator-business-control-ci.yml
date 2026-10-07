@@ -1,0 +1,53 @@
+name: Creator Business Control CI
+
+on:
+  pull_request:
+    paths:
+      - "web/lib/creator-business-control.ts"
+      - "web/lib/mara-real-data.ts"
+      - "web/app/creator/business/**"
+      - "web/app/api/creator/business-settings/**"
+      - "web/scripts/creator-business-control-contract.mjs"
+      - "web/supabase/prepared/creator_business_control_foundation.sql"
+      - "web/package.json"
+      - "web/package-lock.json"
+      - "docs/strategy/MARA_CREATOR_BUSINESS_OS_V1.md"
+      - "docs/audits/MARA_CREATOR_BUSINESS_OS_GAP_2026-10-06.md"
+      - ".github/workflows/creator-business-control-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: web
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Setup Node
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Creator Business Control contract
+        run: npm run creator-business-control:contract
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Production build
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+        run: npm run build
