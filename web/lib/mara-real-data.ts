@@ -92,6 +92,14 @@ export async function readCreatorBusinessRevenue(accessToken: string, creatorId:
   };
 }
 
+export async function readCreatorBusinessActions(accessToken: string, creatorId: string) {
+  const result = await userRest<NextBestActionRow[]>(
+    accessToken,
+    `creator_next_best_actions?select=*&creator_id=eq.${encodeURIComponent(creatorId)}&order=priority.asc&limit=100`,
+  );
+  return result.ok ? result.data : [];
+}
+
 export async function readCreatorDashboard(accessToken: string, creatorId: string) {
   const [customers, opportunities, nextActions, purchases, offers] = await Promise.all([
     userRest<CustomerSummaryRow[]>(accessToken, `creator_customer_summary?select=*&creator_id=eq.${encodeURIComponent(creatorId)}&order=last_activity_at.desc&limit=50`),
