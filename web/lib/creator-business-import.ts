@@ -113,7 +113,7 @@ function parseMajorAmountToMinor(value: string) {
   if (!match) return null;
   const major = BigInt(match[1]);
   const fraction = BigInt((match[2] ?? "").padEnd(2, "0"));
-  const minor = major * 100n + fraction;
+  const minor = major * BigInt(100) + fraction;
   if (minor > BigInt(Number.MAX_SAFE_INTEGER)) return null;
   return Number(minor);
 }
