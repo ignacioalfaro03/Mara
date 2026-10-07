@@ -138,6 +138,7 @@ export default async function CreatorBusinessPage() {
               <p className={styles.eyebrow}>FORECAST</p>
               <p className={styles.metric}>{formatMoney(health.control.forecastBaseMinor, health.currency)}</p>
               <p className={styles.muted}>{statusLabel(health.control.status)} · confianza {health.control.confidence}</p>
+              <p className={styles.small}>Modelo: {health.control.model}</p>
             </article>
             <article className={styles.third}>
               <p className={styles.eyebrow}>BRECHA</p>
