@@ -154,7 +154,7 @@ export function parseCanonicalRevenueCsv(csv: string, asOf = new Date()): Revenu
   if (missing.length > 0) {
     return {
       rows: [],
-      errors: [{ row: 1, code: "MISSING_HEADERS", message: \`Faltan columnas requeridas: \${missing.join(", ")}.\` }],
+      errors: [{ row: 1, code: "MISSING_HEADERS", message: `Faltan columnas requeridas: ${missing.join(", ")}.` }],
       duplicates: [],
       summaryByCurrency: [],
       provenanceType: "CSV_IMPORT",
@@ -205,7 +205,7 @@ export function parseCanonicalRevenueCsv(csv: string, asOf = new Date()): Revenu
       continue;
     }
 
-    const dedupeKey = \`\${source}:\${sourceRecordId}\`;
+    const dedupeKey = `${source}:${sourceRecordId}`;
     if (seen.has(dedupeKey)) {
       duplicates.push({ row: rowNumber, source, sourceRecordId });
       continue;
