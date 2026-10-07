@@ -95,6 +95,9 @@ export type RevenueBridge = {
   expansionRevenueMinor: number;
   contractionRevenueMinor: number;
   lostRevenueMinor: number;
+  unassignedStartRevenueMinor: number;
+  unassignedEndRevenueMinor: number;
+  unassignedDeltaMinor: number;
   reconciled: boolean;
 };
 
@@ -513,18 +516,24 @@ export function buildRevenueBridge(
 
   function customerRevenueFor(period: string) {
     const result = new Map<string, number>();
+    let unassignedMinor = 0;
     for (const item of valid) {
       const local = localDateParts(item.date, timeZone);
       if (periodKey(local) !== period) continue;
       if (throughDay !== null && local.day > throughDay) continue;
-      if (!item.customerKey) continue;
+      if (!item.customerKey) {
+        unassignedMinor += item.amountMinor;
+        continue;
+      }
       result.set(item.customerKey, (result.get(item.customerKey) ?? 0) + item.amountMinor);
     }
-    return result;
+    return { result, unassignedMinor };
   }
 
-  const start = customerRevenueFor(startPeriod);
-  const end = customerRevenueFor(endPeriod);
+  const startData = customerRevenueFor(startPeriod);
+  const endData = customerRevenueFor(endPeriod);
+  const start = startData.result;
+  const end = endData.result;
   const customers = new Set([...start.keys(), ...end.keys()]);
 
   let newRevenueMinor = 0;
@@ -553,15 +562,19 @@ export function buildRevenueBridge(
     if (delta < 0) contractionRevenueMinor += Math.abs(delta);
   }
 
-  const startRevenueMinor = [...start.values()].reduce((sum, value) => sum + value, 0);
-  const endRevenueMinor = [...end.values()].reduce((sum, value) => sum + value, 0);
+  const knownStartRevenueMinor = [...start.values()].reduce((sum, value) => sum + value, 0);
+  const knownEndRevenueMinor = [...end.values()].reduce((sum, value) => sum + value, 0);
+  const startRevenueMinor = knownStartRevenueMinor + startData.unassignedMinor;
+  const endRevenueMinor = knownEndRevenueMinor + endData.unassignedMinor;
+  const unassignedDeltaMinor = endData.unassignedMinor - startData.unassignedMinor;
   const reconciledValue =
     startRevenueMinor +
     newRevenueMinor +
     reactivatedRevenueMinor +
     expansionRevenueMinor -
     contractionRevenueMinor -
-    lostRevenueMinor;
+    lostRevenueMinor +
+    unassignedDeltaMinor;
 
   return {
     startPeriod,
@@ -575,6 +588,9 @@ export function buildRevenueBridge(
     expansionRevenueMinor,
     contractionRevenueMinor,
     lostRevenueMinor,
+    unassignedStartRevenueMinor: startData.unassignedMinor,
+    unassignedEndRevenueMinor: endData.unassignedMinor,
+    unassignedDeltaMinor,
     reconciled: reconciledValue === endRevenueMinor,
   };
 }
