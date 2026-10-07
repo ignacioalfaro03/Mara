@@ -660,10 +660,11 @@ export function buildCustomerHealth(
       if (interval > 0) intervals.push(interval);
     }
 
-    const cadenceDays = intervals.length ? Math.max(1, Math.round(median(intervals))) : fallback.days;
+    const baselineIntervals = intervals.length >= 2 ? intervals.slice(0, -1) : intervals;
+    const cadenceDays = baselineIntervals.length ? Math.max(1, Math.round(median(baselineIntervals))) : fallback.days;
     const confidence: BusinessConfidence =
-      intervals.length >= 4 ? "high" :
-      intervals.length >= 2 ? "medium" :
+      baselineIntervals.length >= 4 ? "high" :
+      baselineIntervals.length >= 2 ? "medium" :
       "low";
     const ratio = daysSinceLastPurchase / cadenceDays;
     const lastObservedInterval = intervals[intervals.length - 1] ?? null;
