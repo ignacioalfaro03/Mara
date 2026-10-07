@@ -229,7 +229,7 @@ export default async function CreatorBusinessPage() {
               <p className={styles.muted}>
                 Contexto económico: {formatMoney(health.mainAction.economicContextMinor, health.currency)} · confianza {health.mainAction.confidence} · fuente {health.mainAction.source === "CREATOR_OS_NEXT_BEST_ACTION" ? "Creator OS" : "Business Control"}.
               </p>
-              {health.mainAction.customerKey ? <Link className={styles.secondary} href={\`/creator/customers/\${health.mainAction.customerKey}\`}>Ver cliente</Link> : null}
+              {health.mainAction.customerKey ? <Link className={styles.secondary} href={`/creator/customers/${health.mainAction.customerKey}`}>Ver cliente</Link> : null}
             </article>
           </section>
 
