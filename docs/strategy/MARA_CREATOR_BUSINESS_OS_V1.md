@@ -154,3 +154,59 @@ A valid recommendation may be **do nothing** or **do not contact this customer**
 This document does not activate payments, payouts, external connectors or production database changes.
 
 **NO MERGE unless Ignacio explicitly writes `mergea`.**
+
+
+## 11. P1 implementation status — 2026-10-07
+
+P1 moves the product from simple financial control into explainable business diagnostics.
+
+Implemented on branch `feature/creator-business-control-v1`:
+
+- six-month revenue ramp;
+- new / repeat / reactivated customer decomposition;
+- revenue bridge with exact reconciliation;
+- same-day-of-month comparison for current vs previous month;
+- transactional customer health;
+- conservative revenue-at-risk;
+- Top 1 / Top 3 / Top 5 concentration;
+- existing Creator OS Next Best Action reuse;
+- canonical external revenue CSV parser;
+- external data provenance and stable-record dedupe contracts;
+- prepared external-source/import/revenue-event persistence with RLS.
+
+### Churn terminology
+
+Do not use `churn` for ordinary transactional inactivity.
+
+Until Mara has a canonical recurring membership/subscription contract, use:
+
+- repeat;
+- dormant;
+- reactivated;
+- revenue at risk.
+
+### Revenue-at-risk V1
+
+P1 does not run a black-box predictive model.
+
+It measures explainable exposure:
+
+> one historical average purchase for a repeat customer materially outside their observed purchase cadence.
+
+This amount is not guaranteed lost revenue and must be shown with confidence/context.
+
+### External source truth
+
+Only Mara-native purchase data is currently connected.
+
+OnlyFans, Arsmate, Instagram, TikTok, X and OTHER remain source labels / future import targets.
+
+CSV parsing does not mean a live connector exists.
+
+### Next strategic slice
+
+After P1 is green, the preferred sequence is:
+
+`IMPORT PREVIEW → VERIFIED EXTERNAL DATA → CHANNEL ECONOMICS → BETTER FORECAST → ACTION OUTCOME LEARNING`
+
+Do not jump directly to probabilistic LTV, dynamic pricing or AI propensity before the external data contract is proven.
