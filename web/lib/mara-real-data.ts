@@ -24,7 +24,7 @@ export type CreatorBusinessSettingsRow = {
 };
 export type CreatorBusinessRevenueRow = Pick<
   PurchaseRow,
-  "id" | "amount_minor" | "currency" | "created_at" | "user_id" | "refunded_at" | "status"
+  "id" | "amount_minor" | "currency" | "created_at" | "user_id" | "refunded_at" | "status" | "provider_payment_id"
 >;
 
 export async function readOwnCreator(accessToken: string, userId: string) {
@@ -82,7 +82,7 @@ export async function readCreatorBusinessSettings(accessToken: string, creatorId
 
 export async function readCreatorBusinessRevenue(accessToken: string, creatorId: string, asOf = new Date()) {
   const limit = 5000;
-  const path = `commerce_purchases?select=id,amount_minor,currency,created_at,user_id,refunded_at,status&creator_id=eq.${encodeURIComponent(creatorId)}&status=eq.succeeded&refunded_at=is.null&created_at=lte.${encodeURIComponent(asOf.toISOString())}&order=created_at.asc&limit=${limit}`;
+  const path = `commerce_purchases?select=id,amount_minor,currency,created_at,user_id,refunded_at,status,provider_payment_id&creator_id=eq.${encodeURIComponent(creatorId)}&status=eq.succeeded&refunded_at=is.null&created_at=lte.${encodeURIComponent(asOf.toISOString())}&order=created_at.asc&limit=${limit}`;
   const result = await userRest<CreatorBusinessRevenueRow[]>(accessToken, path);
   const purchases = result.ok ? result.data : [];
   return {
